@@ -1,0 +1,31 @@
+@import "tailwindcss/base"; /* @tailwind base; */
+@import "tailwindcss/components"; /* @tailwind components; */
+@import "tailwindcss/utilities"; /* @tailwind utilities; */
+
+body {
+  margin: 0;
+  font-family: "Open Sans", "Noto Sans JP", "Helvetica Neue", "Helvetica", "Hiragino Sans",
+    "Hiragino Kaku Gothic ProN", "Arial", "Yu Gothic", "Meiryo", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+/* スクロールバー */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+/* スクロールバーの背景色 */
+::-webkit-scrollbar-track {
+  border-radius: 32px;
+  background-color: #cecece;
+}
+/* スクロールバーの色 */
+::-webkit-scrollbar-thumb {
+  border-radius: 32px;
+  background: #a8a8a8;
+}
