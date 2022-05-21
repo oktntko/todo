@@ -1,5 +1,157 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Loading } from "~/components/Loading";
+import { toLabel } from "~/plugins/code";
 
 export function TodoIndexPage() {
-  return <>ToDo一覧画面</>;
+  const didLogRef = useRef(false); // https://github.com/reactwg/react-18/discussions/18#discussion-3385714
+
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  const [todos, setTodos] = useState<Todo[]>([]);
+
+  useEffect(() => {
+    if (didLogRef.current === false) {
+      didLogRef.current = true;
+      setLoading(true);
+
+      axios.get(`/api/todos`).then(({ data }) => {
+        setTodos(data.todos);
+        setLoading(false);
+      });
+    }
+  }, []);
+
+  const handleDone = (todo_id: number) => {
+    axios.patch(`/api/todos/${todo_id}`);
+    setTodos(todos.filter((todo) => todo_id !== todo.todo_id));
+  };
+
+  const MainContents = () => {
+    if (loading) {
+      // ローディング中
+      return (
+        <div className="mx-auto my-4 w-full max-w-screen-sm space-y-2 px-6">
+          {[...Array(5)].map((_, i) => (
+            <TodoBoxSkelton key={i} />
+          ))}
+        </div>
+      );
+    } else if (todos.length) {
+      // データがあるあとき
+      return (
+        <div className="mx-auto my-4 w-full max-w-screen-sm space-y-2 px-6">
+          {todos.map((todo) => (
+            <TodoBox key={todo.todo_id} todo={todo} onDone={handleDone} />
+          ))}
+        </div>
+      );
+    } else {
+      // データがないとき
+      return (
+        <div className="mx-auto h-full w-full max-w-screen-sm space-y-2 px-6">
+          <div className="flex h-full items-center justify-center">私は今、自由です🎉</div>
+        </div>
+      );
+    }
+  };
+
+  return (
+    <>
+      <Loading loading={loading} setLoading={setLoading} />
+      <MainContents></MainContents>
+      <button
+        className="fixed bottom-16 right-24 h-20 w-20 rounded-full bg-blue-600 p-0 text-white shadow-md lg:right-[24%] 2xl:right-[32%]"
+        onClick={() => navigate("/todos/add")}
+      >
+        追加
+      </button>
+    </>
+  );
 }
+
+const TodoBox = ({ todo, onDone }: { todo: Todo; onDone: (todo_id: number) => void }) => {
+  const navigate = useNavigate();
+
+  return (
+    <div className="rounded border bg-white px-4 py-2 shadow-md dark:border-gray-700 dark:bg-gray-800">
+      <div className="flex flex-row space-x-2">
+        <div className="flex min-w-0 grow flex-col space-y-1 ">
+          <div className="flex min-w-0 shrink-0 text-sm text-gray-500">
+            <div className="w-60 overflow-hidden text-ellipsis whitespace-nowrap">
+              <span>{todo.category_name ?? ""}</span>
+            </div>
+            <div className="w-36">
+              <span>{todo.kizitu ?? ""}</span>
+            </div>
+            <div className="w-12">
+              <span>{toLabel.yusendo(todo.yusendo) ?? ""}</span>
+            </div>
+          </div>
+          <div className="flex grow items-center overflow-hidden text-ellipsis whitespace-nowrap text-gray-700">
+            <span className="text-xl">{todo.yarukoto ?? ""}</span>
+          </div>
+        </div>
+        <div className="flex shrink-0 flex-col space-y-1">
+          <button
+            type="button"
+            className="rounded-lg border border-blue-700 px-5 py-2 text-center text-xs font-medium text-blue-700 hover:bg-blue-800 hover:text-white focus:outline-none focus:ring-1 focus:ring-blue-300 dark:border-blue-500 dark:text-blue-500 dark:hover:bg-blue-600 dark:hover:text-white dark:focus:ring-blue-800"
+            onClick={() => navigate(`/todos/${todo.todo_id}`)}
+          >
+            編集
+          </button>
+          <button
+            type="button"
+            className="rounded-lg bg-green-600 px-5 py-2 text-center text-xs font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-1 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+            onClick={() => onDone(todo.todo_id)}
+          >
+            Done
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const TodoBoxSkelton = () => {
+  return (
+    <div className="rounded border bg-white px-4 py-2 shadow-md dark:border-gray-700 dark:bg-gray-800">
+      <div className="flex flex-row space-x-2">
+        <div className="flex min-w-0 grow animate-pulse flex-col space-y-1 ">
+          <div className="flex min-w-0 shrink-0 text-sm text-gray-500">
+            <div className="w-60 overflow-hidden text-ellipsis whitespace-nowrap">
+              <p className="h-5 rounded-full bg-slate-200"></p>
+            </div>
+            <div className="w-36">
+              <p className="h-5 rounded-full bg-slate-200"></p>
+            </div>
+            <div className="w-12">
+              <p className="h-5 rounded-full bg-slate-200"></p>
+            </div>
+          </div>
+          <div className="flex grow items-center overflow-hidden text-ellipsis whitespace-nowrap text-gray-700">
+            <p className="h-8 w-full rounded-full bg-slate-200"></p>
+          </div>
+        </div>
+        <div className="flex shrink-0 flex-col space-y-1">
+          <button
+            type="button"
+            disabled
+            className="rounded-lg border border-slate-700 px-5 py-2 text-center text-xs font-medium text-slate-700 dark:text-slate-500"
+          >
+            編集
+          </button>
+          <button
+            type="button"
+            disabled
+            className="rounded-lg bg-slate-600 px-5 py-2 text-center text-xs font-medium text-white dark:bg-slate-600"
+          >
+            Done
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};

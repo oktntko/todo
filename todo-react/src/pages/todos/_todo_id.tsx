@@ -1,5 +1,6 @@
 import React from "react";
+import { TodoForm } from "~/components/TodoForm";
 
-export function TodoSyosaiPage() {
-  return <>ToDo詳細画面</>;
-}
+export const TodoSyosaiPage = () => {
+  return <TodoForm />;
+};

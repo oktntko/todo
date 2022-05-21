@@ -1,5 +1,6 @@
 import React from "react";
+import { TodoForm } from "~/components/TodoForm";
 
-export function TodoTorokuPage() {
-  return <>ToDo登録画面</>;
-}
+export const TodoTorokuPage = () => {
+  return <TodoForm />;
+};
