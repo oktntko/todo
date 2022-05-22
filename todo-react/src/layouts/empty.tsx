@@ -1,7 +1,7 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 
-export function EmptyLayout() {
+export const EmptyLayout = () => {
   return (
     <>
       <main>
@@ -9,4 +9,4 @@ export function EmptyLayout() {
       </main>
     </>
   );
-}
+};

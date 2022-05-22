@@ -1,7 +1,7 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 
-export default function MyModal({
+export const Modal = ({
   children,
   display,
   setDisplay,
@@ -11,7 +11,7 @@ export default function MyModal({
   display: boolean;
   setDisplay: React.Dispatch<React.SetStateAction<boolean>>;
   onClose?: (value?: boolean | undefined) => void;
-}) {
+}) => {
   const handleClose = (value: boolean) => {
     if (onClose) {
       onClose(value);
@@ -59,4 +59,4 @@ export default function MyModal({
       </Dialog>
     </Transition>
   );
-}
+};

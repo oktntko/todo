@@ -10,7 +10,7 @@ import { TodoIndexPage } from "~/pages/todos";
 import { TodoTorokuPage } from "~/pages/todos/add";
 import { TodoSyosaiPage } from "~/pages/todos/_todo_id";
 
-export function AppRoute() {
+export const AppRoute = () => {
   return (
     <Routes>
       <Route element={<DashboardLayout />}>
@@ -27,4 +27,4 @@ export function AppRoute() {
       </Route>
     </Routes>
   );
-}
+};

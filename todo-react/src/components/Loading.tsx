@@ -2,13 +2,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import { ImSpinner8 } from "react-icons/im";
 
-export const Loading = ({
-  loading,
-  setLoading,
-}: {
-  loading: boolean;
-  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
-}) => {
+export const Loading = ({ loading }: { loading: boolean }) => {
   return (
     <Transition show={loading} as={Fragment}>
       {/* 画面全体に広がる。flexにして子要素が中心になるように調整 */}

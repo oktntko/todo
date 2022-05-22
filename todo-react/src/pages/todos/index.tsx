@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Loading } from "~/components/Loading";
 import { toLabel } from "~/plugins/code";
 
-export function TodoIndexPage() {
+export const TodoIndexPage = () => {
   const didLogRef = useRef(false); // https://github.com/reactwg/react-18/discussions/18#discussion-3385714
 
   const [loading, setLoading] = useState(true);
@@ -60,7 +60,7 @@ export function TodoIndexPage() {
 
   return (
     <>
-      <Loading loading={loading} setLoading={setLoading} />
+      <Loading loading={loading} />
       <MainContents></MainContents>
       <button
         className="fixed bottom-16 right-24 h-20 w-20 rounded-full bg-blue-600 p-0 text-white shadow-md lg:right-[24%] 2xl:right-[32%]"
@@ -70,7 +70,7 @@ export function TodoIndexPage() {
       </button>
     </>
   );
-}
+};
 
 const TodoBox = ({ todo, onDone }: { todo: Todo; onDone: (todo_id: number) => void }) => {
   const navigate = useNavigate();
@@ -122,17 +122,17 @@ const TodoBoxSkelton = () => {
         <div className="flex min-w-0 grow animate-pulse flex-col space-y-1 ">
           <div className="flex min-w-0 shrink-0 text-sm text-gray-500">
             <div className="w-60 overflow-hidden text-ellipsis whitespace-nowrap">
-              <p className="h-5 rounded-full bg-slate-200"></p>
+              <p className="h-5 rounded bg-slate-200"></p>
             </div>
             <div className="w-36">
-              <p className="h-5 rounded-full bg-slate-200"></p>
+              <p className="h-5 rounded bg-slate-200"></p>
             </div>
             <div className="w-12">
-              <p className="h-5 rounded-full bg-slate-200"></p>
+              <p className="h-5 rounded bg-slate-200"></p>
             </div>
           </div>
           <div className="flex grow items-center overflow-hidden text-ellipsis whitespace-nowrap text-gray-700">
-            <p className="h-8 w-full rounded-full bg-slate-200"></p>
+            <p className="h-8 w-full rounded bg-slate-200"></p>
           </div>
         </div>
         <div className="flex shrink-0 flex-col space-y-1">

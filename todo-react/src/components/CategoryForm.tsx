@@ -1,0 +1,106 @@
+import axios from "axios";
+import React, { useEffect, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router";
+import { Loading } from "~/components/Loading";
+
+export const CategoryForm = () => {
+  const didLogRef = useRef(false); // https://github.com/reactwg/react-18/discussions/18#discussion-3385714
+
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { category_id } = useParams();
+
+  const [form, setForm] = useState({
+    category_name: null as string | null,
+    updated_at: null as string | null,
+  });
+
+  useEffect(() => {
+    if (didLogRef.current === false) {
+      didLogRef.current = true;
+
+      if (category_id) {
+        setLoading(true);
+
+        axios.get(`/api/categories/${category_id}`).then(({ data }) => {
+          setForm({ ...form, ...data });
+          setLoading(false);
+        });
+      }
+    }
+  }, []);
+
+  const handleChange =
+    (name: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setForm({ ...form, [name]: e.target.value });
+    };
+
+  const postCategory = () => {
+    setLoading(true);
+    axios.post("/api/categories", { data: { ...form } }).then(() => {
+      navigate("/categories");
+      setLoading(false);
+    });
+  };
+  const putCategory = () => {
+    setLoading(true);
+    axios.put(`/api/categories/${category_id}`, { data: { ...form } }).then(() => {
+      navigate("/categories");
+      setLoading(false);
+    });
+  };
+  const deleteCategory = () => {
+    setLoading(true);
+    axios.delete(`/api/categories/${category_id}`, { data: { ...form } }).then(() => {
+      navigate("/categories");
+      setLoading(false);
+    });
+  };
+
+  return (
+    <>
+      <Loading loading={loading} />
+      <div className="my-4 mx-auto w-full max-w-screen-sm space-y-2 px-6">
+        <div className="space-y-2">
+          {/* １行目 */}
+          <input
+            placeholder="カテゴリ名"
+            value={form.category_name ?? ""}
+            className="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+            required
+            onChange={handleChange("category_name")}
+          />
+        </div>
+      </div>
+      <div className="my-4 mx-auto flex w-full max-w-screen-sm justify-end space-x-2 px-6">
+        {category_id && (
+          <button
+            type="button"
+            className="my-1 rounded-lg border border-yellow-400 px-5 py-2 text-center text-sm font-medium text-yellow-400 hover:bg-yellow-500 hover:text-white focus:outline-none focus:ring-1 focus:ring-yellow-300 dark:border-yellow-300 dark:bg-green-600 dark:text-yellow-300 dark:hover:bg-yellow-400 dark:hover:text-white dark:focus:ring-yellow-900"
+            onClick={deleteCategory}
+          >
+            削除
+          </button>
+        )}
+        {category_id && (
+          <button
+            type="button"
+            className="my-1 rounded-lg bg-green-600 px-5 py-2 text-center text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-1 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+            onClick={putCategory}
+          >
+            保存
+          </button>
+        )}
+        {!category_id && (
+          <button
+            type="button"
+            className="my-1 rounded-lg bg-green-600 px-5 py-2 text-center text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-1 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+            onClick={postCategory}
+          >
+            登録
+          </button>
+        )}
+      </div>
+    </>
+  );
+};

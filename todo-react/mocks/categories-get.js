@@ -7,7 +7,7 @@ module.exports = {
   cache: false,
   delay: 300 /*ms*/,
   template: () => {
-    const total = faker.datatype.number({ min: 4, max: 6 });
+    const total = faker.datatype.number({ min: 0, max: 8 });
     const categories = [...Array(total)].map(category);
     return {
       categories,

@@ -5,13 +5,13 @@ import { BrowserRouter as Router } from "react-router-dom";
 import "~/main.css";
 import { AppRoute } from "~/routers";
 
-function RouterView() {
+const RouterView = () => {
   return (
     <Suspense fallback={<p>Loading...</p>}>
       <AppRoute />
     </Suspense>
   );
-}
+};
 
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 ReactDOM.createRoot(document.getElementById("root")!).render(

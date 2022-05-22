@@ -1,5 +1,6 @@
 import React from "react";
+import { CategoryForm } from "~/components/CategoryForm";
 
-export function CategorySyosaiPage() {
-  return <>カテゴリ詳細画面</>;
-}
+export const CategorySyosaiPage = () => {
+  return <CategoryForm />;
+};

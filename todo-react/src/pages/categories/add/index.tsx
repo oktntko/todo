@@ -1,5 +1,6 @@
 import React from "react";
+import { CategoryForm } from "~/components/CategoryForm";
 
-export function CategoryTorokuPage() {
-  return <>カテゴリ登録画面</>;
-}
+export const CategoryTorokuPage = () => {
+  return <CategoryForm />;
+};

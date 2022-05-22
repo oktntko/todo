@@ -2,7 +2,7 @@ import React from "react";
 import { Outlet } from "react-router-dom";
 import { Header } from "~/components/Header";
 
-export function DashboardLayout() {
+export const DashboardLayout = () => {
   return (
     <div className="flex h-screen overflow-hidden text-gray-800 dark:text-white">
       <div
@@ -19,4 +19,4 @@ export function DashboardLayout() {
       </div>
     </div>
   );
-}
+};

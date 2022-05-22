@@ -57,21 +57,21 @@ export const TodoForm = () => {
     setForm({ ...form, subcategory_id_list });
   };
 
-  const postCategory = () => {
+  const postTodos = () => {
     setLoading(true);
     axios.post("/api/todos", { data: { ...form } }).then(() => {
       navigate("/todos");
       setLoading(false);
     });
   };
-  const putCategory = () => {
+  const putTodos = () => {
     setLoading(true);
     axios.put(`/api/todos/${todo_id}`, { data: { ...form } }).then(() => {
       navigate("/todos");
       setLoading(false);
     });
   };
-  const deleteCategory = () => {
+  const deleteTodos = () => {
     setLoading(true);
     axios.delete(`/api/todos/${todo_id}`, { data: { ...form } }).then(() => {
       navigate("/todos");
@@ -81,7 +81,7 @@ export const TodoForm = () => {
 
   return (
     <>
-      <Loading loading={loading} setLoading={setLoading} />
+      <Loading loading={loading} />
       <div className="my-4 mx-auto w-full max-w-screen-sm space-y-2 px-6">
         {/* １行目 */}
         <div className="space-y-2">
@@ -134,7 +134,7 @@ export const TodoForm = () => {
           <button
             type="button"
             className="my-1 rounded-lg border border-yellow-400 px-5 py-2 text-center text-sm font-medium text-yellow-400 hover:bg-yellow-500 hover:text-white focus:outline-none focus:ring-1 focus:ring-yellow-300 dark:border-yellow-300 dark:bg-green-600 dark:text-yellow-300 dark:hover:bg-yellow-400 dark:hover:text-white dark:focus:ring-yellow-900"
-            onClick={deleteCategory}
+            onClick={deleteTodos}
           >
             削除
           </button>
@@ -143,7 +143,7 @@ export const TodoForm = () => {
           <button
             type="button"
             className="my-1 rounded-lg bg-green-600 px-5 py-2 text-center text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-1 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-            onClick={putCategory}
+            onClick={putTodos}
           >
             保存
           </button>
@@ -152,7 +152,7 @@ export const TodoForm = () => {
           <button
             type="button"
             className="my-1 rounded-lg bg-green-600 px-5 py-2 text-center text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-1 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-            onClick={postCategory}
+            onClick={postTodos}
           >
             登録
           </button>
