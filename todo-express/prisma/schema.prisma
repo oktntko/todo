@@ -1,0 +1,54 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Todo {
+  todo_id     Int      @id @default(autoincrement()) @db.Integer
+  yarukoto    String   @db.VarChar(100)
+  category_id Int?     @db.Integer
+  kizitu      String?  @db.VarChar(10)
+  yusendo     String?  @db.VarChar(50)
+  memo        String?  @db.VarChar(400)
+  is_done     Boolean  @default(false) @db.Boolean
+  created_at  DateTime @default(now()) @db.Timestamp(3)
+  updated_at  DateTime @updatedAt() @db.Timestamp(3)
+
+  category Category? @relation(fields: [category_id], references: [category_id])
+
+  subcategories TodoSubcategory[]
+
+  @@map("todos")
+}
+
+model Category {
+  category_id   Int      @id @default(autoincrement()) @db.Integer
+  category_name String   @db.VarChar(100)
+  created_at    DateTime @default(now()) @db.Timestamp(3)
+  updated_at    DateTime @updatedAt() @db.Timestamp(3)
+
+  todo               Todo[]
+  todo_subcategories TodoSubcategory[]
+
+  @@unique([category_name], name: "unique_category_name")
+  @@map("categories")
+}
+
+model TodoSubcategory {
+  id          Int @id @default(autoincrement()) @db.Integer
+  todo_id     Int @db.Integer
+  category_id Int @db.Integer
+
+  todo     Todo     @relation(fields: [todo_id], references: [todo_id])
+  category Category @relation(fields: [category_id], references: [category_id])
+
+  @@unique([todo_id, category_id], name: "unique_todo_id_category_id")
+  @@map("todo_subcategories")
+}
