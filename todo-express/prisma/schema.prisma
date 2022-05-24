@@ -46,8 +46,8 @@ model TodoSubcategory {
   todo_id     Int @db.Integer
   category_id Int @db.Integer
 
-  todo     Todo     @relation(fields: [todo_id], references: [todo_id])
-  category Category @relation(fields: [category_id], references: [category_id])
+  todo     Todo     @relation(fields: [todo_id], references: [todo_id], onDelete: Cascade)
+  category Category @relation(fields: [category_id], references: [category_id], onDelete: Cascade)
 
   @@unique([todo_id, category_id], name: "unique_todo_id_category_id")
   @@map("todo_subcategories")

@@ -15,7 +15,9 @@ const postCategory = async (
 const getCategories = async () => {
   log.debug("getCategories");
 
-  return CategoriesRepository.findManyCategory();
+  const categories = await CategoriesRepository.findManyCategory();
+
+  return { categories };
 };
 
 // # GET /api/categories/:category_id
@@ -29,7 +31,7 @@ const getCategory = async (category_id: number) => {
 const putCategory = async (
   category_id: number,
   category: Omit<Category, "category_id" | "created_at" | "updated_at">,
-  updated_at: Date
+  updated_at: string
 ) => {
   log.debug("putCategory", category_id, category, updated_at);
 
@@ -37,7 +39,7 @@ const putCategory = async (
 };
 
 // # DELETE /api/categories/:category_id
-const deleteCategory = async (category_id: number, updated_at: Date) => {
+const deleteCategory = async (category_id: number, updated_at: string) => {
   log.debug("deleteCategory", category_id, updated_at);
 
   return CategoriesRepository.deleteCategory({ category_id });

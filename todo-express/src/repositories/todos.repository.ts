@@ -1,11 +1,10 @@
-import { Prisma, Todo } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import ORM from "~/arch/ORM";
-import { TodoResponse } from "~/controllers/api/todos.controller";
+import { TodoBody, TodoResponse } from "~/controllers/api/todos.controller";
 import log from "~/middlewares/log";
+import { TodoSubcategoriesRepository } from "~/repositories/todo_subcategories.repository";
 
-const createTodo = async (
-  todo: Omit<Todo, "todo_id" | "is_done" | "created_at" | "updated_at">
-) => {
+const createTodo = async (todo: TodoBody) => {
   log.debug("createTodo");
 
   return ORM.todo
@@ -36,7 +35,19 @@ const createTodo = async (
           },
         },
       },
-      data: todo,
+      data: {
+        yarukoto: todo.yarukoto,
+        category_id: todo.category_id,
+        kizitu: todo.kizitu,
+        yusendo: todo.yusendo,
+        memo: todo.memo,
+        subcategories: {
+          createMany: {
+            skipDuplicates: true,
+            data: todo.subcategory_id_list.map((category_id) => ({ category_id })),
+          },
+        },
+      },
     })
     .then(transformSubcategories);
 };
@@ -72,7 +83,10 @@ const findManyTodo = async (where?: Prisma.TodoWhereInput) => {
           },
         },
       },
-      where,
+      where: {
+        ...where,
+        is_done: false,
+      },
     })
     .then((todos) => todos.map(transformSubcategories));
 };
@@ -113,11 +127,10 @@ const findUniqueTodo = async (where: RequireOne<Prisma.TodoWhereUniqueInput>) =>
     .then((todo) => (todo ? transformSubcategories(todo) : null));
 };
 
-const updateTodo = async (
-  where: RequireOne<Prisma.TodoWhereUniqueInput>,
-  todo: Omit<Todo, "todo_id" | "is_done" | "created_at" | "updated_at">
-) => {
+const updateTodo = async (where: RequireOne<Prisma.TodoWhereUniqueInput>, todo: TodoBody) => {
   log.debug("updateTodo");
+
+  await TodoSubcategoriesRepository.deleteManyTodoSubcategory(where);
 
   return ORM.todo
     .update({
@@ -147,7 +160,19 @@ const updateTodo = async (
           },
         },
       },
-      data: todo,
+      data: {
+        yarukoto: todo.yarukoto,
+        category_id: todo.category_id,
+        kizitu: todo.kizitu,
+        yusendo: todo.yusendo,
+        memo: todo.memo,
+        subcategories: {
+          createMany: {
+            skipDuplicates: true,
+            data: todo.subcategory_id_list.map((category_id) => ({ category_id })),
+          },
+        },
+      },
       where,
     })
     .then(transformSubcategories);

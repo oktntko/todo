@@ -10,7 +10,7 @@ export const Modal = ({
   children: JSX.Element;
   display: boolean;
   setDisplay: React.Dispatch<React.SetStateAction<boolean>>;
-  onClose?: (value?: boolean | undefined) => void;
+  onClose?: (value?: boolean | null) => void;
 }) => {
   const handleClose = (value: boolean) => {
     if (onClose) {

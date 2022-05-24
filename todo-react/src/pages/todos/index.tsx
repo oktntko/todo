@@ -1,8 +1,9 @@
-import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loading } from "~/components/Loading";
 import { toLabel } from "~/plugins/code";
+import { api } from "~/repositories/api";
+import { components, paths } from "~/repositories/schema";
 
 export const TodoIndexPage = () => {
   const didLogRef = useRef(false); // https://github.com/reactwg/react-18/discussions/18#discussion-3385714
@@ -10,23 +11,31 @@ export const TodoIndexPage = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const [todos, setTodos] = useState<Todo[]>([]);
+  const [todos, setTodos] = useState<
+    paths["/api/todos"]["get"]["responses"]["200"]["content"]["application/json"]["todos"]
+  >([]);
 
   useEffect(() => {
     if (didLogRef.current === false) {
       didLogRef.current = true;
-      setLoading(true);
 
-      axios.get(`/api/todos`).then(({ data }) => {
-        setTodos(data.todos);
-        setLoading(false);
-      });
+      getTodos();
     }
   }, []);
 
-  const handleDone = (todo_id: number) => {
-    axios.patch(`/api/todos/${todo_id}`);
-    setTodos(todos.filter((todo) => todo_id !== todo.todo_id));
+  const handleDone = (todo_id: string, updated_at: string) => {
+    api.patch.todos({ todo_id }, { updated_at }).then(({ data }) => {
+      setTodos(todos.filter((todo) => todo.todo_id !== data.todo_id));
+    });
+  };
+
+  const getTodos = () => {
+    setLoading(true);
+
+    api.get.todos().then(({ data }) => {
+      setTodos(data.todos);
+      setLoading(false);
+    });
   };
 
   const MainContents = () => {
@@ -44,7 +53,11 @@ export const TodoIndexPage = () => {
       return (
         <div className="mx-auto my-4 w-full max-w-screen-sm space-y-2 px-6">
           {todos.map((todo) => (
-            <TodoBox key={todo.todo_id} todo={todo} onDone={handleDone} />
+            <TodoBox
+              key={todo.todo_id}
+              todo={todo}
+              onDone={() => handleDone(String(todo.todo_id), todo.updated_at)}
+            />
           ))}
         </div>
       );
@@ -72,7 +85,13 @@ export const TodoIndexPage = () => {
   );
 };
 
-const TodoBox = ({ todo, onDone }: { todo: Todo; onDone: (todo_id: number) => void }) => {
+const TodoBox = ({
+  todo,
+  onDone,
+}: {
+  todo: components["schemas"]["TodoResponse"];
+  onDone: (todo_id: number) => void;
+}) => {
   const navigate = useNavigate();
 
   return (
@@ -81,7 +100,7 @@ const TodoBox = ({ todo, onDone }: { todo: Todo; onDone: (todo_id: number) => vo
         <div className="flex min-w-0 grow flex-col space-y-1 ">
           <div className="flex min-w-0 shrink-0 text-sm text-gray-500">
             <div className="w-60 overflow-hidden text-ellipsis whitespace-nowrap">
-              <span>{todo.category_name ?? ""}</span>
+              <span>{todo.category?.category_name ?? ""}</span>
             </div>
             <div className="w-36">
               <span>{todo.kizitu ?? ""}</span>

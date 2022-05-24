@@ -1,5 +1,4 @@
 import { Listbox, Transition } from "@headlessui/react";
-import axios from "axios";
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import { AiOutlineCheck } from "react-icons/ai";
 import { HiSelector } from "react-icons/hi";
@@ -7,6 +6,8 @@ import { MdClear } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import { Loading } from "~/components/Loading";
 import { code } from "~/plugins/code";
+import { api } from "~/repositories/api";
+import { components } from "~/repositories/schema";
 
 export const TodoForm = () => {
   const didLogRef = useRef(false); // https://github.com/reactwg/react-18/discussions/18#discussion-3385714
@@ -15,7 +16,7 @@ export const TodoForm = () => {
   const navigate = useNavigate();
   const { todo_id } = useParams();
 
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<components["schemas"]["Category"][]>([]);
   const [form, setForm] = useState({
     yarukoto: null as string | null,
     category_id: null as number | null,
@@ -31,17 +32,12 @@ export const TodoForm = () => {
     if (didLogRef.current === false) {
       didLogRef.current = true;
 
-      axios.get("/api/categories").then(({ data }) => {
+      api.get.categories().then(({ data }) => {
         setCategories(data.categories);
       });
 
       if (todo_id) {
-        setLoading(true);
-
-        axios.get(`/api/todos/${todo_id}`).then(({ data }) => {
-          setForm({ ...form, ...data });
-          setLoading(false);
-        });
+        getTodo(todo_id);
       }
     }
   }, []);
@@ -57,23 +53,75 @@ export const TodoForm = () => {
     setForm({ ...form, subcategory_id_list });
   };
 
+  const getTodo = (todo_id: string) => {
+    setLoading(true);
+
+    api.get.todo({ todo_id }).then(({ data }) => {
+      setForm({
+        ...form,
+        ...data,
+        subcategory_id_list: data.subcategories.map((category) => category.category_id),
+      });
+      setLoading(false);
+    });
+  };
+
   const postTodos = () => {
+    if (!form.yarukoto) {
+      alert("入力してください！");
+      return;
+    }
+
     setLoading(true);
-    axios.post("/api/todos", { data: { ...form } }).then(() => {
-      navigate("/todos");
-      setLoading(false);
-    });
+    api.post
+      .todos({
+        yarukoto: form.yarukoto,
+        category_id: form.category_id,
+        kizitu: form.kizitu,
+        yusendo: form.yusendo,
+        subcategory_id_list: form.subcategory_id_list,
+        memo: form.memo,
+      })
+      .then(() => {
+        navigate("/todos");
+        setLoading(false);
+      });
   };
-  const putTodos = () => {
+
+  const putTodos = (todo_id: string) => {
+    if (!form.yarukoto || !form.updated_at) {
+      alert("入力してください！");
+      return;
+    }
+
     setLoading(true);
-    axios.put(`/api/todos/${todo_id}`, { data: { ...form } }).then(() => {
-      navigate("/todos");
-      setLoading(false);
-    });
+    api.put
+      .todos(
+        { todo_id },
+        {
+          yarukoto: form.yarukoto,
+          category_id: form.category_id,
+          kizitu: form.kizitu,
+          yusendo: form.yusendo,
+          subcategory_id_list: form.subcategory_id_list,
+          memo: form.memo,
+          updated_at: form.updated_at,
+        }
+      )
+      .then(() => {
+        navigate("/todos");
+        setLoading(false);
+      });
   };
-  const deleteTodos = () => {
+
+  const deleteTodos = (todo_id: string) => {
+    if (!form.updated_at) {
+      alert("入力してください！");
+      return;
+    }
+
     setLoading(true);
-    axios.delete(`/api/todos/${todo_id}`, { data: { ...form } }).then(() => {
+    api.delete.todos({ todo_id }, { updated_at: form.updated_at }).then(() => {
       navigate("/todos");
       setLoading(false);
     });
@@ -134,7 +182,7 @@ export const TodoForm = () => {
           <button
             type="button"
             className="my-1 rounded-lg border border-yellow-400 px-5 py-2 text-center text-sm font-medium text-yellow-400 hover:bg-yellow-500 hover:text-white focus:outline-none focus:ring-1 focus:ring-yellow-300 dark:border-yellow-300 dark:bg-green-600 dark:text-yellow-300 dark:hover:bg-yellow-400 dark:hover:text-white dark:focus:ring-yellow-900"
-            onClick={deleteTodos}
+            onClick={() => deleteTodos(todo_id)}
           >
             削除
           </button>
@@ -143,7 +191,7 @@ export const TodoForm = () => {
           <button
             type="button"
             className="my-1 rounded-lg bg-green-600 px-5 py-2 text-center text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-1 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-            onClick={putTodos}
+            onClick={() => putTodos(todo_id)}
           >
             保存
           </button>
@@ -167,7 +215,7 @@ const CategoryList = ({
   category_id,
   setCategoryId,
 }: {
-  categories: Category[];
+  categories: components["schemas"]["Category"][];
   category_id: number | null;
   setCategoryId: (category_id: number | null) => void;
 }) => {
@@ -235,11 +283,12 @@ const CategoryList = ({
     </div>
   );
 };
+
 const YusendoList = ({
   value,
   onChange,
 }: {
-  value: string | number | readonly string[] | undefined;
+  value: string | number | readonly string[];
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
   return (
@@ -268,12 +317,13 @@ const YusendoList = ({
     </div>
   );
 };
+
 const SubcategoryList = ({
   categories,
   subcategory_id_list,
   setSubcategorIdList,
 }: {
-  categories: Category[];
+  categories: components["schemas"]["Category"][];
   subcategory_id_list: number[];
   setSubcategorIdList: (category_id: number[]) => void;
 }) => {

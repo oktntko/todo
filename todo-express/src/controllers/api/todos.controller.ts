@@ -26,7 +26,7 @@ import { ResponseSchema } from "routing-controllers-openapi";
 import { TodosService } from "~/services/todos.service";
 
 // ::: REQUEST
-class TodoBody {
+export class TodoBody {
   @IsNotEmpty()
   @IsString()
   @MaxLength(100)
@@ -115,6 +115,13 @@ class Category {
   category_name: string;
 }
 
+class ListTodoResponse {
+  @ValidateNested({ each: true })
+  @IsArray()
+  @Type(() => TodoResponse)
+  todos: TodoResponse[];
+}
+
 @JsonController()
 export class TodosController {
   // # POST /api/todos
@@ -126,8 +133,8 @@ export class TodosController {
 
   // # GET /api/todos
   @Get("/api/todos")
-  @ResponseSchema(TodoResponse, { isArray: true })
-  async getTodos(): Promise<TodoResponse[]> {
+  @ResponseSchema(ListTodoResponse)
+  async getTodos(): Promise<ListTodoResponse> {
     return TodosService.getTodos();
   }
 
@@ -144,7 +151,7 @@ export class TodosController {
   async putTodo(
     @Params({ required: true }) path: TodoPathParams,
     @Body({ required: true }) todo: TodoBody,
-    @BodyParam("updated_at", { required: true }) updated_at: Date
+    @BodyParam("updated_at", { required: true }) updated_at: string
   ): Promise<TodoResponse> {
     return TodosService.putTodo(path.todo_id, todo, updated_at);
   }
@@ -154,7 +161,7 @@ export class TodosController {
   @ResponseSchema(TodoResponse)
   async deleteTodo(
     @Params({ required: true }) path: TodoPathParams,
-    @BodyParam("updated_at", { required: true }) updated_at: Date
+    @QueryParam("updated_at", { required: true }) updated_at: string
   ): Promise<TodoResponse> {
     return TodosService.deleteTodo(path.todo_id, updated_at);
   }
@@ -164,7 +171,7 @@ export class TodosController {
   @ResponseSchema(TodoResponse)
   async patchTodo(
     @Params({ required: true }) path: TodoPathParams,
-    @QueryParam("updated_at", { required: true }) updated_at: Date
+    @BodyParam("updated_at", { required: true }) updated_at: string
   ): Promise<TodoResponse> {
     return TodosService.patchTodo(path.todo_id, updated_at);
   }

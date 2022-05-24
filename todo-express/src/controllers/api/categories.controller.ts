@@ -1,4 +1,13 @@
-import { IsDate, IsNotEmpty, IsPositive, IsString, MaxLength } from "class-validator";
+import { Type } from "class-transformer";
+import {
+  IsArray,
+  IsDate,
+  IsNotEmpty,
+  IsPositive,
+  IsString,
+  MaxLength,
+  ValidateNested,
+} from "class-validator";
 import {
   Body,
   BodyParam,
@@ -39,6 +48,13 @@ class CategoryResponse {
   updated_at: Date;
 }
 
+class ListCategoryResponse {
+  @ValidateNested({ each: true })
+  @IsArray()
+  @Type(() => CategoryResponse)
+  categories: CategoryResponse[];
+}
+
 @JsonController()
 export class CategoriesController {
   // # POST /api/categories
@@ -50,8 +66,8 @@ export class CategoriesController {
 
   // # GET /api/categories
   @Get("/api/categories")
-  @ResponseSchema(CategoryResponse, { isArray: true })
-  async getCategories(): Promise<CategoryResponse[]> {
+  @ResponseSchema(ListCategoryResponse)
+  async getCategories(): Promise<ListCategoryResponse> {
     return CategoriesService.getCategories();
   }
 
@@ -68,7 +84,7 @@ export class CategoriesController {
   async putCategory(
     @Params({ required: true }) path: CategoryPathParams,
     @Body({ required: true }) category: CategoryBody,
-    @BodyParam("updated_at", { required: true }) updated_at: Date
+    @BodyParam("updated_at", { required: true }) updated_at: string
   ): Promise<CategoryResponse> {
     return CategoriesService.putCategory(path.category_id, category, updated_at);
   }
@@ -78,7 +94,7 @@ export class CategoriesController {
   @ResponseSchema(CategoryResponse)
   async deleteCategory(
     @Params({ required: true }) path: CategoryPathParams,
-    @QueryParam("updated_at", { required: true }) updated_at: Date
+    @QueryParam("updated_at", { required: true }) updated_at: string
   ): Promise<CategoryResponse> {
     return CategoriesService.deleteCategory(path.category_id, updated_at);
   }
