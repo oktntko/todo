@@ -1,0 +1,404 @@
+components:
+  schemas:
+    CategoryBody:
+      properties:
+        category_name:
+          maxLength: 100
+          type: string
+          minLength: 1
+      type: object
+      required:
+        - category_name
+    CategoryPathParams:
+      properties:
+        category_id:
+          exclusiveMinimum: true
+          minimum: 0
+          type: number
+      type: object
+      required:
+        - category_id
+    CategoryResponse:
+      properties:
+        category_name:
+          maxLength: 100
+          type: string
+          minLength: 1
+        category_id:
+          exclusiveMinimum: true
+          minimum: 0
+          type: number
+        updated_at:
+          oneOf:
+            - format: date
+              type: string
+            - format: date-time
+              type: string
+          minLength: 1
+          type: string
+      type: object
+      required:
+        - category_name
+        - category_id
+        - updated_at
+    ListCategoryResponse:
+      properties:
+        categories:
+          items:
+            $ref: '#/components/schemas/CategoryResponse'
+          type: array
+      type: object
+      required:
+        - categories
+    TodoBody:
+      properties:
+        yarukoto:
+          maxLength: 100
+          type: string
+          minLength: 1
+        category_id:
+          exclusiveMinimum: true
+          minimum: 0
+          type: number
+        kizitu:
+          maxLength: 10
+          type: string
+        yusendo:
+          maxLength: 50
+          type: string
+        subcategory_id_list:
+          items:
+            exclusiveMinimum: true
+            minimum: 0
+            type: number
+          type: array
+        memo:
+          maxLength: 400
+          type: string
+      type: object
+      required:
+        - yarukoto
+        - subcategory_id_list
+    TodoPathParams:
+      properties:
+        todo_id:
+          exclusiveMinimum: true
+          minimum: 0
+          type: number
+      type: object
+      required:
+        - todo_id
+    TodoResponse:
+      properties:
+        todo_id:
+          exclusiveMinimum: true
+          minimum: 0
+          type: number
+        yarukoto:
+          maxLength: 100
+          type: string
+          minLength: 1
+        category_id:
+          exclusiveMinimum: true
+          minimum: 0
+          type: number
+        category:
+          $ref: '#/components/schemas/Category'
+        kizitu:
+          maxLength: 10
+          type: string
+        yusendo:
+          maxLength: 50
+          type: string
+        subcategories:
+          items:
+            $ref: '#/components/schemas/Category'
+          type: array
+        memo:
+          maxLength: 400
+          type: string
+        is_done:
+          type: boolean
+        updated_at:
+          oneOf:
+            - format: date
+              type: string
+            - format: date-time
+              type: string
+          minLength: 1
+          type: string
+      type: object
+      required:
+        - todo_id
+        - yarukoto
+        - subcategories
+        - is_done
+        - updated_at
+    Category:
+      properties:
+        category_id:
+          exclusiveMinimum: true
+          minimum: 0
+          type: number
+        category_name:
+          maxLength: 100
+          type: string
+      type: object
+      required:
+        - category_id
+        - category_name
+    ListTodoResponse:
+      properties:
+        todos:
+          items:
+            $ref: '#/components/schemas/TodoResponse'
+          type: array
+      type: object
+      required:
+        - todos
+info:
+  title: ''
+  version: 1.0.0
+openapi: 3.0.0
+paths:
+  /api/categories:
+    post:
+      operationId: CategoriesController.postCategory
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryBody'
+        description: CategoryBody
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryResponse'
+          description: ''
+      summary: Post category
+      tags:
+        - Categories
+    get:
+      operationId: CategoriesController.getCategories
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListCategoryResponse'
+          description: ''
+      summary: Get categories
+      tags:
+        - Categories
+  /api/categories/{category_id}:
+    get:
+      operationId: CategoriesController.getCategory
+      parameters:
+        - in: path
+          name: category_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryResponse'
+          description: ''
+      summary: Get category
+      tags:
+        - Categories
+    put:
+      operationId: CategoriesController.putCategory
+      parameters:
+        - in: path
+          name: category_id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/CategoryBody'
+                - properties:
+                    updated_at:
+                      type: string
+                  required:
+                    - updated_at
+                  type: object
+        description: CategoryBody
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryResponse'
+          description: ''
+      summary: Put category
+      tags:
+        - Categories
+    delete:
+      operationId: CategoriesController.deleteCategory
+      parameters:
+        - in: path
+          name: category_id
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: updated_at
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryResponse'
+          description: ''
+      summary: Delete category
+      tags:
+        - Categories
+  /api/todos:
+    post:
+      operationId: TodosController.postTodo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TodoBody'
+        description: TodoBody
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoResponse'
+          description: ''
+      summary: Post todo
+      tags:
+        - Todos
+    get:
+      operationId: TodosController.getTodos
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListTodoResponse'
+          description: ''
+      summary: Get todos
+      tags:
+        - Todos
+  /api/todos/{todo_id}:
+    get:
+      operationId: TodosController.getTodo
+      parameters:
+        - in: path
+          name: todo_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoResponse'
+          description: ''
+      summary: Get todo
+      tags:
+        - Todos
+    put:
+      operationId: TodosController.putTodo
+      parameters:
+        - in: path
+          name: todo_id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/TodoBody'
+                - properties:
+                    updated_at:
+                      type: string
+                  required:
+                    - updated_at
+                  type: object
+        description: TodoBody
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoResponse'
+          description: ''
+      summary: Put todo
+      tags:
+        - Todos
+    delete:
+      operationId: TodosController.deleteTodo
+      parameters:
+        - in: path
+          name: todo_id
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: updated_at
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoResponse'
+          description: ''
+      summary: Delete todo
+      tags:
+        - Todos
+  /api/todos/{todo_id}/done:
+    patch:
+      operationId: TodosController.patchTodo
+      parameters:
+        - in: path
+          name: todo_id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                updated_at:
+                  type: string
+              required:
+                - updated_at
+              type: object
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoResponse'
+          description: ''
+      summary: Patch todo
+      tags:
+        - Todos
