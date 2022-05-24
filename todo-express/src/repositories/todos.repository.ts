@@ -1,5 +1,6 @@
 import { Prisma, Todo } from "@prisma/client";
 import ORM from "~/arch/ORM";
+import { TodoResponse } from "~/controllers/api/todos.controller";
 import log from "~/middlewares/log";
 
 const createTodo = async (
@@ -7,64 +8,109 @@ const createTodo = async (
 ) => {
   log.debug("createTodo");
 
-  return ORM.todo.create({
-    select: {
-      todo_id: true,
-      yarukoto: true,
-      category_id: true,
-      kizitu: true,
-      yusendo: true,
-      memo: true,
-      is_done: true,
-      created_at: true,
-      updated_at: true,
-      category: true,
-      subcategories: true,
-    },
-    data: todo,
-  });
+  return ORM.todo
+    .create({
+      select: {
+        todo_id: true,
+        yarukoto: true,
+        category_id: true,
+        kizitu: true,
+        yusendo: true,
+        memo: true,
+        is_done: true,
+        updated_at: true,
+        category: {
+          select: {
+            category_id: true,
+            category_name: true,
+          },
+        },
+        subcategories: {
+          select: {
+            category: {
+              select: {
+                category_id: true,
+                category_name: true,
+              },
+            },
+          },
+        },
+      },
+      data: todo,
+    })
+    .then(transformSubcategories);
 };
 
 const findManyTodo = async (where?: Prisma.TodoWhereInput) => {
   log.debug("findManyTodo");
 
-  return ORM.todo.findMany({
-    select: {
-      todo_id: true,
-      yarukoto: true,
-      category_id: true,
-      kizitu: true,
-      yusendo: true,
-      memo: true,
-      is_done: true,
-      created_at: true,
-      updated_at: true,
-      category: true,
-      subcategories: true,
-    },
-    where,
-  });
+  return ORM.todo
+    .findMany({
+      select: {
+        todo_id: true,
+        yarukoto: true,
+        category_id: true,
+        kizitu: true,
+        yusendo: true,
+        memo: true,
+        is_done: true,
+        updated_at: true,
+        category: {
+          select: {
+            category_id: true,
+            category_name: true,
+          },
+        },
+        subcategories: {
+          select: {
+            category: {
+              select: {
+                category_id: true,
+                category_name: true,
+              },
+            },
+          },
+        },
+      },
+      where,
+    })
+    .then((todos) => todos.map(transformSubcategories));
 };
 
 const findUniqueTodo = async (where: RequireOne<Prisma.TodoWhereUniqueInput>) => {
   log.debug("findUniqueTodo");
 
-  return ORM.todo.findUnique({
-    select: {
-      todo_id: true,
-      yarukoto: true,
-      category_id: true,
-      kizitu: true,
-      yusendo: true,
-      memo: true,
-      is_done: true,
-      created_at: true,
-      updated_at: true,
-      category: true,
-      subcategories: true,
-    },
-    where,
-  });
+  return ORM.todo
+    .findUnique({
+      select: {
+        todo_id: true,
+        yarukoto: true,
+        category_id: true,
+        kizitu: true,
+        yusendo: true,
+        memo: true,
+        is_done: true,
+        updated_at: true,
+        category: {
+          select: {
+            category_id: true,
+            category_name: true,
+          },
+        },
+        subcategories: {
+          select: {
+            category: {
+              select: {
+                category_id: true,
+                category_name: true,
+              },
+            },
+          },
+        },
+      },
+      where,
+    })
+    .then((todo) => (todo ? transformSubcategories(todo) : null));
 };
 
 const updateTodo = async (
@@ -73,44 +119,74 @@ const updateTodo = async (
 ) => {
   log.debug("updateTodo");
 
-  return ORM.todo.update({
-    select: {
-      todo_id: true,
-      yarukoto: true,
-      category_id: true,
-      kizitu: true,
-      yusendo: true,
-      memo: true,
-      is_done: true,
-      created_at: true,
-      updated_at: true,
-      category: true,
-      subcategories: true,
-    },
-    data: todo,
-    where,
-  });
+  return ORM.todo
+    .update({
+      select: {
+        todo_id: true,
+        yarukoto: true,
+        category_id: true,
+        kizitu: true,
+        yusendo: true,
+        memo: true,
+        is_done: true,
+        updated_at: true,
+        category: {
+          select: {
+            category_id: true,
+            category_name: true,
+          },
+        },
+        subcategories: {
+          select: {
+            category: {
+              select: {
+                category_id: true,
+                category_name: true,
+              },
+            },
+          },
+        },
+      },
+      data: todo,
+      where,
+    })
+    .then(transformSubcategories);
 };
 
 const deleteTodo = async (where: RequireOne<Prisma.TodoWhereUniqueInput>) => {
   log.debug("deleteTodo");
 
-  return ORM.todo.delete({
-    select: {
-      todo_id: true,
-      yarukoto: true,
-      category_id: true,
-      kizitu: true,
-      yusendo: true,
-      memo: true,
-      is_done: true,
-      created_at: true,
-      updated_at: true,
-      category: true,
-      subcategories: true,
-    },
-    where,
-  });
+  return ORM.todo
+    .delete({
+      select: {
+        todo_id: true,
+        yarukoto: true,
+        category_id: true,
+        kizitu: true,
+        yusendo: true,
+        memo: true,
+        is_done: true,
+        updated_at: true,
+        category: {
+          select: {
+            category_id: true,
+            category_name: true,
+          },
+        },
+        subcategories: {
+          select: {
+            category: {
+              select: {
+                category_id: true,
+                category_name: true,
+              },
+            },
+          },
+        },
+      },
+      where,
+    })
+    .then(transformSubcategories);
 };
 
 const updateTodoIsDone = async (
@@ -119,23 +195,38 @@ const updateTodoIsDone = async (
 ) => {
   log.debug("updateTodoIsDone");
 
-  return ORM.todo.update({
-    select: {
-      todo_id: true,
-      yarukoto: true,
-      category_id: true,
-      kizitu: true,
-      yusendo: true,
-      memo: true,
-      is_done: true,
-      created_at: true,
-      updated_at: true,
-      category: true,
-      subcategories: true,
-    },
-    data: { is_done },
-    where,
-  });
+  return ORM.todo
+    .update({
+      select: {
+        todo_id: true,
+        yarukoto: true,
+        category_id: true,
+        kizitu: true,
+        yusendo: true,
+        memo: true,
+        is_done: true,
+        updated_at: true,
+        category: {
+          select: {
+            category_id: true,
+            category_name: true,
+          },
+        },
+        subcategories: {
+          select: {
+            category: {
+              select: {
+                category_id: true,
+                category_name: true,
+              },
+            },
+          },
+        },
+      },
+      data: { is_done },
+      where,
+    })
+    .then(transformSubcategories);
 };
 
 export const TodosRepository = {
@@ -146,3 +237,31 @@ export const TodosRepository = {
   deleteTodo,
   updateTodoIsDone,
 } as const;
+
+type SelectTodo = {
+  todo_id: number;
+  is_done: boolean;
+  updated_at: Date;
+  yarukoto: string;
+  category_id: number | null;
+  kizitu: string | null;
+  yusendo: string | null;
+  memo: string | null;
+  category: {
+    category_id: number;
+    category_name: string;
+  } | null;
+  subcategories: {
+    category: {
+      category_id: number;
+      category_name: string;
+    };
+  }[];
+};
+
+const transformSubcategories = (todo: SelectTodo): TodoResponse => {
+  return {
+    ...todo,
+    subcategories: todo.subcategories.map((subcategory) => subcategory.category),
+  };
+};
