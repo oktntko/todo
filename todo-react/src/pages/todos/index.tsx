@@ -32,10 +32,12 @@ export const TodoIndexPage = () => {
   const getTodos = () => {
     setLoading(true);
 
-    api.get.todos().then(({ data }) => {
-      setTodos(data.todos);
-      setLoading(false);
-    });
+    api.get
+      .todos()
+      .then(({ data }) => {
+        setTodos(data.todos);
+      })
+      .finally(() => setLoading(false));
   };
 
   const MainContents = () => {

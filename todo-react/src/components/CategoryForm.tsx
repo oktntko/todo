@@ -32,10 +32,12 @@ export const CategoryForm = () => {
 
   const getCategory = (category_id: string) => {
     setLoading(true);
-    api.get.category({ category_id }).then(({ data }) => {
-      setForm({ ...data });
-      setLoading(false);
-    });
+    api.get
+      .category({ category_id })
+      .then(({ data }) => {
+        setForm({ ...data });
+      })
+      .finally(() => setLoading(false));
   };
 
   const postCategory = () => {
@@ -45,10 +47,12 @@ export const CategoryForm = () => {
     }
 
     setLoading(true);
-    api.post.categories({ category_name: form.category_name }).then(() => {
-      navigate("/categories");
-      setLoading(false);
-    });
+    api.post
+      .categories({ category_name: form.category_name })
+      .then(() => {
+        navigate("/categories");
+      })
+      .finally(() => setLoading(false));
   };
 
   const putCategory = (category_id: string) => {
@@ -65,8 +69,8 @@ export const CategoryForm = () => {
       )
       .then(() => {
         navigate("/categories");
-        setLoading(false);
-      });
+      })
+      .finally(() => setLoading(false));
   };
 
   const deleteCategory = (category_id: string) => {
@@ -76,10 +80,12 @@ export const CategoryForm = () => {
     }
 
     setLoading(true);
-    api.delete.categories({ category_id }, { updated_at: form.updated_at }).then(() => {
-      navigate("/categories");
-      setLoading(false);
-    });
+    api.delete
+      .categories({ category_id }, { updated_at: form.updated_at })
+      .then(() => {
+        navigate("/categories");
+      })
+      .finally(() => setLoading(false));
   };
 
   return (

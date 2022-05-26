@@ -56,14 +56,16 @@ export const TodoForm = () => {
   const getTodo = (todo_id: string) => {
     setLoading(true);
 
-    api.get.todo({ todo_id }).then(({ data }) => {
-      setForm({
-        ...form,
-        ...data,
-        subcategory_id_list: data.subcategories.map((category) => category.category_id),
-      });
-      setLoading(false);
-    });
+    api.get
+      .todo({ todo_id })
+      .then(({ data }) => {
+        setForm({
+          ...form,
+          ...data,
+          subcategory_id_list: data.subcategories.map((category) => category.category_id),
+        });
+      })
+      .finally(() => setLoading(false));
   };
 
   const postTodos = () => {
@@ -84,8 +86,8 @@ export const TodoForm = () => {
       })
       .then(() => {
         navigate("/todos");
-        setLoading(false);
-      });
+      })
+      .finally(() => setLoading(false));
   };
 
   const putTodos = (todo_id: string) => {
@@ -110,8 +112,8 @@ export const TodoForm = () => {
       )
       .then(() => {
         navigate("/todos");
-        setLoading(false);
-      });
+      })
+      .finally(() => setLoading(false));
   };
 
   const deleteTodos = (todo_id: string) => {
@@ -121,10 +123,12 @@ export const TodoForm = () => {
     }
 
     setLoading(true);
-    api.delete.todos({ todo_id }, { updated_at: form.updated_at }).then(() => {
-      navigate("/todos");
-      setLoading(false);
-    });
+    api.delete
+      .todos({ todo_id }, { updated_at: form.updated_at })
+      .then(() => {
+        navigate("/todos");
+      })
+      .finally(() => setLoading(false));
   };
 
   return (

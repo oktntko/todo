@@ -27,10 +27,12 @@ export const CategoryIndexPage = () => {
   const getCategories = () => {
     setLoading(true);
 
-    api.get.categories().then(({ data }) => {
-      setCategories(data.categories);
-      setLoading(false);
-    });
+    api.get
+      .categories()
+      .then(({ data }) => {
+        setCategories(data.categories);
+      })
+      .finally(() => setLoading(false));
   };
 
   return (

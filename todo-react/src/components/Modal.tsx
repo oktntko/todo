@@ -51,10 +51,9 @@ export const Modal = ({
           leaveFrom="opacity-100 scale-100"
           leaveTo="opacity-0 scale-[0.8]"
         >
-          <div className="relative h-full w-full max-w-2xl p-4 md:h-auto">
-            {/* コンテンツ。アニメーションだけ。focusできる要素がないとwarningになる。 */}
-            {children}
-          </div>
+          <div className="relative h-full w-full max-w-2xl p-4 md:h-auto">{children}</div>
+          {/* focusできる要素がないとwarningになるため */}
+          <input className="sr-only" />
         </Transition.Child>
       </Dialog>
     </Transition>
