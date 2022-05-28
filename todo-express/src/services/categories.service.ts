@@ -8,6 +8,8 @@ const postCategory = async (
 ) => {
   log.debug("postCategory", category);
 
+  await CategoriesRepository.checkDuplicate({ category_name: category.category_name });
+
   return CategoriesRepository.createCategory(category);
 };
 
@@ -34,6 +36,10 @@ const putCategory = async (
   updated_at: string
 ) => {
   log.debug("putCategory", category_id, category, updated_at);
+
+  await CategoriesRepository.checkPreviousVersion({ category_id }, updated_at);
+
+  await CategoriesRepository.checkDuplicate({ category_name: category.category_name }, category_id);
 
   return CategoriesRepository.updateCategory({ category_id }, category);
 };

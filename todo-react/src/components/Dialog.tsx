@@ -54,7 +54,7 @@ export const Dialog = ({
             <MdClear className="h-5 w-5 text-gray-400" aria-hidden="true" />
           </button>
         )}
-        <div className="p-6 text-center">{children}</div>
+        <div className="min-w-[16rem] px-6 py-4 text-center">{children}</div>
       </div>
     </Overlay>
   );
@@ -108,7 +108,7 @@ export const MessageDialog = ({
           }
         })()}
       </>
-      {message && <h3 className="mb-5 text-gray-500 dark:text-gray-400">{message}</h3>}
+      {message && <h3 className="text-gray-500 dark:text-gray-400">{message}</h3>}
       {onCancel && (
         <button
           type="button"

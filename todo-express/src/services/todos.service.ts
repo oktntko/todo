@@ -29,6 +29,8 @@ const getTodo = async (todo_id: number) => {
 const putTodo = async (todo_id: number, todo: TodoBody, updated_at: string) => {
   log.debug("putTodo", todo_id, todo, updated_at);
 
+  await TodosRepository.checkPreviousVersion({ todo_id }, updated_at);
+
   return TodosRepository.updateTodo({ todo_id }, todo);
 };
 

@@ -1,5 +1,11 @@
 import { Category, Prisma } from "@prisma/client";
 import ORM from "~/arch/ORM";
+import dayjs from "~/libs/dayjs";
+import {
+  AlreadyExistsError,
+  NotExistsError,
+  UpdateConflictsError,
+} from "~/middlewares/ErrorHandler";
 import log from "~/middlewares/log";
 
 const createCategory = async (
@@ -13,7 +19,9 @@ const createCategory = async (
       category_name: true,
       updated_at: true,
     },
-    data: category,
+    data: {
+      category_name: category.category_name,
+    },
   });
 };
 
@@ -55,7 +63,9 @@ const updateCategory = async (
       category_name: true,
       updated_at: true,
     },
-    data: category,
+    data: {
+      category_name: category.category_name,
+    },
     where,
   });
 };
@@ -73,10 +83,39 @@ const deleteCategory = async (where: RequireOne<Prisma.CategoryWhereUniqueInput>
   });
 };
 
+const checkDuplicate = async (
+  where: Pick<Required<Prisma.CategoryWhereUniqueInput>, "category_name">,
+  category_id?: number
+) => {
+  const duplicate = await findUniqueCategory(where);
+  if (duplicate && (category_id == null || duplicate.category_id !== category_id)) {
+    throw new AlreadyExistsError();
+  }
+
+  return duplicate;
+};
+
+const checkPreviousVersion = async (
+  where: Pick<Required<Prisma.CategoryWhereUniqueInput>, "category_id">,
+  updated_at: string
+) => {
+  const previous = await findUniqueCategory(where);
+
+  if (!previous) {
+    throw new NotExistsError();
+  } else if (!dayjs(previous.updated_at).isSame(updated_at)) {
+    throw new UpdateConflictsError();
+  }
+
+  return previous;
+};
+
 export const CategoriesRepository = {
   createCategory,
   findManyCategory,
   findUniqueCategory,
   updateCategory,
   deleteCategory,
+  checkDuplicate,
+  checkPreviousVersion,
 } as const;

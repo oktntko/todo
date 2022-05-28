@@ -1,6 +1,8 @@
 import { Prisma } from "@prisma/client";
 import ORM from "~/arch/ORM";
 import { TodoBody, TodoResponse } from "~/controllers/api/todos.controller";
+import dayjs from "~/libs/dayjs";
+import { NotExistsError, UpdateConflictsError } from "~/middlewares/ErrorHandler";
 import log from "~/middlewares/log";
 import { TodoSubcategoriesRepository } from "~/repositories/todo_subcategories.repository";
 
@@ -254,6 +256,21 @@ const updateTodoIsDone = async (
     .then(transformSubcategories);
 };
 
+const checkPreviousVersion = async (
+  where: Pick<Required<Prisma.TodoWhereUniqueInput>, "todo_id">,
+  updated_at: string
+) => {
+  const previous = await findUniqueTodo(where);
+
+  if (!previous) {
+    throw new NotExistsError();
+  } else if (!dayjs(previous.updated_at).isSame(updated_at)) {
+    throw new UpdateConflictsError();
+  }
+
+  return previous;
+};
+
 export const TodosRepository = {
   createTodo,
   findManyTodo,
@@ -261,6 +278,7 @@ export const TodosRepository = {
   updateTodo,
   deleteTodo,
   updateTodoIsDone,
+  checkPreviousVersion,
 } as const;
 
 type SelectTodo = {
