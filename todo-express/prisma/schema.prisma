@@ -11,15 +11,16 @@ generator client {
 }
 
 model Todo {
-  todo_id     Int      @id @default(autoincrement()) @db.Integer
-  yarukoto    String   @db.VarChar(100)
-  category_id Int?     @db.Integer
-  kizitu      String?  @db.VarChar(10)
-  yusendo     String?  @db.VarChar(50)
-  memo        String?  @db.VarChar(400)
-  is_done     Boolean  @default(false) @db.Boolean
-  created_at  DateTime @default(now()) @db.Timestamp(3)
-  updated_at  DateTime @updatedAt() @db.Timestamp(3)
+  todo_id     Int       @id @default(autoincrement()) @db.Integer
+  yarukoto    String    @db.VarChar(100)
+  priority_no Int?      @db.Integer
+  category_id Int?      @db.Integer
+  kizitu      String?   @db.VarChar(10)
+  yusendo     String?   @db.VarChar(50)
+  memo        String?   @db.VarChar(400)
+  created_at  DateTime  @default(now()) @db.Timestamp(3)
+  updated_at  DateTime  @updatedAt() @db.Timestamp(3)
+  done_at     DateTime? @db.Timestamp(3)
 
   category Category? @relation(fields: [category_id], references: [category_id])
 

@@ -78,13 +78,19 @@ const todos = {
     },
   },
   patch: {
-    todos: async (
-      path: paths["/api/todos/{todo_id}/done"]["patch"]["parameters"]["path"],
-      body: paths["/api/todos/{todo_id}/done"]["patch"]["requestBody"]["content"]["application/json"]
-    ) => {
-      return client.patch<
-        paths["/api/todos/{todo_id}/done"]["patch"]["responses"]["200"]["content"]["application/json"]
-      >(`/api/todos/${path.todo_id}/done`, body);
+    todos: {
+      done: async (path: paths["/api/todos/{todo_id}/done"]["patch"]["parameters"]["path"]) => {
+        return client.patch<
+          paths["/api/todos/{todo_id}/done"]["patch"]["responses"]["200"]["content"]["application/json"]
+        >(`/api/todos/${path.todo_id}/done`);
+      },
+      priority: async (
+        body: paths["/api/todos/priority"]["patch"]["requestBody"]["content"]["application/json"]
+      ) => {
+        return client.patch<
+          paths["/api/todos/priority"]["patch"]["responses"]["200"]["content"]["application/json"]
+        >(`/api/todos/priority`, body);
+      },
     },
   },
   delete: {

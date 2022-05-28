@@ -23,7 +23,10 @@ export interface paths {
     delete: operations["TodosController.deleteTodo"];
   };
   "/api/todos/{todo_id}/done": {
-    patch: operations["TodosController.patchTodo"];
+    patch: operations["TodosController.patchTodoDone"];
+  };
+  "/api/todos/priority": {
+    patch: operations["TodosController.patchTodoPriorityNo"];
   };
   "/openapi": {
     get: operations["OpenapiController.getOpenApi"];
@@ -44,30 +47,38 @@ export interface components {
       updated_at: string;
     };
     ListCategoryResponse: {
-      categories: components["schemas"]["CategoryResponse"][];
+      categories: components["schemas"]["Category"][];
     };
     TodoBody: {
       yarukoto: string;
-      category_id?: null | number;
-      kizitu?: null | string;
-      yusendo?: null | string;
+      category_id?: number;
+      kizitu?: string;
+      yusendo?: string;
       subcategory_id_list: number[];
-      memo?: null | string;
+      memo?: string;
     };
     TodoPathParams: {
       todo_id: number;
     };
+    PatchTodoPriorityNoBody: {
+      todos: components["schemas"]["TodoPriorityNo"][];
+    };
+    TodoPriorityNo: {
+      todo_id: number;
+      priority_no: number;
+    };
     TodoResponse: {
       todo_id: number;
       yarukoto: string;
-      category_id?: null | number;
-      category?: null | components["schemas"]["Category"];
-      kizitu?: null | string;
-      yusendo?: null | string;
+      priority_no?: number;
+      category_id?: number;
+      category?: components["schemas"]["Category"];
+      kizitu?: string;
+      yusendo?: string;
       subcategories: components["schemas"]["Category"][];
-      memo?: null | string;
-      is_done: boolean;
+      memo?: string;
       updated_at: string;
+      done_at?: string | string;
     };
     Category: {
       category_id: number;
@@ -234,7 +245,7 @@ export interface operations {
       };
     };
   };
-  "TodosController.patchTodo": {
+  "TodosController.patchTodoDone": {
     parameters: {
       path: {
         todo_id: string;
@@ -247,11 +258,19 @@ export interface operations {
         };
       };
     };
+  };
+  "TodosController.patchTodoPriorityNo": {
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["ListTodoResponse"];
+        };
+      };
+    };
+    /** PatchTodoPriorityNoBody */
     requestBody: {
       content: {
-        "application/json": {
-          updated_at: string;
-        };
+        "application/json": components["schemas"]["PatchTodoPriorityNoBody"];
       };
     };
   };

@@ -19,13 +19,13 @@ export const TodoForm = () => {
   const [categories, setCategories] = useState<components["schemas"]["Category"][]>([]);
   const [form, setForm] = useState({
     yarukoto: null as string | null,
-    category_id: null as number | null,
-    kizitu: null as string | null,
-    yusendo: null as string | null,
+    category_id: undefined as number | undefined,
+    kizitu: undefined as string | undefined,
+    yusendo: undefined as string | undefined,
     subcategory_id_list: [] as number[],
-    memo: null as string | null,
-    is_done: null as boolean | null,
-    updated_at: null as string | null,
+    memo: undefined as string | undefined,
+    is_done: undefined as boolean | undefined,
+    updated_at: undefined as string | undefined,
   });
 
   useEffect(() => {
@@ -46,7 +46,7 @@ export const TodoForm = () => {
     (name: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       setForm({ ...form, [name]: e.target.value });
     };
-  const setCategoryId = (category_id: number | null) => {
+  const setCategoryId = (category_id: number | undefined) => {
     setForm({ ...form, category_id });
   };
   const setSubcategorIdList = (subcategory_id_list: number[]) => {
@@ -220,8 +220,8 @@ const CategoryList = ({
   setCategoryId,
 }: {
   categories: components["schemas"]["Category"][];
-  category_id: number | null;
-  setCategoryId: (category_id: number | null) => void;
+  category_id: number | undefined;
+  setCategoryId: (category_id: number | undefined) => void;
 }) => {
   return (
     <div className="relative grow">
@@ -238,7 +238,7 @@ const CategoryList = ({
           </span>
         </Listbox.Button>
         <span className="absolute inset-y-0 right-0 flex items-center pr-2">
-          <button onClick={() => setCategoryId(null)}>
+          <button onClick={() => setCategoryId(undefined)}>
             <MdClear className="h-5 w-5 text-gray-400" aria-hidden="true" />
           </button>
           <HiSelector className="h-5 w-5 text-gray-400" aria-hidden="true" />

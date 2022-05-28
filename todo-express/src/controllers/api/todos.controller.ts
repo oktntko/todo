@@ -1,13 +1,14 @@
 import { Type } from "class-transformer";
 import {
   IsArray,
-  IsBoolean,
   IsDate,
+  IsInt,
   IsNotEmpty,
   IsOptional,
   IsPositive,
   IsString,
   MaxLength,
+  Min,
   ValidateNested,
 } from "class-validator";
 import {
@@ -60,6 +61,20 @@ class TodoPathParams {
   todo_id: number;
 }
 
+class PatchTodoPriorityNoBody {
+  @ValidateNested({ each: true })
+  @Type(() => TodoPriorityNo)
+  todos: TodoPriorityNo[];
+}
+
+export class TodoPriorityNo {
+  @IsPositive()
+  todo_id: number;
+  @IsInt()
+  @Min(0)
+  priority_no: number;
+}
+
 // ::: RESPONSE
 export class TodoResponse {
   @IsPositive()
@@ -69,6 +84,10 @@ export class TodoResponse {
   @IsString()
   @MaxLength(100)
   yarukoto: string;
+
+  @IsOptional()
+  @IsInt()
+  priority_no: number | null;
 
   @IsOptional()
   @IsPositive()
@@ -99,12 +118,13 @@ export class TodoResponse {
   @MaxLength(400)
   memo: string | null;
 
-  @IsBoolean()
-  is_done: boolean;
-
   @IsNotEmpty()
   @IsDate()
   updated_at: Date;
+
+  @IsOptional()
+  @IsDate()
+  done_at: Date | null;
 }
 
 class Category {
@@ -169,10 +189,16 @@ export class TodosController {
   // # PATCH /api/todos/:todo_id/done
   @Patch("/api/todos/:todo_id/done")
   @ResponseSchema(TodoResponse)
-  async patchTodo(
-    @Params({ required: true }) path: TodoPathParams,
-    @BodyParam("updated_at", { required: true }) updated_at: string
-  ): Promise<TodoResponse> {
-    return TodosService.patchTodo(path.todo_id, updated_at);
+  async patchTodoDone(@Params({ required: true }) path: TodoPathParams): Promise<TodoResponse> {
+    return TodosService.patchTodoDone(path.todo_id);
+  }
+
+  // # PATCH /api/todos/priority
+  @Patch("/api/todos/priority")
+  @ResponseSchema(ListTodoResponse)
+  async patchTodoPriorityNo(
+    @Body({ required: true }) body: PatchTodoPriorityNoBody
+  ): Promise<ListTodoResponse> {
+    return TodosService.patchTodosPriority(body.todos);
   }
 }
