@@ -1,36 +1,26 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment } from "react";
+import React, { Fragment } from "react";
 
-export const Modal = ({
+export const Overlay = ({
   children,
   display,
-  setDisplay,
-  onClose,
+  onClickOverlay,
+  afterLeave,
 }: {
-  children: JSX.Element;
+  children: React.ReactNode;
   display: boolean;
-  setDisplay: React.Dispatch<React.SetStateAction<boolean>>;
-  onClose?: (value?: boolean | null) => void;
+  onClickOverlay?: (value: boolean) => void;
+  afterLeave?: () => void;
 }) => {
-  const handleClose = (value: boolean) => {
-    if (onClose) {
-      onClose(value);
-    } else {
-      setDisplay(false);
-    }
-  };
-
   return (
     <Transition show={display} as={Fragment}>
       {/* 画面全体に広がる。flexにして子要素が中心になるように調整 */}
       <Dialog
-        as="div"
         className={`fixed inset-0 z-10 flex
           flex-col items-center justify-center overflow-hidden`}
-        onClose={handleClose}
+        onClose={(value) => (onClickOverlay ? onClickOverlay(value) : () => ({}))}
       >
         <Transition.Child
-          as={Fragment}
           enter="linear duration-200"
           enterFrom="opacity-0"
           enterTo="opacity-100"
@@ -43,13 +33,13 @@ export const Modal = ({
         </Transition.Child>
 
         <Transition.Child
-          as={Fragment}
           enter="ease duration-200"
           enterFrom="opacity-0 scale-[0.8]"
           enterTo="opacity-100 scale-100"
           leave="ease duration-200"
           leaveFrom="opacity-100 scale-100"
           leaveTo="opacity-0 scale-[0.8]"
+          afterLeave={afterLeave}
         >
           <div className="relative h-full w-full max-w-2xl p-4 md:h-auto">{children}</div>
           {/* focusできる要素がないとwarningになるため */}

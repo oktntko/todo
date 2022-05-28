@@ -9,7 +9,7 @@ axios.interceptors.response.use(
       error.response.data = await blobToJson(error.response.data);
     }
 
-    return Promise.reject(error.response);
+    return Promise.reject(error);
   }
 );
 
@@ -50,5 +50,5 @@ const blobToJson = async (blob: Blob): Promise<any> => {
     fileReader.readAsText(blob);
   })
     .then((data) => JSON.parse(data))
-    .catch(console.log);
+    .catch(console.error);
 };

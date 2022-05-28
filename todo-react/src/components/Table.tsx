@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
 
 type HeaderNode = (column: Column) => ReactNode;
 type CellNode = (value?: any, row?: any, column?: Column) => ReactNode;

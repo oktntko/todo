@@ -1,23 +1,11 @@
-// main.ts
-import React, { Suspense } from "react";
+import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter as Router } from "react-router-dom";
+import { AppRoot } from "~/app";
 import "~/main.css";
-import { AppRoute } from "~/routers";
-
-const RouterView = () => {
-  return (
-    <Suspense fallback={<p>Loading...</p>}>
-      <AppRoute />
-    </Suspense>
-  );
-};
 
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <Router>
-      <RouterView />
-    </Router>
+    <AppRoot />
   </React.StrictMode>
 );
