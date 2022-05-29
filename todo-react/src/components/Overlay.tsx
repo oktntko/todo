@@ -21,10 +21,10 @@ export const Overlay = ({
         onClose={(value) => (onClickOverlay ? onClickOverlay(value) : () => ({}))}
       >
         <Transition.Child
-          enter="linear duration-200"
+          enter="linear transition-opacity duration-200"
           enterFrom="opacity-0"
           enterTo="opacity-100"
-          leave="linear duration-200"
+          leave="linear transition-opacity duration-200"
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
@@ -33,10 +33,10 @@ export const Overlay = ({
         </Transition.Child>
 
         <Transition.Child
-          enter="ease duration-200"
+          enter="ease transition-opacity duration-200"
           enterFrom="opacity-0 scale-[0.8]"
           enterTo="opacity-100 scale-100"
-          leave="ease duration-200"
+          leave="ease transition-opacity duration-200"
           leaveFrom="opacity-100 scale-100"
           leaveTo="opacity-0 scale-[0.8]"
           afterLeave={afterLeave}

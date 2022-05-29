@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
+import DataTable from "react-data-table-component";
+import { FcGenericSortingDesc } from "react-icons/fc";
 import { useNavigate } from "react-router";
 import { NavLink } from "react-router-dom";
-import { Loading } from "~/components/Loading";
-import { Table } from "~/components/Table";
+import { NoData, Progress } from "~/components/Table";
 import { api } from "~/repositories/api";
 import { paths } from "~/repositories/schema";
 
@@ -31,28 +32,32 @@ export const CategoryIndexPage = () => {
 
   return (
     <>
-      <Loading loading={loading} />
       <div className="mx-auto my-4 w-full max-w-screen-sm space-y-2 px-6">
-        <Table
-          columns={[
-            {
-              accessor: "category_id",
-              HeaderClassName: "w-4 px-6 py-3",
-              Header: "ID",
-              Cell: (value?: any) => {
-                return (
+        <div className={"relative overflow-x-auto shadow-md"}>
+          <DataTable
+            data={categories}
+            columns={[
+              {
+                name: "ID",
+                selector: (row) => row.category_id,
+                sortable: true,
+                cell: (row) => (
                   <NavLink
-                    to={`/categories/${value}`}
+                    to={`/categories/${row.category_id}`}
                     className={"text-blue-600 underline"}
-                  >{`#${value}`}</NavLink>
-                );
+                  >{`#${row.category_id}`}</NavLink>
+                ),
+                maxWidth: "64px",
               },
-            },
-            { accessor: "category_name", Header: "カテゴリ名" },
-          ]}
-          rows={categories}
-          loading={loading}
-        />
+              { name: "カテゴリ名", selector: (row) => row.category_name, sortable: true },
+            ]}
+            highlightOnHover
+            progressPending={loading}
+            progressComponent={<Progress />}
+            noDataComponent={<NoData />}
+            sortIcon={<FcGenericSortingDesc />}
+          />
+        </div>
       </div>
       <button
         className="fixed bottom-16 right-24 h-20 w-20 rounded-full bg-blue-600 p-0 text-white shadow-md lg:right-[24%] 2xl:right-[32%]"

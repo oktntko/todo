@@ -14,10 +14,10 @@ export const Loading = ({ loading }: { loading: boolean }) => {
       >
         <Transition.Child
           as={Fragment}
-          enter="ease-out duration-100"
+          enter="ease-out transition-opacity duration-100"
           enterFrom="opacity-0"
           enterTo="opacity-100"
-          leave="ease-out duration-100"
+          leave="ease-out transition-opacity duration-100"
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
@@ -27,10 +27,10 @@ export const Loading = ({ loading }: { loading: boolean }) => {
 
         <Transition.Child
           as={Fragment}
-          enter="ease duration-50"
+          enter="ease transition-opacity duration-50"
           enterFrom="opacity-0 scale-[0.8]"
           enterTo="opacity-100 scale-100"
-          leave="ease duration-50"
+          leave="ease transition-opacity duration-50"
           leaveFrom="opacity-100 scale-100"
           leaveTo="opacity-0 scale-[0.8]"
         >
