@@ -1,11 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { Loading } from "~/components/Loading";
 import { api } from "~/repositories/api";
 
 export const CategoryForm = () => {
-  const didLogRef = useRef(false); // https://github.com/reactwg/react-18/discussions/18#discussion-3385714
-
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { category_id } = useParams();
@@ -16,12 +14,8 @@ export const CategoryForm = () => {
   });
 
   useEffect(() => {
-    if (didLogRef.current === false) {
-      didLogRef.current = true;
-
-      if (category_id) {
-        getCategory(category_id);
-      }
+    if (category_id) {
+      getCategory(category_id);
     }
   }, []);
 

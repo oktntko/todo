@@ -10,8 +10,6 @@ import { api } from "~/repositories/api";
 import { components, paths } from "~/repositories/schema";
 
 export const TodoIndexPage = React.memo(function TodoIndexPage() {
-  const didLogRef = useRef(false); // https://github.com/reactwg/react-18/discussions/18#discussion-3385714
-
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -20,11 +18,7 @@ export const TodoIndexPage = React.memo(function TodoIndexPage() {
   >([]);
 
   useEffect(() => {
-    if (didLogRef.current === false) {
-      didLogRef.current = true;
-
-      getTodos();
-    }
+    getTodos();
   }, []);
 
   const getTodos = () => {

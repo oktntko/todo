@@ -1,5 +1,5 @@
 import { Listbox, Transition } from "@headlessui/react";
-import React, { Fragment, useEffect, useRef, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { AiOutlineCheck } from "react-icons/ai";
 import { HiSelector } from "react-icons/hi";
 import { MdClear } from "react-icons/md";
@@ -10,8 +10,6 @@ import { api } from "~/repositories/api";
 import { components } from "~/repositories/schema";
 
 export const TodoForm = () => {
-  const didLogRef = useRef(false); // https://github.com/reactwg/react-18/discussions/18#discussion-3385714
-
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { todo_id } = useParams();
@@ -29,16 +27,12 @@ export const TodoForm = () => {
   });
 
   useEffect(() => {
-    if (didLogRef.current === false) {
-      didLogRef.current = true;
+    api.get.categories().then(({ data }) => {
+      setCategories(data.categories);
+    });
 
-      api.get.categories().then(({ data }) => {
-        setCategories(data.categories);
-      });
-
-      if (todo_id) {
-        getTodo(todo_id);
-      }
+    if (todo_id) {
+      getTodo(todo_id);
     }
   }, []);
 
