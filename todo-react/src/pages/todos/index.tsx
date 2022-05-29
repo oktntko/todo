@@ -1,8 +1,5 @@
-import type { XYCoord } from "dnd-core";
-import update from "immutability-helper";
-import React, { useEffect, useRef, useState } from "react";
-import { DndProvider, useDrag, useDrop } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
+import { Reorder } from "framer-motion";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loading } from "~/components/Loading";
 import { toLabel } from "~/plugins/code";
@@ -38,27 +35,8 @@ export const TodoIndexPage = React.memo(function TodoIndexPage() {
     api.patch.todos.done({ todo_id: String(todo_id) });
   };
 
-  const moveTodo = (currentIndex: number, hoverIndex: number) => {
-    setTodos((todos: components["schemas"]["TodoResponse"][]) =>
-      update(todos, {
-        $splice: [
-          [currentIndex, 1],
-          [hoverIndex, 0, todos[currentIndex]],
-        ],
-      })
-    );
-  };
-
-  const renderTodoBox = (todo: components["schemas"]["TodoResponse"], index: number) => {
-    return (
-      <TodoBox
-        key={todo.todo_id}
-        todo={todo}
-        index={index}
-        moveTodo={moveTodo}
-        onDone={() => handleDone(todo.todo_id)}
-      />
-    );
+  const renderTodoBox = (todo: components["schemas"]["TodoResponse"]) => {
+    return <TodoBox key={todo.todo_id} todo={todo} onDone={() => handleDone(todo.todo_id)} />;
   };
 
   useEffect(() => {
@@ -72,35 +50,31 @@ export const TodoIndexPage = React.memo(function TodoIndexPage() {
   return (
     <>
       <Loading loading={loading} />
-      <DndProvider backend={HTML5Backend}>
-        {/* 条件分岐(v-if みたいな)だと再レンダリングのせいかドラッグ中のステータスがOFFになるため visibleで制御している */}
-        {/* ローディング中 スケルトン */}
-        <div
-          className={`${
-            loading ? "visible" : "hidden"
-          } mx-auto my-4 w-full max-w-screen-sm space-y-2 px-6`}
-        >
+      {/* ローディング中 スケルトン */}
+      {loading && (
+        <div className={`mx-auto my-4 w-full max-w-screen-sm space-y-2 px-6`}>
           {[...Array(5)].map((_, i) => (
             <TodoBoxSkelton key={i} />
           ))}
         </div>
-        {/* データがあるあとき */}
-        <div
-          className={`${
-            todos.length ? "visible" : "hidden"
-          } mx-auto my-4 w-full max-w-screen-sm space-y-2 px-6`}
+      )}
+      {/* データがあるあとき */}
+      {!loading && todos.length > 0 && (
+        <Reorder.Group
+          axis="y"
+          onReorder={setTodos}
+          values={todos}
+          className={`mx-auto my-4 w-full max-w-screen-sm space-y-2 px-6`}
         >
           {todos.map(renderTodoBox)}
-        </div>
-        {/* データがないとき */}
-        <div
-          className={`${
-            todos.length === 0 ? "visible" : "hidden"
-          } mx-auto h-full w-full max-w-screen-sm space-y-2 px-6`}
-        >
+        </Reorder.Group>
+      )}
+      {/* データがないとき */}
+      {!loading && todos.length === 0 && (
+        <div className={`mx-auto h-full w-full max-w-screen-sm space-y-2 px-6`}>
           <div className="flex h-full items-center justify-center">私は今、自由です🎉</div>
         </div>
-      </DndProvider>
+      )}
       <button
         className="fixed bottom-16 right-24 h-20 w-20 rounded-full bg-blue-600 p-0 text-white shadow-md lg:right-[24%] 2xl:right-[32%]"
         onClick={() => navigate("/todos/add")}
@@ -113,83 +87,18 @@ export const TodoIndexPage = React.memo(function TodoIndexPage() {
 
 const TodoBox = React.memo(function TodoBox({
   todo,
-  index,
   onDone,
-  moveTodo,
 }: {
   todo: components["schemas"]["TodoResponse"];
-  index: number;
   onDone: (todo_id: number) => void;
-  moveTodo: (currentIndex: number, hoverIndex: number) => void;
 }) {
   const navigate = useNavigate();
-  const ref = useRef<HTMLDivElement>(null);
-
-  const [{ isDragging }, drag] = useDrag({
-    type: "TodoBox",
-    item: (): { index: number } => ({ index }),
-    collect: (monitor) => ({ isDragging: monitor.isDragging() }),
-  });
-
-  const [, drop] = useDrop<{ index: number } /* useDrag の item() */>({
-    accept: "TodoBox",
-    hover: (item, monitor) => {
-      if (!ref.current) {
-        return;
-      }
-      const currentIndex = item.index;
-      const hoverIndex = index;
-
-      // Don't replace items with themselves
-      if (currentIndex === hoverIndex) {
-        return;
-      }
-
-      // Determine rectangle on screen
-      const hoverBoundingRect = ref.current?.getBoundingClientRect();
-
-      // Get vertical middle
-      const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
-
-      // Determine mouse position
-      const clientOffset = monitor.getClientOffset();
-
-      // Get pixels to the top
-      const hoverClientY = (clientOffset as XYCoord).y - hoverBoundingRect.top;
-
-      // Only perform the move when the mouse has crossed half of the items height
-      // When dragging downwards, only move when the cursor is below 50%
-      // When dragging upwards, only move when the cursor is above 50%
-
-      // Dragging downwards
-      if (currentIndex < hoverIndex && hoverClientY < hoverMiddleY) {
-        return;
-      }
-
-      // Dragging upwards
-      if (currentIndex > hoverIndex && hoverClientY > hoverMiddleY) {
-        return;
-      }
-
-      // Time to actually perform the action
-      moveTodo(currentIndex, hoverIndex);
-
-      // Note: we're mutating the monitor item here!
-      // Generally it's better to avoid mutations,
-      // but it's good here for the sake of performance
-      // to avoid expensive index searches.
-      item.index = hoverIndex;
-    },
-  });
-
-  drag(drop(ref));
 
   return (
-    <div
-      ref={ref}
-      className={`${
-        isDragging ? "opacity-10" : "opacity-100"
-      } cursor-move rounded border bg-white px-4 py-2 shadow-md dark:border-gray-700 dark:bg-gray-800`}
+    <Reorder.Item
+      value={todo}
+      id={String(todo.category_id)}
+      className={`cursor-move rounded border bg-white px-4 py-2 shadow-md dark:border-gray-700 dark:bg-gray-800`}
     >
       <div className="flex flex-row space-x-2">
         <div className="flex min-w-0 grow flex-col space-y-1 ">
@@ -225,7 +134,7 @@ const TodoBox = React.memo(function TodoBox({
           </button>
         </div>
       </div>
-    </div>
+    </Reorder.Item>
   );
 });
 
