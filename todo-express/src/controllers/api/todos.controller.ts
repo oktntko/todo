@@ -61,18 +61,18 @@ class TodoPathParams {
   todo_id: number;
 }
 
-class PatchTodoPriorityNoBody {
+class PatchTodoReorderBody {
   @ValidateNested({ each: true })
-  @Type(() => TodoPriorityNo)
-  todos: TodoPriorityNo[];
+  @Type(() => TodoReorder)
+  todos: TodoReorder[];
 }
 
-export class TodoPriorityNo {
+export class TodoReorder {
   @IsPositive()
   todo_id: number;
   @IsInt()
   @Min(0)
-  priority_no: number;
+  order: number;
 }
 
 // ::: RESPONSE
@@ -87,7 +87,7 @@ export class TodoResponse {
 
   @IsOptional()
   @IsInt()
-  priority_no: number | null;
+  order: number | null;
 
   @IsOptional()
   @IsPositive()
@@ -193,11 +193,11 @@ export class TodosController {
     return TodosService.patchTodoDone(path.todo_id);
   }
 
-  // # PATCH /api/todos/priority
-  @Patch("/api/todos/priority")
+  // # PATCH /api/todos/reorder
+  @Patch("/api/todos/reorder")
   @ResponseSchema(ListTodoResponse)
-  async patchTodoPriorityNo(
-    @Body({ required: true }) body: PatchTodoPriorityNoBody
+  async patchTodoReorder(
+    @Body({ required: true }) body: PatchTodoReorderBody
   ): Promise<ListTodoResponse> {
     return TodosService.patchTodosPriority(body.todos);
   }

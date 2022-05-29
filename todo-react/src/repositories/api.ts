@@ -84,12 +84,12 @@ const todos = {
           paths["/api/todos/{todo_id}/done"]["patch"]["responses"]["200"]["content"]["application/json"]
         >(`/api/todos/${path.todo_id}/done`);
       },
-      priority: async (
-        body: paths["/api/todos/priority"]["patch"]["requestBody"]["content"]["application/json"]
+      reorder: async (
+        body: paths["/api/todos/reorder"]["patch"]["requestBody"]["content"]["application/json"]
       ) => {
         return client.patch<
-          paths["/api/todos/priority"]["patch"]["responses"]["200"]["content"]["application/json"]
-        >(`/api/todos/priority`, body);
+          paths["/api/todos/reorder"]["patch"]["responses"]["200"]["content"]["application/json"]
+        >(`/api/todos/reorder`, body);
       },
     },
   },

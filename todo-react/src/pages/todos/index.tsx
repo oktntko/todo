@@ -40,9 +40,9 @@ export const TodoIndexPage = React.memo(function TodoIndexPage() {
   };
 
   useEffect(() => {
-    api.patch.todos.priority({
+    api.patch.todos.reorder({
       todos: todos.map(({ todo_id }, index) => {
-        return { todo_id, priority_no: index };
+        return { todo_id, order: index };
       }),
     });
   }, [todos]);

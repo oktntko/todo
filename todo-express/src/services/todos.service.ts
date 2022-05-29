@@ -1,4 +1,4 @@
-import { TodoBody, TodoPriorityNo } from "~/controllers/api/todos.controller";
+import { TodoBody, TodoReorder } from "~/controllers/api/todos.controller";
 import log from "~/middlewares/log";
 import { TodosRepository } from "~/repositories/todos.repository";
 
@@ -48,11 +48,11 @@ const patchTodoDone = async (todo_id: number) => {
   return TodosRepository.updateTodoDoneAt({ todo_id }, new Date());
 };
 
-// # PATCH /api/todos/priority
-const patchTodosPriority = async (todos: TodoPriorityNo[]) => {
+// # PATCH /api/todos/reorder
+const patchTodosPriority = async (todos: TodoReorder[]) => {
   log.debug("patchTodosPriority", todos);
 
-  return { todos: await Promise.all(todos.map(TodosRepository.updateTodoPriorityNo)) };
+  return { todos: await Promise.all(todos.map(TodosRepository.updateTodoReorder)) };
 };
 
 export const TodosService = {

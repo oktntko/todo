@@ -13,7 +13,7 @@ generator client {
 model Todo {
   todo_id     Int       @id @default(autoincrement()) @db.Integer
   yarukoto    String    @db.VarChar(100)
-  priority_no Int?      @db.Integer
+  order       Int?      @db.Integer
   category_id Int?      @db.Integer
   kizitu      String?   @db.VarChar(10)
   yusendo     String?   @db.VarChar(50)

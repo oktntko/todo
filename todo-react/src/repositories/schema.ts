@@ -25,8 +25,8 @@ export interface paths {
   "/api/todos/{todo_id}/done": {
     patch: operations["TodosController.patchTodoDone"];
   };
-  "/api/todos/priority": {
-    patch: operations["TodosController.patchTodoPriorityNo"];
+  "/api/todos/reorder": {
+    patch: operations["TodosController.patchTodoReorder"];
   };
   "/openapi": {
     get: operations["OpenapiController.getOpenApi"];
@@ -47,7 +47,7 @@ export interface components {
       updated_at: string;
     };
     ListCategoryResponse: {
-      categories: components["schemas"]["Category"][];
+      categories: components["schemas"]["CategoryResponse"][];
     };
     TodoBody: {
       yarukoto: string;
@@ -60,17 +60,17 @@ export interface components {
     TodoPathParams: {
       todo_id: number;
     };
-    PatchTodoPriorityNoBody: {
-      todos: components["schemas"]["TodoPriorityNo"][];
+    PatchTodoReorderBody: {
+      todos: components["schemas"]["TodoReorder"][];
     };
-    TodoPriorityNo: {
+    TodoReorder: {
       todo_id: number;
-      priority_no: number;
+      order: number;
     };
     TodoResponse: {
       todo_id: number;
       yarukoto: string;
-      priority_no?: number;
+      order?: number;
       category_id?: number;
       category?: components["schemas"]["Category"];
       kizitu?: string;
@@ -259,7 +259,7 @@ export interface operations {
       };
     };
   };
-  "TodosController.patchTodoPriorityNo": {
+  "TodosController.patchTodoReorder": {
     responses: {
       200: {
         content: {
@@ -267,10 +267,10 @@ export interface operations {
         };
       };
     };
-    /** PatchTodoPriorityNoBody */
+    /** PatchTodoReorderBody */
     requestBody: {
       content: {
-        "application/json": components["schemas"]["PatchTodoPriorityNoBody"];
+        "application/json": components["schemas"]["PatchTodoReorderBody"];
       };
     };
   };
