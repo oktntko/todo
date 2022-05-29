@@ -32,14 +32,10 @@ export const TodoIndexPage = React.memo(function TodoIndexPage() {
       .finally(() => setLoading(false));
   };
 
-  const handleDone = (todo_id: string, index: number) => {
-    setTodos((todos: components["schemas"]["TodoResponse"][]) =>
-      update(todos, {
-        $splice: [[index, 1]],
-      })
-    );
+  const handleDone = (todo_id: number) => {
+    setTodos(todos.filter((todo) => todo.todo_id !== todo_id));
 
-    api.patch.todos.done({ todo_id });
+    api.patch.todos.done({ todo_id: String(todo_id) });
   };
 
   const moveTodo = (currentIndex: number, hoverIndex: number) => {
@@ -60,7 +56,7 @@ export const TodoIndexPage = React.memo(function TodoIndexPage() {
         todo={todo}
         index={index}
         moveTodo={moveTodo}
-        onDone={() => handleDone(String(todo.todo_id), index)}
+        onDone={() => handleDone(todo.todo_id)}
       />
     );
   };
