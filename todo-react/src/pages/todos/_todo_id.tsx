@@ -1,5 +1,5 @@
 import { TodoForm } from "~/components/TodoForm";
 
-export const TodoSyosaiPage = () => {
+export function TodoSyosaiPage() {
   return <TodoForm />;
-};
+}

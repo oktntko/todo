@@ -4,7 +4,7 @@ import { NavLink } from "react-router-dom";
 
 export const iconOptions = { size: "2rem", color: "#414855" };
 
-export const Header = () => {
+export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
@@ -59,9 +59,9 @@ export const Header = () => {
       </div>
     </nav>
   );
-};
+}
 
-const MenuIcon = ({ isMobileMenuOpen }: { isMobileMenuOpen: boolean }) => {
+function MenuIcon({ isMobileMenuOpen }: { isMobileMenuOpen: boolean }) {
   return (
     <>
       <svg
@@ -90,4 +90,4 @@ const MenuIcon = ({ isMobileMenuOpen }: { isMobileMenuOpen: boolean }) => {
       </svg>
     </>
   );
-};
+}

@@ -2,7 +2,7 @@ import { FcTodoList } from "react-icons/fc";
 import { Link } from "react-router-dom";
 import { iconOptions } from "~/components/Header";
 
-export const NotFoundPage = () => {
+export function NotFoundPage() {
   return (
     <div className="bg-white py-6 sm:py-8 lg:py-12">
       <div className="mx-auto max-w-screen-2xl px-4 md:px-8">
@@ -39,4 +39,4 @@ export const NotFoundPage = () => {
       </div>
     </div>
   );
-};
+}

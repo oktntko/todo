@@ -1,5 +1,5 @@
 import { CategoryForm } from "~/components/CategoryForm";
 
-export const CategoryTorokuPage = () => {
+export function CategoryTorokuPage() {
   return <CategoryForm />;
-};
+}

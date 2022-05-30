@@ -9,7 +9,7 @@ import { TodoIndexPage } from "~/pages/todos";
 import { TodoTorokuPage } from "~/pages/todos/add";
 import { TodoSyosaiPage } from "~/pages/todos/_todo_id";
 
-export const RouterView = () => {
+export function RouterView() {
   return (
     <BrowserRouter>
       <Routes>
@@ -28,4 +28,4 @@ export const RouterView = () => {
       </Routes>
     </BrowserRouter>
   );
-};
+}

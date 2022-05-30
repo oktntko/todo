@@ -7,7 +7,7 @@ import { Overlay } from "~/components/Overlay";
 
 type CloseEventType = "escape" | "button" | "overlay";
 
-export const Dialog = ({
+export function Dialog({
   children,
   display,
   handleCloseEvent = ["escape", "button", "overlay"],
@@ -19,7 +19,7 @@ export const Dialog = ({
   handleCloseEvent?: CloseEventType | CloseEventType[];
   onClose?: () => void;
   afterLeave?: () => void;
-}) => {
+}) {
   // Handle Close
   // "escape"
   if (!handleCloseEvent.includes("escape")) {
@@ -59,9 +59,9 @@ export const Dialog = ({
       </div>
     </Overlay>
   );
-};
+}
 
-export const MessageDialog = ({
+export function MessageDialog({
   display,
   onClose,
   afterLeave,
@@ -83,7 +83,7 @@ export const MessageDialog = ({
   cancelText?: string;
   onConfirm?: () => void;
   confirmText?: string;
-}) => {
+}) {
   return (
     <Dialog display={display} onClose={onClose} afterLeave={afterLeave}>
       {title && (
@@ -130,14 +130,14 @@ export const MessageDialog = ({
       )}
     </Dialog>
   );
-};
+}
 
-export const AxiosErrorMessageDialog = (props: {
+export function AxiosErrorMessageDialog(props: {
   display: boolean;
   onClose: () => void;
   afterLeave?: () => void;
   axiosError?: AxiosError<{ message: string }, any> | null;
-}) => {
+}) {
   const level = (() => {
     const status = props.axiosError?.response?.status ?? 0;
     if (0 < status && status < 400) {
@@ -156,4 +156,4 @@ export const AxiosErrorMessageDialog = (props: {
       message={props.axiosError?.response?.data.message || ""}
     />
   );
-};
+}

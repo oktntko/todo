@@ -10,7 +10,7 @@ import { code } from "~/plugins/code";
 import { api } from "~/repositories/api";
 import { components } from "~/repositories/schema";
 
-export const TodoForm = () => {
+export function TodoForm() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { todo_id } = useParams();
@@ -207,9 +207,9 @@ export const TodoForm = () => {
       </div>
     </>
   );
-};
+}
 
-const CategoryList = ({
+function CategoryList({
   categories,
   category_id,
   setCategoryId,
@@ -217,7 +217,7 @@ const CategoryList = ({
   categories: components["schemas"]["Category"][];
   category_id: number | undefined;
   setCategoryId: (category_id: number | undefined) => void;
-}) => {
+}) {
   return (
     <div className="relative grow">
       <Listbox value={category_id} onChange={setCategoryId}>
@@ -281,15 +281,15 @@ const CategoryList = ({
       </Listbox>
     </div>
   );
-};
+}
 
-const YusendoList = ({
+function YusendoList({
   value,
   onChange,
 }: {
   value: string | number | readonly string[];
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}) => {
+}) {
   return (
     <div className="flex items-center space-x-2">
       {code.yusendo.map((yusendo, i) => {
@@ -315,9 +315,9 @@ const YusendoList = ({
       })}
     </div>
   );
-};
+}
 
-const SubcategoryList = ({
+function SubcategoryList({
   categories,
   subcategory_id_list,
   setSubcategorIdList,
@@ -325,7 +325,7 @@ const SubcategoryList = ({
   categories: components["schemas"]["Category"][];
   subcategory_id_list: number[];
   setSubcategorIdList: (category_id: number[]) => void;
-}) => {
+}) {
   return (
     <div className="relative">
       <Listbox value={subcategory_id_list} onChange={setSubcategorIdList} multiple>
@@ -389,4 +389,4 @@ const SubcategoryList = ({
       </Listbox>
     </div>
   );
-};
+}

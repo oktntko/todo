@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 
-export const EmptyLayout = () => {
+export function EmptyLayout() {
   return (
     <>
       <main>
@@ -8,4 +8,4 @@ export const EmptyLayout = () => {
       </main>
     </>
   );
-};
+}

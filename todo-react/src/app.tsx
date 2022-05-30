@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { AxiosErrorMessageDialog } from "~/components/Dialog";
 import { RouterView } from "~/routers";
 
-export const AppRoot = () => {
+export function AppRoot() {
   const { hasError, clearHasError, axiosError, clearAxiosError } = useAxiosErrorHandler();
 
   return (
@@ -16,10 +16,10 @@ export const AppRoot = () => {
         onClose={clearHasError}
         afterLeave={clearAxiosError}
         axiosError={axiosError}
-      ></AxiosErrorMessageDialog>
+      />
     </>
   );
-};
+}
 
 // https://www.asobou.co.jp/blog/web/error-boundary
 // https://zenn.dev/berlysia/articles/5dfa58f282aa14

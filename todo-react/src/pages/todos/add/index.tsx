@@ -1,5 +1,5 @@
 import { TodoForm } from "~/components/TodoForm";
 
-export const TodoTorokuPage = () => {
+export function TodoTorokuPage() {
   return <TodoForm />;
-};
+}

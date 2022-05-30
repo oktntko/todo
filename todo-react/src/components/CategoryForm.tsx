@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router";
 import { Loading } from "~/components/Loading";
 import { api } from "~/repositories/api";
 
-export const CategoryForm = () => {
+export function CategoryForm() {
   const navigate = useNavigate();
   const { category_id } = useParams();
   const { loading, category, getCategory, setCategory, deleteCategory, putCategory, postCategory } =
@@ -67,7 +67,7 @@ export const CategoryForm = () => {
       </div>
     </>
   );
-};
+}
 
 const useCategory = () => {
   const [loading, setLoading] = useState(false);

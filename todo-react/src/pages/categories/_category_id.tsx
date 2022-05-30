@@ -1,5 +1,5 @@
 import { CategoryForm } from "~/components/CategoryForm";
 
-export const CategorySyosaiPage = () => {
+export function CategorySyosaiPage() {
   return <CategoryForm />;
-};
+}

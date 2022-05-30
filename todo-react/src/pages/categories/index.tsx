@@ -7,7 +7,7 @@ import { NoData, Progress } from "~/components/Table";
 import { api } from "~/repositories/api";
 import { components } from "~/repositories/schema";
 
-export const CategoryIndexPage = () => {
+export function CategoryIndexPage() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -65,4 +65,4 @@ export const CategoryIndexPage = () => {
       </button>
     </>
   );
-};
+}

@@ -2,7 +2,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import type { ReactNode } from "react";
 import { Fragment } from "react";
 
-export const Overlay = ({
+export function Overlay({
   children,
   display,
   onClickOverlay,
@@ -12,7 +12,7 @@ export const Overlay = ({
   display: boolean;
   onClickOverlay?: (value: boolean) => void;
   afterLeave?: () => void;
-}) => {
+}) {
   return (
     <Transition show={display} as={Fragment}>
       {/* 画面全体に広がる。flexにして子要素が中心になるように調整 */}
@@ -49,4 +49,4 @@ export const Overlay = ({
       </Dialog>
     </Transition>
   );
-};
+}
