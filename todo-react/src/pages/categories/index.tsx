@@ -1,19 +1,17 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { FcGenericSortingDesc } from "react-icons/fc";
 import { useNavigate } from "react-router";
 import { NavLink } from "react-router-dom";
 import { NoData, Progress } from "~/components/Table";
 import { api } from "~/repositories/api";
-import { paths } from "~/repositories/schema";
+import { components } from "~/repositories/schema";
 
 export const CategoryIndexPage = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const [categories, setCategories] = useState<
-    paths["/api/categories"]["get"]["responses"]["200"]["content"]["application/json"]["categories"]
-  >([]);
+  const [categories, setCategories] = useState<components["schemas"]["CategoryResponse"][]>([]);
 
   useEffect(() => {
     getCategories();

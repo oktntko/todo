@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FcTodoList } from "react-icons/fc";
 import { NavLink } from "react-router-dom";
 

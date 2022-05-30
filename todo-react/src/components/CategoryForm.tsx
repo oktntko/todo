@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import type { ChangeEvent } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { Loading } from "~/components/Loading";
 import { api } from "~/repositories/api";
@@ -16,8 +17,7 @@ export const CategoryForm = () => {
   }, []);
 
   const handleChange =
-    (name: keyof typeof category) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    (name: keyof typeof category) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       setCategory({ ...category, [name]: e.target.value });
     };
 

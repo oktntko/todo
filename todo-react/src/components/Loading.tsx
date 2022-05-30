@@ -1,5 +1,5 @@
 import { Dialog, Transition } from "@headlessui/react";
-import React, { Fragment } from "react";
+import { Fragment } from "react";
 import { ImSpinner8 } from "react-icons/im";
 
 export const Loading = ({ loading }: { loading: boolean }) => {

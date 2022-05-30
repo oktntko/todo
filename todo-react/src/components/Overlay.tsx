@@ -1,5 +1,6 @@
 import { Dialog, Transition } from "@headlessui/react";
-import React, { Fragment } from "react";
+import type { ReactNode } from "react";
+import { Fragment } from "react";
 
 export const Overlay = ({
   children,
@@ -7,7 +8,7 @@ export const Overlay = ({
   onClickOverlay,
   afterLeave,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   display: boolean;
   onClickOverlay?: (value: boolean) => void;
   afterLeave?: () => void;

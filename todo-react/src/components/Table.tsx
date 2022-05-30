@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import React from "react";
 import { AiFillWarning } from "react-icons/ai";
 import { ImSpinner8 } from "react-icons/im";
 

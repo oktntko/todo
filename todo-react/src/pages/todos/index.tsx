@@ -1,12 +1,12 @@
 import { motion, Reorder } from "framer-motion";
-import React, { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loading } from "~/components/Loading";
 import { toLabel } from "~/plugins/code";
 import { api } from "~/repositories/api";
 import { components, paths } from "~/repositories/schema";
 
-export const TodoIndexPage = React.memo(function TodoIndexPage() {
+export const TodoIndexPage = memo(function TodoIndexPage() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -83,7 +83,7 @@ export const TodoIndexPage = React.memo(function TodoIndexPage() {
   );
 });
 
-const TodoBox = React.memo(function TodoBox({
+const TodoBox = memo(function TodoBox({
   todo,
   onDone,
 }: {

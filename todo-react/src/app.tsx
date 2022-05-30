@@ -1,6 +1,6 @@
 // main.ts
 import axios, { AxiosError } from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { AxiosErrorMessageDialog } from "~/components/Dialog";
 import { RouterView } from "~/routers";
 

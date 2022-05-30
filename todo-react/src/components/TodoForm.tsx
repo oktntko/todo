@@ -1,5 +1,6 @@
 import { Listbox, Transition } from "@headlessui/react";
-import React, { Fragment, useEffect, useState } from "react";
+import type { ChangeEvent } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { AiOutlineCheck } from "react-icons/ai";
 import { HiSelector } from "react-icons/hi";
 import { MdClear } from "react-icons/md";
@@ -37,7 +38,7 @@ export const TodoForm = () => {
   }, []);
 
   const handleChange =
-    (name: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    (name: keyof typeof form) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       setForm({ ...form, [name]: e.target.value });
     };
   const setCategoryId = (category_id: number | undefined) => {

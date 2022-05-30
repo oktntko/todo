@@ -1,5 +1,6 @@
 import { AxiosError } from "axios";
-import React, { useEffect } from "react";
+import type { ReactNode } from "react";
+import { useEffect } from "react";
 import { AiFillCloseCircle, AiFillInfoCircle, AiFillWarning } from "react-icons/ai";
 import { MdClear } from "react-icons/md";
 import { Overlay } from "~/components/Overlay";
@@ -13,7 +14,7 @@ export const Dialog = ({
   onClose,
   afterLeave,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   display: boolean;
   handleCloseEvent?: CloseEventType | CloseEventType[];
   onClose?: () => void;
