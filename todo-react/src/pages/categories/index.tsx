@@ -58,6 +58,7 @@ export function CategoryIndexPage() {
         </div>
       </div>
       <button
+        type="button"
         className="fixed bottom-16 right-24 h-20 w-20 rounded-full bg-blue-600 p-0 text-white shadow-md lg:right-[24%] 2xl:right-[32%]"
         onClick={() => navigate("/categories/add")}
       >

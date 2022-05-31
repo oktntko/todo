@@ -4,15 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { Loading } from "~/components/Loading";
 import { toLabel } from "~/plugins/code";
 import { api } from "~/repositories/api";
-import { components, paths } from "~/repositories/schema";
+import { components } from "~/repositories/schema";
 
-export const TodoIndexPage = memo(function TodoIndexPage() {
+export function TodoIndexPage() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const [todos, setTodos] = useState<
-    paths["/api/todos"]["get"]["responses"]["200"]["content"]["application/json"]["todos"]
-  >([]);
+  const [todos, setTodos] = useState<components["schemas"]["TodoResponse"][]>([]);
 
   useEffect(() => {
     getTodos();
@@ -74,6 +72,7 @@ export const TodoIndexPage = memo(function TodoIndexPage() {
         </div>
       )}
       <button
+        type="button"
         className="fixed bottom-16 right-24 h-20 w-20 rounded-full bg-blue-600 p-0 text-white shadow-md lg:right-[24%] 2xl:right-[32%]"
         onClick={() => navigate("/todos/add")}
       >
@@ -81,7 +80,7 @@ export const TodoIndexPage = memo(function TodoIndexPage() {
       </button>
     </>
   );
-});
+}
 
 const TodoBox = memo(function TodoBox({
   todo,
