@@ -8,25 +8,9 @@ import { api } from "~/repositories/api";
 import { components } from "~/repositories/schema";
 
 export function CategoryIndexPage() {
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const [categories, setCategories] = useState<components["schemas"]["CategoryResponse"][]>([]);
-
-  useEffect(() => {
-    getCategories();
-  }, []);
-
-  const getCategories = () => {
-    setLoading(true);
-
-    api.get
-      .categories()
-      .then(({ data }) => {
-        setCategories(data.categories);
-      })
-      .finally(() => setLoading(false));
-  };
+  const { loading, categories } = useCategories();
 
   return (
     <>
@@ -67,3 +51,19 @@ export function CategoryIndexPage() {
     </>
   );
 }
+
+const useCategories = () => {
+  const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState<components["schemas"]["CategoryResponse"][]>([]);
+
+  const getCategories = () => {
+    setLoading(true);
+    return api.get.categories().finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    getCategories().then(({ data }) => setCategories(data.categories));
+  }, []);
+
+  return { loading, categories };
+};

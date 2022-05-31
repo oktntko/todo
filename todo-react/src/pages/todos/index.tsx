@@ -1,5 +1,5 @@
 import { motion, Reorder } from "framer-motion";
-import { memo, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loading } from "~/components/Loading";
 import { toLabel } from "~/plugins/code";
@@ -7,57 +7,25 @@ import { api } from "~/repositories/api";
 import { components } from "~/repositories/schema";
 
 export function TodoIndexPage() {
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const [todos, setTodos] = useState<components["schemas"]["TodoResponse"][]>([]);
-
-  useEffect(() => {
-    getTodos();
-  }, []);
-
-  const getTodos = () => {
-    setLoading(true);
-
-    api.get
-      .todos()
-      .then(({ data }) => {
-        setTodos(data.todos);
-      })
-      .finally(() => setLoading(false));
-  };
-
-  const handleDone = (todo_id: number) => {
-    setTodos(todos.filter((todo) => todo.todo_id !== todo_id));
-
-    api.patch.todos.done({ todo_id: String(todo_id) });
-  };
-
-  const renderTodoBox = (todo: components["schemas"]["TodoResponse"]) => {
-    return <TodoBox key={todo.todo_id} todo={todo} onDone={() => handleDone(todo.todo_id)} />;
-  };
-
-  useEffect(() => {
-    api.patch.todos.reorder({
-      todos: todos.map(({ todo_id }, index) => {
-        return { todo_id, order: index };
-      }),
-    });
-  }, [todos]);
+  const { loading, todos, handleDone, handleReorder } = useTodos();
 
   return (
     <>
       <Loading loading={loading} />
-      {/* データがあるあとき */}
+      {/* データがあるとき */}
       {!loading && todos.length > 0 && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <Reorder.Group
             axis="y"
-            onReorder={setTodos}
+            onReorder={handleReorder}
             values={todos}
             className={`mx-auto my-4 w-full max-w-screen-sm space-y-2 px-6`}
           >
-            {todos.map(renderTodoBox)}
+            {todos.map((todo) => (
+              <TodoBox key={todo.todo_id} todo={todo} onDone={() => handleDone(todo.todo_id)} />
+            ))}
           </Reorder.Group>
         </motion.div>
       )}
@@ -81,6 +49,42 @@ export function TodoIndexPage() {
     </>
   );
 }
+
+const useTodos = () => {
+  const [loading, setLoading] = useState(true);
+  const [todos, setTodos] = useState<components["schemas"]["TodoResponse"][]>([]);
+
+  const getTodos = useCallback(() => {
+    setLoading(true);
+    return api.get.todos().finally(() => setLoading(false));
+  }, []);
+
+  const handleDone = useCallback(
+    (todo_id: number) => {
+      setTodos(todos.filter((todo) => todo.todo_id !== todo_id));
+      api.patch.todos.done({ todo_id: String(todo_id) });
+    },
+    [todos]
+  );
+
+  const handleReorder = useCallback(
+    (todos: components["schemas"]["TodoResponse"][]) => {
+      setTodos(todos);
+      api.patch.todos.reorder({
+        todos: todos.map(({ todo_id }, index) => {
+          return { todo_id, order: index };
+        }),
+      });
+    },
+    [todos]
+  );
+
+  useEffect(() => {
+    getTodos().then(({ data }) => setTodos(data.todos));
+  }, []);
+
+  return { loading, todos, handleDone, handleReorder };
+};
 
 const TodoBox = memo(function TodoBox({
   todo,
