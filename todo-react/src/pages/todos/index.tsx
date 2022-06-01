@@ -1,5 +1,6 @@
 import { motion, Reorder } from "framer-motion";
 import { memo, useCallback, useEffect, useState } from "react";
+import { AiFillTag } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { Loading } from "~/components/Loading";
 import { toLabel } from "~/plugins/code";
@@ -99,21 +100,21 @@ const TodoBox = memo(function TodoBox({
     <Reorder.Item
       value={todo}
       id={String(todo.category_id)}
-      style={{
-        background: `linear-gradient(to bottom right, ${todo.category?.color}, 0.5%, white 15%)`,
-      }}
       className={`cursor-move rounded border bg-white px-4 py-2 shadow-md dark:border-gray-700 dark:bg-gray-800`}
     >
       <div className="flex flex-row space-x-2">
         <div className="flex min-w-0 grow flex-col space-y-1 ">
-          <div className="flex min-w-0 shrink-0 text-sm text-gray-500">
-            <div className="w-60 overflow-hidden text-ellipsis whitespace-nowrap">
+          <div className="flex min-w-0 shrink-0 items-center space-x-2 text-sm text-gray-500">
+            <div className="w-4 ">
+              <AiFillTag style={{ color: todo.category?.color }} className="text-lg" />
+            </div>
+            <div className="w-80 overflow-hidden text-ellipsis whitespace-nowrap">
               <span>{todo.category?.category_name ?? ""}</span>
             </div>
-            <div className="w-36">
+            <div className="w-24">
               <span>{todo.kizitu ?? ""}</span>
             </div>
-            <div className="w-12">
+            <div className="w-8">
               <span>{toLabel.yusendo(todo.yusendo) ?? ""}</span>
             </div>
           </div>

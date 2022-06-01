@@ -11,7 +11,7 @@ export function CategoryForm({ category_id }: { category_id?: string | undefined
 
   const [initialValues, setInitialValues] = useState({
     category_name: "",
-    color: "#000000",
+    color: "#ffffff",
     updated_at: "",
   });
   const { loading, getCategory, postCategory, putCategory, deleteCategory } = useCategory();
