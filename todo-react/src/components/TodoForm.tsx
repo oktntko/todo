@@ -1,7 +1,7 @@
 import { Listbox, Transition } from "@headlessui/react";
 import { Field, Form, Formik, useField } from "formik";
 import { Fragment, memo, useCallback, useEffect, useState } from "react";
-import { AiOutlineCheck } from "react-icons/ai";
+import { AiFillTag, AiOutlineCheck } from "react-icons/ai";
 import { HiSelector } from "react-icons/hi";
 import { MdClear } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
@@ -220,7 +220,8 @@ const CategoryList = memo(function CategoryList(props: {
                   }
                 >
                   {({ selected }) => (
-                    <>
+                    <div className="flex items-center space-x-2">
+                      <AiFillTag style={{ color: category.color }} className="shrink-0 text-2xl" />
                       <span
                         className={`block truncate ${selected ? "font-medium" : "font-normal"}`}
                       >
@@ -231,7 +232,7 @@ const CategoryList = memo(function CategoryList(props: {
                           <AiOutlineCheck className="h-5 w-5" aria-hidden="true" />
                         </span>
                       ) : null}
-                    </>
+                    </div>
                   )}
                 </Listbox.Option>
               );
@@ -323,7 +324,8 @@ const SubcategoryList = memo(function SubcategoryList(props: {
                   }
                 >
                   {({ selected }) => (
-                    <>
+                    <div className="flex items-center space-x-2">
+                      <AiFillTag style={{ color: category.color }} className="shrink-0 text-2xl" />
                       <span
                         className={`block truncate ${selected ? "font-medium" : "font-normal"}`}
                       >
@@ -334,7 +336,7 @@ const SubcategoryList = memo(function SubcategoryList(props: {
                           <AiOutlineCheck className="h-5 w-5" aria-hidden="true" />
                         </span>
                       ) : null}
-                    </>
+                    </div>
                   )}
                 </Listbox.Option>
               );

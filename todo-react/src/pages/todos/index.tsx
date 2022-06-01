@@ -99,6 +99,9 @@ const TodoBox = memo(function TodoBox({
     <Reorder.Item
       value={todo}
       id={String(todo.category_id)}
+      style={{
+        background: `linear-gradient(to bottom right, ${todo.category?.color}, 0.5%, white 15%)`,
+      }}
       className={`cursor-move rounded border bg-white px-4 py-2 shadow-md dark:border-gray-700 dark:bg-gray-800`}
     >
       <div className="flex flex-row space-x-2">

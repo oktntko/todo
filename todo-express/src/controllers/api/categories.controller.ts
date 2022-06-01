@@ -2,7 +2,9 @@ import { Type } from "class-transformer";
 import {
   IsArray,
   IsDate,
+  IsHexColor,
   IsNotEmpty,
+  IsOptional,
   IsPositive,
   IsString,
   MaxLength,
@@ -28,6 +30,11 @@ class CategoryBody {
   @IsString()
   @MaxLength(100)
   category_name: string;
+  @IsOptional()
+  @IsString()
+  @IsHexColor()
+  @MaxLength(100)
+  color: string | null;
 }
 
 class CategoryPathParams {
@@ -43,6 +50,11 @@ class CategoryResponse {
   category_name: string;
   @IsPositive()
   category_id: number;
+  @IsOptional()
+  @IsString()
+  @IsHexColor()
+  @MaxLength(100)
+  color: string | null;
   @IsNotEmpty()
   @IsDate()
   updated_at: Date;

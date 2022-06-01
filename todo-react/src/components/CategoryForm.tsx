@@ -1,5 +1,6 @@
 import { Field, Form, Formik } from "formik";
 import { useCallback, useEffect, useState } from "react";
+import { AiFillTag } from "react-icons/ai";
 import { useNavigate } from "react-router";
 import { Loading } from "~/components/Loading";
 import { api } from "~/repositories/api";
@@ -8,12 +9,16 @@ import { components } from "~/repositories/schema";
 export function CategoryForm({ category_id }: { category_id?: string | undefined }) {
   const navigate = useNavigate();
 
-  const [initialValues, setInitialValues] = useState({ category_name: "", updated_at: "" });
+  const [initialValues, setInitialValues] = useState({
+    category_name: "",
+    color: "#000000",
+    updated_at: "",
+  });
   const { loading, getCategory, postCategory, putCategory, deleteCategory } = useCategory();
 
   useEffect(() => {
     if (category_id) {
-      getCategory(category_id).then(({ data }) => setInitialValues(data));
+      getCategory(category_id).then(({ data }) => setInitialValues({ ...initialValues, ...data }));
     }
   }, [category_id]);
 
@@ -44,12 +49,24 @@ export function CategoryForm({ category_id }: { category_id?: string | undefined
             <div className="my-4 mx-auto w-full max-w-screen-sm space-y-2 px-6">
               <div className="space-y-2">
                 {/* １行目 */}
-                <Field
-                  name="category_name"
-                  placeholder="カテゴリ名"
-                  className="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                  required
-                />
+                <div className="flex items-center space-x-2">
+                  <label htmlFor="color">
+                    <AiFillTag style={{ color: values.color }} className="text-2xl" />
+                  </label>
+                  <Field
+                    id="color"
+                    type="color"
+                    name="color"
+                    placeholder="色"
+                    data-tooltip-target="tooltip-default"
+                  />
+                  <Field
+                    name="category_name"
+                    placeholder="カテゴリ名"
+                    className="grow rounded-lg border border-gray-300 bg-white p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                    required
+                  />
+                </div>
               </div>
               {/* フォームボタン */}
               <div className="my-4 mx-auto flex w-full max-w-screen-sm justify-end space-x-2 px-6">
@@ -87,9 +104,7 @@ const useCategory = () => {
 
   const postCategory = useCallback((category: components["schemas"]["CategoryBody"]) => {
     setLoading(true);
-    return api.post
-      .categories({ category_name: category.category_name })
-      .finally(() => setLoading(false));
+    return api.post.categories(category).finally(() => setLoading(false));
   }, []);
 
   const putCategory = useCallback(

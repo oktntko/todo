@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
+import { AiFillTag } from "react-icons/ai";
 import { FcGenericSortingDesc } from "react-icons/fc";
 import { useNavigate } from "react-router";
 import { NavLink } from "react-router-dom";
@@ -30,6 +31,11 @@ export function CategoryIndexPage() {
                   >{`#${row.category_id}`}</NavLink>
                 ),
                 maxWidth: "64px",
+              },
+              {
+                name: "",
+                cell: (row) => <AiFillTag style={{ color: row.color }} className="text-2xl" />,
+                maxWidth: "32px",
               },
               { name: "カテゴリ名", selector: (row) => row.category_name, sortable: true },
             ]}

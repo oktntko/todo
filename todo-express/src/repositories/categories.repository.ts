@@ -17,10 +17,12 @@ const createCategory = async (
     select: {
       category_id: true,
       category_name: true,
+      color: true,
       updated_at: true,
     },
     data: {
       category_name: category.category_name,
+      color: category.color,
     },
   });
 };
@@ -32,6 +34,7 @@ const findManyCategory = async (where?: Prisma.CategoryWhereInput) => {
     select: {
       category_id: true,
       category_name: true,
+      color: true,
       updated_at: true,
     },
     where,
@@ -45,6 +48,7 @@ const findUniqueCategory = async (where: RequireOne<Prisma.CategoryWhereUniqueIn
     select: {
       category_id: true,
       category_name: true,
+      color: true,
       updated_at: true,
     },
     where,
@@ -61,10 +65,12 @@ const updateCategory = async (
     select: {
       category_id: true,
       category_name: true,
+      color: true,
       updated_at: true,
     },
     data: {
       category_name: category.category_name,
+      color: category.color,
     },
     where,
   });
@@ -77,6 +83,7 @@ const deleteCategory = async (where: RequireOne<Prisma.CategoryWhereUniqueInput>
     select: {
       category_id: true,
       category_name: true,
+      color: true,
       updated_at: true,
     },
     where,

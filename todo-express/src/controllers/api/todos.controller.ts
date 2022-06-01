@@ -2,6 +2,7 @@ import { Type } from "class-transformer";
 import {
   IsArray,
   IsDate,
+  IsHexColor,
   IsInt,
   IsNotEmpty,
   IsOptional,
@@ -133,6 +134,11 @@ class Category {
   @IsString()
   @MaxLength(100)
   category_name: string;
+  @IsOptional()
+  @IsString()
+  @IsHexColor()
+  @MaxLength(100)
+  color: string | null;
 }
 
 class ListTodoResponse {

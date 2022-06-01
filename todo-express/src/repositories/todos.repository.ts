@@ -25,6 +25,7 @@ const createTodo = async (todo: TodoBody) => {
           select: {
             category_id: true,
             category_name: true,
+            color: true,
           },
         },
         subcategories: {
@@ -33,6 +34,7 @@ const createTodo = async (todo: TodoBody) => {
               select: {
                 category_id: true,
                 category_name: true,
+                color: true,
               },
             },
           },
@@ -74,6 +76,7 @@ const findManyTodo = async (where?: Prisma.TodoWhereInput) => {
           select: {
             category_id: true,
             category_name: true,
+            color: true,
           },
         },
         subcategories: {
@@ -82,6 +85,7 @@ const findManyTodo = async (where?: Prisma.TodoWhereInput) => {
               select: {
                 category_id: true,
                 category_name: true,
+                color: true,
               },
             },
           },
@@ -117,6 +121,7 @@ const findUniqueTodo = async (where: RequireOne<Prisma.TodoWhereUniqueInput>) =>
           select: {
             category_id: true,
             category_name: true,
+            color: true,
           },
         },
         subcategories: {
@@ -125,6 +130,7 @@ const findUniqueTodo = async (where: RequireOne<Prisma.TodoWhereUniqueInput>) =>
               select: {
                 category_id: true,
                 category_name: true,
+                color: true,
               },
             },
           },
@@ -156,6 +162,7 @@ const updateTodo = async (where: RequireOne<Prisma.TodoWhereUniqueInput>, todo: 
           select: {
             category_id: true,
             category_name: true,
+            color: true,
           },
         },
         subcategories: {
@@ -164,6 +171,7 @@ const updateTodo = async (where: RequireOne<Prisma.TodoWhereUniqueInput>, todo: 
               select: {
                 category_id: true,
                 category_name: true,
+                color: true,
               },
             },
           },
@@ -206,6 +214,7 @@ const deleteTodo = async (where: RequireOne<Prisma.TodoWhereUniqueInput>) => {
           select: {
             category_id: true,
             category_name: true,
+            color: true,
           },
         },
         subcategories: {
@@ -214,6 +223,7 @@ const deleteTodo = async (where: RequireOne<Prisma.TodoWhereUniqueInput>) => {
               select: {
                 category_id: true,
                 category_name: true,
+                color: true,
               },
             },
           },
@@ -243,6 +253,7 @@ const updateTodoDoneAt = async (where: RequireOne<Prisma.TodoWhereUniqueInput>, 
           select: {
             category_id: true,
             category_name: true,
+            color: true,
           },
         },
         subcategories: {
@@ -251,6 +262,7 @@ const updateTodoDoneAt = async (where: RequireOne<Prisma.TodoWhereUniqueInput>, 
               select: {
                 category_id: true,
                 category_name: true,
+                color: true,
               },
             },
           },
@@ -284,6 +296,7 @@ const updateTodoReorder = async (todo: TodoReorder) => {
           select: {
             category_id: true,
             category_name: true,
+            color: true,
           },
         },
         subcategories: {
@@ -292,6 +305,7 @@ const updateTodoReorder = async (todo: TodoReorder) => {
               select: {
                 category_id: true,
                 category_name: true,
+                color: true,
               },
             },
           },
@@ -346,11 +360,13 @@ type SelectTodo = {
   category: {
     category_id: number;
     category_name: string;
+    color: string | null;
   } | null;
   subcategories: {
     category: {
       category_id: number;
       category_name: string;
+      color: string | null;
     };
   }[];
 };
