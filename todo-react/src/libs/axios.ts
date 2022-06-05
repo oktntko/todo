@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { AxiosResponse } from "axios";
 
-axios.interceptors.response.use(
+const client = axios.create({ timeout: 1000 });
+
+client.interceptors.response.use(
   (response) => response,
   async (error) => {
     // responseType: "blob" でリクエストするとデータが Blob になるため、JSONにパースする
@@ -13,7 +15,7 @@ axios.interceptors.response.use(
   }
 );
 
-export default axios;
+export default client;
 
 export const saveAsFile = (response: AxiosResponse<any>) => {
   const headerFilename = response.headers["content-disposition"].split("filename=")[1];
