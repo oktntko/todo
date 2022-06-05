@@ -9,10 +9,10 @@ export function DashboardLayout() {
           flex-grow flex-col flex-nowrap
           bg-neutral-50"
       >
-        <nav className="z-[1] h-16 flex-shrink-0">
+        <nav className="h-16 flex-shrink-0">
           <Header />
         </nav>
-        <main className="z-0 flex-grow overflow-auto ">
+        <main className="flex-grow overflow-auto ">
           <Outlet />
         </main>
       </div>
