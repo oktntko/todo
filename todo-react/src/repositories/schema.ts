@@ -22,6 +22,9 @@ export interface paths {
     put: operations["TodosController.putTodo"];
     delete: operations["TodosController.deleteTodo"];
   };
+  "/api/todos/{todo_id}/one": {
+    patch: operations["TodosController.patchTodoOne"];
+  };
   "/api/todos/{todo_id}/done": {
     patch: operations["TodosController.patchTodoDone"];
   };
@@ -52,10 +55,13 @@ export interface components {
       categories: components["schemas"]["CategoryResponse"][];
     };
     TodoBody: {
-      yarukoto: string;
+      yarukoto?: string;
+      /** @enum {string} */
+      status: "TODO" | "DOING" | "DONE";
       category_id?: number;
       kizitu?: string;
-      yusendo?: string;
+      /** @enum {string} */
+      yusendo: "FAST" | "SPEEDUP" | "PLAY" | "PAUSE" | "STOP";
       subcategory_id_list: number[];
       memo?: string;
     };
@@ -71,21 +77,18 @@ export interface components {
     };
     TodoResponse: {
       todo_id: number;
-      yarukoto: string;
+      yarukoto?: string;
+      /** @enum {string} */
+      status: "TODO" | "DOING" | "DONE";
       order?: number;
       category_id?: number;
-      category?: components["schemas"]["Category"];
       kizitu?: string;
-      yusendo?: string;
-      subcategories: components["schemas"]["Category"][];
+      /** @enum {string} */
+      yusendo: "FAST" | "SPEEDUP" | "PLAY" | "PAUSE" | "STOP";
+      subcategory_id_list: number[];
       memo?: string;
       updated_at: string;
       done_at?: string | string;
-    };
-    Category: {
-      category_id: number;
-      category_name: string;
-      color?: string;
     };
     ListTodoResponse: {
       todos: components["schemas"]["TodoResponse"][];
@@ -245,6 +248,26 @@ export interface operations {
         content: {
           "application/json": components["schemas"]["TodoResponse"];
         };
+      };
+    };
+  };
+  "TodosController.patchTodoOne": {
+    parameters: {
+      path: {
+        todo_id: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["TodoResponse"];
+        };
+      };
+    };
+    /** TodoBody */
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["TodoBody"];
       };
     };
   };

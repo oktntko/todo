@@ -79,6 +79,14 @@ const todos = {
   },
   patch: {
     todos: {
+      one: async (
+        path: paths["/api/todos/{todo_id}/one"]["patch"]["parameters"]["path"],
+        body: paths["/api/todos/{todo_id}/one"]["patch"]["requestBody"]["content"]["application/json"]
+      ) => {
+        return client.patch<
+          paths["/api/todos/{todo_id}/one"]["patch"]["responses"]["200"]["content"]["application/json"]
+        >(`/api/todos/${path.todo_id}/one`, body);
+      },
       done: async (path: paths["/api/todos/{todo_id}/done"]["patch"]["parameters"]["path"]) => {
         return client.patch<
           paths["/api/todos/{todo_id}/done"]["patch"]["responses"]["200"]["content"]["application/json"]

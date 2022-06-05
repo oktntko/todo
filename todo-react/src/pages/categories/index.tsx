@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
-import DataTable from "react-data-table-component";
 import { AiFillTag } from "react-icons/ai";
-import { FcGenericSortingDesc } from "react-icons/fc";
 import { useNavigate } from "react-router";
 import { NavLink } from "react-router-dom";
-import { NoData, Progress } from "~/components/Table";
+import { Table } from "~/components/Table";
 import { api } from "~/repositories/api";
 import { components } from "~/repositories/schema";
 
@@ -16,36 +14,30 @@ export function CategoryIndexPage() {
   return (
     <>
       <div className="mx-auto my-4 w-full max-w-screen-sm space-y-2 px-6">
-        <div className={"relative overflow-x-auto shadow-md"}>
-          <DataTable
-            data={categories}
-            columns={[
-              {
-                name: "ID",
-                selector: (row) => row.category_id,
-                sortable: true,
-                cell: (row) => (
-                  <NavLink
-                    to={`/categories/${row.category_id}`}
-                    className={"text-blue-600 underline"}
-                  >{`#${row.category_id}`}</NavLink>
-                ),
-                maxWidth: "64px",
-              },
-              {
-                name: "",
-                cell: (row) => <AiFillTag style={{ color: row.color }} className="text-2xl" />,
-                maxWidth: "32px",
-              },
-              { name: "カテゴリ名", selector: (row) => row.category_name, sortable: true },
-            ]}
-            highlightOnHover
-            progressPending={loading}
-            progressComponent={<Progress />}
-            noDataComponent={<NoData />}
-            sortIcon={<FcGenericSortingDesc />}
-          />
-        </div>
+        <Table
+          data={categories}
+          columns={[
+            {
+              name: "ID",
+              selector: (row) => row.category_id,
+              sortable: true,
+              cell: (row) => (
+                <NavLink
+                  to={`/categories/${row.category_id}`}
+                  className={"text-blue-600 underline"}
+                >{`#${row.category_id}`}</NavLink>
+              ),
+              maxWidth: "64px",
+            },
+            {
+              name: "",
+              cell: (row) => <AiFillTag style={{ color: row.color }} className="text-2xl" />,
+              maxWidth: "32px",
+            },
+            { name: "カテゴリ名", selector: (row) => row.category_name, sortable: true },
+          ]}
+          progressPending={loading}
+        />
       </div>
       <button
         type="button"

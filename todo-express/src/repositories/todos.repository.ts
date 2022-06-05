@@ -14,6 +14,7 @@ const createTodo = async (todo: TodoBody) => {
       select: {
         todo_id: true,
         yarukoto: true,
+        status: true,
         order: true,
         category_id: true,
         kizitu: true,
@@ -21,27 +22,15 @@ const createTodo = async (todo: TodoBody) => {
         memo: true,
         updated_at: true,
         done_at: true,
-        category: {
-          select: {
-            category_id: true,
-            category_name: true,
-            color: true,
-          },
-        },
         subcategories: {
           select: {
-            category: {
-              select: {
-                category_id: true,
-                category_name: true,
-                color: true,
-              },
-            },
+            category_id: true,
           },
         },
       },
       data: {
         yarukoto: todo.yarukoto,
+        status: todo.status,
         category_id: todo.category_id,
         kizitu: todo.kizitu,
         yusendo: todo.yusendo,
@@ -65,6 +54,7 @@ const findManyTodo = async (where?: Prisma.TodoWhereInput) => {
       select: {
         todo_id: true,
         yarukoto: true,
+        status: true,
         order: true,
         category_id: true,
         kizitu: true,
@@ -72,22 +62,9 @@ const findManyTodo = async (where?: Prisma.TodoWhereInput) => {
         memo: true,
         updated_at: true,
         done_at: true,
-        category: {
-          select: {
-            category_id: true,
-            category_name: true,
-            color: true,
-          },
-        },
         subcategories: {
           select: {
-            category: {
-              select: {
-                category_id: true,
-                category_name: true,
-                color: true,
-              },
-            },
+            category_id: true,
           },
         },
       },
@@ -110,6 +87,7 @@ const findUniqueTodo = async (where: RequireOne<Prisma.TodoWhereUniqueInput>) =>
       select: {
         todo_id: true,
         yarukoto: true,
+        status: true,
         order: true,
         category_id: true,
         kizitu: true,
@@ -117,22 +95,9 @@ const findUniqueTodo = async (where: RequireOne<Prisma.TodoWhereUniqueInput>) =>
         memo: true,
         updated_at: true,
         done_at: true,
-        category: {
-          select: {
-            category_id: true,
-            category_name: true,
-            color: true,
-          },
-        },
         subcategories: {
           select: {
-            category: {
-              select: {
-                category_id: true,
-                category_name: true,
-                color: true,
-              },
-            },
+            category_id: true,
           },
         },
       },
@@ -151,6 +116,7 @@ const updateTodo = async (where: RequireOne<Prisma.TodoWhereUniqueInput>, todo: 
       select: {
         todo_id: true,
         yarukoto: true,
+        status: true,
         order: true,
         category_id: true,
         kizitu: true,
@@ -158,27 +124,15 @@ const updateTodo = async (where: RequireOne<Prisma.TodoWhereUniqueInput>, todo: 
         memo: true,
         updated_at: true,
         done_at: true,
-        category: {
-          select: {
-            category_id: true,
-            category_name: true,
-            color: true,
-          },
-        },
         subcategories: {
           select: {
-            category: {
-              select: {
-                category_id: true,
-                category_name: true,
-                color: true,
-              },
-            },
+            category_id: true,
           },
         },
       },
       data: {
         yarukoto: todo.yarukoto,
+        status: todo.status,
         category_id: todo.category_id,
         kizitu: todo.kizitu,
         yusendo: todo.yusendo,
@@ -203,6 +157,7 @@ const deleteTodo = async (where: RequireOne<Prisma.TodoWhereUniqueInput>) => {
       select: {
         todo_id: true,
         yarukoto: true,
+        status: true,
         order: true,
         category_id: true,
         kizitu: true,
@@ -210,22 +165,9 @@ const deleteTodo = async (where: RequireOne<Prisma.TodoWhereUniqueInput>) => {
         memo: true,
         updated_at: true,
         done_at: true,
-        category: {
-          select: {
-            category_id: true,
-            category_name: true,
-            color: true,
-          },
-        },
         subcategories: {
           select: {
-            category: {
-              select: {
-                category_id: true,
-                category_name: true,
-                color: true,
-              },
-            },
+            category_id: true,
           },
         },
       },
@@ -242,6 +184,7 @@ const updateTodoDoneAt = async (where: RequireOne<Prisma.TodoWhereUniqueInput>, 
       select: {
         todo_id: true,
         yarukoto: true,
+        status: true,
         order: true,
         category_id: true,
         kizitu: true,
@@ -249,22 +192,9 @@ const updateTodoDoneAt = async (where: RequireOne<Prisma.TodoWhereUniqueInput>, 
         memo: true,
         updated_at: true,
         done_at: true,
-        category: {
-          select: {
-            category_id: true,
-            category_name: true,
-            color: true,
-          },
-        },
         subcategories: {
           select: {
-            category: {
-              select: {
-                category_id: true,
-                category_name: true,
-                color: true,
-              },
-            },
+            category_id: true,
           },
         },
       },
@@ -285,6 +215,7 @@ const updateTodoReorder = async (todo: TodoReorder) => {
       select: {
         todo_id: true,
         yarukoto: true,
+        status: true,
         order: true,
         category_id: true,
         kizitu: true,
@@ -292,22 +223,9 @@ const updateTodoReorder = async (todo: TodoReorder) => {
         memo: true,
         updated_at: true,
         done_at: true,
-        category: {
-          select: {
-            category_id: true,
-            category_name: true,
-            color: true,
-          },
-        },
         subcategories: {
           select: {
-            category: {
-              select: {
-                category_id: true,
-                category_name: true,
-                color: true,
-              },
-            },
+            category_id: true,
           },
         },
       },
@@ -352,28 +270,20 @@ type SelectTodo = {
   order: number | null;
   done_at: Date | null;
   updated_at: Date;
-  yarukoto: string;
+  yarukoto: string | null;
+  status: "TODO" | "DOING" | "DONE";
   category_id: number | null;
   kizitu: string | null;
-  yusendo: string | null;
+  yusendo: "FAST" | "SPEEDUP" | "PLAY" | "PAUSE" | "STOP";
   memo: string | null;
-  category: {
-    category_id: number;
-    category_name: string;
-    color: string | null;
-  } | null;
   subcategories: {
-    category: {
-      category_id: number;
-      category_name: string;
-      color: string | null;
-    };
+    category_id: number;
   }[];
 };
 
 const transformSubcategories = (todo: SelectTodo): TodoResponse => {
   return {
     ...todo,
-    subcategories: todo.subcategories.map((subcategory) => subcategory.category),
+    subcategory_id_list: todo.subcategories.map((subcategory) => subcategory.category_id),
   };
 };

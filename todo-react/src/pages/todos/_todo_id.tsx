@@ -1,5 +1,5 @@
 import { useParams } from "react-router";
-import { TodoForm } from "~/components/TodoForm";
+import { TodoForm } from "~/forms/TodoForm";
 
 export function TodoSyosaiPage() {
   const { todo_id } = useParams();

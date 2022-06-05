@@ -136,7 +136,7 @@ export function AxiosErrorMessageDialog(props: {
   display: boolean;
   onClose: () => void;
   afterLeave?: () => void;
-  axiosError?: AxiosError<{ message: string }, any> | null;
+  axiosError?: AxiosError<{ message: string }, unknown> | null;
 }) {
   const level = (() => {
     const status = props.axiosError?.response?.status ?? 0;

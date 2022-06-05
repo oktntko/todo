@@ -10,13 +10,28 @@ generator client {
   provider = "prisma-client-js"
 }
 
+enum Status {
+  TODO
+  DOING
+  DONE
+}
+
+enum Yusendo {
+  FAST
+  SPEEDUP
+  PLAY
+  PAUSE
+  STOP
+}
+
 model Todo {
   todo_id     Int       @id @default(autoincrement()) @db.Integer
-  yarukoto    String    @db.VarChar(100)
+  yarukoto    String?   @db.VarChar(100)
+  status      Status    @default(TODO)
   order       Int?      @db.Integer
   category_id Int?      @db.Integer
   kizitu      String?   @db.VarChar(10)
-  yusendo     String?   @db.VarChar(50)
+  yusendo     Yusendo   @default(PLAY)
   memo        String?   @db.VarChar(400)
   created_at  DateTime  @default(now()) @db.Timestamp(3)
   updated_at  DateTime  @updatedAt() @db.Timestamp(3)

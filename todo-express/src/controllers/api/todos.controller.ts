@@ -1,8 +1,8 @@
-import { Type } from "class-transformer";
+import { Transform, Type } from "class-transformer";
 import {
   IsArray,
   IsDate,
-  IsHexColor,
+  IsIn,
   IsInt,
   IsNotEmpty,
   IsOptional,
@@ -25,28 +25,37 @@ import {
   QueryParam,
 } from "routing-controllers";
 import { ResponseSchema } from "routing-controllers-openapi";
+import { transformerEmptyToNull } from "~/libs/transformers";
 import { TodosService } from "~/services/todos.service";
 
 // ::: REQUEST
 export class TodoBody {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @MaxLength(100)
-  yarukoto: string;
+  @Transform(transformerEmptyToNull)
+  yarukoto: string | null;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsIn(["TODO", "DOING", "DONE"])
+  status: "TODO" | "DOING" | "DONE";
 
   @IsOptional()
   @IsPositive()
+  @Transform(transformerEmptyToNull)
   category_id: number | null;
 
   @IsOptional()
   @IsString()
   @MaxLength(10)
+  @Transform(transformerEmptyToNull)
   kizitu: string | null;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
-  @MaxLength(50)
-  yusendo: string | null;
+  @IsIn(["FAST", "SPEEDUP", "PLAY", "PAUSE", "STOP"])
+  yusendo: "FAST" | "SPEEDUP" | "PLAY" | "PAUSE" | "STOP";
 
   @IsPositive({ each: true })
   subcategory_id_list: number[];
@@ -54,6 +63,7 @@ export class TodoBody {
   @IsOptional()
   @IsString()
   @MaxLength(400)
+  @Transform(transformerEmptyToNull)
   memo: string | null;
 }
 
@@ -81,10 +91,15 @@ export class TodoResponse {
   @IsPositive()
   todo_id: number;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @MaxLength(100)
-  yarukoto: string;
+  yarukoto: string | null;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsIn(["TODO", "DOING", "DONE"])
+  status: "TODO" | "DOING" | "DONE";
 
   @IsOptional()
   @IsInt()
@@ -94,25 +109,19 @@ export class TodoResponse {
   @IsPositive()
   category_id: number | null;
 
-  @ValidateNested()
-  @IsOptional()
-  @Type(() => Category)
-  category: Category | null;
-
   @IsOptional()
   @IsString()
   @MaxLength(10)
   kizitu: string | null;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
-  @MaxLength(50)
-  yusendo: string | null;
+  @IsIn(["FAST", "SPEEDUP", "PLAY", "PAUSE", "STOP"])
+  yusendo: "FAST" | "SPEEDUP" | "PLAY" | "PAUSE" | "STOP";
 
-  @ValidateNested({ each: true })
+  @IsPositive({ each: true })
   @IsArray()
-  @Type(() => Category)
-  subcategories: Category[];
+  subcategory_id_list: number[];
 
   @IsOptional()
   @IsString()
@@ -126,19 +135,6 @@ export class TodoResponse {
   @IsOptional()
   @IsDate()
   done_at: Date | null;
-}
-
-class Category {
-  @IsPositive()
-  category_id: number;
-  @IsString()
-  @MaxLength(100)
-  category_name: string;
-  @IsOptional()
-  @IsString()
-  @IsHexColor()
-  @MaxLength(100)
-  color: string | null;
 }
 
 class ListTodoResponse {
@@ -192,6 +188,16 @@ export class TodosController {
     return TodosService.deleteTodo(path.todo_id, updated_at);
   }
 
+  // # PATCH /api/todos/:todo_id
+  @Patch("/api/todos/:todo_id/one")
+  @ResponseSchema(TodoResponse)
+  async patchTodoOne(
+    @Params({ required: true }) path: TodoPathParams,
+    @Body({ required: true }) todo: TodoBody
+  ): Promise<TodoResponse> {
+    return TodosService.patchTodoOne(path.todo_id, todo);
+  }
+
   // # PATCH /api/todos/:todo_id/done
   @Patch("/api/todos/:todo_id/done")
   @ResponseSchema(TodoResponse)
@@ -205,6 +211,6 @@ export class TodosController {
   async patchTodoReorder(
     @Body({ required: true }) body: PatchTodoReorderBody
   ): Promise<ListTodoResponse> {
-    return TodosService.patchTodosPriority(body.todos);
+    return TodosService.patchTodoReorder(body.todos);
   }
 }

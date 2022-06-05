@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
+import DataTable, { TableProps } from "react-data-table-component";
 import { AiFillWarning } from "react-icons/ai";
+import { FcGenericSortingDesc } from "react-icons/fc";
 import { ImSpinner8 } from "react-icons/im";
 
 export function Progress() {
@@ -27,6 +29,20 @@ export function NoData() {
         <AiFillWarning className="mb-4 h-10 w-10 text-yellow-500/80 dark:text-gray-200"></AiFillWarning>
         <h3 className="text-gray-500 dark:text-gray-400">データが見つかりません</h3>
       </motion.div>
+    </div>
+  );
+}
+
+export function Table<T>(props: TableProps<T>) {
+  return (
+    <div className={"relative overflow-x-auto shadow-md"}>
+      <DataTable
+        highlightOnHover
+        progressComponent={<Progress />}
+        noDataComponent={<NoData />}
+        sortIcon={<FcGenericSortingDesc />}
+        {...props}
+      />
     </div>
   );
 }

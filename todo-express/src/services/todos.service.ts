@@ -41,6 +41,13 @@ const deleteTodo = async (todo_id: number, updated_at: string) => {
   return TodosRepository.deleteTodo({ todo_id });
 };
 
+// # PATCH /api/todos/:todo_id
+const patchTodoOne = async (todo_id: number, todo: TodoBody) => {
+  log.debug("patchTodoOne", todo_id);
+
+  return TodosRepository.updateTodo({ todo_id }, todo);
+};
+
 // # PATCH /api/todos/:todo_id/done
 const patchTodoDone = async (todo_id: number) => {
   log.debug("patchTodoDone", todo_id);
@@ -49,8 +56,8 @@ const patchTodoDone = async (todo_id: number) => {
 };
 
 // # PATCH /api/todos/reorder
-const patchTodosPriority = async (todos: TodoReorder[]) => {
-  log.debug("patchTodosPriority", todos);
+const patchTodoReorder = async (todos: TodoReorder[]) => {
+  log.debug("patchTodoReorder", todos);
 
   return { todos: await Promise.all(todos.map(TodosRepository.updateTodoReorder)) };
 };
@@ -61,6 +68,7 @@ export const TodosService = {
   getTodo,
   putTodo,
   deleteTodo,
+  patchTodoOne,
   patchTodoDone,
-  patchTodosPriority,
+  patchTodoReorder,
 } as const;
