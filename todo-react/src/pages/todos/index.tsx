@@ -70,7 +70,7 @@ export function TodoIndexPage() {
       <button
         type="button"
         className={`${
-          isVisible && todoId == null ? "z-20" : ""
+          isVisible && todoId == null ? "!z-20" : ""
         } fixed bottom-16 right-24 h-20 w-20 rounded-full bg-blue-600 p-0 text-white shadow-md lg:right-[24%] 2xl:right-[32%]`}
         onClick={() => {
           setTodoId(null);
@@ -164,7 +164,7 @@ const TodoBox = memo(function TodoBox(props: {
       value={props.todo}
       id={String(props.todo.category_id)}
       className={`${
-        props.sideFormTodoId === props.todo.todo_id ? "z-20" : ""
+        props.sideFormTodoId === props.todo.todo_id ? "!z-20" : ""
       } relative rounded border bg-white px-4 py-2 shadow dark:border-gray-700 dark:bg-gray-800`}
       dragListener={false}
       dragControls={dragControls}
@@ -294,10 +294,10 @@ function CategoryListbox({
         leaveFrom="transform scale-100 opacity-100"
         leaveTo="transform scale-95 opacity-0"
       >
-        <div className="absolute text-xs">
+        <div className="absolute !z-10 text-xs">
           <Listbox.Options
             className={
-              "absolute top-2 z-10 block max-w-[360px] truncate rounded-md bg-white shadow-sm ring-1 ring-black ring-opacity-5 focus:outline-none"
+              "absolute top-2 block max-w-[360px] truncate rounded-md bg-white shadow-sm ring-1 ring-black ring-opacity-5 focus:outline-none"
             }
           >
             {categories.map((category) => {
