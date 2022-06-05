@@ -5,17 +5,21 @@ import { AiFillTag, AiOutlineCheck } from "react-icons/ai";
 import { FaRegCheckCircle, FaRegCircle } from "react-icons/fa";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { MdDragHandle } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
 import { Loading } from "~/components/Loading";
-import { useCategory, YusendoList } from "~/forms/TodoForm";
+import { TodoFormDialog, useCategory, YusendoList } from "~/forms/TodoForm";
 import { api } from "~/repositories/api";
 import { components } from "~/repositories/schema";
 
 export function TodoIndexPage() {
-  const navigate = useNavigate();
-
   const { categories } = useCategory();
-  const { loading, todos, handleDone, handleReorder, handleChange } = useTodos();
+  const { loading, todos, refresh, handleDone, handleReorder, handleChange } = useTodos();
+
+  const [todoId, setTodoId] = useState<number | null>(null);
+  const [isVisible, setIsVisible] = useState<boolean>(false);
+
+  useEffect(() => {
+    refresh();
+  }, []);
 
   return (
     <>
@@ -33,9 +37,21 @@ export function TodoIndexPage() {
               <TodoBox
                 key={todo.todo_id}
                 todo={todo}
-                onDone={() => handleDone(todo.todo_id)}
                 categories={categories}
-                handleChange={handleChange}
+                onChange={(todo_id, key, state) => {
+                  setTodoId(null);
+                  setIsVisible(false);
+                  handleChange(todo_id, key, state);
+                }}
+                onDone={(todo_id) => {
+                  setTodoId(null);
+                  setIsVisible(false);
+                  handleDone(todo_id);
+                }}
+                sideFormIsVisible={isVisible}
+                setSideFormIsVisible={setIsVisible}
+                sideFormTodoId={todoId}
+                setSideFormTodoId={setTodoId}
               />
             ))}
           </Reorder.Group>
@@ -53,11 +69,25 @@ export function TodoIndexPage() {
       )}
       <button
         type="button"
-        className="fixed bottom-16 right-24 h-20 w-20 rounded-full bg-blue-600 p-0 text-white shadow-md lg:right-[24%] 2xl:right-[32%]"
-        onClick={() => navigate("/todos/add")}
+        className={`${
+          isVisible && todoId == null ? "z-20" : ""
+        } fixed bottom-16 right-24 h-20 w-20 rounded-full bg-blue-600 p-0 text-white shadow-md lg:right-[24%] 2xl:right-[32%]`}
+        onClick={() => {
+          setTodoId(null);
+          setIsVisible(!isVisible);
+        }}
       >
         追加
       </button>
+      <TodoFormDialog
+        isVisible={isVisible}
+        todo_id={todoId ? String(todoId) : undefined}
+        onSuccess={() => {
+          setTodoId(null);
+          setIsVisible(false);
+          refresh();
+        }}
+      />
     </>
   );
 }
@@ -105,37 +135,37 @@ const useTodos = () => {
     [todos]
   );
 
-  useEffect(() => {
+  const refresh = useCallback(() => {
     getTodos().then(({ data }) => setTodos(data.todos));
   }, []);
 
-  return { loading, todos, handleDone, handleReorder, handleChange };
+  return { loading, refresh, todos, handleDone, handleReorder, handleChange };
 };
 
-const TodoBox = memo(function TodoBox({
-  todo,
-  onDone,
-  categories,
-  handleChange,
-}: {
+const TodoBox = memo(function TodoBox(props: {
   todo: components["schemas"]["TodoResponse"];
-  onDone: (todo_id: number) => void;
   categories: components["schemas"]["CategoryResponse"][];
-  handleChange: (
+  onDone: (todo_id: number) => void;
+  onChange: (
     todo_id: number,
     key: keyof components["schemas"]["TodoResponse"],
     state: components["schemas"]["TodoResponse"][keyof components["schemas"]["TodoResponse"]]
   ) => void;
+  sideFormIsVisible: boolean;
+  setSideFormIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  sideFormTodoId: number | null;
+  setSideFormTodoId: React.Dispatch<React.SetStateAction<number | null>>;
 }) {
-  const navigate = useNavigate();
   const dragControls = useDragControls();
   const [isHover, setIsHover] = useState(false);
 
   return (
     <Reorder.Item
-      value={todo}
-      id={String(todo.category_id)}
-      className={`rounded border bg-white px-4 py-2 shadow-md dark:border-gray-700 dark:bg-gray-800`}
+      value={props.todo}
+      id={String(props.todo.category_id)}
+      className={`${
+        props.sideFormTodoId === props.todo.todo_id ? "z-20" : ""
+      } relative rounded border bg-white px-4 py-2 shadow dark:border-gray-700 dark:bg-gray-800`}
       dragListener={false}
       dragControls={dragControls}
     >
@@ -144,55 +174,49 @@ const TodoBox = memo(function TodoBox({
         <div className="flex grow flex-col space-y-3 ">
           {/* １行目 */}
           <div className="flex items-center space-x-4 text-xs text-gray-500">
-            <div className="font-bold uppercase">{todo.status}</div>
+            <div className="font-bold uppercase">{props.todo.status}</div>
             <div className="flex items-center">
               <CategoryListbox
-                value={todo.category_id}
-                categories={categories}
-                onChange={(category_id) => {
-                  handleChange(todo.todo_id, "category_id", category_id);
-                }}
+                value={props.todo.category_id}
+                categories={props.categories}
+                onChange={(category_id) =>
+                  props.onChange(props.todo.todo_id, "category_id", category_id)
+                }
               />
             </div>
 
             <input
-              value={todo.kizitu}
+              value={props.todo.kizitu}
               name="kizitu"
               placeholder="期日"
               type="date"
               className="focus:outline-none"
               onKeyDown={(e) => e.preventDefault()}
-              onChange={(e) => {
-                handleChange(todo.todo_id, "kizitu", e.target.value);
-              }}
+              onChange={(e) => props.onChange(props.todo.todo_id, "kizitu", e.target.value)}
             />
 
             <YusendoList
-              value={todo.yusendo}
-              onChange={(value) => {
-                handleChange(todo.todo_id, "yusendo", value);
-              }}
+              value={props.todo.yusendo}
+              onChange={(value) => props.onChange(props.todo.todo_id, "yusendo", value)}
             ></YusendoList>
           </div>
           {/* ２行目 */}
           <input
-            value={todo.yarukoto}
+            value={props.todo.yarukoto}
             name="yarukoto"
             placeholder="やること"
             className="flex items-center overflow-hidden text-ellipsis whitespace-nowrap text-gray-700 focus:outline-none"
-            onChange={(e) => {
-              handleChange(todo.todo_id, "yarukoto", e.target.value);
-            }}
+            onChange={(e) => props.onChange(props.todo.todo_id, "yarukoto", e.target.value)}
           />
           {/* ３行目 */}
           <div className="">
             <CategoryListbox
               multiple
-              value={todo.subcategory_id_list}
-              categories={categories}
-              onChange={(subcategory_id_list) => {
-                handleChange(todo.todo_id, "subcategory_id_list", subcategory_id_list);
-              }}
+              value={props.todo.subcategory_id_list}
+              categories={props.categories}
+              onChange={(subcategory_id_list) =>
+                props.onChange(props.todo.todo_id, "subcategory_id_list", subcategory_id_list)
+              }
             />
           </div>
         </div>
@@ -201,12 +225,21 @@ const TodoBox = memo(function TodoBox({
           onPointerDown={(event) => dragControls.start(event)}
           className="flex flex-col items-stretch"
         >
-          <HiDotsHorizontal
-            className="cursor-pointer text-xl text-gray-600"
-            onClick={() => navigate(`/todos/${todo.todo_id}`)}
-          />
+          <div>
+            <HiDotsHorizontal
+              className="cursor-pointer text-xl text-gray-600"
+              onClick={() => {
+                props.setSideFormTodoId(props.sideFormIsVisible ? null : props.todo.todo_id);
+                props.setSideFormIsVisible(!props.sideFormIsVisible);
+              }}
+            />
+          </div>
           <div
-            onPointerDown={(event) => dragControls.start(event)}
+            onPointerDown={(event) => {
+              props.setSideFormTodoId(null);
+              props.setSideFormIsVisible(false);
+              dragControls.start(event);
+            }}
             className="flex grow cursor-move items-center"
           >
             <MdDragHandle className="text-xl text-gray-500" />
@@ -215,12 +248,12 @@ const TodoBox = memo(function TodoBox({
             {isHover ? (
               <FaRegCheckCircle
                 className="cursor-pointer text-xl text-green-500"
-                onClick={() => onDone(todo.todo_id)}
+                onClick={() => props.onDone(props.todo.todo_id)}
               />
             ) : (
               <FaRegCircle
                 className="cursor-pointer text-xl text-gray-500"
-                onClick={() => onDone(todo.todo_id)}
+                onClick={() => props.onDone(props.todo.todo_id)}
               />
             )}
           </div>

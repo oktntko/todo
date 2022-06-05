@@ -1,20 +1,24 @@
 import { Listbox, Transition } from "@headlessui/react";
 import { Field, FieldInputProps, Form, Formik } from "formik";
-import { motion, useAnimation } from "framer-motion";
+import { AnimatePresence, motion, useAnimation } from "framer-motion";
 import { Fragment, useCallback, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { AiFillTag, AiOutlineCheck } from "react-icons/ai";
 import { HiSelector } from "react-icons/hi";
 import { ImForward3, ImLast, ImPause2, ImPlay3, ImStop2 } from "react-icons/im";
 import { MdClear } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
 import { Loading } from "~/components/Loading";
 import { code } from "~/plugins/code";
 import { api } from "~/repositories/api";
 import { components } from "~/repositories/schema";
 
-export function TodoForm({ todo_id }: { todo_id?: string | undefined }) {
-  const navigate = useNavigate();
-
+export function TodoForm({
+  todo_id,
+  onSuccess,
+}: {
+  todo_id?: string | undefined;
+  onSuccess: (res: { data: components["schemas"]["TodoResponse"] }) => void;
+}) {
   const { categories } = useCategory();
 
   const [initialValues, setInitialValues] = useState({
@@ -44,9 +48,9 @@ export function TodoForm({ todo_id }: { todo_id?: string | undefined }) {
   const handleSubmit = useCallback(
     (values: typeof initialValues) => {
       if (todo_id) {
-        putTodo(todo_id, values).then(() => navigate("/todos"));
+        putTodo(todo_id, values).then(onSuccess);
       } else {
-        postTodo(values).then(() => navigate("/todos"));
+        postTodo(values).then(onSuccess);
       }
     },
     [todo_id]
@@ -54,7 +58,7 @@ export function TodoForm({ todo_id }: { todo_id?: string | undefined }) {
 
   const handleDelete = useCallback(
     (todo_id: string, values: typeof initialValues) => {
-      deleteTodo(todo_id, values).then(() => navigate("/todos"));
+      deleteTodo(todo_id, values).then(onSuccess);
     },
     [todo_id]
   );
@@ -331,5 +335,41 @@ function CategoryListbox({
         </Listbox.Options>
       </Transition>
     </Listbox>
+  );
+}
+
+export function TodoFormDialog({
+  isVisible,
+  todo_id,
+  onSuccess,
+}: {
+  isVisible: boolean;
+  todo_id?: string;
+  onSuccess: (res: { data: components["schemas"]["TodoResponse"] }) => void;
+}) {
+  return createPortal(
+    <AnimatePresence>
+      {isVisible && (
+        <motion.div
+          className={`fixed inset-0 z-10 overflow-hidden bg-slate-200/50 backdrop-blur-[2px]`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ opacity: { ease: "linear", duration: 0.2 } }}
+        >
+          <motion.div
+            className="absolute right-0 h-full w-full max-w-screen-sm bg-white px-8 py-8 shadow"
+            initial={{ x: 100, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: 100, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <TodoForm todo_id={todo_id} onSuccess={onSuccess} />
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>,
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    document.getElementById("outside")!
   );
 }
