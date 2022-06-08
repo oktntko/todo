@@ -7,7 +7,6 @@ import { AiFillTag, AiOutlineCheck } from "react-icons/ai";
 import { HiSelector } from "react-icons/hi";
 import { ImForward3, ImLast, ImPause2, ImPlay3, ImStop2 } from "react-icons/im";
 import { MdClear } from "react-icons/md";
-import { Loading } from "~/components/Loading";
 import { code } from "~/plugins/code";
 import { api } from "~/repositories/api";
 import { components } from "~/repositories/schema";
@@ -32,7 +31,7 @@ export function TodoForm({
     updated_at: "",
   });
 
-  const { loading, getTodo, postTodo, putTodo, deleteTodo } = useTodo();
+  const { getTodo, postTodo, putTodo, deleteTodo } = useTodo();
 
   useEffect(() => {
     if (todo_id) {
@@ -65,7 +64,6 @@ export function TodoForm({
 
   return (
     <>
-      <Loading loading={loading} />
       <Formik initialValues={initialValues} enableReinitialize onSubmit={handleSubmit}>
         {({ values }) => (
           <Form>

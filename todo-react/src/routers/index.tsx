@@ -6,8 +6,6 @@ import { CategoryIndexPage } from "~/pages/categories";
 import { CategoryTorokuPage } from "~/pages/categories/add";
 import { CategorySyosaiPage } from "~/pages/categories/_category_id";
 import { TodoIndexPage } from "~/pages/todos";
-import { TodoTorokuPage } from "~/pages/todos/add";
-import { TodoSyosaiPage } from "~/pages/todos/_todo_id";
 
 export function RouterView() {
   return (
@@ -16,8 +14,6 @@ export function RouterView() {
         <Route element={<DashboardLayout />}>
           <Route index element={<TodoIndexPage />} />
           <Route path="/todos" element={<TodoIndexPage />} />
-          <Route path="/todos/add" element={<TodoTorokuPage />} />
-          <Route path="/todos/:todo_id" element={<TodoSyosaiPage />} />
           <Route path="/categories" element={<CategoryIndexPage />} />
           <Route path="/categories/add" element={<CategoryTorokuPage />} />
           <Route path="/categories/:category_id" element={<CategorySyosaiPage />} />
