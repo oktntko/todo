@@ -35,8 +35,6 @@ const putProject = async (
 ) => {
   log.debug("putProject", project_id, project, updated_at);
 
-  await ProjectsRepository.checkPreviousVersion({ project_id }, updated_at);
-
   await ProjectsRepository.checkDuplicate({ project_name: project.project_name }, project_id);
 
   return ProjectsRepository.updateProject({ project_id }, project);
@@ -49,10 +47,18 @@ const deleteProject = async (project_id: number, updated_at: string) => {
   return ProjectsRepository.deleteProject({ project_id });
 };
 
+// # PATCH /api/projects/reorder
+const patchProjectReorder = async (projects: Pick<Project, "project_id" | "order">[]) => {
+  log.debug("patchProjectReorder", projects);
+
+  return { projects: await Promise.all(projects.map(ProjectsRepository.updateProjectOrder)) };
+};
+
 export const ProjectsService = {
   postProject,
   getProjects,
   getProject,
   putProject,
   deleteProject,
+  patchProjectReorder,
 } as const;

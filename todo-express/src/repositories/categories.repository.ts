@@ -18,11 +18,13 @@ const createCategory = async (
       category_id: true,
       category_name: true,
       color: true,
+      order: true,
       updated_at: true,
     },
     data: {
       category_name: category.category_name,
       color: category.color,
+      order: category.order,
     },
   });
 };
@@ -35,9 +37,13 @@ const findManyCategory = async (where?: Prisma.CategoryWhereInput) => {
       category_id: true,
       category_name: true,
       color: true,
+      order: true,
       updated_at: true,
     },
     where,
+    orderBy: {
+      order: "asc",
+    },
   });
 };
 
@@ -49,6 +55,7 @@ const findUniqueCategory = async (where: RequireOne<Prisma.CategoryWhereUniqueIn
       category_id: true,
       category_name: true,
       color: true,
+      order: true,
       updated_at: true,
     },
     where,
@@ -66,11 +73,13 @@ const updateCategory = async (
       category_id: true,
       category_name: true,
       color: true,
+      order: true,
       updated_at: true,
     },
     data: {
       category_name: category.category_name,
       color: category.color,
+      order: category.order,
     },
     where,
   });
@@ -84,6 +93,7 @@ const deleteCategory = async (where: RequireOne<Prisma.CategoryWhereUniqueInput>
       category_id: true,
       category_name: true,
       color: true,
+      order: true,
       updated_at: true,
     },
     where,
@@ -117,6 +127,26 @@ const checkPreviousVersion = async (
   return previous;
 };
 
+const updateCategoryOrder = async (category: Pick<Category, "category_id" | "order">) => {
+  log.debug("updateCategoryOrder");
+
+  return ORM.category.update({
+    select: {
+      category_id: true,
+      category_name: true,
+      color: true,
+      order: true,
+      updated_at: true,
+    },
+    data: {
+      order: category.order,
+    },
+    where: {
+      category_id: category.category_id,
+    },
+  });
+};
+
 export const CategoriesRepository = {
   createCategory,
   findManyCategory,
@@ -125,4 +155,5 @@ export const CategoriesRepository = {
   deleteCategory,
   checkDuplicate,
   checkPreviousVersion,
+  updateCategoryOrder,
 } as const;

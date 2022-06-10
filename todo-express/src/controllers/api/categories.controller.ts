@@ -1,8 +1,8 @@
 import { Type } from "class-transformer";
 import {
-  IsArray,
   IsDate,
   IsHexColor,
+  IsInt,
   IsNotEmpty,
   IsPositive,
   IsString,
@@ -16,6 +16,7 @@ import {
   Get,
   JsonController,
   Params,
+  Patch,
   Post,
   Put,
   QueryParam,
@@ -35,11 +36,28 @@ class CategoryBody {
   @IsHexColor()
   @MaxLength(100)
   color: string;
+
+  @IsInt()
+  order: number;
 }
 
 class CategoryPathParams {
   @IsPositive()
   category_id: number;
+}
+
+class CategoryReorderBody {
+  @IsPositive()
+  category_id: number;
+
+  @IsInt()
+  order: number;
+}
+
+class ListCategoryBody {
+  @ValidateNested({ each: true })
+  @Type(() => CategoryReorderBody)
+  categories: CategoryReorderBody[];
 }
 
 // ::: RESPONSE
@@ -58,6 +76,9 @@ class CategoryResponse {
   @MaxLength(100)
   color: string;
 
+  @IsInt()
+  order: number;
+
   @IsNotEmpty()
   @IsDate()
   updated_at: Date;
@@ -65,7 +86,6 @@ class CategoryResponse {
 
 class ListCategoryResponse {
   @ValidateNested({ each: true })
-  @IsArray()
   @Type(() => CategoryResponse)
   categories: CategoryResponse[];
 }
@@ -112,5 +132,14 @@ export class CategoriesController {
     @QueryParam("updated_at", { required: true }) updated_at: string
   ): Promise<CategoryResponse> {
     return CategoriesService.deleteCategory(path.category_id, updated_at);
+  }
+
+  // # PATCH /api/categories/reorder
+  @Patch("/api/categories/reorder")
+  @ResponseSchema(ListCategoryResponse)
+  async patchStatusReorder(
+    @Body({ required: true }) body: ListCategoryBody
+  ): Promise<ListCategoryResponse> {
+    return CategoriesService.patchCategoryReorder(body.categories);
   }
 }

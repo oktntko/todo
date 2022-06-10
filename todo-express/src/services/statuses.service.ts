@@ -35,8 +35,6 @@ const putStatus = async (
 ) => {
   log.debug("putStatus", status_id, status, updated_at);
 
-  await StatusesRepository.checkPreviousVersion({ status_id }, updated_at);
-
   await StatusesRepository.checkDuplicate({ status_name: status.status_name }, status_id);
 
   return StatusesRepository.updateStatus({ status_id }, status);
@@ -49,10 +47,18 @@ const deleteStatus = async (status_id: number, updated_at: string) => {
   return StatusesRepository.deleteStatus({ status_id });
 };
 
+// # PATCH /api/statuses/reorder
+const patchStatusReorder = async (statuses: Pick<Status, "status_id" | "order">[]) => {
+  log.debug("patchStatusReorder", statuses);
+
+  return { statuses: await Promise.all(statuses.map(StatusesRepository.updateStatusOrder)) };
+};
+
 export const StatusesService = {
   postStatus,
   getStatuses,
   getStatus,
   putStatus,
   deleteStatus,
+  patchStatusReorder,
 } as const;

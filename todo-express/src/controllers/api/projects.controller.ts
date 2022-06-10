@@ -1,8 +1,8 @@
 import { Type } from "class-transformer";
 import {
-  IsArray,
   IsDate,
   IsHexColor,
+  IsInt,
   IsNotEmpty,
   IsPositive,
   IsString,
@@ -16,6 +16,7 @@ import {
   Get,
   JsonController,
   Params,
+  Patch,
   Post,
   Put,
   QueryParam,
@@ -34,11 +35,28 @@ class ProjectBody {
   @IsString()
   @MaxLength(100)
   icon: string;
+
+  @IsInt()
+  order: number;
 }
 
 class ProjectPathParams {
   @IsPositive()
   project_id: number;
+}
+
+class ProjectReorderBody {
+  @IsPositive()
+  project_id: number;
+
+  @IsInt()
+  order: number;
+}
+
+class ListProjectBody {
+  @ValidateNested({ each: true })
+  @Type(() => ProjectReorderBody)
+  projects: ProjectReorderBody[];
 }
 
 // ::: RESPONSE
@@ -57,6 +75,9 @@ class ProjectResponse {
   @MaxLength(100)
   icon: string;
 
+  @IsInt()
+  order: number;
+
   @IsNotEmpty()
   @IsDate()
   updated_at: Date;
@@ -64,7 +85,6 @@ class ProjectResponse {
 
 class ListProjectResponse {
   @ValidateNested({ each: true })
-  @IsArray()
   @Type(() => ProjectResponse)
   projects: ProjectResponse[];
 }
@@ -111,5 +131,14 @@ export class ProjectsController {
     @QueryParam("updated_at", { required: true }) updated_at: string
   ): Promise<ProjectResponse> {
     return ProjectsService.deleteProject(path.project_id, updated_at);
+  }
+
+  // # PATCH /api/projects/reorder
+  @Patch("/api/projects/reorder")
+  @ResponseSchema(ListProjectResponse)
+  async patchProjectReorder(
+    @Body({ required: true }) body: ListProjectBody
+  ): Promise<ListProjectResponse> {
+    return ProjectsService.patchProjectReorder(body.projects);
   }
 }

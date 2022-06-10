@@ -35,8 +35,6 @@ const putTag = async (
 ) => {
   log.debug("putTag", tag_id, tag, updated_at);
 
-  await TagsRepository.checkPreviousVersion({ tag_id }, updated_at);
-
   await TagsRepository.checkDuplicate({ tag_name: tag.tag_name }, tag_id);
 
   return TagsRepository.updateTag({ tag_id }, tag);
@@ -49,10 +47,18 @@ const deleteTag = async (tag_id: number, updated_at: string) => {
   return TagsRepository.deleteTag({ tag_id });
 };
 
+// # PATCH /api/tags/reorder
+const patchTagReorder = async (tags: Pick<Tag, "tag_id" | "order">[]) => {
+  log.debug("patchTagReorder", tags);
+
+  return { tags: await Promise.all(tags.map(TagsRepository.updateTagOrder)) };
+};
+
 export const TagsService = {
   postTag,
   getTags,
   getTag,
   putTag,
   deleteTag,
+  patchTagReorder,
 } as const;

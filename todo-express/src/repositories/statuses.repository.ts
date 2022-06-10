@@ -1,4 +1,4 @@
-import { Status, Prisma } from "@prisma/client";
+import { Prisma, Status } from "@prisma/client";
 import ORM from "~/arch/ORM";
 import dayjs from "~/libs/dayjs";
 import {
@@ -16,11 +16,13 @@ const createStatus = async (status: Omit<Status, "status_id" | "created_at" | "u
       status_id: true,
       status_name: true,
       color: true,
+      order: true,
       updated_at: true,
     },
     data: {
       status_name: status.status_name,
       color: status.color,
+      order: status.order,
     },
   });
 };
@@ -33,9 +35,13 @@ const findManyStatus = async (where?: Prisma.StatusWhereInput) => {
       status_id: true,
       status_name: true,
       color: true,
+      order: true,
       updated_at: true,
     },
     where,
+    orderBy: {
+      order: "asc",
+    },
   });
 };
 
@@ -47,6 +53,7 @@ const findUniqueStatus = async (where: RequireOne<Prisma.StatusWhereUniqueInput>
       status_id: true,
       status_name: true,
       color: true,
+      order: true,
       updated_at: true,
     },
     where,
@@ -64,11 +71,13 @@ const updateStatus = async (
       status_id: true,
       status_name: true,
       color: true,
+      order: true,
       updated_at: true,
     },
     data: {
       status_name: status.status_name,
       color: status.color,
+      order: status.order,
     },
     where,
   });
@@ -82,6 +91,7 @@ const deleteStatus = async (where: RequireOne<Prisma.StatusWhereUniqueInput>) =>
       status_id: true,
       status_name: true,
       color: true,
+      order: true,
       updated_at: true,
     },
     where,
@@ -115,6 +125,26 @@ const checkPreviousVersion = async (
   return previous;
 };
 
+const updateStatusOrder = async (status: Pick<Status, "status_id" | "order">) => {
+  log.debug("updateStatusOrder");
+
+  return ORM.status.update({
+    select: {
+      status_id: true,
+      status_name: true,
+      color: true,
+      order: true,
+      updated_at: true,
+    },
+    data: {
+      order: status.order,
+    },
+    where: {
+      status_id: status.status_id,
+    },
+  });
+};
+
 export const StatusesRepository = {
   createStatus,
   findManyStatus,
@@ -123,4 +153,5 @@ export const StatusesRepository = {
   deleteStatus,
   checkDuplicate,
   checkPreviousVersion,
+  updateStatusOrder,
 } as const;

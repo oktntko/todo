@@ -18,11 +18,13 @@ const createProject = async (
       project_id: true,
       project_name: true,
       icon: true,
+      order: true,
       updated_at: true,
     },
     data: {
       project_name: project.project_name,
       icon: project.icon,
+      order: project.order,
     },
   });
 };
@@ -35,9 +37,13 @@ const findManyProject = async (where?: Prisma.ProjectWhereInput) => {
       project_id: true,
       project_name: true,
       icon: true,
+      order: true,
       updated_at: true,
     },
     where,
+    orderBy: {
+      order: "asc",
+    },
   });
 };
 
@@ -49,6 +55,7 @@ const findUniqueProject = async (where: RequireOne<Prisma.ProjectWhereUniqueInpu
       project_id: true,
       project_name: true,
       icon: true,
+      order: true,
       updated_at: true,
     },
     where,
@@ -66,11 +73,13 @@ const updateProject = async (
       project_id: true,
       project_name: true,
       icon: true,
+      order: true,
       updated_at: true,
     },
     data: {
       project_name: project.project_name,
       icon: project.icon,
+      order: project.order,
     },
     where,
   });
@@ -84,6 +93,7 @@ const deleteProject = async (where: RequireOne<Prisma.ProjectWhereUniqueInput>) 
       project_id: true,
       project_name: true,
       icon: true,
+      order: true,
       updated_at: true,
     },
     where,
@@ -117,6 +127,26 @@ const checkPreviousVersion = async (
   return previous;
 };
 
+const updateProjectOrder = async (project: Pick<Project, "project_id" | "order">) => {
+  log.debug("updateProjectOrder");
+
+  return ORM.project.update({
+    select: {
+      project_id: true,
+      project_name: true,
+      icon: true,
+      order: true,
+      updated_at: true,
+    },
+    data: {
+      order: project.order,
+    },
+    where: {
+      project_id: project.project_id,
+    },
+  });
+};
+
 export const ProjectsRepository = {
   createProject,
   findManyProject,
@@ -125,4 +155,5 @@ export const ProjectsRepository = {
   deleteProject,
   checkDuplicate,
   checkPreviousVersion,
+  updateProjectOrder,
 } as const;

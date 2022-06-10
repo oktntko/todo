@@ -17,25 +17,36 @@ interface StatusType extends Weaken<components["schemas"]["StatusResponse"], "st
   status_id: string | number;
 }
 
-const newdata = () => ({
+const newdata = (index: number) => ({
   status_id: generateId(), // 追加分は id が string
-  color: "#000000",
   status_name: "",
+  color: "#000000",
+  order: index,
   updated_at: "",
 });
 
 export function StatusIndexPage() {
-  const { statuses, setStatuses, postStatuses, putStatuses, deleteStatuses } = useStatus();
+  const { statuses, setStatuses, postStatuses, putStatuses, deleteStatuses, patchStatusReorder } =
+    useStatus();
 
-  const handleAdd = () => {
-    setStatuses(update(statuses, { $push: [newdata()] }));
+  const handleReorder = (values: StatusType[]) => {
+    const statuses = values.map((status, index) => ({ ...status, order: index }));
+    setStatuses(values);
+
+    if (statuses.length) {
+      patchStatusReorder({
+        statuses: statuses.filter(
+          (status) => typeof status.status_id === "number"
+        ) as components["schemas"]["StatusReorderBody"][],
+      });
+    }
   };
 
   const handleSubmit = (index: number, values: StatusType) => {
     if (typeof values.status_id === "string") {
-      postStatuses(index, values);
+      postStatuses(index, { ...values, order: index });
     } else {
-      putStatuses(index, values.status_id, values);
+      putStatuses(index, values.status_id, { ...values, order: index });
     }
   };
 
@@ -45,11 +56,15 @@ export function StatusIndexPage() {
     }
   };
 
+  const handleAdd = () => {
+    setStatuses(update(statuses, { $push: [newdata(statuses.length)] }));
+  };
+
   return (
     <>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
         <div className="container my-4 mx-auto sm:px-4 md:max-w-3xl">
-          <Reorder.Group values={statuses} onReorder={setStatuses} className=" ">
+          <Reorder.Group values={statuses} onReorder={handleReorder} className=" ">
             {statuses.map((status, index) => (
               <StatusRow
                 key={status.status_id}
@@ -115,7 +130,22 @@ const useStatus = () => {
     [statuses]
   );
 
-  return { statuses, setStatuses, getStatuses, postStatuses, putStatuses, deleteStatuses };
+  const patchStatusReorder = useCallback(
+    ({ statuses }: components["schemas"]["ListStatusBody"]) => {
+      api.patch.statuses({ statuses });
+    },
+    [statuses]
+  );
+
+  return {
+    statuses,
+    setStatuses,
+    getStatuses,
+    postStatuses,
+    putStatuses,
+    deleteStatuses,
+    patchStatusReorder,
+  };
 };
 
 type StatusRowProps = {

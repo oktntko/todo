@@ -43,6 +43,15 @@ const statuses = {
       >(`/api/statuses/${path.status_id}`, { params: query });
     },
   },
+  patch: {
+    statuses: async (
+      body: paths["/api/statuses/reorder"]["patch"]["requestBody"]["content"]["application/json"]
+    ) => {
+      return client.patch<
+        paths["/api/statuses/reorder"]["patch"]["responses"]["200"]["content"]["application/json"]
+      >(`/api/statuses/reorder`, body);
+    },
+  },
 };
 
 const categories = {
@@ -85,6 +94,15 @@ const categories = {
       return client.delete<
         paths["/api/categories/{category_id}"]["delete"]["responses"]["200"]["content"]["application/json"]
       >(`/api/categories/${path.category_id}`, { params: query });
+    },
+  },
+  patch: {
+    categories: async (
+      body: paths["/api/categories/reorder"]["patch"]["requestBody"]["content"]["application/json"]
+    ) => {
+      return client.patch<
+        paths["/api/categories/reorder"]["patch"]["responses"]["200"]["content"]["application/json"]
+      >(`/api/categories/reorder`, body);
     },
   },
 };
@@ -131,6 +149,15 @@ const projects = {
       >(`/api/projects/${path.project_id}`, { params: query });
     },
   },
+  patch: {
+    projects: async (
+      body: paths["/api/projects/reorder"]["patch"]["requestBody"]["content"]["application/json"]
+    ) => {
+      return client.patch<
+        paths["/api/projects/reorder"]["patch"]["responses"]["200"]["content"]["application/json"]
+      >(`/api/projects/reorder`, body);
+    },
+  },
 };
 
 const tags = {
@@ -175,7 +202,17 @@ const tags = {
       >(`/api/tags/${path.tag_id}`, { params: query });
     },
   },
+  patch: {
+    tags: async (
+      body: paths["/api/tags/reorder"]["patch"]["requestBody"]["content"]["application/json"]
+    ) => {
+      return client.patch<
+        paths["/api/tags/reorder"]["patch"]["responses"]["200"]["content"]["application/json"]
+      >(`/api/tags/reorder`, body);
+    },
+  },
 };
+
 const todos = {
   get: {
     todos: async () => {
@@ -248,5 +285,11 @@ export const api = {
     ...projects.delete,
     ...tags.delete,
     ...todos.delete,
+  },
+  patch: {
+    ...statuses.patch,
+    ...categories.patch,
+    ...projects.patch,
+    ...tags.patch,
   },
 };

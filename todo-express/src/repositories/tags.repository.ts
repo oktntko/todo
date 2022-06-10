@@ -1,4 +1,4 @@
-import { Tag, Prisma } from "@prisma/client";
+import { Prisma, Tag } from "@prisma/client";
 import ORM from "~/arch/ORM";
 import dayjs from "~/libs/dayjs";
 import {
@@ -16,11 +16,13 @@ const createTag = async (tag: Omit<Tag, "tag_id" | "created_at" | "updated_at">)
       tag_id: true,
       tag_name: true,
       icon: true,
+      order: true,
       updated_at: true,
     },
     data: {
       tag_name: tag.tag_name,
       icon: tag.icon,
+      order: tag.order,
     },
   });
 };
@@ -33,9 +35,13 @@ const findManyTag = async (where?: Prisma.TagWhereInput) => {
       tag_id: true,
       tag_name: true,
       icon: true,
+      order: true,
       updated_at: true,
     },
     where,
+    orderBy: {
+      order: "asc",
+    },
   });
 };
 
@@ -47,6 +53,7 @@ const findUniqueTag = async (where: RequireOne<Prisma.TagWhereUniqueInput>) => {
       tag_id: true,
       tag_name: true,
       icon: true,
+      order: true,
       updated_at: true,
     },
     where,
@@ -64,11 +71,13 @@ const updateTag = async (
       tag_id: true,
       tag_name: true,
       icon: true,
+      order: true,
       updated_at: true,
     },
     data: {
       tag_name: tag.tag_name,
       icon: tag.icon,
+      order: tag.order,
     },
     where,
   });
@@ -82,6 +91,7 @@ const deleteTag = async (where: RequireOne<Prisma.TagWhereUniqueInput>) => {
       tag_id: true,
       tag_name: true,
       icon: true,
+      order: true,
       updated_at: true,
     },
     where,
@@ -115,6 +125,26 @@ const checkPreviousVersion = async (
   return previous;
 };
 
+const updateTagOrder = async (tag: Pick<Tag, "tag_id" | "order">) => {
+  log.debug("updateTagOrder");
+
+  return ORM.tag.update({
+    select: {
+      tag_id: true,
+      tag_name: true,
+      icon: true,
+      order: true,
+      updated_at: true,
+    },
+    data: {
+      order: tag.order,
+    },
+    where: {
+      tag_id: tag.tag_id,
+    },
+  });
+};
+
 export const TagsRepository = {
   createTag,
   findManyTag,
@@ -123,4 +153,5 @@ export const TagsRepository = {
   deleteTag,
   checkDuplicate,
   checkPreviousVersion,
+  updateTagOrder,
 } as const;

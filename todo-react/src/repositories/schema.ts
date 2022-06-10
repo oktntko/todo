@@ -13,6 +13,45 @@ export type paths = {
     put: operations["CategoriesController.putCategory"];
     delete: operations["CategoriesController.deleteCategory"];
   };
+  "/api/categories/reorder": {
+    patch: operations["CategoriesController.patchStatusReorder"];
+  };
+  "/api/projects": {
+    get: operations["ProjectsController.getProjects"];
+    post: operations["ProjectsController.postProject"];
+  };
+  "/api/projects/{project_id}": {
+    get: operations["ProjectsController.getProject"];
+    put: operations["ProjectsController.putProject"];
+    delete: operations["ProjectsController.deleteProject"];
+  };
+  "/api/projects/reorder": {
+    patch: operations["ProjectsController.patchProjectReorder"];
+  };
+  "/api/statuses": {
+    get: operations["StatusesController.getStatuses"];
+    post: operations["StatusesController.postStatus"];
+  };
+  "/api/statuses/{status_id}": {
+    get: operations["StatusesController.getStatus"];
+    put: operations["StatusesController.putStatus"];
+    delete: operations["StatusesController.deleteStatus"];
+  };
+  "/api/statuses/reorder": {
+    patch: operations["StatusesController.patchStatusReorder"];
+  };
+  "/api/tags": {
+    get: operations["TagsController.getTags"];
+    post: operations["TagsController.postTag"];
+  };
+  "/api/tags/{tag_id}": {
+    get: operations["TagsController.getTag"];
+    put: operations["TagsController.putTag"];
+    delete: operations["TagsController.deleteTag"];
+  };
+  "/api/tags/reorder": {
+    patch: operations["TagsController.patchTagReorder"];
+  };
   "/api/todos": {
     get: operations["TodosController.getTodos"];
     post: operations["TodosController.postTodo"];
@@ -25,33 +64,6 @@ export type paths = {
   "/openapi": {
     get: operations["OpenapiController.getOpenApi"];
   };
-  "/api/projects": {
-    get: operations["ProjectsController.getProjects"];
-    post: operations["ProjectsController.postProject"];
-  };
-  "/api/projects/{project_id}": {
-    get: operations["ProjectsController.getProject"];
-    put: operations["ProjectsController.putProject"];
-    delete: operations["ProjectsController.deleteProject"];
-  };
-  "/api/statuses": {
-    get: operations["StatusesController.getStatuses"];
-    post: operations["StatusesController.postStatus"];
-  };
-  "/api/statuses/{status_id}": {
-    get: operations["StatusesController.getStatus"];
-    put: operations["StatusesController.putStatus"];
-    delete: operations["StatusesController.deleteStatus"];
-  };
-  "/api/tags": {
-    get: operations["TagsController.getTags"];
-    post: operations["TagsController.postTag"];
-  };
-  "/api/tags/{tag_id}": {
-    get: operations["TagsController.getTag"];
-    put: operations["TagsController.putTag"];
-    delete: operations["TagsController.deleteTag"];
-  };
 };
 
 export type components = {
@@ -59,18 +71,102 @@ export type components = {
     CategoryBody: {
       category_name: string;
       color: string;
+      order: number;
     };
     CategoryPathParams: {
       category_id: number;
+    };
+    CategoryReorderBody: {
+      category_id: number;
+      order: number;
+    };
+    ListCategoryBody: {
+      categories: components["schemas"]["CategoryReorderBody"][];
     };
     CategoryResponse: {
       category_id: number;
       category_name: string;
       color: string;
+      order: number;
       updated_at: string;
     };
     ListCategoryResponse: {
       categories: components["schemas"]["CategoryResponse"][];
+    };
+    ProjectBody: {
+      project_name: string;
+      icon: string;
+      order: number;
+    };
+    ProjectPathParams: {
+      project_id: number;
+    };
+    ProjectReorderBody: {
+      project_id: number;
+      order: number;
+    };
+    ListProjectBody: {
+      projects: components["schemas"]["ProjectReorderBody"][];
+    };
+    ProjectResponse: {
+      project_id: number;
+      project_name: string;
+      icon: string;
+      order: number;
+      updated_at: string;
+    };
+    ListProjectResponse: {
+      projects: components["schemas"]["ProjectResponse"][];
+    };
+    StatusBody: {
+      status_name: string;
+      color: string;
+      order: number;
+    };
+    StatusPathParams: {
+      status_id: number;
+    };
+    StatusReorderBody: {
+      status_id: number;
+      order: number;
+    };
+    ListStatusBody: {
+      statuses: components["schemas"]["StatusReorderBody"][];
+    };
+    StatusResponse: {
+      status_id: number;
+      status_name: string;
+      color: string;
+      order: number;
+      updated_at: string;
+    };
+    ListStatusResponse: {
+      statuses: components["schemas"]["StatusResponse"][];
+    };
+    TagBody: {
+      tag_name: string;
+      icon: string;
+      order: number;
+    };
+    TagPathParams: {
+      tag_id: number;
+    };
+    TagReorderBody: {
+      tag_id: number;
+      order: number;
+    };
+    ListTagBody: {
+      tags: components["schemas"]["TagReorderBody"][];
+    };
+    TagResponse: {
+      tag_id: number;
+      tag_name: string;
+      icon: string;
+      order: number;
+      updated_at: string;
+    };
+    ListTagResponse: {
+      tags: components["schemas"]["TagResponse"][];
     };
     TodoBody: {
       yarukoto?: string;
@@ -102,54 +198,6 @@ export type components = {
     };
     ListTodoResponse: {
       todos: components["schemas"]["TodoResponse"][];
-    };
-    ProjectBody: {
-      project_name: string;
-      icon: string;
-    };
-    ProjectPathParams: {
-      project_id: number;
-    };
-    ProjectResponse: {
-      project_id: number;
-      project_name: string;
-      icon: string;
-      updated_at: string;
-    };
-    ListProjectResponse: {
-      projects: components["schemas"]["ProjectResponse"][];
-    };
-    StatusBody: {
-      status_name: string;
-      color: string;
-    };
-    StatusPathParams: {
-      status_id: number;
-    };
-    StatusResponse: {
-      status_id: number;
-      status_name: string;
-      color: string;
-      updated_at: string;
-    };
-    ListStatusResponse: {
-      statuses: components["schemas"]["StatusResponse"][];
-    };
-    TagBody: {
-      tag_name: string;
-      icon: string;
-    };
-    TagPathParams: {
-      tag_id: number;
-    };
-    TagResponse: {
-      tag_id: number;
-      tag_name: string;
-      icon: string;
-      updated_at: string;
-    };
-    ListTagResponse: {
-      tags: components["schemas"]["TagResponse"][];
     };
   };
 };
@@ -229,6 +277,297 @@ export type operations = {
         content: {
           "application/json": components["schemas"]["CategoryResponse"];
         };
+      };
+    };
+  };
+  "CategoriesController.patchStatusReorder": {
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["ListCategoryResponse"];
+        };
+      };
+    };
+    /** ListCategoryBody */
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ListCategoryBody"];
+      };
+    };
+  };
+  "ProjectsController.getProjects": {
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["ListProjectResponse"];
+        };
+      };
+    };
+  };
+  "ProjectsController.postProject": {
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["ProjectResponse"];
+        };
+      };
+    };
+    /** ProjectBody */
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ProjectBody"];
+      };
+    };
+  };
+  "ProjectsController.getProject": {
+    parameters: {
+      path: {
+        project_id: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["ProjectResponse"];
+        };
+      };
+    };
+  };
+  "ProjectsController.putProject": {
+    parameters: {
+      path: {
+        project_id: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["ProjectResponse"];
+        };
+      };
+    };
+    /** ProjectBody */
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ProjectBody"] & {
+          updated_at: string;
+        };
+      };
+    };
+  };
+  "ProjectsController.deleteProject": {
+    parameters: {
+      path: {
+        project_id: string;
+      };
+      query: {
+        updated_at: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["ProjectResponse"];
+        };
+      };
+    };
+  };
+  "ProjectsController.patchProjectReorder": {
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["ListProjectResponse"];
+        };
+      };
+    };
+    /** ListProjectBody */
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ListProjectBody"];
+      };
+    };
+  };
+  "StatusesController.getStatuses": {
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["ListStatusResponse"];
+        };
+      };
+    };
+  };
+  "StatusesController.postStatus": {
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["StatusResponse"];
+        };
+      };
+    };
+    /** StatusBody */
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["StatusBody"];
+      };
+    };
+  };
+  "StatusesController.getStatus": {
+    parameters: {
+      path: {
+        status_id: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["StatusResponse"];
+        };
+      };
+    };
+  };
+  "StatusesController.putStatus": {
+    parameters: {
+      path: {
+        status_id: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["StatusResponse"];
+        };
+      };
+    };
+    /** StatusBody */
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["StatusBody"] & {
+          updated_at: string;
+        };
+      };
+    };
+  };
+  "StatusesController.deleteStatus": {
+    parameters: {
+      path: {
+        status_id: string;
+      };
+      query: {
+        updated_at: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["StatusResponse"];
+        };
+      };
+    };
+  };
+  "StatusesController.patchStatusReorder": {
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["ListStatusResponse"];
+        };
+      };
+    };
+    /** ListStatusBody */
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ListStatusBody"];
+      };
+    };
+  };
+  "TagsController.getTags": {
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["ListTagResponse"];
+        };
+      };
+    };
+  };
+  "TagsController.postTag": {
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["TagResponse"];
+        };
+      };
+    };
+    /** TagBody */
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["TagBody"];
+      };
+    };
+  };
+  "TagsController.getTag": {
+    parameters: {
+      path: {
+        tag_id: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["TagResponse"];
+        };
+      };
+    };
+  };
+  "TagsController.putTag": {
+    parameters: {
+      path: {
+        tag_id: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["TagResponse"];
+        };
+      };
+    };
+    /** TagBody */
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["TagBody"] & {
+          updated_at: string;
+        };
+      };
+    };
+  };
+  "TagsController.deleteTag": {
+    parameters: {
+      path: {
+        tag_id: string;
+      };
+      query: {
+        updated_at: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["TagResponse"];
+        };
+      };
+    };
+  };
+  "TagsController.patchTagReorder": {
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["ListTagResponse"];
+        };
+      };
+    };
+    /** ListTagBody */
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ListTagBody"];
       };
     };
   };
@@ -315,237 +654,6 @@ export type operations = {
       200: {
         content: {
           "application/json": unknown;
-        };
-      };
-    };
-  };
-  "ProjectsController.getProjects": {
-    responses: {
-      200: {
-        content: {
-          "application/json": components["schemas"]["ListProjectResponse"];
-        };
-      };
-    };
-  };
-  "ProjectsController.postProject": {
-    responses: {
-      200: {
-        content: {
-          "application/json": components["schemas"]["ProjectResponse"];
-        };
-      };
-    };
-    /** ProjectBody */
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["ProjectBody"];
-      };
-    };
-  };
-  "ProjectsController.getProject": {
-    parameters: {
-      path: {
-        project_id: string;
-      };
-    };
-    responses: {
-      200: {
-        content: {
-          "application/json": components["schemas"]["ProjectResponse"];
-        };
-      };
-    };
-  };
-  "ProjectsController.putProject": {
-    parameters: {
-      path: {
-        project_id: string;
-      };
-    };
-    responses: {
-      200: {
-        content: {
-          "application/json": components["schemas"]["ProjectResponse"];
-        };
-      };
-    };
-    /** ProjectBody */
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["ProjectBody"] & {
-          updated_at: string;
-        };
-      };
-    };
-  };
-  "ProjectsController.deleteProject": {
-    parameters: {
-      path: {
-        project_id: string;
-      };
-      query: {
-        updated_at: string;
-      };
-    };
-    responses: {
-      200: {
-        content: {
-          "application/json": components["schemas"]["ProjectResponse"];
-        };
-      };
-    };
-  };
-  "StatusesController.getStatuses": {
-    responses: {
-      200: {
-        content: {
-          "application/json": components["schemas"]["ListStatusResponse"];
-        };
-      };
-    };
-  };
-  "StatusesController.postStatus": {
-    responses: {
-      200: {
-        content: {
-          "application/json": components["schemas"]["StatusResponse"];
-        };
-      };
-    };
-    /** StatusBody */
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["StatusBody"];
-      };
-    };
-  };
-  "StatusesController.getStatus": {
-    parameters: {
-      path: {
-        status_id: string;
-      };
-    };
-    responses: {
-      200: {
-        content: {
-          "application/json": components["schemas"]["StatusResponse"];
-        };
-      };
-    };
-  };
-  "StatusesController.putStatus": {
-    parameters: {
-      path: {
-        status_id: string;
-      };
-    };
-    responses: {
-      200: {
-        content: {
-          "application/json": components["schemas"]["StatusResponse"];
-        };
-      };
-    };
-    /** StatusBody */
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["StatusBody"] & {
-          updated_at: string;
-        };
-      };
-    };
-  };
-  "StatusesController.deleteStatus": {
-    parameters: {
-      path: {
-        status_id: string;
-      };
-      query: {
-        updated_at: string;
-      };
-    };
-    responses: {
-      200: {
-        content: {
-          "application/json": components["schemas"]["StatusResponse"];
-        };
-      };
-    };
-  };
-  "TagsController.getTags": {
-    responses: {
-      200: {
-        content: {
-          "application/json": components["schemas"]["ListTagResponse"];
-        };
-      };
-    };
-  };
-  "TagsController.postTag": {
-    responses: {
-      200: {
-        content: {
-          "application/json": components["schemas"]["TagResponse"];
-        };
-      };
-    };
-    /** TagBody */
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["TagBody"];
-      };
-    };
-  };
-  "TagsController.getTag": {
-    parameters: {
-      path: {
-        tag_id: string;
-      };
-    };
-    responses: {
-      200: {
-        content: {
-          "application/json": components["schemas"]["TagResponse"];
-        };
-      };
-    };
-  };
-  "TagsController.putTag": {
-    parameters: {
-      path: {
-        tag_id: string;
-      };
-    };
-    responses: {
-      200: {
-        content: {
-          "application/json": components["schemas"]["TagResponse"];
-        };
-      };
-    };
-    /** TagBody */
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["TagBody"] & {
-          updated_at: string;
-        };
-      };
-    };
-  };
-  "TagsController.deleteTag": {
-    parameters: {
-      path: {
-        tag_id: string;
-      };
-      query: {
-        updated_at: string;
-      };
-    };
-    responses: {
-      200: {
-        content: {
-          "application/json": components["schemas"]["TagResponse"];
         };
       };
     };

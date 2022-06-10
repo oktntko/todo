@@ -1,8 +1,8 @@
 import { Type } from "class-transformer";
 import {
-  IsArray,
   IsDate,
   IsHexColor,
+  IsInt,
   IsNotEmpty,
   IsPositive,
   IsString,
@@ -16,6 +16,7 @@ import {
   Get,
   JsonController,
   Params,
+  Patch,
   Post,
   Put,
   QueryParam,
@@ -34,11 +35,28 @@ class TagBody {
   @IsString()
   @MaxLength(100)
   icon: string;
+
+  @IsInt()
+  order: number;
 }
 
 class TagPathParams {
   @IsPositive()
   tag_id: number;
+}
+
+class TagReorderBody {
+  @IsPositive()
+  tag_id: number;
+
+  @IsInt()
+  order: number;
+}
+
+class ListTagBody {
+  @ValidateNested({ each: true })
+  @Type(() => TagReorderBody)
+  tags: TagReorderBody[];
 }
 
 // ::: RESPONSE
@@ -57,6 +75,9 @@ class TagResponse {
   @MaxLength(100)
   icon: string;
 
+  @IsInt()
+  order: number;
+
   @IsNotEmpty()
   @IsDate()
   updated_at: Date;
@@ -64,7 +85,6 @@ class TagResponse {
 
 class ListTagResponse {
   @ValidateNested({ each: true })
-  @IsArray()
   @Type(() => TagResponse)
   tags: TagResponse[];
 }
@@ -111,5 +131,12 @@ export class TagsController {
     @QueryParam("updated_at", { required: true }) updated_at: string
   ): Promise<TagResponse> {
     return TagsService.deleteTag(path.tag_id, updated_at);
+  }
+
+  // # PATCH /api/tags/reorder
+  @Patch("/api/tags/reorder")
+  @ResponseSchema(ListTagResponse)
+  async patchTagReorder(@Body({ required: true }) body: ListTagBody): Promise<ListTagResponse> {
+    return TagsService.patchTagReorder(body.tags);
   }
 }

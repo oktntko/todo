@@ -37,8 +37,6 @@ const putCategory = async (
 ) => {
   log.debug("putCategory", category_id, category, updated_at);
 
-  await CategoriesRepository.checkPreviousVersion({ category_id }, updated_at);
-
   await CategoriesRepository.checkDuplicate({ category_name: category.category_name }, category_id);
 
   return CategoriesRepository.updateCategory({ category_id }, category);
@@ -51,10 +49,20 @@ const deleteCategory = async (category_id: number, updated_at: string) => {
   return CategoriesRepository.deleteCategory({ category_id });
 };
 
+// # PATCH /api/categories/reorder
+const patchCategoryReorder = async (categories: Pick<Category, "category_id" | "order">[]) => {
+  log.debug("patchCategoryReorder", categories);
+
+  return {
+    categories: await Promise.all(categories.map(CategoriesRepository.updateCategoryOrder)),
+  };
+};
+
 export const CategoriesService = {
   postCategory,
   getCategories,
   getCategory,
   putCategory,
   deleteCategory,
+  patchCategoryReorder,
 } as const;
