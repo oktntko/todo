@@ -2,14 +2,11 @@ import { Transform, Type } from "class-transformer";
 import {
   IsArray,
   IsDate,
-  IsIn,
-  IsInt,
   IsNotEmpty,
   IsOptional,
   IsPositive,
   IsString,
   MaxLength,
-  Min,
   ValidateNested,
 } from "class-validator";
 import {
@@ -19,7 +16,6 @@ import {
   Get,
   JsonController,
   Params,
-  Patch,
   Post,
   Put,
   QueryParam,
@@ -36,10 +32,33 @@ export class TodoBody {
   @Transform(transformerEmptyToNull)
   yarukoto: string | null;
 
-  @IsNotEmpty()
+  @IsOptional()
+  @IsPositive()
+  @Transform(transformerEmptyToNull)
+  order: number | null;
+
+  @IsOptional()
   @IsString()
-  @IsIn(["TODO", "DOING", "DONE"])
-  status: "TODO" | "DOING" | "DONE";
+  @MaxLength(10)
+  @Transform(transformerEmptyToNull)
+  beginning: string | null;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(10)
+  @Transform(transformerEmptyToNull)
+  deadline: string | null;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(400)
+  @Transform(transformerEmptyToNull)
+  memo: string | null;
+
+  @IsOptional()
+  @IsPositive()
+  @Transform(transformerEmptyToNull)
+  status_id: number | null;
 
   @IsOptional()
   @IsPositive()
@@ -47,43 +66,18 @@ export class TodoBody {
   category_id: number | null;
 
   @IsOptional()
-  @IsString()
-  @MaxLength(10)
+  @IsPositive()
   @Transform(transformerEmptyToNull)
-  kizitu: string | null;
-
-  @IsNotEmpty()
-  @IsString()
-  @IsIn(["FAST", "SPEEDUP", "PLAY", "PAUSE", "STOP"])
-  yusendo: "FAST" | "SPEEDUP" | "PLAY" | "PAUSE" | "STOP";
+  project_id: number | null;
 
   @IsPositive({ each: true })
-  subcategory_id_list: number[];
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(400)
-  @Transform(transformerEmptyToNull)
-  memo: string | null;
+  @IsArray()
+  tag_id_list: number[];
 }
 
 class TodoPathParams {
   @IsPositive()
   todo_id: number;
-}
-
-class PatchTodoReorderBody {
-  @ValidateNested({ each: true })
-  @Type(() => TodoReorder)
-  todos: TodoReorder[];
-}
-
-export class TodoReorder {
-  @IsPositive()
-  todo_id: number;
-  @IsInt()
-  @Min(0)
-  order: number;
 }
 
 // ::: RESPONSE
@@ -94,39 +88,50 @@ export class TodoResponse {
   @IsOptional()
   @IsString()
   @MaxLength(100)
+  @Transform(transformerEmptyToNull)
   yarukoto: string | null;
-
-  @IsNotEmpty()
-  @IsString()
-  @IsIn(["TODO", "DOING", "DONE"])
-  status: "TODO" | "DOING" | "DONE";
-
-  @IsOptional()
-  @IsInt()
-  order: number | null;
 
   @IsOptional()
   @IsPositive()
-  category_id: number | null;
+  @Transform(transformerEmptyToNull)
+  order: number | null;
 
   @IsOptional()
   @IsString()
   @MaxLength(10)
-  kizitu: string | null;
+  @Transform(transformerEmptyToNull)
+  beginning: string | null;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  @IsIn(["FAST", "SPEEDUP", "PLAY", "PAUSE", "STOP"])
-  yusendo: "FAST" | "SPEEDUP" | "PLAY" | "PAUSE" | "STOP";
-
-  @IsPositive({ each: true })
-  @IsArray()
-  subcategory_id_list: number[];
+  @MaxLength(10)
+  @Transform(transformerEmptyToNull)
+  deadline: string | null;
 
   @IsOptional()
   @IsString()
   @MaxLength(400)
+  @Transform(transformerEmptyToNull)
   memo: string | null;
+
+  @IsOptional()
+  @IsPositive()
+  @Transform(transformerEmptyToNull)
+  status_id: number | null;
+
+  @IsOptional()
+  @IsPositive()
+  @Transform(transformerEmptyToNull)
+  category_id: number | null;
+
+  @IsOptional()
+  @IsPositive()
+  @Transform(transformerEmptyToNull)
+  project_id: number | null;
+
+  @IsPositive({ each: true })
+  @IsArray()
+  tag_id_list: number[];
 
   @IsNotEmpty()
   @IsDate()
@@ -186,31 +191,5 @@ export class TodosController {
     @QueryParam("updated_at", { required: true }) updated_at: string
   ): Promise<TodoResponse> {
     return TodosService.deleteTodo(path.todo_id, updated_at);
-  }
-
-  // # PATCH /api/todos/:todo_id
-  @Patch("/api/todos/:todo_id/one")
-  @ResponseSchema(TodoResponse)
-  async patchTodoOne(
-    @Params({ required: true }) path: TodoPathParams,
-    @Body({ required: true }) todo: TodoBody
-  ): Promise<TodoResponse> {
-    return TodosService.patchTodoOne(path.todo_id, todo);
-  }
-
-  // # PATCH /api/todos/:todo_id/done
-  @Patch("/api/todos/:todo_id/done")
-  @ResponseSchema(TodoResponse)
-  async patchTodoDone(@Params({ required: true }) path: TodoPathParams): Promise<TodoResponse> {
-    return TodosService.patchTodoDone(path.todo_id);
-  }
-
-  // # PATCH /api/todos/reorder
-  @Patch("/api/todos/reorder")
-  @ResponseSchema(ListTodoResponse)
-  async patchTodoReorder(
-    @Body({ required: true }) body: PatchTodoReorderBody
-  ): Promise<ListTodoResponse> {
-    return TodosService.patchTodoReorder(body.todos);
   }
 }

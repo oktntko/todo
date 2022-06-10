@@ -15,7 +15,8 @@
     "test:cov": "DATABASE_URL='postgresql://todo:todo@localhost:5432/unit_test' vitest run --coverage",
     "test:db": "DATABASE_URL='postgresql://todo:todo@localhost:5432/unit_test' npm-run-all --sequential db:*",
     "lint": "eslint --ext .js,.ts src",
-    "ncu": "ncu --target minor"
+    "ncu": "ncu --target minor",
+    "openapi": "curl http://localhost:8080/openapi > openapi.json && openapi-typescript openapi.json --output schema.ts --export-type"
   },
   "keywords": [],
   "author": "",

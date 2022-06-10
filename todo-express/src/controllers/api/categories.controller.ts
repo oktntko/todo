@@ -1,10 +1,9 @@
-import { Transform, Type } from "class-transformer";
+import { Type } from "class-transformer";
 import {
   IsArray,
   IsDate,
   IsHexColor,
   IsNotEmpty,
-  IsOptional,
   IsPositive,
   IsString,
   MaxLength,
@@ -22,7 +21,6 @@ import {
   QueryParam,
 } from "routing-controllers";
 import { ResponseSchema } from "routing-controllers-openapi";
-import { transformerEmptyToNull } from "~/libs/transformers";
 import { CategoriesService } from "~/services/categories.service";
 
 // ::: REQUEST
@@ -32,12 +30,11 @@ class CategoryBody {
   @MaxLength(100)
   category_name: string;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @IsHexColor()
   @MaxLength(100)
-  @Transform(transformerEmptyToNull)
-  color: string | null;
+  color: string;
 }
 
 class CategoryPathParams {
@@ -47,20 +44,19 @@ class CategoryPathParams {
 
 // ::: RESPONSE
 class CategoryResponse {
+  @IsPositive()
+  category_id: number;
+
   @IsNotEmpty()
   @IsString()
   @MaxLength(100)
   category_name: string;
 
-  @IsPositive()
-  category_id: number;
-
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @IsHexColor()
   @MaxLength(100)
-  @Transform(transformerEmptyToNull)
-  color: string | null;
+  color: string;
 
   @IsNotEmpty()
   @IsDate()
