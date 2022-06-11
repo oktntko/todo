@@ -146,7 +146,7 @@ export type components = {
     };
     TagBody: {
       tag_name: string;
-      icon: string;
+      color: string;
       order: number;
     };
     TagPathParams: {
@@ -162,7 +162,7 @@ export type components = {
     TagResponse: {
       tag_id: number;
       tag_name: string;
-      icon: string;
+      color: string;
       order: number;
       updated_at: string;
     };

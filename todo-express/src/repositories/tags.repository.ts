@@ -15,13 +15,13 @@ const createTag = async (tag: Omit<Tag, "tag_id" | "created_at" | "updated_at">)
     select: {
       tag_id: true,
       tag_name: true,
-      icon: true,
+      color: true,
       order: true,
       updated_at: true,
     },
     data: {
       tag_name: tag.tag_name,
-      icon: tag.icon,
+      color: tag.color,
       order: tag.order,
     },
   });
@@ -34,7 +34,7 @@ const findManyTag = async (where?: Prisma.TagWhereInput) => {
     select: {
       tag_id: true,
       tag_name: true,
-      icon: true,
+      color: true,
       order: true,
       updated_at: true,
     },
@@ -52,7 +52,7 @@ const findUniqueTag = async (where: RequireOne<Prisma.TagWhereUniqueInput>) => {
     select: {
       tag_id: true,
       tag_name: true,
-      icon: true,
+      color: true,
       order: true,
       updated_at: true,
     },
@@ -70,13 +70,13 @@ const updateTag = async (
     select: {
       tag_id: true,
       tag_name: true,
-      icon: true,
+      color: true,
       order: true,
       updated_at: true,
     },
     data: {
       tag_name: tag.tag_name,
-      icon: tag.icon,
+      color: tag.color,
       order: tag.order,
     },
     where,
@@ -90,7 +90,7 @@ const deleteTag = async (where: RequireOne<Prisma.TagWhereUniqueInput>) => {
     select: {
       tag_id: true,
       tag_name: true,
-      icon: true,
+      color: true,
       order: true,
       updated_at: true,
     },
@@ -132,7 +132,7 @@ const updateTagOrder = async (tag: Pick<Tag, "tag_id" | "order">) => {
     select: {
       tag_id: true,
       tag_name: true,
-      icon: true,
+      color: true,
       order: true,
       updated_at: true,
     },

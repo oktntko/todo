@@ -75,7 +75,7 @@ export function Header() {
                           className="py-1 text-sm text-gray-700 dark:text-gray-200"
                           aria-labelledby="dropdownDefault"
                         >
-                          {["statuses", "categories", "projects"].map((page) => {
+                          {["statuses", "categories", "projects", "tags"].map((page) => {
                             return (
                               <li key={page}>
                                 <NavLink

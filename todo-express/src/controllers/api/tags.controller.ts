@@ -1,6 +1,7 @@
 import { Type } from "class-transformer";
 import {
   IsDate,
+  IsHexColor,
   IsInt,
   IsNotEmpty,
   IsPositive,
@@ -32,8 +33,9 @@ class TagBody {
 
   @IsNotEmpty()
   @IsString()
+  @IsHexColor()
   @MaxLength(100)
-  icon: string;
+  color: string;
 
   @IsInt()
   order: number;
@@ -70,8 +72,9 @@ class TagResponse {
 
   @IsNotEmpty()
   @IsString()
+  @IsHexColor()
   @MaxLength(100)
-  icon: string;
+  color: string;
 
   @IsInt()
   order: number;

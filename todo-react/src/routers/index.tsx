@@ -5,6 +5,7 @@ import { NotFoundPage } from "~/pages/404";
 import { CategoryIndexPage } from "~/pages/categories";
 import { ProjectIndexPage } from "~/pages/projects";
 import { StatusIndexPage } from "~/pages/statuses";
+import { TagIndexPage } from "~/pages/tags";
 import { TodoIndexPage } from "~/pages/todos";
 
 export function RouterView() {
@@ -12,10 +13,11 @@ export function RouterView() {
     <BrowserRouter>
       <Routes>
         <Route element={<DashboardLayout />}>
-          <Route index element={<CategoryIndexPage />} />
+          <Route index element={<TodoIndexPage />} />
           <Route path="/statuses" element={<StatusIndexPage />} />
           <Route path="/categories" element={<CategoryIndexPage />} />
           <Route path="/projects" element={<ProjectIndexPage />} />
+          <Route path="/tags" element={<TagIndexPage />} />
           <Route path="/todos" element={<TodoIndexPage />} />
         </Route>
         <Route element={<EmptyLayout />}>
