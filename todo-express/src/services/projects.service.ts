@@ -1,14 +1,26 @@
 import { Project } from "@prisma/client";
 import log from "~/middlewares/log";
+import { FilesRepository } from "~/repositories/files.repository";
 import { ProjectsRepository } from "~/repositories/projects.repository";
 
+const FilesProjectsIconRepo = new FilesRepository("projects", "icon");
+
 // # POST /api/projects
-const postProject = async (project: Omit<Project, "project_id" | "created_at" | "updated_at">) => {
+const postProject = async (
+  project: Omit<Project, "project_id" | "created_at" | "updated_at">,
+  icon: Express.Multer.File | undefined
+) => {
   log.debug("postProject", project);
 
   await ProjectsRepository.checkDuplicate({ project_name: project.project_name });
 
-  return ProjectsRepository.createProject(project);
+  const result = await ProjectsRepository.createProject(project);
+
+  if (icon) {
+    FilesProjectsIconRepo.write(result.project_id, icon.originalname, icon.buffer);
+  }
+
+  return result;
 };
 
 // # GET /api/projects
@@ -31,20 +43,31 @@ const getProject = async (project_id: number) => {
 const putProject = async (
   project_id: number,
   project: Omit<Project, "project_id" | "created_at" | "updated_at">,
-  updated_at: string
+  updated_at: string,
+  icon: Express.Multer.File | undefined
 ) => {
   log.debug("putProject", project_id, project, updated_at);
 
   await ProjectsRepository.checkDuplicate({ project_name: project.project_name }, project_id);
 
-  return ProjectsRepository.updateProject({ project_id }, project);
+  const result = await ProjectsRepository.updateProject({ project_id }, project);
+
+  if (icon) {
+    FilesProjectsIconRepo.write(result.project_id, icon.originalname, icon.buffer);
+  }
+
+  return result;
 };
 
 // # DELETE /api/projects/:project_id
 const deleteProject = async (project_id: number, updated_at: string) => {
   log.debug("deleteProject", project_id, updated_at);
 
-  return ProjectsRepository.deleteProject({ project_id });
+  const result = await ProjectsRepository.deleteProject({ project_id });
+
+  FilesProjectsIconRepo.delete(result.project_id);
+
+  return result;
 };
 
 // # PATCH /api/projects/reorder

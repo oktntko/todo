@@ -1,75 +1,76 @@
 import equal from "fast-deep-equal";
-import { Field, Form, Formik } from "formik";
+import { Field, FieldInputProps, Form, Formik } from "formik";
 import { motion, Reorder, useDragControls } from "framer-motion";
 import update from "immutability-helper";
 import { useCallback, useEffect, useState } from "react";
-import { AiFillTag } from "react-icons/ai";
 import { BiCheckCircle, BiTrash, BiUndo } from "react-icons/bi";
 import { BsPlus } from "react-icons/bs";
 import { MdOutlineDragIndicator } from "react-icons/md";
 import { Button } from "~/components/Button";
+import { ImageInput } from "~/components/Input";
 import { Tooltip } from "~/components/Tooltip";
 import { generateId } from "~/libs/strings";
 import { api } from "~/repositories/api";
 import { components } from "~/repositories/schema";
 
-interface StatusType extends Weaken<components["schemas"]["StatusResponse"], "status_id"> {
-  status_id: string | number;
+interface ProjectType extends Weaken<components["schemas"]["ProjectResponse"], "project_id"> {
+  project_id: string | number;
+  icon?: File | null;
 }
 
 const newdata = (index: number) => ({
-  status_id: generateId(), // 追加分は id が string
-  status_name: "",
-  color: "#000000",
+  project_id: generateId(), // 追加分は id が string
+  project_name: "",
   order: index,
   updated_at: "",
+  icon: null as File | null,
 });
 
-export function StatusIndexPage() {
-  const { statuses, setStatuses, postStatuses, putStatuses, deleteStatuses, patchStatusReorder } =
-    useStatus();
+export function ProjectIndexPage() {
+  const { projects, setProjects, postProjects, putProjects, deleteProjects, patchProjectReorder } =
+    useProject();
 
-  const handleReorder = (values: StatusType[]) => {
-    const statuses = values.map((status, index) => ({ ...status, order: index }));
-    setStatuses(values);
+  const handleReorder = (values: ProjectType[]) => {
+    const projects = values.map((project, index) => ({ ...project, order: index }));
+    setProjects(values);
 
-    if (statuses.length) {
-      patchStatusReorder({
-        statuses: statuses.filter(
-          (status) => typeof status.status_id === "number"
-        ) as components["schemas"]["StatusReorderBody"][],
+    if (projects.length) {
+      patchProjectReorder({
+        projects: projects.filter(
+          (project) => typeof project.project_id === "number"
+        ) as components["schemas"]["ProjectReorderBody"][],
       });
     }
   };
 
-  const handleSubmit = (index: number, values: StatusType) => {
-    if (typeof values.status_id === "string") {
-      postStatuses(index, { ...values, order: index });
+  const handleSubmit = (index: number, values: ProjectType) => {
+    if (typeof values.project_id === "string") {
+      postProjects(index, { ...values, order: index });
     } else {
-      putStatuses(index, values.status_id, { ...values, order: index });
+      putProjects(index, values.project_id, { ...values, order: index });
     }
   };
 
-  const handleDelete = (index: number, values: StatusType) => {
-    if (typeof values.status_id === "number") {
-      deleteStatuses(index, values.status_id, values);
+  const handleDelete = (index: number, values: ProjectType) => {
+    if (typeof values.project_id === "number") {
+      deleteProjects(index, values.project_id, values);
     }
   };
 
   const handleAdd = () => {
-    setStatuses(update(statuses, { $push: [newdata(statuses.length)] }));
+    setProjects(update(projects, { $push: [newdata(projects.length)] }));
   };
 
   return (
     <>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
         <div className="container my-4 mx-auto sm:px-4 md:max-w-3xl">
-          <Reorder.Group values={statuses} onReorder={handleReorder} className=" ">
-            {statuses.map((status, index) => (
-              <StatusRow
-                key={status.status_id}
+          <Reorder.Group values={projects} onReorder={handleReorder} className=" ">
+            {projects.map((project, index) => (
+              <ProjectRow
+                key={project.project_id}
                 index={index}
-                status={status}
+                project={project}
                 onSubmit={handleSubmit}
                 onDelete={handleDelete}
               />
@@ -92,88 +93,88 @@ export function StatusIndexPage() {
   );
 }
 
-const useStatus = () => {
-  const [statuses, setStatuses] = useState<StatusType[]>([]);
+const useProject = () => {
+  const [projects, setProjects] = useState<ProjectType[]>([]);
 
-  const getStatuses = useCallback(() => {
-    api.get.statuses().then(({ data }) => setStatuses(data.statuses));
-  }, [statuses]);
+  const getProjects = useCallback(() => {
+    api.get.projects().then(({ data }) => setProjects(data.projects));
+  }, [projects]);
 
   useEffect(() => {
-    getStatuses();
+    getProjects();
   }, []);
 
-  const postStatuses = useCallback(
-    (index: number, status: components["schemas"]["StatusBody"]) => {
+  const postProjects = useCallback(
+    (index: number, project: ProjectType) => {
       api.post
-        .statuses(status)
-        .then(({ data }) => setStatuses(update(statuses, { $splice: [[index, 1, data]] })));
+        .projects(project)
+        .then(({ data }) => setProjects(update(projects, { $splice: [[index, 1, data]] })));
     },
-    [statuses]
+    [projects]
   );
 
-  const putStatuses = useCallback(
-    (index: number, status_id: number, status: components["schemas"]["StatusBody"] & Version) => {
+  const putProjects = useCallback(
+    (index: number, project_id: number, project: ProjectType) => {
       api.put
-        .statuses({ status_id: String(status_id) }, status)
-        .then(({ data }) => setStatuses(update(statuses, { $splice: [[index, 1, data]] })));
+        .projects({ project_id: String(project_id) }, project)
+        .then(({ data }) => setProjects(update(projects, { $splice: [[index, 1, data]] })));
     },
-    [statuses]
+    [projects]
   );
 
-  const deleteStatuses = useCallback(
-    (index: number, status_id: number, version: Version) => {
+  const deleteProjects = useCallback(
+    (index: number, project_id: number, version: Version) => {
       api.delete
-        .statuses({ status_id: String(status_id) }, version)
-        .then(() => setStatuses(update(statuses, { $splice: [[index, 1]] })));
+        .projects({ project_id: String(project_id) }, version)
+        .then(() => setProjects(update(projects, { $splice: [[index, 1]] })));
     },
-    [statuses]
+    [projects]
   );
 
-  const patchStatusReorder = useCallback(
-    ({ statuses }: components["schemas"]["ListStatusBody"]) => {
-      api.patch.statuses({ statuses });
+  const patchProjectReorder = useCallback(
+    ({ projects }: components["schemas"]["ListProjectBody"]) => {
+      api.patch.projects({ projects });
     },
-    [statuses]
+    [projects]
   );
 
   return {
-    statuses,
-    setStatuses,
-    getStatuses,
-    postStatuses,
-    putStatuses,
-    deleteStatuses,
-    patchStatusReorder,
+    projects,
+    setProjects,
+    getProjects,
+    postProjects,
+    putProjects,
+    deleteProjects,
+    patchProjectReorder,
   };
 };
 
-type StatusRowProps = {
+type ProjectRowProps = {
   index: number;
-  status: StatusType;
-  onSubmit: (index: number, values: StatusType) => void;
-  onDelete: (index: number, values: StatusType) => void;
+  project: ProjectType;
+  onSubmit: (index: number, values: ProjectType) => void;
+  onDelete: (index: number, values: ProjectType) => void;
 };
 
-function StatusRow({ index, status, onSubmit, onDelete }: StatusRowProps) {
+function ProjectRow({ index, project, onSubmit, onDelete }: ProjectRowProps) {
   const dragControls = useDragControls();
 
   return (
     <Reorder.Item
-      key={status.status_id}
-      value={status}
+      key={project.project_id}
+      value={project}
       dragListener={false}
       dragControls={dragControls}
       className="border-b"
     >
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
         <Formik
-          initialValues={status}
+          initialValues={project}
           enableReinitialize
           onSubmit={(values) => onSubmit(index, values)}
         >
           {({ values, resetForm }) => {
-            const isOriginalValues = equal(values, status);
+            const isOriginalValues = equal(values, project);
 
             return (
               <Form>
@@ -188,15 +189,18 @@ function StatusRow({ index, status, onSubmit, onDelete }: StatusRowProps) {
                   >
                     <MdOutlineDragIndicator className="text-xl" />
                   </Button>
-                  <div className="flex items-center space-x-2 rounded p-1">
-                    <label htmlFor={`color_${values.status_id}`}>
-                      <AiFillTag style={{ color: values.color }} />
-                    </label>
-                    <Field id={`color_${values.status_id}`} type="color" name="color" />
-                  </div>
+                  <Field name="icon" className="flex items-center space-x-2 rounded p-1 text-sm">
+                    {({ field }: { field: FieldInputProps<File | null> }) => (
+                      <ImageInput
+                        {...field}
+                        htmlId={`icon_${values.project_id}`}
+                        dataId={values.project_id}
+                      />
+                    )}
+                  </Field>
                   <Field
                     type="text"
-                    name="status_name"
+                    name="project_name"
                     className="flex-grow truncate rounded border p-1"
                     maxLength={50}
                   />
@@ -207,7 +211,7 @@ function StatusRow({ index, status, onSubmit, onDelete }: StatusRowProps) {
                       colorset={"white"}
                       disabled={isOriginalValues}
                       onClick={() => {
-                        resetForm({ values: status });
+                        resetForm({ values: project });
                       }}
                     >
                       <BiUndo className="text-lg" />
@@ -218,7 +222,7 @@ function StatusRow({ index, status, onSubmit, onDelete }: StatusRowProps) {
                       type="submit"
                       className="rounded-3xl p-1"
                       colorset={"green"}
-                      disabled={isOriginalValues || values.status_name === ""}
+                      disabled={isOriginalValues || values.project_name === ""}
                     >
                       <BiCheckCircle className="text-lg" />
                     </Button>
@@ -229,7 +233,7 @@ function StatusRow({ index, status, onSubmit, onDelete }: StatusRowProps) {
                       type="button"
                       className="rounded-3xl p-1"
                       colorset={"yellow"}
-                      disabled={typeof values.status_id === "string"}
+                      disabled={typeof values.project_id === "string"}
                       onClick={() => {
                         onDelete(index, values);
                       }}

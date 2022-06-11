@@ -61,6 +61,9 @@ export type paths = {
     put: operations["TodosController.putTodo"];
     delete: operations["TodosController.deleteTodo"];
   };
+  "/files/{resources}/{data_name}/{id}": {
+    get: operations["FilesController.getFile"];
+  };
   "/openapi": {
     get: operations["OpenapiController.getOpenApi"];
   };
@@ -95,7 +98,6 @@ export type components = {
     };
     ProjectBody: {
       project_name: string;
-      icon: string;
       order: number;
     };
     ProjectPathParams: {
@@ -111,7 +113,6 @@ export type components = {
     ProjectResponse: {
       project_id: number;
       project_name: string;
-      icon: string;
       order: number;
       updated_at: string;
     };
@@ -198,6 +199,13 @@ export type components = {
     };
     ListTodoResponse: {
       todos: components["schemas"]["TodoResponse"][];
+    };
+    FilePathParams: {
+      /** @enum {string} */
+      resources: "projects";
+      /** @enum {string} */
+      data_name: "icon";
+      id: number;
     };
   };
 };
@@ -644,6 +652,23 @@ export type operations = {
       200: {
         content: {
           "application/json": components["schemas"]["TodoResponse"];
+        };
+      };
+    };
+  };
+  "FilesController.getFile": {
+    parameters: {
+      path: {
+        resources: string;
+        data_name: string;
+        id: string;
+      };
+    };
+    responses: {
+      /** Successful response */
+      200: {
+        content: {
+          "text/html; charset=utf-8": unknown;
         };
       };
     };

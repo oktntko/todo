@@ -17,13 +17,11 @@ const createProject = async (
     select: {
       project_id: true,
       project_name: true,
-      icon: true,
       order: true,
       updated_at: true,
     },
     data: {
       project_name: project.project_name,
-      icon: project.icon,
       order: project.order,
     },
   });
@@ -36,7 +34,6 @@ const findManyProject = async (where?: Prisma.ProjectWhereInput) => {
     select: {
       project_id: true,
       project_name: true,
-      icon: true,
       order: true,
       updated_at: true,
     },
@@ -54,7 +51,6 @@ const findUniqueProject = async (where: RequireOne<Prisma.ProjectWhereUniqueInpu
     select: {
       project_id: true,
       project_name: true,
-      icon: true,
       order: true,
       updated_at: true,
     },
@@ -72,13 +68,11 @@ const updateProject = async (
     select: {
       project_id: true,
       project_name: true,
-      icon: true,
       order: true,
       updated_at: true,
     },
     data: {
       project_name: project.project_name,
-      icon: project.icon,
       order: project.order,
     },
     where,
@@ -92,7 +86,6 @@ const deleteProject = async (where: RequireOne<Prisma.ProjectWhereUniqueInput>) 
     select: {
       project_id: true,
       project_name: true,
-      icon: true,
       order: true,
       updated_at: true,
     },
@@ -134,7 +127,6 @@ const updateProjectOrder = async (project: Pick<Project, "project_id" | "order">
     select: {
       project_id: true,
       project_name: true,
-      icon: true,
       order: true,
       updated_at: true,
     },

@@ -1,7 +1,6 @@
-import { Type } from "class-transformer";
+import { Transform, Type } from "class-transformer";
 import {
   IsDate,
-  IsHexColor,
   IsInt,
   IsNotEmpty,
   IsPositive,
@@ -20,8 +19,11 @@ import {
   Post,
   Put,
   QueryParam,
+  UploadedFile,
 } from "routing-controllers";
 import { ResponseSchema } from "routing-controllers-openapi";
+import { transformerStringToNumber } from "~/libs/transformers";
+import { validateUploadedFile } from "~/libs/validators";
 import { ProjectsService } from "~/services/projects.service";
 
 // ::: REQUEST
@@ -31,11 +33,7 @@ class ProjectBody {
   @MaxLength(100)
   project_name: string;
 
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(100)
-  icon: string;
-
+  @Transform(transformerStringToNumber) // form のため string で来るので変換する
   @IsInt()
   order: number;
 }
@@ -69,12 +67,6 @@ class ProjectResponse {
   @MaxLength(100)
   project_name: string;
 
-  @IsNotEmpty()
-  @IsString()
-  @IsHexColor()
-  @MaxLength(100)
-  icon: string;
-
   @IsInt()
   order: number;
 
@@ -94,8 +86,13 @@ export class ProjectsController {
   // # POST /api/projects
   @Post("/api/projects")
   @ResponseSchema(ProjectResponse)
-  async postProject(@Body({ required: true }) project: ProjectBody): Promise<ProjectResponse> {
-    return ProjectsService.postProject(project);
+  async postProject(
+    @Body({ required: true }) project: ProjectBody,
+    @UploadedFile("icon", { required: false }) icon: Express.Multer.File | undefined
+  ): Promise<ProjectResponse> {
+    validateUploadedFile(icon, { required: false, mimetype: "image/", fileSize: 1024 * 1024 });
+
+    return ProjectsService.postProject(project, icon);
   }
 
   // # GET /api/projects
@@ -118,9 +115,12 @@ export class ProjectsController {
   async putProject(
     @Params({ required: true }) path: ProjectPathParams,
     @Body({ required: true }) project: ProjectBody,
-    @BodyParam("updated_at", { required: true }) updated_at: string
+    @BodyParam("updated_at", { required: true }) updated_at: string,
+    @UploadedFile("icon", { required: false }) icon: Express.Multer.File | undefined
   ): Promise<ProjectResponse> {
-    return ProjectsService.putProject(path.project_id, project, updated_at);
+    validateUploadedFile(icon, { required: false, mimetype: "image/", fileSize: 1024 * 1024 });
+
+    return ProjectsService.putProject(path.project_id, project, updated_at, icon);
   }
 
   // # DELETE /api/projects/:project_id

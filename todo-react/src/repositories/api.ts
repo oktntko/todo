@@ -122,21 +122,31 @@ const projects = {
   },
   post: {
     projects: async (
-      body: paths["/api/projects"]["post"]["requestBody"]["content"]["application/json"]
+      body: paths["/api/projects"]["post"]["requestBody"]["content"]["application/json"] & {
+        icon?: File | null;
+      }
     ) => {
+      const data = new FormData();
+      Object.entries(body).map(([key, value]) => data.append(key, value as string));
+
       return client.post<
         paths["/api/projects"]["post"]["responses"]["200"]["content"]["application/json"]
-      >(`/api/projects`, body);
+      >(`/api/projects`, data);
     },
   },
   put: {
     projects: async (
       path: paths["/api/projects/{project_id}"]["put"]["parameters"]["path"],
-      body: paths["/api/projects/{project_id}"]["put"]["requestBody"]["content"]["application/json"]
+      body: paths["/api/projects/{project_id}"]["put"]["requestBody"]["content"]["application/json"] & {
+        icon?: File | null;
+      }
     ) => {
+      const data = new FormData();
+      Object.entries(body).map(([key, value]) => data.append(key, value as string));
+
       return client.put<
         paths["/api/projects/{project_id}"]["put"]["responses"]["200"]["content"]["application/json"]
-      >(`/api/projects/${path.project_id}`, body);
+      >(`/api/projects/${path.project_id}`, data);
     },
   },
   delete: {

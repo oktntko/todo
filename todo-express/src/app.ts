@@ -4,6 +4,7 @@ import "reflect-metadata";
 import { useExpressServer } from "routing-controllers";
 import {
   CategoriesController,
+  FilesController,
   OpenapiController,
   ProjectsController,
   StatusesController,
@@ -31,6 +32,7 @@ useExpressServer(app, {
     StatusesController,
     TagsController,
     TodosController,
+    FilesController,
   ],
   middlewares: [BeforeLogHandler, NotFoundHandler, ErrorHandler, AfterLogHandler],
   defaults: {
