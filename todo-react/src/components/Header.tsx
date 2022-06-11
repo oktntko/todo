@@ -1,11 +1,14 @@
+import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import { FcTodoList } from "react-icons/fc";
+import { FcSettings, FcTodoList } from "react-icons/fc";
 import { NavLink } from "react-router-dom";
+import { Button } from "~/components/Button";
 
 export const iconOptions = { size: "2rem", color: "#414855" };
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
   return (
     <nav className="border-gray-200 px-2 py-2.5 dark:bg-gray-800 sm:px-4">
@@ -29,8 +32,8 @@ export function Header() {
           className={`${!isMobileMenuOpen ? "hidden" : ""} w-full md:block md:w-auto`}
           id="mobile-menu"
         >
-          <ul className="mt-4 flex flex-col md:mt-0 md:flex-row md:space-x-8 md:text-sm md:font-medium">
-            <li>
+          <ul className="mt-4 flex flex-col md:mt-0 md:flex-row md:space-x-8 ">
+            <li className="flex items-center">
               <NavLink
                 to="/todos"
                 className={({ isActive }) =>
@@ -43,16 +46,57 @@ export function Header() {
               </NavLink>
             </li>
             <li>
-              <NavLink
-                to="/categories"
-                className={({ isActive }) =>
-                  `${
-                    isActive ? "text-blue-600 underline" : "text-gray-700"
-                  } block border-b border-gray-100 bg-neutral-50 py-2 pr-4 pl-3 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:border-0 md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white`
-                }
+              <Button
+                className="flex items-center border-none"
+                onClick={() => setIsVisible(!isVisible)}
               >
-                カテゴリ
-              </NavLink>
+                <FcSettings></FcSettings>
+              </Button>
+              <AnimatePresence>
+                {isVisible && (
+                  <>
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ opacity: { ease: "easeInOut", duration: 0.2 } }}
+                      className="absolute inset-0 z-10"
+                      onClick={() => setIsVisible(false)}
+                    ></motion.div>
+                    <div className="relative">
+                      <motion.div
+                        className={`absolute right-0 z-10 w-44 divide-y divide-gray-100 rounded bg-white shadow dark:bg-gray-700 `}
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ opacity: { ease: "easeInOut", duration: 0.2 } }}
+                      >
+                        <ul
+                          className="py-1 text-sm text-gray-700 dark:text-gray-200"
+                          aria-labelledby="dropdownDefault"
+                        >
+                          {["statuses", "categories", "projects"].map((page) => {
+                            return (
+                              <li key={page}>
+                                <NavLink
+                                  to={`/${page}`}
+                                  className={({ isActive }) =>
+                                    `${
+                                      isActive ? "text-blue-600 underline" : "text-gray-700"
+                                    } block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white`
+                                  }
+                                >
+                                  <span className="capitalize">{page}</span>
+                                </NavLink>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </motion.div>
+                    </div>
+                  </>
+                )}
+              </AnimatePresence>
             </li>
           </ul>
         </div>
