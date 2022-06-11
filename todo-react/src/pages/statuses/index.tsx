@@ -3,10 +3,9 @@ import { Field, Form, Formik } from "formik";
 import { motion, Reorder, useDragControls } from "framer-motion";
 import update from "immutability-helper";
 import { useCallback, useEffect, useState } from "react";
-import { AiFillTag } from "react-icons/ai";
 import { BiCheckCircle, BiTrash, BiUndo } from "react-icons/bi";
 import { BsPlus } from "react-icons/bs";
-import { MdOutlineDragIndicator } from "react-icons/md";
+import { MdAccessTimeFilled, MdOutlineDragIndicator } from "react-icons/md";
 import { Button } from "~/components/Button";
 import { Tooltip } from "~/components/Tooltip";
 import { generateId } from "~/libs/strings";
@@ -190,7 +189,7 @@ function StatusRow({ index, status, onSubmit, onDelete }: StatusRowProps) {
                   </Button>
                   <div className="flex items-center space-x-2 rounded p-1">
                     <label htmlFor={`color_${values.status_id}`}>
-                      <AiFillTag style={{ color: values.color }} />
+                      <MdAccessTimeFilled style={{ color: values.color }} />
                     </label>
                     <Field id={`color_${values.status_id}`} type="color" name="color" />
                   </div>

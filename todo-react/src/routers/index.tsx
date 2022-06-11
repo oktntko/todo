@@ -3,8 +3,6 @@ import { DashboardLayout } from "~/layouts/dashboard";
 import { EmptyLayout } from "~/layouts/empty";
 import { NotFoundPage } from "~/pages/404";
 import { CategoryIndexPage } from "~/pages/categories";
-import { CategoryTorokuPage } from "~/pages/categories/add";
-import { CategorySyosaiPage } from "~/pages/categories/_category_id";
 import { ProjectIndexPage } from "~/pages/projects";
 import { StatusIndexPage } from "~/pages/statuses";
 import { TodoIndexPage } from "~/pages/todos";
@@ -14,12 +12,11 @@ export function RouterView() {
     <BrowserRouter>
       <Routes>
         <Route element={<DashboardLayout />}>
-          <Route index element={<ProjectIndexPage />} />
+          <Route index element={<CategoryIndexPage />} />
           <Route path="/statuses" element={<StatusIndexPage />} />
-          <Route path="/todos" element={<TodoIndexPage />} />
           <Route path="/categories" element={<CategoryIndexPage />} />
-          <Route path="/categories/add" element={<CategoryTorokuPage />} />
-          <Route path="/categories/:category_id" element={<CategorySyosaiPage />} />
+          <Route path="/projects" element={<ProjectIndexPage />} />
+          <Route path="/todos" element={<TodoIndexPage />} />
         </Route>
         <Route element={<EmptyLayout />}>
           <Route path="*" element={<NotFoundPage />} />
