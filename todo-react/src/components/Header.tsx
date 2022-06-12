@@ -35,14 +35,50 @@ export function Header() {
           <ul className="mt-4 flex flex-col md:mt-0 md:flex-row md:space-x-8 ">
             <li className="flex items-center">
               <NavLink
-                to="/todos"
+                to="/todos/list"
                 className={({ isActive }) =>
                   `${
                     isActive ? "text-blue-600 underline" : "text-gray-700"
-                  } block border-b border-gray-100 bg-neutral-50 py-2 pr-4 pl-3 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:border-0 md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white`
+                  } block border-b border-gray-100 bg-neutral-50 py-2 pr-4 pl-3 uppercase hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:border-0 md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white`
                 }
               >
-                ToDo
+                ToDo List
+              </NavLink>
+            </li>
+            <li className="flex items-center">
+              <NavLink
+                to="/todos/board"
+                className={({ isActive }) =>
+                  `${
+                    isActive ? "text-blue-600 underline" : "text-gray-700"
+                  } block border-b border-gray-100 bg-neutral-50 py-2 pr-4 pl-3 uppercase hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:border-0 md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white`
+                }
+              >
+                Board
+              </NavLink>
+            </li>
+            <li className="flex items-center">
+              <NavLink
+                to="/todos/gantt"
+                className={({ isActive }) =>
+                  `${
+                    isActive ? "text-blue-600 underline" : "text-gray-700"
+                  } block border-b border-gray-100 bg-neutral-50 py-2 pr-4 pl-3 uppercase hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:border-0 md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white`
+                }
+              >
+                Gantt
+              </NavLink>
+            </li>
+            <li className="flex items-center">
+              <NavLink
+                to="/todos/table"
+                className={({ isActive }) =>
+                  `${
+                    isActive ? "text-blue-600 underline" : "text-gray-700"
+                  } block border-b border-gray-100 bg-neutral-50 py-2 pr-4 pl-3 uppercase hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:border-0 md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white`
+                }
+              >
+                Table
               </NavLink>
             </li>
             <li>

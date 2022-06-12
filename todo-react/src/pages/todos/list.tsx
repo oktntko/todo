@@ -33,7 +33,7 @@ const newdata = (index: number) => ({
   updated_at: "",
 });
 
-export function TodoIndexPage() {
+export function TodoListPage() {
   const { todos, setTodos, postTodos, putTodos, deleteTodos, patchTodoReorder, doneTodos } =
     useTodo();
   const selections = useSelections();
