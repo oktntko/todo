@@ -83,7 +83,7 @@ const findManyTodo = async (
       },
       orderBy: {
         ...orderBy,
-        todo_id: "asc",
+        order: "asc",
       },
     })
     .then((todo) => todo.map(transform));
@@ -209,8 +209,11 @@ const checkPreviousVersion = async (
   return previous;
 };
 
-const updateTodoOrder = async (todo: Pick<Todo, "todo_id" | "order">) => {
-  log.debug("updateTodoOrder");
+const patchTodo = async (
+  where: RequireOne<Prisma.TodoWhereUniqueInput>,
+  todo: Partial<Omit<Todo, "todo_id" | "created_at" | "updated_at">>
+) => {
+  log.debug("patchTodo");
 
   return ORM.todo
     .update({
@@ -233,44 +236,17 @@ const updateTodoOrder = async (todo: Pick<Todo, "todo_id" | "order">) => {
         done_at: true,
       },
       data: {
+        yarukoto: todo.yarukoto,
         order: todo.order,
+        beginning: todo.beginning,
+        deadline: todo.deadline,
+        memo: todo.memo,
+        status_id: todo.status_id,
+        category_id: todo.category_id,
+        project_id: todo.project_id,
+        done_at: todo.done_at,
       },
-      where: {
-        todo_id: todo.todo_id,
-      },
-    })
-    .then(transform);
-};
-
-const updateTodoDone = async (todo: Pick<Todo, "todo_id">) => {
-  log.debug("updateTodoDone");
-
-  return ORM.todo
-    .update({
-      select: {
-        todo_id: true,
-        yarukoto: true,
-        order: true,
-        beginning: true,
-        deadline: true,
-        memo: true,
-        status_id: true,
-        category_id: true,
-        project_id: true,
-        tags: {
-          select: {
-            tag_id: true,
-          },
-        },
-        updated_at: true,
-        done_at: true,
-      },
-      data: {
-        done_at: new Date(),
-      },
-      where: {
-        todo_id: todo.todo_id,
-      },
+      where,
     })
     .then(transform);
 };
@@ -280,10 +256,9 @@ export const TodosRepository = {
   findManyTodo,
   findUniqueTodo,
   updateTodo,
+  patchTodo,
   deleteTodo,
   checkPreviousVersion,
-  updateTodoOrder,
-  updateTodoDone,
 } as const;
 
 type SelectTodo = {

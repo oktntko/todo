@@ -7,7 +7,6 @@ import { BiSend, BiTrash, BiUndo } from "react-icons/bi";
 import { BsPlus } from "react-icons/bs";
 import { MdAccessTimeFilled, MdOutlineDragIndicator } from "react-icons/md";
 import { Button } from "~/components/Button";
-import { Tooltip } from "~/components/Tooltip";
 import { generateId } from "~/libs/strings";
 import { api } from "~/repositories/api";
 import { components } from "~/repositories/schema";
@@ -199,43 +198,36 @@ function StatusRow({ index, status, onSubmit, onDelete }: StatusRowProps) {
                     className="flex-grow truncate rounded border p-1"
                     maxLength={50}
                   />
-                  <Tooltip message="Undo" className="uppercase">
-                    <Button
-                      type="button"
-                      className="rounded-3xl p-1"
-                      colorset={"white"}
-                      disabled={isOriginalValues}
-                      onClick={() => {
-                        resetForm({ values: status });
-                      }}
-                    >
-                      <BiUndo className="text-lg" />
-                    </Button>
-                  </Tooltip>
-                  <Tooltip message="Commit">
-                    <Button
-                      type="submit"
-                      className="rounded-3xl p-1"
-                      colorset={"green"}
-                      disabled={isOriginalValues || values.status_name === ""}
-                    >
-                      <BiSend className="text-lg" />
-                    </Button>
-                  </Tooltip>
-
-                  <Tooltip message="Delete">
-                    <Button
-                      type="button"
-                      className="rounded-3xl p-1"
-                      colorset={"yellow"}
-                      disabled={typeof values.status_id === "string"}
-                      onClick={() => {
-                        onDelete(index, values);
-                      }}
-                    >
-                      <BiTrash className="text-lg" />
-                    </Button>
-                  </Tooltip>
+                  <Button
+                    type="button"
+                    className="rounded-3xl p-1"
+                    colorset={"white"}
+                    disabled={isOriginalValues}
+                    onClick={() => {
+                      resetForm({ values: status });
+                    }}
+                  >
+                    <BiUndo className="text-lg" />
+                  </Button>
+                  <Button
+                    type="submit"
+                    className="rounded-3xl p-1"
+                    colorset={"green"}
+                    disabled={isOriginalValues || values.status_name === ""}
+                  >
+                    <BiSend className="text-lg" />
+                  </Button>
+                  <Button
+                    type="button"
+                    className="rounded-3xl p-1"
+                    colorset={"yellow"}
+                    disabled={typeof values.status_id === "string"}
+                    onClick={() => {
+                      onDelete(index, values);
+                    }}
+                  >
+                    <BiTrash className="text-lg" />
+                  </Button>
                 </div>
               </Form>
             );

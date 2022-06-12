@@ -31,7 +31,6 @@ export class TodoBody {
   @IsOptional()
   @IsString()
   @MaxLength(100)
-  @Transform(transformerEmptyToNull)
   yarukoto: string | null;
 
   @IsOptional()
@@ -41,19 +40,16 @@ export class TodoBody {
   @IsOptional()
   @IsString()
   @MaxLength(10)
-  @Transform(transformerEmptyToNull)
   beginning: string | null;
 
   @IsOptional()
   @IsString()
   @MaxLength(10)
-  @Transform(transformerEmptyToNull)
   deadline: string | null;
 
   @IsOptional()
   @IsString()
   @MaxLength(400)
-  @Transform(transformerEmptyToNull)
   memo: string | null;
 
   @IsOptional()
@@ -103,7 +99,6 @@ export class TodoResponse {
   @IsOptional()
   @IsString()
   @MaxLength(100)
-  @Transform(transformerEmptyToNull)
   yarukoto: string | null;
 
   @IsOptional()
@@ -114,19 +109,16 @@ export class TodoResponse {
   @IsOptional()
   @IsString()
   @MaxLength(10)
-  @Transform(transformerEmptyToNull)
   beginning: string | null;
 
   @IsOptional()
   @IsString()
   @MaxLength(10)
-  @Transform(transformerEmptyToNull)
   deadline: string | null;
 
   @IsOptional()
   @IsString()
   @MaxLength(400)
-  @Transform(transformerEmptyToNull)
   memo: string | null;
 
   @IsOptional()
@@ -223,5 +215,15 @@ export class TodosController {
     @BodyParam("updated_at", { required: true }) updated_at: string
   ): Promise<TodoResponse> {
     return TodosService.patchTodoDone(path.todo_id, updated_at);
+  }
+
+  // # PATCH /api/todos/:todo_id/status
+  @Patch("/api/todos/:todo_id/status")
+  @ResponseSchema(TodoResponse)
+  async patchTodoStatus(
+    @Params({ required: true }) path: TodoPathParams,
+    @BodyParam("status_id", { required: true }) status_id: number
+  ): Promise<TodoResponse> {
+    return TodosService.patchTodoStatus(path.todo_id, status_id);
   }
 }

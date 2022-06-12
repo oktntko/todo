@@ -121,13 +121,12 @@ export function SelectInput<V extends string | number, T>(props: SelectInputProp
     <Listbox multiple={props.multiple} value={props.value} onChange={handleChange} as="div">
       <Listbox.Button className={"flex items-center space-x-1"}>
         {button()}
-        <button
+        <div
           className={`${isNotEmpty ? "" : "invisible"}`}
-          type="button"
           onClick={() => (props.multiple ? handleChange([]) : handleChange(null))}
         >
           <MdClear className="text-gray-400" aria-hidden="true" />
-        </button>
+        </div>
       </Listbox.Button>
       <Transition
         as={Fragment}

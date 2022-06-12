@@ -67,6 +67,9 @@ export type paths = {
   "/api/todos/{todo_id}/done": {
     patch: operations["TodosController.patchTodoDone"];
   };
+  "/api/todos/{todo_id}/status": {
+    patch: operations["TodosController.patchTodoStatus"];
+  };
   "/files/{resources}/{data_name}/{id}": {
     get: operations["FilesController.getFile"];
   };
@@ -701,6 +704,27 @@ export type operations = {
       content: {
         "application/json": {
           updated_at: string;
+        };
+      };
+    };
+  };
+  "TodosController.patchTodoStatus": {
+    parameters: {
+      path: {
+        todo_id: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["TodoResponse"];
+        };
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          status_id: number;
         };
       };
     };
