@@ -4,7 +4,7 @@ import { motion, Reorder, useDragControls } from "framer-motion";
 import update from "immutability-helper";
 import { useCallback, useEffect, useState } from "react";
 import { AiFillTag } from "react-icons/ai";
-import { BiCheckCircle, BiTrash, BiUndo } from "react-icons/bi";
+import { BiSend, BiTrash, BiUndo } from "react-icons/bi";
 import { BsPlus } from "react-icons/bs";
 import { MdOutlineDragIndicator } from "react-icons/md";
 import { Button } from "~/components/Button";
@@ -62,7 +62,7 @@ export function TagIndexPage() {
   return (
     <>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-        <div className="container my-4 mx-auto sm:px-4 md:max-w-3xl">
+        <div className="container mx-auto sm:px-4 md:my-4 md:max-w-3xl">
           <Reorder.Group values={tags} onReorder={handleReorder} className=" ">
             {tags.map((tag, index) => (
               <TagRow
@@ -217,7 +217,7 @@ function TagRow({ index, tag, onSubmit, onDelete }: TagRowProps) {
                       colorset={"green"}
                       disabled={isOriginalValues || values.tag_name === ""}
                     >
-                      <BiCheckCircle className="text-lg" />
+                      <BiSend className="text-lg" />
                     </Button>
                   </Tooltip>
 

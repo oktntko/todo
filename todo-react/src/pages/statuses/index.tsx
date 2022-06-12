@@ -3,7 +3,7 @@ import { Field, Form, Formik } from "formik";
 import { motion, Reorder, useDragControls } from "framer-motion";
 import update from "immutability-helper";
 import { useCallback, useEffect, useState } from "react";
-import { BiCheckCircle, BiTrash, BiUndo } from "react-icons/bi";
+import { BiSend, BiTrash, BiUndo } from "react-icons/bi";
 import { BsPlus } from "react-icons/bs";
 import { MdAccessTimeFilled, MdOutlineDragIndicator } from "react-icons/md";
 import { Button } from "~/components/Button";
@@ -62,7 +62,7 @@ export function StatusIndexPage() {
   return (
     <>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-        <div className="container my-4 mx-auto sm:px-4 md:max-w-3xl">
+        <div className="container mx-auto sm:px-4 md:my-4 md:max-w-3xl">
           <Reorder.Group values={statuses} onReorder={handleReorder} className=" ">
             {statuses.map((status, index) => (
               <StatusRow
@@ -219,7 +219,7 @@ function StatusRow({ index, status, onSubmit, onDelete }: StatusRowProps) {
                       colorset={"green"}
                       disabled={isOriginalValues || values.status_name === ""}
                     >
-                      <BiCheckCircle className="text-lg" />
+                      <BiSend className="text-lg" />
                     </Button>
                   </Tooltip>
 

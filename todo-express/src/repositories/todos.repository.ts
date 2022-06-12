@@ -209,6 +209,72 @@ const checkPreviousVersion = async (
   return previous;
 };
 
+const updateTodoOrder = async (todo: Pick<Todo, "todo_id" | "order">) => {
+  log.debug("updateTodoOrder");
+
+  return ORM.todo
+    .update({
+      select: {
+        todo_id: true,
+        yarukoto: true,
+        order: true,
+        beginning: true,
+        deadline: true,
+        memo: true,
+        status_id: true,
+        category_id: true,
+        project_id: true,
+        tags: {
+          select: {
+            tag_id: true,
+          },
+        },
+        updated_at: true,
+        done_at: true,
+      },
+      data: {
+        order: todo.order,
+      },
+      where: {
+        todo_id: todo.todo_id,
+      },
+    })
+    .then(transform);
+};
+
+const updateTodoDone = async (todo: Pick<Todo, "todo_id">) => {
+  log.debug("updateTodoDone");
+
+  return ORM.todo
+    .update({
+      select: {
+        todo_id: true,
+        yarukoto: true,
+        order: true,
+        beginning: true,
+        deadline: true,
+        memo: true,
+        status_id: true,
+        category_id: true,
+        project_id: true,
+        tags: {
+          select: {
+            tag_id: true,
+          },
+        },
+        updated_at: true,
+        done_at: true,
+      },
+      data: {
+        done_at: new Date(),
+      },
+      where: {
+        todo_id: todo.todo_id,
+      },
+    })
+    .then(transform);
+};
+
 export const TodosRepository = {
   createTodo,
   findManyTodo,
@@ -216,6 +282,8 @@ export const TodosRepository = {
   updateTodo,
   deleteTodo,
   checkPreviousVersion,
+  updateTodoOrder,
+  updateTodoDone,
 } as const;
 
 type SelectTodo = {

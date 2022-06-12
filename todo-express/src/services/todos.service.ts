@@ -35,8 +35,6 @@ const putTodo = async (
 ) => {
   log.debug("putTodo", todo_id, todo, updated_at);
 
-  await TodosRepository.checkPreviousVersion({ todo_id }, updated_at);
-
   return TodosRepository.updateTodo({ todo_id }, todo);
 };
 
@@ -47,10 +45,26 @@ const deleteTodo = async (todo_id: number, updated_at: string) => {
   return TodosRepository.deleteTodo({ todo_id });
 };
 
+// # PATCH /api/todos/reorder
+const patchTodoReorder = async (todos: Pick<Todo, "todo_id" | "order">[]) => {
+  log.debug("patchTodoReorder", todos);
+
+  return { todos: await Promise.all(todos.map(TodosRepository.updateTodoOrder)) };
+};
+
+// # PATCH /api/todos/:todo_id/done
+const patchTodoDone = async (todo_id: number, updated_at: string) => {
+  log.debug("patchTodoDone", todo_id, updated_at);
+
+  return TodosRepository.updateTodoDone({ todo_id });
+};
+
 export const TodosService = {
   postTodo,
   getTodos,
   getTodo,
   putTodo,
   deleteTodo,
+  patchTodoReorder,
+  patchTodoDone,
 } as const;

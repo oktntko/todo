@@ -65,7 +65,7 @@ export function Header() {
                     ></motion.div>
                     <div className="relative">
                       <motion.div
-                        className={`absolute right-0 z-10 w-44 divide-y divide-gray-100 rounded bg-white shadow dark:bg-gray-700 `}
+                        className={`absolute right-0 z-10 w-32 divide-y divide-gray-100 rounded bg-white shadow dark:bg-gray-700 `}
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}

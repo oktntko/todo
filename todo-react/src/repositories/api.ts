@@ -265,6 +265,23 @@ const todos = {
       >(`/api/todos/${path.todo_id}`, { params: query });
     },
   },
+  patch: {
+    todosReorder: async (
+      body: paths["/api/todos/reorder"]["patch"]["requestBody"]["content"]["application/json"]
+    ) => {
+      return client.patch<
+        paths["/api/todos/reorder"]["patch"]["responses"]["200"]["content"]["application/json"]
+      >(`/api/todos/reorder`, body);
+    },
+    todosDone: async (
+      path: paths["/api/todos/{todo_id}/done"]["patch"]["parameters"]["path"],
+      body: paths["/api/todos/{todo_id}/done"]["patch"]["requestBody"]["content"]["application/json"]
+    ) => {
+      return client.patch<
+        paths["/api/todos/{todo_id}/done"]["patch"]["responses"]["200"]["content"]["application/json"]
+      >(`/api/todos/${path.todo_id}/done`, body);
+    },
+  },
 };
 
 export const api = {
@@ -301,5 +318,6 @@ export const api = {
     ...categories.patch,
     ...projects.patch,
     ...tags.patch,
+    ...todos.patch,
   },
 };

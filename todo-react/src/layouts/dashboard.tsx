@@ -12,7 +12,7 @@ export function DashboardLayout() {
         <nav className="h-12 flex-shrink-0 border-b">
           <Header />
         </nav>
-        <main className="flex-grow overflow-auto p-4">
+        <main className="flex-grow overflow-auto md:p-4">
           <Outlet />
         </main>
       </div>

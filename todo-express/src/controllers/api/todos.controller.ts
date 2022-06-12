@@ -2,6 +2,7 @@ import { Transform, Type } from "class-transformer";
 import {
   IsArray,
   IsDate,
+  IsInt,
   IsNotEmpty,
   IsOptional,
   IsPositive,
@@ -16,6 +17,7 @@ import {
   Get,
   JsonController,
   Params,
+  Patch,
   Post,
   Put,
   QueryParam,
@@ -33,7 +35,6 @@ export class TodoBody {
   yarukoto: string | null;
 
   @IsOptional()
-  @IsPositive()
   @Transform(transformerEmptyToNull)
   order: number | null;
 
@@ -78,6 +79,20 @@ export class TodoBody {
 class TodoPathParams {
   @IsPositive()
   todo_id: number;
+}
+
+class TodoReorderBody {
+  @IsPositive()
+  todo_id: number;
+
+  @IsInt()
+  order: number;
+}
+
+class ListTodoBody {
+  @ValidateNested({ each: true })
+  @Type(() => TodoReorderBody)
+  todos: TodoReorderBody[];
 }
 
 // ::: RESPONSE
@@ -191,5 +206,22 @@ export class TodosController {
     @QueryParam("updated_at", { required: true }) updated_at: string
   ): Promise<TodoResponse> {
     return TodosService.deleteTodo(path.todo_id, updated_at);
+  }
+
+  // # PATCH /api/todos/reorder
+  @Patch("/api/todos/reorder")
+  @ResponseSchema(ListTodoResponse)
+  async patchTodoReorder(@Body({ required: true }) body: ListTodoBody): Promise<ListTodoResponse> {
+    return TodosService.patchTodoReorder(body.todos);
+  }
+
+  // # PATCH /api/todos/:todo_id/done
+  @Patch("/api/todos/:todo_id/done")
+  @ResponseSchema(TodoResponse)
+  async patchTodoDone(
+    @Params({ required: true }) path: TodoPathParams,
+    @BodyParam("updated_at", { required: true }) updated_at: string
+  ): Promise<TodoResponse> {
+    return TodosService.patchTodoDone(path.todo_id, updated_at);
   }
 }

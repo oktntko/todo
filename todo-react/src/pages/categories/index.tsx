@@ -3,7 +3,7 @@ import { Field, Form, Formik } from "formik";
 import { motion, Reorder, useDragControls } from "framer-motion";
 import update from "immutability-helper";
 import { useCallback, useEffect, useState } from "react";
-import { BiCheckCircle, BiTrash, BiUndo } from "react-icons/bi";
+import { BiSend, BiTrash, BiUndo } from "react-icons/bi";
 import { BsPlus } from "react-icons/bs";
 import { MdCategory, MdOutlineDragIndicator } from "react-icons/md";
 import { Button } from "~/components/Button";
@@ -68,7 +68,7 @@ export function CategoryIndexPage() {
   return (
     <>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-        <div className="container my-4 mx-auto sm:px-4 md:max-w-3xl">
+        <div className="container mx-auto sm:px-4 md:my-4 md:max-w-3xl">
           <Reorder.Group values={categories} onReorder={handleReorder} className=" ">
             {categories.map((category, index) => (
               <CategoryRow
@@ -229,7 +229,7 @@ function CategoryRow({ index, category, onSubmit, onDelete }: CategoryRowProps) 
                       colorset={"green"}
                       disabled={isOriginalValues || values.category_name === ""}
                     >
-                      <BiCheckCircle className="text-lg" />
+                      <BiSend className="text-lg" />
                     </Button>
                   </Tooltip>
 

@@ -61,6 +61,12 @@ export type paths = {
     put: operations["TodosController.putTodo"];
     delete: operations["TodosController.deleteTodo"];
   };
+  "/api/todos/reorder": {
+    patch: operations["TodosController.patchTodoReorder"];
+  };
+  "/api/todos/{todo_id}/done": {
+    patch: operations["TodosController.patchTodoDone"];
+  };
   "/files/{resources}/{data_name}/{id}": {
     get: operations["FilesController.getFile"];
   };
@@ -171,7 +177,7 @@ export type components = {
     };
     TodoBody: {
       yarukoto?: string;
-      order?: number;
+      order?: unknown;
       beginning?: string;
       deadline?: string;
       memo?: string;
@@ -182,6 +188,13 @@ export type components = {
     };
     TodoPathParams: {
       todo_id: number;
+    };
+    TodoReorderBody: {
+      todo_id: number;
+      order: number;
+    };
+    ListTodoBody: {
+      todos: components["schemas"]["TodoReorderBody"][];
     };
     TodoResponse: {
       todo_id: number;
@@ -652,6 +665,42 @@ export type operations = {
       200: {
         content: {
           "application/json": components["schemas"]["TodoResponse"];
+        };
+      };
+    };
+  };
+  "TodosController.patchTodoReorder": {
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["ListTodoResponse"];
+        };
+      };
+    };
+    /** ListTodoBody */
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ListTodoBody"];
+      };
+    };
+  };
+  "TodosController.patchTodoDone": {
+    parameters: {
+      path: {
+        todo_id: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["TodoResponse"];
+        };
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          updated_at: string;
         };
       };
     };
