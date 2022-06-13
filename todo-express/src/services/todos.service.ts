@@ -1,9 +1,11 @@
-import { TodoBody, TodoReorder } from "~/controllers/api/todos.controller";
+import { Todo } from "@prisma/client";
 import log from "~/middlewares/log";
 import { TodosRepository } from "~/repositories/todos.repository";
 
 // # POST /api/todos
-const postTodo = async (todo: TodoBody) => {
+const postTodo = async (
+  todo: Omit<Todo, "todo_id" | "created_at" | "updated_at" | "done_at"> & { tag_id_list: number[] }
+) => {
   log.debug("postTodo", todo);
 
   return TodosRepository.createTodo(todo);
@@ -26,10 +28,12 @@ const getTodo = async (todo_id: number) => {
 };
 
 // # PUT /api/todos/:todo_id
-const putTodo = async (todo_id: number, todo: TodoBody, updated_at: string) => {
+const putTodo = async (
+  todo_id: number,
+  todo: Omit<Todo, "todo_id" | "created_at" | "updated_at" | "done_at"> & { tag_id_list: number[] },
+  updated_at: string
+) => {
   log.debug("putTodo", todo_id, todo, updated_at);
-
-  await TodosRepository.checkPreviousVersion({ todo_id }, updated_at);
 
   return TodosRepository.updateTodo({ todo_id }, todo);
 };
@@ -41,25 +45,31 @@ const deleteTodo = async (todo_id: number, updated_at: string) => {
   return TodosRepository.deleteTodo({ todo_id });
 };
 
-// # PATCH /api/todos/:todo_id
-const patchTodoOne = async (todo_id: number, todo: TodoBody) => {
-  log.debug("patchTodoOne", todo_id);
+// # PATCH /api/todos/reorder
+const patchTodoReorder = async (todos: Pick<Todo, "todo_id" | "order">[]) => {
+  log.debug("patchTodoReorder", todos);
 
-  return TodosRepository.updateTodo({ todo_id }, todo);
+  return {
+    todos: await Promise.all(
+      todos.map((todo) =>
+        TodosRepository.patchTodo({ todo_id: todo.todo_id }, { order: todo.order })
+      )
+    ),
+  };
 };
 
 // # PATCH /api/todos/:todo_id/done
-const patchTodoDone = async (todo_id: number) => {
-  log.debug("patchTodoDone", todo_id);
+const patchTodoDone = async (todo_id: number, updated_at: string) => {
+  log.debug("patchTodoDone", todo_id, updated_at);
 
-  return TodosRepository.updateTodoDoneAt({ todo_id }, new Date());
+  return TodosRepository.patchTodo({ todo_id }, { done_at: new Date() });
 };
 
-// # PATCH /api/todos/reorder
-const patchTodoReorder = async (todos: TodoReorder[]) => {
-  log.debug("patchTodoReorder", todos);
+// # PATCH /api/todos/:todo_id/status
+const patchTodoStatus = async (todo_id: number, status_id: number) => {
+  log.debug("patchTodoStatus", todo_id, status_id);
 
-  return { todos: await Promise.all(todos.map(TodosRepository.updateTodoReorder)) };
+  return TodosRepository.patchTodo({ todo_id }, { status_id });
 };
 
 export const TodosService = {
@@ -68,7 +78,7 @@ export const TodosService = {
   getTodo,
   putTodo,
   deleteTodo,
-  patchTodoOne,
-  patchTodoDone,
   patchTodoReorder,
+  patchTodoDone,
+  patchTodoStatus,
 } as const;

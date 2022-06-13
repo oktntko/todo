@@ -2,7 +2,15 @@ import express from "express";
 import helmet from "helmet";
 import "reflect-metadata";
 import { useExpressServer } from "routing-controllers";
-import { CategoriesController, OpenapiController, TodosController } from "~/controllers";
+import {
+  CategoriesController,
+  FilesController,
+  OpenapiController,
+  ProjectsController,
+  StatusesController,
+  TagsController,
+  TodosController,
+} from "~/controllers";
 import { AfterLogHandler, BeforeLogHandler, ErrorHandler, NotFoundHandler } from "~/middlewares";
 import log from "~/middlewares/log";
 
@@ -17,7 +25,15 @@ app.use(express.urlencoded({ extended: true }));
 
 useExpressServer(app, {
   defaultErrorHandler: false,
-  controllers: [OpenapiController, TodosController, CategoriesController],
+  controllers: [
+    CategoriesController,
+    OpenapiController,
+    ProjectsController,
+    StatusesController,
+    TagsController,
+    TodosController,
+    FilesController,
+  ],
   middlewares: [BeforeLogHandler, NotFoundHandler, ErrorHandler, AfterLogHandler],
   defaults: {
     paramOptions: {

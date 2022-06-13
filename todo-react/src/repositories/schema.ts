@@ -3,7 +3,7 @@
  * Do not make direct changes to the file.
  */
 
-export interface paths {
+export type paths = {
   "/api/categories": {
     get: operations["CategoriesController.getCategories"];
     post: operations["CategoriesController.postCategory"];
@@ -12,6 +12,45 @@ export interface paths {
     get: operations["CategoriesController.getCategory"];
     put: operations["CategoriesController.putCategory"];
     delete: operations["CategoriesController.deleteCategory"];
+  };
+  "/api/categories/reorder": {
+    patch: operations["CategoriesController.patchStatusReorder"];
+  };
+  "/api/projects": {
+    get: operations["ProjectsController.getProjects"];
+    post: operations["ProjectsController.postProject"];
+  };
+  "/api/projects/{project_id}": {
+    get: operations["ProjectsController.getProject"];
+    put: operations["ProjectsController.putProject"];
+    delete: operations["ProjectsController.deleteProject"];
+  };
+  "/api/projects/reorder": {
+    patch: operations["ProjectsController.patchProjectReorder"];
+  };
+  "/api/statuses": {
+    get: operations["StatusesController.getStatuses"];
+    post: operations["StatusesController.postStatus"];
+  };
+  "/api/statuses/{status_id}": {
+    get: operations["StatusesController.getStatus"];
+    put: operations["StatusesController.putStatus"];
+    delete: operations["StatusesController.deleteStatus"];
+  };
+  "/api/statuses/reorder": {
+    patch: operations["StatusesController.patchStatusReorder"];
+  };
+  "/api/tags": {
+    get: operations["TagsController.getTags"];
+    post: operations["TagsController.postTag"];
+  };
+  "/api/tags/{tag_id}": {
+    get: operations["TagsController.getTag"];
+    put: operations["TagsController.putTag"];
+    delete: operations["TagsController.deleteTag"];
+  };
+  "/api/tags/reorder": {
+    patch: operations["TagsController.patchTagReorder"];
   };
   "/api/todos": {
     get: operations["TodosController.getTodos"];
@@ -22,81 +61,172 @@ export interface paths {
     put: operations["TodosController.putTodo"];
     delete: operations["TodosController.deleteTodo"];
   };
-  "/api/todos/{todo_id}/one": {
-    patch: operations["TodosController.patchTodoOne"];
+  "/api/todos/reorder": {
+    patch: operations["TodosController.patchTodoReorder"];
   };
   "/api/todos/{todo_id}/done": {
     patch: operations["TodosController.patchTodoDone"];
   };
-  "/api/todos/reorder": {
-    patch: operations["TodosController.patchTodoReorder"];
+  "/api/todos/{todo_id}/status": {
+    patch: operations["TodosController.patchTodoStatus"];
+  };
+  "/files/{resources}/{data_name}/{id}": {
+    get: operations["FilesController.getFile"];
   };
   "/openapi": {
     get: operations["OpenapiController.getOpenApi"];
   };
-}
+};
 
-export interface components {
+export type components = {
   schemas: {
     CategoryBody: {
       category_name: string;
-      color?: string;
+      color: string;
+      order: number;
     };
     CategoryPathParams: {
       category_id: number;
     };
-    CategoryResponse: {
-      category_name: string;
+    CategoryReorderBody: {
       category_id: number;
-      color?: string;
+      order: number;
+    };
+    ListCategoryBody: {
+      categories: components["schemas"]["CategoryReorderBody"][];
+    };
+    CategoryResponse: {
+      category_id: number;
+      category_name: string;
+      color: string;
+      order: number;
       updated_at: string;
     };
     ListCategoryResponse: {
       categories: components["schemas"]["CategoryResponse"][];
     };
+    ProjectBody: {
+      project_name: string;
+      order: number;
+    };
+    ProjectPathParams: {
+      project_id: number;
+    };
+    ProjectReorderBody: {
+      project_id: number;
+      order: number;
+    };
+    ListProjectBody: {
+      projects: components["schemas"]["ProjectReorderBody"][];
+    };
+    ProjectResponse: {
+      project_id: number;
+      project_name: string;
+      order: number;
+      updated_at: string;
+    };
+    ListProjectResponse: {
+      projects: components["schemas"]["ProjectResponse"][];
+    };
+    StatusBody: {
+      status_name: string;
+      color: string;
+      order: number;
+    };
+    StatusPathParams: {
+      status_id: number;
+    };
+    StatusReorderBody: {
+      status_id: number;
+      order: number;
+    };
+    ListStatusBody: {
+      statuses: components["schemas"]["StatusReorderBody"][];
+    };
+    StatusResponse: {
+      status_id: number;
+      status_name: string;
+      color: string;
+      order: number;
+      updated_at: string;
+    };
+    ListStatusResponse: {
+      statuses: components["schemas"]["StatusResponse"][];
+    };
+    TagBody: {
+      tag_name: string;
+      color: string;
+      order: number;
+    };
+    TagPathParams: {
+      tag_id: number;
+    };
+    TagReorderBody: {
+      tag_id: number;
+      order: number;
+    };
+    ListTagBody: {
+      tags: components["schemas"]["TagReorderBody"][];
+    };
+    TagResponse: {
+      tag_id: number;
+      tag_name: string;
+      color: string;
+      order: number;
+      updated_at: string;
+    };
+    ListTagResponse: {
+      tags: components["schemas"]["TagResponse"][];
+    };
     TodoBody: {
       yarukoto?: string;
-      /** @enum {string} */
-      status: "TODO" | "DOING" | "DONE";
-      category_id?: number;
-      kizitu?: string;
-      /** @enum {string} */
-      yusendo: "FAST" | "SPEEDUP" | "PLAY" | "PAUSE" | "STOP";
-      subcategory_id_list: number[];
+      order?: unknown;
+      beginning?: string;
+      deadline?: string;
       memo?: string;
+      status_id?: number;
+      category_id?: number;
+      project_id?: number;
+      tag_id_list: number[];
     };
     TodoPathParams: {
       todo_id: number;
     };
-    PatchTodoReorderBody: {
-      todos: components["schemas"]["TodoReorder"][];
-    };
-    TodoReorder: {
+    TodoReorderBody: {
       todo_id: number;
       order: number;
+    };
+    ListTodoBody: {
+      todos: components["schemas"]["TodoReorderBody"][];
     };
     TodoResponse: {
       todo_id: number;
       yarukoto?: string;
-      /** @enum {string} */
-      status: "TODO" | "DOING" | "DONE";
       order?: number;
-      category_id?: number;
-      kizitu?: string;
-      /** @enum {string} */
-      yusendo: "FAST" | "SPEEDUP" | "PLAY" | "PAUSE" | "STOP";
-      subcategory_id_list: number[];
+      beginning?: string;
+      deadline?: string;
       memo?: string;
+      status_id?: number;
+      category_id?: number;
+      project_id?: number;
+      tag_id_list: number[];
       updated_at: string;
       done_at?: string | string;
     };
     ListTodoResponse: {
       todos: components["schemas"]["TodoResponse"][];
     };
+    FilePathParams: {
+      /** @enum {string} */
+      resources: "projects";
+      /** @enum {string} */
+      data_name: "icon";
+      id: number;
+    };
   };
-}
+};
 
-export interface operations {
+export type operations = {
   "CategoriesController.getCategories": {
     responses: {
       200: {
@@ -171,6 +301,297 @@ export interface operations {
         content: {
           "application/json": components["schemas"]["CategoryResponse"];
         };
+      };
+    };
+  };
+  "CategoriesController.patchStatusReorder": {
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["ListCategoryResponse"];
+        };
+      };
+    };
+    /** ListCategoryBody */
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ListCategoryBody"];
+      };
+    };
+  };
+  "ProjectsController.getProjects": {
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["ListProjectResponse"];
+        };
+      };
+    };
+  };
+  "ProjectsController.postProject": {
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["ProjectResponse"];
+        };
+      };
+    };
+    /** ProjectBody */
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ProjectBody"];
+      };
+    };
+  };
+  "ProjectsController.getProject": {
+    parameters: {
+      path: {
+        project_id: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["ProjectResponse"];
+        };
+      };
+    };
+  };
+  "ProjectsController.putProject": {
+    parameters: {
+      path: {
+        project_id: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["ProjectResponse"];
+        };
+      };
+    };
+    /** ProjectBody */
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ProjectBody"] & {
+          updated_at: string;
+        };
+      };
+    };
+  };
+  "ProjectsController.deleteProject": {
+    parameters: {
+      path: {
+        project_id: string;
+      };
+      query: {
+        updated_at: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["ProjectResponse"];
+        };
+      };
+    };
+  };
+  "ProjectsController.patchProjectReorder": {
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["ListProjectResponse"];
+        };
+      };
+    };
+    /** ListProjectBody */
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ListProjectBody"];
+      };
+    };
+  };
+  "StatusesController.getStatuses": {
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["ListStatusResponse"];
+        };
+      };
+    };
+  };
+  "StatusesController.postStatus": {
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["StatusResponse"];
+        };
+      };
+    };
+    /** StatusBody */
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["StatusBody"];
+      };
+    };
+  };
+  "StatusesController.getStatus": {
+    parameters: {
+      path: {
+        status_id: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["StatusResponse"];
+        };
+      };
+    };
+  };
+  "StatusesController.putStatus": {
+    parameters: {
+      path: {
+        status_id: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["StatusResponse"];
+        };
+      };
+    };
+    /** StatusBody */
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["StatusBody"] & {
+          updated_at: string;
+        };
+      };
+    };
+  };
+  "StatusesController.deleteStatus": {
+    parameters: {
+      path: {
+        status_id: string;
+      };
+      query: {
+        updated_at: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["StatusResponse"];
+        };
+      };
+    };
+  };
+  "StatusesController.patchStatusReorder": {
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["ListStatusResponse"];
+        };
+      };
+    };
+    /** ListStatusBody */
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ListStatusBody"];
+      };
+    };
+  };
+  "TagsController.getTags": {
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["ListTagResponse"];
+        };
+      };
+    };
+  };
+  "TagsController.postTag": {
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["TagResponse"];
+        };
+      };
+    };
+    /** TagBody */
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["TagBody"];
+      };
+    };
+  };
+  "TagsController.getTag": {
+    parameters: {
+      path: {
+        tag_id: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["TagResponse"];
+        };
+      };
+    };
+  };
+  "TagsController.putTag": {
+    parameters: {
+      path: {
+        tag_id: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["TagResponse"];
+        };
+      };
+    };
+    /** TagBody */
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["TagBody"] & {
+          updated_at: string;
+        };
+      };
+    };
+  };
+  "TagsController.deleteTag": {
+    parameters: {
+      path: {
+        tag_id: string;
+      };
+      query: {
+        updated_at: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["TagResponse"];
+        };
+      };
+    };
+  };
+  "TagsController.patchTagReorder": {
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["ListTagResponse"];
+        };
+      };
+    };
+    /** ListTagBody */
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ListTagBody"];
       };
     };
   };
@@ -251,23 +672,18 @@ export interface operations {
       };
     };
   };
-  "TodosController.patchTodoOne": {
-    parameters: {
-      path: {
-        todo_id: string;
-      };
-    };
+  "TodosController.patchTodoReorder": {
     responses: {
       200: {
         content: {
-          "application/json": components["schemas"]["TodoResponse"];
+          "application/json": components["schemas"]["ListTodoResponse"];
         };
       };
     };
-    /** TodoBody */
+    /** ListTodoBody */
     requestBody: {
       content: {
-        "application/json": components["schemas"]["TodoBody"];
+        "application/json": components["schemas"]["ListTodoBody"];
       };
     };
   };
@@ -284,19 +700,49 @@ export interface operations {
         };
       };
     };
-  };
-  "TodosController.patchTodoReorder": {
-    responses: {
-      200: {
-        content: {
-          "application/json": components["schemas"]["ListTodoResponse"];
+    requestBody: {
+      content: {
+        "application/json": {
+          updated_at: string;
         };
       };
     };
-    /** PatchTodoReorderBody */
+  };
+  "TodosController.patchTodoStatus": {
+    parameters: {
+      path: {
+        todo_id: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["TodoResponse"];
+        };
+      };
+    };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["PatchTodoReorderBody"];
+        "application/json": {
+          status_id: number;
+        };
+      };
+    };
+  };
+  "FilesController.getFile": {
+    parameters: {
+      path: {
+        resources: string;
+        data_name: string;
+        id: string;
+      };
+    };
+    responses: {
+      /** Successful response */
+      200: {
+        content: {
+          "text/html; charset=utf-8": unknown;
+        };
       };
     };
   };
@@ -310,4 +756,4 @@ export interface operations {
       };
     };
   };
-}
+};

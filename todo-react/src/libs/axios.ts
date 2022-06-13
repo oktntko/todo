@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { AxiosResponse } from "axios";
 
-const client = axios.create({ timeout: 1000 });
+const client = axios.create({ timeout: 5000 });
 
 client.interceptors.response.use(
   (response) => response,

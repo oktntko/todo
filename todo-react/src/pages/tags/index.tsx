@@ -3,65 +3,59 @@ import { Field, Form, Formik } from "formik";
 import { motion, Reorder, useDragControls } from "framer-motion";
 import update from "immutability-helper";
 import { useCallback, useEffect, useState } from "react";
+import { AiFillTag } from "react-icons/ai";
 import { BiSend, BiTrash, BiUndo } from "react-icons/bi";
 import { BsPlus } from "react-icons/bs";
-import { MdCategory, MdOutlineDragIndicator } from "react-icons/md";
+import { MdOutlineDragIndicator } from "react-icons/md";
 import { Button } from "~/components/Button";
 import { generateId } from "~/libs/strings";
 import { api } from "~/repositories/api";
 import { components } from "~/repositories/schema";
 
-interface CategoryType extends Weaken<components["schemas"]["CategoryResponse"], "category_id"> {
-  category_id: string | number;
+interface TagType extends Weaken<components["schemas"]["TagResponse"], "tag_id"> {
+  tag_id: string | number;
 }
 
 const newdata = (index: number) => ({
-  category_id: generateId(), // 追加分は id が string
-  category_name: "",
+  tag_id: generateId(), // 追加分は id が string
+  tag_name: "",
   color: "#000000",
   order: index,
   updated_at: "",
 });
 
-export function CategoryIndexPage() {
-  const {
-    categories,
-    setCategories,
-    postCategories,
-    putCategories,
-    deleteCategories,
-    patchCategoryReorder,
-  } = useCategory();
+export function TagIndexPage() {
+  const { tags, setTags, postTags, putTags, deleteTags, patchTagReorder } = useTag();
 
-  const handleReorder = (values: CategoryType[]) => {
-    const categories = values.map((category, index) => ({ ...category, order: index }));
-    setCategories(values);
+  const handleReorder = (values: TagType[]) => {
+    const tags = values.map((tag, index) => ({ ...tag, order: index }));
+    setTags(values);
 
-    if (categories.length) {
-      patchCategoryReorder({
-        categories: categories.filter(
-          (category) => typeof category.category_id === "number"
-        ) as components["schemas"]["CategoryReorderBody"][],
+    if (tags.length) {
+      patchTagReorder({
+        tags: tags.filter(
+          (tag) => typeof tag.tag_id === "number"
+        ) as components["schemas"]["TagReorderBody"][],
       });
     }
   };
 
-  const handleSubmit = (index: number, values: CategoryType) => {
-    if (typeof values.category_id === "string") {
-      postCategories(index, { ...values, order: index });
+  const handleSubmit = (index: number, values: TagType) => {
+    if (typeof values.tag_id === "string") {
+      postTags(index, { ...values, order: index });
     } else {
-      putCategories(index, values.category_id, { ...values, order: index });
+      putTags(index, values.tag_id, { ...values, order: index });
     }
   };
 
-  const handleDelete = (index: number, values: CategoryType) => {
-    if (typeof values.category_id === "number") {
-      deleteCategories(index, values.category_id, values);
+  const handleDelete = (index: number, values: TagType) => {
+    if (typeof values.tag_id === "number") {
+      deleteTags(index, values.tag_id, values);
     }
   };
 
   const handleAdd = () => {
-    setCategories(update(categories, { $push: [newdata(categories.length)] }));
+    setTags(update(tags, { $push: [newdata(tags.length)] }));
   };
 
   return (
@@ -71,12 +65,12 @@ export function CategoryIndexPage() {
         animate={{ opacity: 1 }}
         className="container mx-auto md:my-4 md:max-w-3xl md:px-4"
       >
-        <Reorder.Group values={categories} onReorder={handleReorder} className=" ">
-          {categories.map((category, index) => (
-            <CategoryRow
-              key={category.category_id}
+        <Reorder.Group values={tags} onReorder={handleReorder} className=" ">
+          {tags.map((tag, index) => (
+            <TagRow
+              key={tag.tag_id}
               index={index}
-              category={category}
+              tag={tag}
               onSubmit={handleSubmit}
               onDelete={handleDelete}
             />
@@ -98,92 +92,86 @@ export function CategoryIndexPage() {
   );
 }
 
-const useCategory = () => {
-  const [categories, setCategories] = useState<CategoryType[]>([]);
+const useTag = () => {
+  const [tags, setTags] = useState<TagType[]>([]);
 
-  const getCategories = useCallback(() => {
-    api.get.categories().then(({ data }) => setCategories(data.categories));
-  }, [categories]);
+  const getTags = useCallback(() => {
+    api.get.tags().then(({ data }) => setTags(data.tags));
+  }, [tags]);
 
   useEffect(() => {
-    getCategories();
+    getTags();
   }, []);
 
-  const postCategories = useCallback(
-    (index: number, category: components["schemas"]["CategoryBody"]) => {
-      api.post
-        .categories(category)
-        .then(({ data }) => setCategories(update(categories, { $splice: [[index, 1, data]] })));
+  const postTags = useCallback(
+    (index: number, tag: components["schemas"]["TagBody"]) => {
+      api.post.tags(tag).then(({ data }) => setTags(update(tags, { $splice: [[index, 1, data]] })));
     },
-    [categories]
+    [tags]
   );
 
-  const putCategories = useCallback(
-    (
-      index: number,
-      category_id: number,
-      category: components["schemas"]["CategoryBody"] & Version
-    ) => {
+  const putTags = useCallback(
+    (index: number, tag_id: number, tag: components["schemas"]["TagBody"] & Version) => {
       api.put
-        .categories({ category_id: String(category_id) }, category)
-        .then(({ data }) => setCategories(update(categories, { $splice: [[index, 1, data]] })));
+        .tags({ tag_id: String(tag_id) }, tag)
+        .then(({ data }) => setTags(update(tags, { $splice: [[index, 1, data]] })));
     },
-    [categories]
+    [tags]
   );
 
-  const deleteCategories = useCallback(
-    (index: number, category_id: number, version: Version) => {
+  const deleteTags = useCallback(
+    (index: number, tag_id: number, version: Version) => {
       api.delete
-        .categories({ category_id: String(category_id) }, version)
-        .then(() => setCategories(update(categories, { $splice: [[index, 1]] })));
+        .tags({ tag_id: String(tag_id) }, version)
+        .then(() => setTags(update(tags, { $splice: [[index, 1]] })));
     },
-    [categories]
+    [tags]
   );
 
-  const patchCategoryReorder = useCallback(
-    ({ categories }: components["schemas"]["ListCategoryBody"]) => {
-      api.patch.categories({ categories });
+  const patchTagReorder = useCallback(
+    ({ tags }: components["schemas"]["ListTagBody"]) => {
+      api.patch.tags({ tags });
     },
-    [categories]
+    [tags]
   );
 
   return {
-    categories,
-    setCategories,
-    getCategories,
-    postCategories,
-    putCategories,
-    deleteCategories,
-    patchCategoryReorder,
+    tags,
+    setTags,
+    getTags,
+    postTags,
+    putTags,
+    deleteTags,
+    patchTagReorder,
   };
 };
 
-type CategoryRowProps = {
+type TagRowProps = {
   index: number;
-  category: CategoryType;
-  onSubmit: (index: number, values: CategoryType) => void;
-  onDelete: (index: number, values: CategoryType) => void;
+  tag: TagType;
+  onSubmit: (index: number, values: TagType) => void;
+  onDelete: (index: number, values: TagType) => void;
 };
 
-function CategoryRow({ index, category, onSubmit, onDelete }: CategoryRowProps) {
+function TagRow({ index, tag, onSubmit, onDelete }: TagRowProps) {
   const dragControls = useDragControls();
 
   return (
     <Reorder.Item
-      key={category.category_id}
-      value={category}
+      key={tag.tag_id}
+      value={tag}
       dragListener={false}
       dragControls={dragControls}
       className="border-b"
     >
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
         <Formik
-          initialValues={category}
+          initialValues={tag}
           enableReinitialize
           onSubmit={(values) => onSubmit(index, values)}
         >
           {({ values, resetForm }) => {
-            const isOriginalValues = equal(values, category);
+            const isOriginalValues = equal(values, tag);
 
             return (
               <Form>
@@ -199,14 +187,14 @@ function CategoryRow({ index, category, onSubmit, onDelete }: CategoryRowProps) 
                     <MdOutlineDragIndicator className="text-xl" />
                   </Button>
                   <div className="flex items-center space-x-2 rounded p-1">
-                    <label htmlFor={`color_${values.category_id}`}>
-                      <MdCategory style={{ color: values.color }} />
+                    <label htmlFor={`color_${values.tag_id}`}>
+                      <AiFillTag style={{ color: values.color }} />
                     </label>
-                    <Field id={`color_${values.category_id}`} type="color" name="color" />
+                    <Field id={`color_${values.tag_id}`} type="color" name="color" />
                   </div>
                   <Field
                     type="text"
-                    name="category_name"
+                    name="tag_name"
                     className="flex-grow truncate rounded border p-1"
                     maxLength={50}
                   />
@@ -216,7 +204,7 @@ function CategoryRow({ index, category, onSubmit, onDelete }: CategoryRowProps) 
                     colorset={"white"}
                     disabled={isOriginalValues}
                     onClick={() => {
-                      resetForm({ values: category });
+                      resetForm({ values: tag });
                     }}
                   >
                     <BiUndo className="text-lg" />
@@ -225,7 +213,7 @@ function CategoryRow({ index, category, onSubmit, onDelete }: CategoryRowProps) 
                     type="submit"
                     className="rounded-3xl p-1"
                     colorset={"green"}
-                    disabled={isOriginalValues || values.category_name === ""}
+                    disabled={isOriginalValues || values.tag_name === ""}
                   >
                     <BiSend className="text-lg" />
                   </Button>
@@ -233,7 +221,7 @@ function CategoryRow({ index, category, onSubmit, onDelete }: CategoryRowProps) 
                     type="button"
                     className="rounded-3xl p-1"
                     colorset={"yellow"}
-                    disabled={typeof values.category_id === "string"}
+                    disabled={typeof values.tag_id === "string"}
                     onClick={() => {
                       onDelete(index, values);
                     }}

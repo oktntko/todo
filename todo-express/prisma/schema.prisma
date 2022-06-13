@@ -10,62 +10,93 @@ generator client {
   provider = "prisma-client-js"
 }
 
-enum Status {
-  TODO
-  DOING
-  DONE
-}
-
-enum Yusendo {
-  FAST
-  SPEEDUP
-  PLAY
-  PAUSE
-  STOP
-}
-
 model Todo {
-  todo_id     Int       @id @default(autoincrement()) @db.Integer
-  yarukoto    String?   @db.VarChar(100)
-  status      Status    @default(TODO)
-  order       Int?      @db.Integer
-  category_id Int?      @db.Integer
-  kizitu      String?   @db.VarChar(10)
-  yusendo     Yusendo   @default(PLAY)
-  memo        String?   @db.VarChar(400)
-  created_at  DateTime  @default(now()) @db.Timestamp(3)
-  updated_at  DateTime  @updatedAt() @db.Timestamp(3)
-  done_at     DateTime? @db.Timestamp(3)
+  todo_id    Int       @id @default(autoincrement()) @db.Integer
+  yarukoto   String?   @db.VarChar(100)
+  order      Int?      @db.Integer
+  beginning  String?   @db.VarChar(10)
+  deadline   String?   @db.VarChar(10)
+  memo       String?   @db.VarChar(400)
+  created_at DateTime  @default(now()) @db.Timestamp(3)
+  updated_at DateTime  @updatedAt() @db.Timestamp(3)
+  done_at    DateTime? @db.Timestamp(3)
 
+  status_id   Int? @db.Integer
+  category_id Int? @db.Integer
+  project_id  Int? @db.Integer
+
+  Status   Status?   @relation(fields: [status_id], references: [status_id])
   category Category? @relation(fields: [category_id], references: [category_id])
+  Project  Project?  @relation(fields: [project_id], references: [project_id])
 
-  subcategories TodoSubcategory[]
+  tags TodoTag[]
 
   @@map("todos")
+}
+
+model Status {
+  status_id   Int      @id @default(autoincrement()) @db.Integer
+  status_name String   @db.VarChar(100)
+  color       String   @db.VarChar(100)
+  order       Int      @db.Integer
+  created_at  DateTime @default(now()) @db.Timestamp(3)
+  updated_at  DateTime @updatedAt() @db.Timestamp(3)
+
+  todos Todo[]
+
+  @@unique([status_name], name: "unique_status_name")
+  @@map("statuses")
 }
 
 model Category {
   category_id   Int      @id @default(autoincrement()) @db.Integer
   category_name String   @db.VarChar(100)
-  color         String?  @db.VarChar(100)
+  color         String   @db.VarChar(100)
+  order         Int      @db.Integer
   created_at    DateTime @default(now()) @db.Timestamp(3)
   updated_at    DateTime @updatedAt() @db.Timestamp(3)
 
-  todo               Todo[]
-  todo_subcategories TodoSubcategory[]
+  todos Todo[]
 
   @@unique([category_name], name: "unique_category_name")
   @@map("categories")
 }
 
-model TodoSubcategory {
-  id          Int @id @default(autoincrement()) @db.Integer
-  todo_id     Int @db.Integer
-  category_id Int @db.Integer
+model Project {
+  project_id   Int      @id @default(autoincrement()) @db.Integer
+  project_name String   @db.VarChar(100)
+  order        Int      @db.Integer
+  created_at   DateTime @default(now()) @db.Timestamp(3)
+  updated_at   DateTime @updatedAt() @db.Timestamp(3)
 
-  todo     Todo     @relation(fields: [todo_id], references: [todo_id], onDelete: Cascade)
-  category Category @relation(fields: [category_id], references: [category_id], onDelete: Cascade)
+  todos Todo[]
 
-  @@unique([todo_id, category_id], name: "unique_todo_id_category_id")
-  @@map("todo_subcategories")
+  @@unique([project_name], name: "unique_project_name")
+  @@map("projects")
+}
+
+model Tag {
+  tag_id     Int      @id @default(autoincrement()) @db.Integer
+  tag_name   String   @db.VarChar(100)
+  color      String   @db.VarChar(100)
+  order      Int      @db.Integer
+  created_at DateTime @default(now()) @db.Timestamp(3)
+  updated_at DateTime @updatedAt() @db.Timestamp(3)
+
+  todo_tags TodoTag[]
+
+  @@unique([tag_name], name: "unique_tag_name")
+  @@map("tags")
+}
+
+model TodoTag {
+  id      Int @id @default(autoincrement()) @db.Integer
+  todo_id Int @db.Integer
+  tag_id  Int @db.Integer
+
+  todo Todo @relation(fields: [todo_id], references: [todo_id], onDelete: Cascade)
+  tag  Tag  @relation(fields: [tag_id], references: [tag_id], onDelete: Cascade)
+
+  @@unique([todo_id, tag_id], name: "unique_todo_id_tag_id")
+  @@map("todo_tags")
 }

@@ -1,10 +1,9 @@
-import { Transform, Type } from "class-transformer";
+import { Type } from "class-transformer";
 import {
-  IsArray,
   IsDate,
   IsHexColor,
+  IsInt,
   IsNotEmpty,
-  IsOptional,
   IsPositive,
   IsString,
   MaxLength,
@@ -17,12 +16,12 @@ import {
   Get,
   JsonController,
   Params,
+  Patch,
   Post,
   Put,
   QueryParam,
 } from "routing-controllers";
 import { ResponseSchema } from "routing-controllers-openapi";
-import { transformerEmptyToNull } from "~/libs/transformers";
 import { CategoriesService } from "~/services/categories.service";
 
 // ::: REQUEST
@@ -32,12 +31,14 @@ class CategoryBody {
   @MaxLength(100)
   category_name: string;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @IsHexColor()
   @MaxLength(100)
-  @Transform(transformerEmptyToNull)
-  color: string | null;
+  color: string;
+
+  @IsInt()
+  order: number;
 }
 
 class CategoryPathParams {
@@ -45,22 +46,38 @@ class CategoryPathParams {
   category_id: number;
 }
 
+class CategoryReorderBody {
+  @IsPositive()
+  category_id: number;
+
+  @IsInt()
+  order: number;
+}
+
+class ListCategoryBody {
+  @ValidateNested({ each: true })
+  @Type(() => CategoryReorderBody)
+  categories: CategoryReorderBody[];
+}
+
 // ::: RESPONSE
 class CategoryResponse {
+  @IsPositive()
+  category_id: number;
+
   @IsNotEmpty()
   @IsString()
   @MaxLength(100)
   category_name: string;
 
-  @IsPositive()
-  category_id: number;
-
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @IsHexColor()
   @MaxLength(100)
-  @Transform(transformerEmptyToNull)
-  color: string | null;
+  color: string;
+
+  @IsInt()
+  order: number;
 
   @IsNotEmpty()
   @IsDate()
@@ -69,7 +86,6 @@ class CategoryResponse {
 
 class ListCategoryResponse {
   @ValidateNested({ each: true })
-  @IsArray()
   @Type(() => CategoryResponse)
   categories: CategoryResponse[];
 }
@@ -116,5 +132,14 @@ export class CategoriesController {
     @QueryParam("updated_at", { required: true }) updated_at: string
   ): Promise<CategoryResponse> {
     return CategoriesService.deleteCategory(path.category_id, updated_at);
+  }
+
+  // # PATCH /api/categories/reorder
+  @Patch("/api/categories/reorder")
+  @ResponseSchema(ListCategoryResponse)
+  async patchStatusReorder(
+    @Body({ required: true }) body: ListCategoryBody
+  ): Promise<ListCategoryResponse> {
+    return CategoriesService.patchCategoryReorder(body.categories);
   }
 }
