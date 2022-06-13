@@ -6,7 +6,7 @@ import { api } from "~/repositories/api";
 import { components } from "~/repositories/schema";
 
 export function TodoTablePage() {
-  const { todos } = useTodo();
+  const { loading, todos } = useTodo();
   const selections = useSelections();
 
   const columns: TableColumn<components["schemas"]["TodoResponse"]>[] = [
@@ -75,25 +75,26 @@ export function TodoTablePage() {
 
   return (
     <div className="md:my-4 md:px-4">
-      <Table columns={columns} data={todos} />
+      <Table columns={columns} data={todos} progressPending={loading} />
     </div>
   );
 }
 
 const useTodo = () => {
+  const [loading, setLoading] = useState(false);
   const [todos, setTodos] = useState<components["schemas"]["TodoResponse"][]>([]);
 
   const getTodos = useCallback(() => {
-    api.get.todos().then(({ data }) => setTodos(data.todos));
-  }, [todos]);
+    setLoading(true);
+    api.get
+      .todos()
+      .then(({ data }) => setTodos(data.todos))
+      .finally(() => setLoading(false));
+  }, [todos, loading]);
 
   useEffect(() => {
     getTodos();
   }, []);
 
-  return {
-    todos,
-    setTodos,
-    getTodos,
-  };
+  return { loading, todos, setTodos, getTodos };
 };
