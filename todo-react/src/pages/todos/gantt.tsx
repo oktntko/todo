@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { DisplayOption, EventOption, Gantt, StylingOption, Task, ViewMode } from "gantt-task-react";
+import { DisplayOption, Gantt, StylingOption, Task, ViewMode } from "gantt-task-react";
 import "gantt-task-react/dist/index.css";
 import { useCallback, useEffect, useState } from "react";
 import { AiOutlineCheck } from "react-icons/ai";
@@ -10,27 +10,6 @@ export function TodoGanttPage() {
   const { todos } = useTodo();
   const [showTasks, setShowTasks] = useState(true);
   const [viewMode, setViewMode] = useState(ViewMode.Day);
-
-  const event: EventOption = {
-    onDateChange(task, children) {
-      console.log(task, children);
-    },
-    onDelete(task) {
-      console.log(task);
-    },
-    onDoubleClick(task) {
-      console.log(task);
-    },
-    onExpanderClick(task) {
-      console.log(task);
-    },
-    onProgressChange(task, children) {
-      console.log(task, children);
-    },
-    onSelect(task, isSelected) {
-      console.log(task, isSelected);
-    },
-  };
 
   const display: DisplayOption = {
     viewMode,
@@ -46,7 +25,7 @@ export function TodoGanttPage() {
 
   return (
     <>
-      <div className="sm:px-4 md:my-4">
+      <div className="md:my-4 md:px-4">
         <ul className="flex justify-end space-x-4 px-4 pb-4">
           <li>
             <ModeSelect viewMode={viewMode} setViewMode={setViewMode} />
@@ -69,11 +48,7 @@ export function TodoGanttPage() {
             />
           </div>
         </ul>
-        {todos.length === 0 ? (
-          <div></div>
-        ) : (
-          <Gantt tasks={todos} {...event} {...display} {...style} />
-        )}
+        {todos.length === 0 ? <div></div> : <Gantt tasks={todos} {...display} {...style} />}
       </div>
     </>
   );

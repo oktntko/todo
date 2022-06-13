@@ -63,7 +63,7 @@ export function StatusIndexPage() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="container mx-auto sm:px-4 md:my-4 md:max-w-3xl"
+        className="container mx-auto md:my-4 md:max-w-3xl md:px-4"
       >
         <Reorder.Group values={statuses} onReorder={handleReorder} className=" ">
           {statuses.map((status, index) => (
