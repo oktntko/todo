@@ -11,7 +11,7 @@ export function Header() {
   const [isVisible, setIsVisible] = useState(false);
 
   return (
-    <nav className="border-gray-200 px-2 py-2.5 dark:bg-gray-800 sm:px-4">
+    <nav className="border-b border-gray-200 px-2 py-2.5 dark:bg-gray-800 sm:px-4">
       <div className="container mx-auto flex flex-wrap items-center justify-between">
         <a href="/" className="flex items-center">
           <FcTodoList {...iconOptions} />

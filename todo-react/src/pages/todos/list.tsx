@@ -67,32 +67,34 @@ export function TodoListPage() {
 
   return (
     <>
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-        <div className="container mx-auto sm:px-4 md:my-4 md:max-w-3xl">
-          <Reorder.Group values={todos} onReorder={handleReorder} className=" ">
-            {todos.map((todo, index) => (
-              <TodoRow
-                key={todo.todo_id}
-                index={index}
-                todo={todo}
-                onSubmit={handleSubmit}
-                onDelete={handleDelete}
-                onDone={handleDone}
-                {...selections}
-              />
-            ))}
-          </Reorder.Group>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="container mx-auto sm:px-4 md:my-4 md:max-w-3xl"
+      >
+        <Reorder.Group values={todos} onReorder={handleReorder} className=" ">
+          {todos.map((todo, index) => (
+            <TodoRow
+              key={todo.todo_id}
+              index={index}
+              todo={todo}
+              onSubmit={handleSubmit}
+              onDelete={handleDelete}
+              onDone={handleDone}
+              {...selections}
+            />
+          ))}
+        </Reorder.Group>
 
-          <div className="flex flex-row flex-nowrap items-center justify-start space-x-2 ">
-            <Button
-              type="button"
-              className="flex flex-grow items-center space-x-2 rounded-none border-0 bg-neutral-100 p-2 hover:bg-slate-200"
-              onClick={handleAdd}
-            >
-              <BsPlus />
-              <span>追加</span>
-            </Button>
-          </div>
+        <div className="flex flex-row flex-nowrap items-center justify-start space-x-2 ">
+          <Button
+            type="button"
+            className="flex flex-grow items-center space-x-2 rounded-none border-0 bg-neutral-100 p-2 hover:bg-slate-200"
+            onClick={handleAdd}
+          >
+            <BsPlus />
+            <span>追加</span>
+          </Button>
         </div>
       </motion.div>
     </>

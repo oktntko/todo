@@ -66,30 +66,32 @@ export function CategoryIndexPage() {
 
   return (
     <>
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-        <div className="container mx-auto sm:px-4 md:my-4 md:max-w-3xl">
-          <Reorder.Group values={categories} onReorder={handleReorder} className=" ">
-            {categories.map((category, index) => (
-              <CategoryRow
-                key={category.category_id}
-                index={index}
-                category={category}
-                onSubmit={handleSubmit}
-                onDelete={handleDelete}
-              />
-            ))}
-          </Reorder.Group>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="container mx-auto sm:px-4 md:my-4 md:max-w-3xl"
+      >
+        <Reorder.Group values={categories} onReorder={handleReorder} className=" ">
+          {categories.map((category, index) => (
+            <CategoryRow
+              key={category.category_id}
+              index={index}
+              category={category}
+              onSubmit={handleSubmit}
+              onDelete={handleDelete}
+            />
+          ))}
+        </Reorder.Group>
 
-          <div className="flex flex-row flex-nowrap items-center justify-start space-x-2 ">
-            <Button
-              type="button"
-              className="flex flex-grow items-center space-x-2 rounded-none border-0 bg-neutral-100 p-2 hover:bg-slate-200"
-              onClick={handleAdd}
-            >
-              <BsPlus />
-              <span>追加</span>
-            </Button>
-          </div>
+        <div className="flex flex-row flex-nowrap items-center justify-start space-x-2 ">
+          <Button
+            type="button"
+            className="flex flex-grow items-center space-x-2 rounded-none border-0 bg-neutral-100 p-2 hover:bg-slate-200"
+            onClick={handleAdd}
+          >
+            <BsPlus />
+            <span>追加</span>
+          </Button>
         </div>
       </motion.div>
     </>
