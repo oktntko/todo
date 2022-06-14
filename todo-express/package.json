@@ -11,9 +11,9 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:seed": "prisma db seed",
-    "test": "DATABASE_URL='postgresql://todo:todo@localhost:5432/unit_test' vitest",
-    "test:cov": "DATABASE_URL='postgresql://todo:todo@localhost:5432/unit_test' vitest run --coverage",
-    "test:db": "DATABASE_URL='postgresql://todo:todo@localhost:5432/unit_test' npm-run-all --sequential db:*",
+    "test": "DATABASE_URL='postgresql://todo:todo@localhost:8882/unit_test' vitest",
+    "test:cov": "DATABASE_URL='postgresql://todo:todo@localhost:8882/unit_test' vitest run --coverage",
+    "test:db": "DATABASE_URL='postgresql://todo:todo@localhost:8882/unit_test' npm-run-all --sequential db:*",
     "lint": "eslint --ext .js,.ts src",
     "ncu": "ncu --target minor",
     "openapi": "curl http://localhost:8080/openapi > openapi.json && openapi-typescript openapi.json --output schema.ts --export-type"

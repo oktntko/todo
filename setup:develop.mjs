@@ -9,10 +9,10 @@ await $`docker network create todo-network || true`;
 
 // todo-express のセットアップを行う
 cd(`todo-express`);
+await $`cp .env.example .env`;
 await $`docker-compose up -d`; // database コンテナを起動する
 await $`npm i -f`;
 await $`npm run db`;
-await $`npm run test:db`; // unittest 用のデータベース
 
 // 戻る
 cd(currentdir);

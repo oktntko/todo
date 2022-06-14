@@ -9,13 +9,14 @@ await $`docker network create todo-network || true`;
 
 // todo-express のセットアップを行う
 cd(`todo-express`);
+await $`cp .env.example .env`;
 await $`docker-compose up -d`; // database コンテナを起動する
 await $`npm i -f`;
 await $`npm run db`;
 await $`npm run build`;
 
 // webserver コンテナ内に持っていくファイル類をコピーする
-const copyFiles = ["dist", "prisma", "ecosystem.config.js", "package*.json"];
+const copyFiles = [`dist`, `prisma`, `ecosystem.config.js`, `package.json`, `package-lock.json`];
 await $`cp -rf ${copyFiles} ../.docker/webserver`;
 
 // 戻る
@@ -29,4 +30,5 @@ await $`npm run build`;
 
 // 戻る
 cd(currentdir);
+await $`cp .env.example .env`;
 await $`docker-compose up -d`; // webserver コンテナを起動する

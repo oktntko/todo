@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "test",
-    "setup:develop": "zx setup:develop.mjs",
-    "setup:useonly": "zx setup:useonly.mjs"
+    "setup:develop": "npm i && zx setup:develop.mjs",
+    "setup:useonly": "npm i && zx setup:useonly.mjs"
   },
   "repository": {
     "type": "git",
