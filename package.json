@@ -1,0 +1,30 @@
+{
+  "name": "todo",
+  "version": "0.0.0",
+  "description": "todo",
+  "main": "index.js",
+  "scripts": {
+    "test": "test",
+    "setup:develop": "zx setup:develop.mjs",
+    "setup:useonly": "zx setup:useonly.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oktntko/todo.git"
+  },
+  "keywords": [
+    "todo",
+    "react",
+    "express",
+    "docker"
+  ],
+  "author": "oktntko@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/oktntko/todo/issues"
+  },
+  "homepage": "https://github.com/oktntko/todo#readme",
+  "devDependencies": {
+    "zx": "^6.2.5"
+  }
+}

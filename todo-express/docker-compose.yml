@@ -1,17 +1,22 @@
 version: "3"
 services:
   database:
-    container_name: todo_database
+    container_name: todo-database
     image: postgres:14.3
     ports:
       - ${DB_PORT}:5432
     environment:
-      POSTGRES_PASSWORD: ${DB_POSTGRES_PASSWORD}
-      POSTGRES_USER: ${DB_POSTGRES_USER}
-      POSTGRES_DB: ${DB_POSTGRES_DB}
+      POSTGRES_PASSWORD: todo
+      POSTGRES_USER: todo
+      POSTGRES_DB: todo_db
     restart: on-failure
     volumes:
-      - todo-db-store:/var/lib/postgresql/data
-      - ./.docker/database/initdb.d:/docker-entrypoint-initdb.d
+      - todo-volume:/var/lib/postgresql/data
+    networks:
+      - todo-network
+
 volumes:
-  todo-db-store:
+  todo-volume:
+networks:
+  todo-network:
+    external: true
