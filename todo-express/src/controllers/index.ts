@@ -1,4 +1,5 @@
 export { CategoriesController } from "~/controllers/api/categories.controller";
+export { DashboardController } from "~/controllers/api/dashboard.controller";
 export { ProjectsController } from "~/controllers/api/projects.controller";
 export { StatusesController } from "~/controllers/api/statuses.controller";
 export { TagsController } from "~/controllers/api/tags.controller";

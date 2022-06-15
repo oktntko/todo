@@ -16,6 +16,9 @@ export type paths = {
   "/api/categories/reorder": {
     patch: operations["CategoriesController.patchStatusReorder"];
   };
+  "/api/dashboard": {
+    get: operations["DashboardController.getDashboard"];
+  };
   "/api/projects": {
     get: operations["ProjectsController.getProjects"];
     post: operations["ProjectsController.postProject"];
@@ -104,6 +107,39 @@ export type components = {
     };
     ListCategoryResponse: {
       categories: components["schemas"]["CategoryResponse"][];
+    };
+    DashboardQuery: {
+      begin_date?: string;
+      end_date?: string;
+    };
+    CountResponse: {
+      count: number;
+    };
+    CountObjectResponse: {
+      created: components["schemas"]["CountResponse"];
+      done: components["schemas"]["CountResponse"];
+    };
+    PieResponse: {
+      name?: string;
+      count: number;
+    };
+    PieObjectResponse: {
+      category: components["schemas"]["PieResponse"][];
+      project: components["schemas"]["PieResponse"][];
+    };
+    BarResponse: {
+      created_date: string;
+      name?: string;
+      count: number;
+    };
+    BarObjectResponse: {
+      category: components["schemas"]["BarResponse"][];
+      project: components["schemas"]["BarResponse"][];
+    };
+    DashboardResponse: {
+      count: components["schemas"]["CountObjectResponse"];
+      pie: components["schemas"]["PieObjectResponse"];
+      stackedBar: components["schemas"]["BarObjectResponse"];
     };
     ProjectBody: {
       project_name: string;
@@ -316,6 +352,21 @@ export type operations = {
     requestBody: {
       content: {
         "application/json": components["schemas"]["ListCategoryBody"];
+      };
+    };
+  };
+  "DashboardController.getDashboard": {
+    parameters: {
+      query: {
+        begin_date?: string;
+        end_date?: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["DashboardResponse"];
+        };
       };
     };
   };

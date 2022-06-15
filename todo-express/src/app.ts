@@ -10,6 +10,7 @@ import {
   StatusesController,
   TagsController,
   TodosController,
+  DashboardController,
 } from "~/controllers";
 import { AfterLogHandler, BeforeLogHandler, ErrorHandler, NotFoundHandler } from "~/middlewares";
 import log from "~/middlewares/log";
@@ -33,6 +34,7 @@ useExpressServer(app, {
     TagsController,
     TodosController,
     FilesController,
+    DashboardController,
   ],
   middlewares: [BeforeLogHandler, NotFoundHandler, ErrorHandler, AfterLogHandler],
   defaults: {

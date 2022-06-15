@@ -292,6 +292,16 @@ const todos = {
   },
 };
 
+const dashboard = {
+  get: {
+    dashboard: async (query: paths["/api/dashboard"]["get"]["parameters"]["query"]) => {
+      return client.get<
+        paths["/api/dashboard"]["get"]["responses"]["200"]["content"]["application/json"]
+      >(`/api/dashboard`, { params: query });
+    },
+  },
+};
+
 export const api = {
   get: {
     ...statuses.get,
@@ -299,6 +309,7 @@ export const api = {
     ...projects.get,
     ...tags.get,
     ...todos.get,
+    ...dashboard.get,
   },
   post: {
     ...statuses.post,
