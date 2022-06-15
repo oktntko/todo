@@ -1,8 +1,11 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
+import { AiFillFileImage, AiFillTag } from "react-icons/ai";
 import { FcSettings, FcTodoList } from "react-icons/fc";
+import { MdAccessTimeFilled, MdCategory } from "react-icons/md";
 import { NavLink } from "react-router-dom";
 import { Button } from "~/components/Button";
+import { url } from "~/routers";
 
 export const iconOptions = { size: "2rem", color: "#414855" };
 
@@ -81,7 +84,7 @@ export function Header() {
                 Table
               </NavLink>
             </li>
-            <li>
+            <li className="flex items-end justify-end md:justify-end">
               <Button
                 className="flex items-center border-none"
                 onClick={() => setIsVisible(!isVisible)}
@@ -111,22 +114,58 @@ export function Header() {
                           className="py-1 text-sm text-gray-700 dark:text-gray-200"
                           aria-labelledby="dropdownDefault"
                         >
-                          {["statuses", "categories", "projects", "tags"].map((page) => {
-                            return (
-                              <li key={page}>
-                                <NavLink
-                                  to={`/${page}`}
-                                  className={({ isActive }) =>
-                                    `${
-                                      isActive ? "text-blue-600 underline" : "text-gray-700"
-                                    } block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white`
-                                  }
-                                >
-                                  <span className="capitalize">{page}</span>
-                                </NavLink>
-                              </li>
-                            );
-                          })}
+                          <li>
+                            <NavLink
+                              to={url.settings.statuses}
+                              className={({ isActive }) =>
+                                `${
+                                  isActive ? "text-blue-600 underline" : "text-gray-700"
+                                } flex items-center space-x-1 p-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white`
+                              }
+                            >
+                              <MdAccessTimeFilled />
+                              <span className="uppercase">status</span>
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to={url.settings.categories}
+                              className={({ isActive }) =>
+                                `${
+                                  isActive ? "text-blue-600 underline" : "text-gray-700"
+                                } flex items-center space-x-1 p-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white`
+                              }
+                            >
+                              <MdCategory />
+                              <span className="uppercase">category</span>
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to={url.settings.projects}
+                              className={({ isActive }) =>
+                                `${
+                                  isActive ? "text-blue-600 underline" : "text-gray-700"
+                                } flex items-center space-x-1 p-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white`
+                              }
+                            >
+                              <AiFillFileImage />
+                              <span className="uppercase">project</span>
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to={url.settings.tags}
+                              className={({ isActive }) =>
+                                `${
+                                  isActive ? "text-blue-600 underline" : "text-gray-700"
+                                } flex items-center space-x-1 p-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white`
+                              }
+                            >
+                              <AiFillTag />
+                              <span className="uppercase">tag</span>
+                            </NavLink>
+                          </li>
                         </ul>
                       </motion.div>
                     </div>

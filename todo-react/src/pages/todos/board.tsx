@@ -65,10 +65,10 @@ export function TodoBoardPage() {
 
   return (
     <>
-      <div className="flex flex-nowrap justify-center space-x-4 md:my-4 md:px-4" ref={ref}>
+      <div className="my-4 flex flex-wrap justify-center gap-4 md:px-4 xl:flex-nowrap" ref={ref}>
         {selections.statuses.map((status) => (
           <div key={status.status_id} className="w-full max-w-screen-md">
-            <div className="space-x-4 pb-2 text-sm">{statusStyle(status)}</div>
+            <div className="px-4 pb-2 text-sm md:px-0 ">{statusStyle(status)}</div>
             <div
               className={`${BOARD_COL} self-start transition-shadow`}
               data-status_id={`${status.status_id}`}
