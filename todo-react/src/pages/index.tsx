@@ -15,6 +15,7 @@ export function IndexPage() {
     begin_date: dayjs().subtract(1, "week").format("YYYY-MM-DD"),
     end_date: dayjs().format("YYYY-MM-DD"),
   });
+  const [checked, setChecked] = useState("category");
 
   return (
     <>
@@ -23,6 +24,7 @@ export function IndexPage() {
         animate={{ opacity: 1 }}
         className="container mx-auto md:my-4 md:px-4"
       >
+        {/* 検索ボックス */}
         <div className="mx-auto flex flex-row flex-nowrap items-center justify-center md:max-w-3xl">
           <Formik initialValues={initialValues} onSubmit={(values) => getDashboard(values)}>
             {({ values, resetForm }) => {
@@ -74,10 +76,89 @@ export function IndexPage() {
             }}
           </Formik>
         </div>
-
+        {/* 件数 */}
+        <div className="m-4 flex flex-wrap justify-center gap-8">
+          <div className="min-w-[16rem] rounded-lg border border-gray-200 bg-white p-6 shadow-md dark:border-gray-700 dark:bg-gray-800">
+            <h5 className="mb-2 text-lg font-bold uppercase text-red-500 dark:text-white">
+              created
+            </h5>
+            <h1
+              className={`mb-2 text-center text-8xl font-bold text-gray-500 dark:text-white ${
+                (res?.count.created.count ?? 0) - 5 > (res?.count.done.count ?? 0)
+                  ? "text-red-500"
+                  : ""
+              }`}
+            >
+              {res?.count.created.count}
+            </h1>
+          </div>
+          <div className="min-w-[16rem] rounded-lg border border-gray-200 bg-white p-6 shadow-md dark:border-gray-700 dark:bg-gray-800">
+            <h5 className="mb-2 text-lg font-bold uppercase text-green-500 dark:text-white">
+              done
+            </h5>
+            <h5
+              className={`mb-2 text-center text-8xl font-bold text-gray-500 dark:text-white ${
+                (res?.count.created.count ?? 0) - 5 < (res?.count.done.count ?? 0)
+                  ? "text-green-500"
+                  : ""
+              }`}
+            >
+              {res?.count.done.count}
+            </h5>
+          </div>
+        </div>
+        {/* チャート選択肢 */}
+        <div className="m-4 flex flex-wrap justify-center gap-8">
+          <div>
+            <input
+              type="radio"
+              name="central"
+              id="category"
+              value="category"
+              className="peer hidden"
+              onChange={(e) => setChecked(e.target.value)}
+            />
+            <label
+              htmlFor="category"
+              className="my-4 flex w-32 flex-col rounded-2xl border-2 border-gray-500 p-2 text-center text-lg font-bold uppercase hover:bg-yellow-200 peer-checked:bg-green-200"
+            >
+              category
+            </label>
+          </div>
+          <div>
+            <input
+              type="radio"
+              name="central"
+              id="project"
+              value="project"
+              className="peer hidden"
+              onChange={(e) => setChecked(e.target.value)}
+            />
+            <label
+              htmlFor="project"
+              className="my-4 flex w-32 flex-col rounded-2xl border-2 border-gray-500 p-2 text-center text-lg font-bold uppercase hover:bg-yellow-200 peer-checked:bg-green-200"
+            >
+              project
+            </label>
+          </div>
+        </div>
+        {/* チャート */}
         <div className="flex gap-2 ">
-          <div className="">{res ? <PieChart data={res.pie.category} /> : null}</div>
-          <div className="">{res ? <StackedBarChart data={res.stackedBar.category} /> : null}</div>
+          {checked === "category" ? (
+            <>
+              <div className="">{res ? <PieChart data={res.pie.category} /> : null}</div>
+              <div className="">
+                {res ? <StackedBarChart data={res.stackedBar.category} /> : null}
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="">{res ? <PieChart data={res.pie.project} /> : null}</div>
+              <div className="">
+                {res ? <StackedBarChart data={res.stackedBar.project} /> : null}
+              </div>
+            </>
+          )}
         </div>
       </motion.div>
     </>
@@ -116,7 +197,7 @@ const PieChart = memo(function PieChart({
       series={series}
       type="pie"
       width={720}
-      height={560}
+      height={480}
     />
   );
 });
@@ -156,8 +237,8 @@ const StackedBarChart = memo(function StackedBarChart({
       }}
       series={series}
       type="bar"
-      width={800}
-      height={560}
+      width={720}
+      height={480}
     />
   );
 });
