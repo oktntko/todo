@@ -7,17 +7,20 @@ import { DashboardService } from "~/services/dashboard.service";
 
 // ::: REQUEST
 export class DashboardQuery {
+  // ! QueryParams で型を string | null にするとパースエラーが発生するため、 string? に統一する
+  // エラーの内容は↓と同じ
+  // https://github.com/typestack/routing-controllers/issues/748
   @IsOptional()
   @IsString()
   @MaxLength(10)
   @Transform(transformerEmptyToNull)
-  begin_date: string | null;
+  begin_date?: string;
 
   @IsOptional()
   @IsString()
   @MaxLength(10)
   @Transform(transformerEmptyToNull)
-  end_date: string | null;
+  end_date?: string;
 }
 
 // ::: RESPONSE
@@ -39,7 +42,7 @@ export class CountObjectResponse {
 export class PieResponse {
   @IsOptional()
   @IsString()
-  name: string | null;
+  name?: string;
 
   @IsInt()
   count: number;
@@ -60,7 +63,7 @@ export class BarResponse {
   created_date: string;
   @IsOptional()
   @IsString()
-  name: string | null;
+  name?: string;
   @IsInt()
   count: number;
 }

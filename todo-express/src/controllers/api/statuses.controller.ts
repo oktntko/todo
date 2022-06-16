@@ -140,7 +140,6 @@ export class StatusesController {
   async patchStatusReorder(
     @Body({ required: true }) body: ListStatusBody
   ): Promise<ListStatusResponse> {
-    console.log(body);
     return StatusesService.patchStatusReorder(body.statuses);
   }
 }

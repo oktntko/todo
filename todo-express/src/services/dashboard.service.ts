@@ -6,8 +6,9 @@ import { TodosRawRepository } from "~/repositories/todos.raw.repository";
 // # GET /api/dashboard
 const getDashboard = async (query: DashboardQuery) => {
   log.debug("getDashboard");
-  const begin_date = query.end_date ?? dayjs().subtract(1, "week").format("YYYY-MM-DD");
-  const end_date = query.begin_date ?? dayjs().format("YYYY-MM-DD");
+  const begin_date = query.begin_date ?? dayjs().subtract(1, "week").format("YYYY-MM-DD");
+  // end_date 検索対象がタイムスタンプなので、指定された日を検索対象に含めるために、＋１日する
+  const end_date = dayjs(query.end_date).add(1, "day").format("YYYY-MM-DD");
 
   // カウントを取得する
   const count = {

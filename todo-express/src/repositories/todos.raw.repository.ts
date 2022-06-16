@@ -4,7 +4,7 @@ import log from "~/middlewares/log";
 
 type StackedBarType = {
   created_date: string;
-  name: string | null;
+  name?: string;
   count: number;
 };
 
@@ -39,7 +39,7 @@ ORDER BY
 };
 
 type PieType = {
-  name: string | null;
+  name?: string;
   count: number;
 };
 
