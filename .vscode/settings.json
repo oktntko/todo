@@ -33,6 +33,9 @@
   "[markdown]": {
     "files.trimTrailingWhitespace": false
   },
+  "[dockerfile]": {
+    "editor.formatOnSave": false
+  },
   "javascript.format.enable": false,
   "typescript.format.enable": false,
   "editor.formatOnSave": true,

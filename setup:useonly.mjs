@@ -31,4 +31,4 @@ await $`npm run build`;
 // 戻る
 cd(currentdir);
 await $`cp .env.example .env`;
-await $`docker-compose up -d`; // webserver コンテナを起動する
+await $`docker-compose up -d --build`; // webserver コンテナを起動する

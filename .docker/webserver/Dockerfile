@@ -14,8 +14,8 @@ RUN yum update -y && \
 
 # nginx => nodejs => postgres
 # (package)nginx
-RUN amazon-linux-extras install -y nginx1
-RUN rm -rf /usr/share/nginx/html/*
+RUN amazon-linux-extras install -y nginx1 && \
+    rm -rf /usr/share/nginx/html/*
 COPY nginx.conf /etc/nginx/nginx.conf
 
 # (package)nodejs
@@ -31,15 +31,15 @@ RUN curl -fsSL https://rpm.nodesource.com/setup_16.x | bash - && \
 # (app)backend
 WORKDIR /usr/local/webapp
 
-COPY ./package*.json ./
+COPY ./package*.json        ./
 RUN npm i -f
 
-COPY ./prisma ./prisma
-COPY ./prisma.env ./.env
+COPY ./prisma               ./prisma
+COPY ./prisma.env           ./.env
 RUN npm run db:generate
 
-COPY ./dist ./dist
-COPY ./ecosystem.config.js ./
+COPY ./dist                 ./dist
+COPY ./ecosystem.config.js  ./
 
 # nginx と pm2 のプロセスを同時に起動する https://docs.docker.com/config/containers/multi-service_container/
 COPY ./cmd.sh ./
