@@ -1,21 +1,36 @@
 import dayjs from "dayjs";
-import equal from "fast-deep-equal";
-import { Field, Form, Formik } from "formik";
 import { motion } from "framer-motion";
 import { memo, useCallback, useEffect, useState } from "react";
 import Chart from "react-apexcharts";
-import { BiSend, BiUndo } from "react-icons/bi";
-import { Button } from "~/components/Button";
 import { api } from "~/repositories/api";
 import { components, paths } from "~/repositories/schema";
 
+const BEGIN_DATE_ID = "begin_date";
+const END_DATE_ID = "end_date";
+
 export function IndexPage() {
   const { res, getDashboard } = useDashboard();
-  const [initialValues] = useState({
-    begin_date: dayjs().subtract(1, "week").format("YYYY-MM-DD"),
-    end_date: dayjs().format("YYYY-MM-DD"),
-  });
   const [checked, setChecked] = useState("category");
+
+  const begin_date = dayjs().subtract(1, "week").format("YYYY-MM-DD");
+  const end_date = dayjs().format("YYYY-MM-DD");
+
+  const handleChange = () => {
+    const beginElement = document.getElementById(BEGIN_DATE_ID);
+    const endElement = document.getElementById(END_DATE_ID);
+    if (!(beginElement instanceof HTMLInputElement) || !(endElement instanceof HTMLInputElement)) {
+      return;
+    }
+
+    if (dayjs(beginElement.value).isAfter(dayjs(endElement.value))) {
+      return;
+    }
+
+    getDashboard({
+      begin_date: beginElement.value,
+      end_date: endElement.value,
+    });
+  };
 
   return (
     <>
@@ -26,55 +41,28 @@ export function IndexPage() {
       >
         {/* 検索ボックス */}
         <div className="mx-auto flex flex-row flex-nowrap items-center justify-center md:max-w-3xl">
-          <Formik initialValues={initialValues} onSubmit={(values) => getDashboard(values)}>
-            {({ values, resetForm }) => {
-              const isOriginalValues = equal(values, initialValues);
-
-              return (
-                <Form>
-                  <div
-                    className={`flex flex-row flex-nowrap items-center justify-center
-              space-x-2 p-4 `}
-                  >
-                    {/* 開始日と期日 */}
-                    <div className="flex flex-nowrap items-center space-x-1 py-1">
-                      {/* 開始日 */}
-                      <Field
-                        name="begin_date"
-                        type="date"
-                        className="border-[0.5px] focus:outline-none"
-                      />
-                      <span> ～ </span>
-                      {/* 期日 */}
-                      <Field
-                        name="end_date"
-                        type="date"
-                        className="border-[0.5px] focus:outline-none"
-                      />
-                    </div>
-
-                    {/* 右側 */}
-                    <div className="flex flex-nowrap justify-end space-x-2 ">
-                      <Button
-                        type="button"
-                        className="rounded-3xl p-1"
-                        colorset={"white"}
-                        disabled={isOriginalValues}
-                        onClick={() => {
-                          resetForm({ values: initialValues });
-                        }}
-                      >
-                        <BiUndo className="text-lg" />
-                      </Button>
-                      <Button type="submit" className="rounded-3xl p-1" colorset={"green"}>
-                        <BiSend className="text-lg" />
-                      </Button>
-                    </div>
-                  </div>
-                </Form>
-              );
-            }}
-          </Formik>
+          {/* 開始日と期日 */}
+          <form className="flex flex-nowrap items-center space-x-1 py-1">
+            {/* 開始日 */}
+            <input
+              id={BEGIN_DATE_ID}
+              name="begin_date"
+              type="date"
+              defaultValue={begin_date}
+              className="border-[0.5px] focus:outline-none"
+              onChange={handleChange}
+            />
+            <span> ～ </span>
+            {/* 期日 */}
+            <input
+              id={END_DATE_ID}
+              name="end_date"
+              type="date"
+              defaultValue={end_date}
+              className="border-[0.5px] focus:outline-none"
+              onChange={handleChange}
+            />
+          </form>
         </div>
         {/* 件数 */}
         <div className="m-4 flex flex-wrap justify-center gap-8">
@@ -109,41 +97,28 @@ export function IndexPage() {
         </div>
         {/* チャート選択肢 */}
         <div className="m-4 flex flex-wrap justify-center gap-8">
-          <div>
-            <input
-              type="radio"
-              name="central"
-              id="category"
-              value="category"
-              className="peer hidden"
-              onChange={(e) => setChecked(e.target.value)}
-            />
-            <label
-              htmlFor="category"
-              className="my-4 flex w-32 flex-col rounded-2xl border-2 border-gray-500 p-2 text-center text-lg font-bold uppercase hover:bg-yellow-200 peer-checked:bg-green-200"
-            >
-              category
-            </label>
-          </div>
-          <div>
-            <input
-              type="radio"
-              name="central"
-              id="project"
-              value="project"
-              className="peer hidden"
-              onChange={(e) => setChecked(e.target.value)}
-            />
-            <label
-              htmlFor="project"
-              className="my-4 flex w-32 flex-col rounded-2xl border-2 border-gray-500 p-2 text-center text-lg font-bold uppercase hover:bg-yellow-200 peer-checked:bg-green-200"
-            >
-              project
-            </label>
-          </div>
+          {["category", "project"].map((option) => (
+            <div key={option}>
+              <input
+                type="radio"
+                name="option"
+                id={option}
+                value={option}
+                checked={checked === option}
+                className="peer hidden"
+                onChange={(e) => setChecked(e.target.value)}
+              />
+              <label
+                htmlFor={option}
+                className="my-4 flex w-32 flex-col rounded-2xl border-2 border-gray-500 p-2 text-center text-lg font-bold uppercase hover:bg-yellow-200 peer-checked:bg-green-200"
+              >
+                {option}
+              </label>
+            </div>
+          ))}
         </div>
         {/* チャート */}
-        <div className="flex gap-2 ">
+        <div className="flex flex-wrap justify-center gap-2 ">
           {checked === "category" ? (
             <>
               <div className="">{res ? <PieChart data={res.pie.category} /> : null}</div>

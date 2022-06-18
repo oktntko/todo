@@ -151,7 +151,7 @@ function TodoRow(props: TodoRowProps) {
                   {/* 真ん中 */}
                   <div className="flex grow flex-col flex-nowrap space-y-2">
                     {/* １行目 */}
-                    <div className="flex flex-wrap items-center space-x-4 text-sm">
+                    <div className="flex flex-wrap items-center gap-2 text-sm">
                       {/* ステータス */}
                       <Field name="status_id" className="flex items-center py-1">
                         {({ field }: { field: FieldInputProps<number | null> }) => (

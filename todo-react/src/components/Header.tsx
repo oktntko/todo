@@ -35,50 +35,50 @@ export function Header() {
           className={`${!isMobileMenuOpen ? "hidden" : ""} w-full md:block md:w-auto`}
           id="mobile-menu"
         >
-          <ul className="mt-4 flex flex-col md:mt-0 md:flex-row md:space-x-8 ">
-            <li className="flex items-center">
+          <ul className="mt-4 flex flex-col md:mt-0 md:flex-row md:gap-8 ">
+            <li className="flex items-center justify-end">
               <NavLink
                 to="/todos/list"
                 className={({ isActive }) =>
                   `${
                     isActive ? "text-blue-600 underline" : "text-gray-700"
-                  } block border-b border-gray-100 bg-neutral-50 py-2 pr-4 pl-3 uppercase hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:border-0 md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white`
+                  } block border-gray-100 bg-neutral-50 py-2 pr-4 pl-3 uppercase hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:border-0 md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white`
                 }
               >
                 ToDo List
               </NavLink>
             </li>
-            <li className="flex items-center">
+            <li className="flex items-center justify-end">
               <NavLink
                 to="/todos/board"
                 className={({ isActive }) =>
                   `${
                     isActive ? "text-blue-600 underline" : "text-gray-700"
-                  } block border-b border-gray-100 bg-neutral-50 py-2 pr-4 pl-3 uppercase hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:border-0 md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white`
+                  } block border-gray-100 bg-neutral-50 py-2 pr-4 pl-3 uppercase hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:border-0 md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white`
                 }
               >
                 Board
               </NavLink>
             </li>
-            <li className="flex items-center">
+            <li className="flex items-center justify-end">
               <NavLink
                 to="/todos/gantt"
                 className={({ isActive }) =>
                   `${
                     isActive ? "text-blue-600 underline" : "text-gray-700"
-                  } block border-b border-gray-100 bg-neutral-50 py-2 pr-4 pl-3 uppercase hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:border-0 md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white`
+                  } block border-gray-100 bg-neutral-50 py-2 pr-4 pl-3 uppercase hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:border-0 md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white`
                 }
               >
                 Gantt
               </NavLink>
             </li>
-            <li className="flex items-center">
+            <li className="flex items-center justify-end">
               <NavLink
                 to="/todos/table"
                 className={({ isActive }) =>
                   `${
                     isActive ? "text-blue-600 underline" : "text-gray-700"
-                  } block border-b border-gray-100 bg-neutral-50 py-2 pr-4 pl-3 uppercase hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:border-0 md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white`
+                  } block border-gray-100 bg-neutral-50 py-2 pr-4 pl-3 uppercase hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:border-0 md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white`
                 }
               >
                 Table
@@ -120,7 +120,7 @@ export function Header() {
                               className={({ isActive }) =>
                                 `${
                                   isActive ? "text-blue-600 underline" : "text-gray-700"
-                                } flex items-center space-x-1 p-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white`
+                                } flex items-center gap-1 p-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white`
                               }
                             >
                               <MdAccessTimeFilled />
@@ -133,7 +133,7 @@ export function Header() {
                               className={({ isActive }) =>
                                 `${
                                   isActive ? "text-blue-600 underline" : "text-gray-700"
-                                } flex items-center space-x-1 p-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white`
+                                } flex items-center gap-1 p-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white`
                               }
                             >
                               <MdCategory />
@@ -146,7 +146,7 @@ export function Header() {
                               className={({ isActive }) =>
                                 `${
                                   isActive ? "text-blue-600 underline" : "text-gray-700"
-                                } flex items-center space-x-1 p-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white`
+                                } flex items-center gap-1 p-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white`
                               }
                             >
                               <AiFillFileImage />
@@ -159,7 +159,7 @@ export function Header() {
                               className={({ isActive }) =>
                                 `${
                                   isActive ? "text-blue-600 underline" : "text-gray-700"
-                                } flex items-center space-x-1 p-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white`
+                                } flex items-center gap-1 p-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white`
                               }
                             >
                               <AiFillTag />
