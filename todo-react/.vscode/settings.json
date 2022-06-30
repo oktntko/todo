@@ -26,10 +26,6 @@
   "[markdown]": {
     "files.trimTrailingWhitespace": false
   },
-  "[vue]": {
-    "editor.tabSize": 2,
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
   "javascript.format.enable": false,
   "typescript.format.enable": false,
   "editor.formatOnSave": true,

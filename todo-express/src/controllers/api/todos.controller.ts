@@ -31,41 +31,41 @@ export class TodoBody {
   @IsOptional()
   @IsString()
   @MaxLength(100)
-  yarukoto?: string;
+  yarukoto: string | null;
 
   @IsOptional()
   @Transform(transformerEmptyToNull)
-  order?: number;
+  order: number | null;
 
   @IsOptional()
   @IsString()
   @MaxLength(10)
-  beginning?: string;
+  beginning: string | null;
 
   @IsOptional()
   @IsString()
   @MaxLength(10)
-  deadline?: string;
+  deadline: string | null;
 
   @IsOptional()
   @IsString()
   @MaxLength(400)
-  memo?: string;
+  memo: string | null;
 
   @IsOptional()
   @IsPositive()
   @Transform(transformerEmptyToNull)
-  status_id?: number;
+  status_id: number | null;
 
   @IsOptional()
   @IsPositive()
   @Transform(transformerEmptyToNull)
-  category_id?: number;
+  category_id: number | null;
 
   @IsOptional()
   @IsPositive()
   @Transform(transformerEmptyToNull)
-  project_id?: number;
+  project_id: number | null;
 
   @IsPositive({ each: true })
   @IsArray()
@@ -99,42 +99,42 @@ export class TodoResponse {
   @IsOptional()
   @IsString()
   @MaxLength(100)
-  yarukoto?: string;
+  yarukoto: string | null;
 
   @IsOptional()
   @IsPositive()
   @Transform(transformerEmptyToNull)
-  order?: number;
+  order: number | null;
 
   @IsOptional()
   @IsString()
   @MaxLength(10)
-  beginning?: string;
+  beginning: string | null;
 
   @IsOptional()
   @IsString()
   @MaxLength(10)
-  deadline?: string;
+  deadline: string | null;
 
   @IsOptional()
   @IsString()
   @MaxLength(400)
-  memo?: string;
+  memo: string | null;
 
   @IsOptional()
   @IsPositive()
   @Transform(transformerEmptyToNull)
-  status_id?: number;
+  status_id: number | null;
 
   @IsOptional()
   @IsPositive()
   @Transform(transformerEmptyToNull)
-  category_id?: number;
+  category_id: number | null;
 
   @IsOptional()
   @IsPositive()
   @Transform(transformerEmptyToNull)
-  project_id?: number;
+  project_id: number | null;
 
   @IsPositive({ each: true })
   @IsArray()
@@ -146,7 +146,7 @@ export class TodoResponse {
 
   @IsOptional()
   @IsDate()
-  done_at?: Date;
+  done_at: Date | null;
 }
 
 class ListTodoResponse {
