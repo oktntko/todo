@@ -1,6 +1,9 @@
 <template>
   <div class="about">
-    <h1>This is an about page</h1>
+    <h1>This is an home page</h1>
+    <RouterLink to="/about">
+      <span>about</span>
+    </RouterLink>
   </div>
 </template>
 

@@ -1,9 +1,9 @@
 // @ts-check
 
 import js from '@eslint/js';
+import prettier from 'eslint-config-prettier';
 import vue from 'eslint-plugin-vue';
 import ts from 'typescript-eslint';
-import prettier from 'eslint-config-prettier';
 
 export default ts.config(
   {
@@ -25,7 +25,9 @@ export default ts.config(
   },
   {
     rules: {
+      'no-undef': 'off', // When using TypeScript, we recommend to disable no-undef rule directly as TypeScript already check for them and you don't need to worry about this.
       '@typescript-eslint/ban-ts-ignore': 'off',
+      'vue/multi-word-component-names': 'off',
     },
   },
 );
