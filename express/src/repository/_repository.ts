@@ -1,9 +1,9 @@
 import { TRPCError } from '@trpc/server';
 import * as R from 'remeda';
 
-export const DATA_IS_NOT_EXIST_MESSAGE = '対象のデータは既に削除されています。';
-export const DUPLICATE_IS_EXISTING_MESSAGE = '重複するデータが既に存在しています。';
-export const PREVIOUS_IS_UPDATED_MESSAGE =
+export const MESSAGE_DATA_IS_NOT_EXIST = '対象のデータは既に削除されています。';
+export const MESSAGE_DUPLICATE_IS_EXISTING = '重複するデータが既に存在しています。';
+export const MESSAGE_PREVIOUS_IS_UPDATED =
   '対象のデータは変更されています。最新の状態で再度実行してください。';
 
 export async function checkDataExist<T>(params: {
@@ -14,7 +14,7 @@ export async function checkDataExist<T>(params: {
   if (!data) {
     throw new TRPCError({
       code: 'NOT_FOUND',
-      message: params.dataIsNotExistMessage || DATA_IS_NOT_EXIST_MESSAGE,
+      message: params.dataIsNotExistMessage || MESSAGE_DATA_IS_NOT_EXIST,
     });
   }
 
@@ -32,14 +32,14 @@ export async function checkDuplicate<T>(params: {
     // 重複データがあるだけでデータが登録できない
     throw new TRPCError({
       code: 'CONFLICT',
-      message: params.duplicateIsExistingMessage || DUPLICATE_IS_EXISTING_MESSAGE,
+      message: params.duplicateIsExistingMessage || MESSAGE_DUPLICATE_IS_EXISTING,
     });
   } else if (data && params.current && data[params.current.key] !== params.current.value) {
     // 更新のとき
     // 重複データが自身と一致しないときだけデータが更新できない
     throw new TRPCError({
       code: 'CONFLICT',
-      message: params.duplicateIsExistingMessage || DUPLICATE_IS_EXISTING_MESSAGE,
+      message: params.duplicateIsExistingMessage || MESSAGE_DUPLICATE_IS_EXISTING,
     });
   }
 
@@ -63,7 +63,7 @@ export async function checkPreviousVersion<T extends { updated_at: Date }>(param
   if (data.updated_at.getTime() !== date.getTime()) {
     throw new TRPCError({
       code: 'CONFLICT',
-      message: params.previousIsUpdatedMessage || PREVIOUS_IS_UPDATED_MESSAGE,
+      message: params.previousIsUpdatedMessage || MESSAGE_PREVIOUS_IS_UPDATED,
     });
   }
 

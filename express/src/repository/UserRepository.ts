@@ -30,7 +30,6 @@ async function findManyUser(
     skip?: number;
   },
 ) {
-  console.log('');
   return prisma.user.findMany({
     where: params.where,
     orderBy: params.orderBy,
