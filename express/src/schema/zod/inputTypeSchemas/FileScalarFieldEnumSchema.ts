@@ -2,7 +2,7 @@ import { z } from '~/lib/zod.js';
 
 export const FileScalarFieldEnumSchema = z.enum([
   'file_id',
-  'originalname',
+  'filename',
   'mimetype',
   'size',
   'created_at',

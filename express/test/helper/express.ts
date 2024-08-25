@@ -1,7 +1,8 @@
 import { CreateExpressContextOptions } from '@trpc/server/adapters/express';
-import { TRPCRequestInfo } from '@trpc/server/http';
 import type { Request, Response } from 'express';
 import { SessionData } from 'express-session';
+import { PrismaClient } from '~/middleware/prisma.js';
+import * as LibTrpc from '~/middleware/trpc.js';
 
 export function mockopts(
   req: {
@@ -16,11 +17,10 @@ export function mockopts(
       data: {},
     },
   },
-): CreateExpressContextOptions {
+): Pick<CreateExpressContextOptions, 'req' | 'res'> {
   return {
     req: mockreq(req),
     res: mockres(),
-    info: mockinfo(),
   };
 }
 
@@ -32,6 +32,13 @@ function mockres(): Response {
   return {} as unknown as Response;
 }
 
-function mockinfo(): TRPCRequestInfo {
-  return {} as unknown as TRPCRequestInfo;
+export function mockCreateContext(prisma: PrismaClient) {
+  const ctx = vi.spyOn(LibTrpc, 'createContext');
+  ctx.mockImplementationOnce((opts) => ({
+    req: opts.req,
+    res: opts.res,
+    prisma,
+  }));
+
+  return ctx;
 }

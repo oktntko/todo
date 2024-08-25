@@ -21,7 +21,7 @@ describe(`UserRouter`, () => {
     describe(`test search input`, () => {
       test(`user_keyword`, async () => {
         return transactionRollback(prisma, async (prisma) => {
-          const ctx = await createContext(mockopts(), prisma);
+          const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
           await prisma.user.createMany({
@@ -132,7 +132,7 @@ describe(`UserRouter`, () => {
       });
       test(`limit & offset`, async () => {
         return transactionRollback(prisma, async (prisma) => {
-          const ctx = await createContext(mockopts(), prisma);
+          const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
           await prisma.user.createMany({
@@ -227,7 +227,7 @@ describe(`UserRouter`, () => {
     describe(`test output`, () => {
       test(`full`, async () => {
         return transactionRollback(prisma, async (prisma) => {
-          const ctx = await createContext(mockopts(), prisma);
+          const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
           await prisma.user.createMany({
@@ -275,7 +275,7 @@ describe(`UserRouter`, () => {
       });
       test(`min`, async () => {
         return transactionRollback(prisma, async (prisma) => {
-          const ctx = await createContext(mockopts(), prisma);
+          const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
           await prisma.user.createMany({
@@ -328,7 +328,7 @@ describe(`UserRouter`, () => {
     describe(`test decision table`, () => {
       test(`success!`, async () => {
         return transactionRollback(prisma, async (prisma) => {
-          const ctx = await createContext(mockopts(), prisma);
+          const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
           await prisma.user.create({
@@ -364,7 +364,7 @@ describe(`UserRouter`, () => {
       });
       test(`fail. data is not exist.`, async () => {
         return transactionRollback(prisma, async (prisma) => {
-          const ctx = await createContext(mockopts(), prisma);
+          const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
 
@@ -385,7 +385,7 @@ describe(`UserRouter`, () => {
     describe(`test input schema`, () => {
       test.for([[null]] as const)(`fail. user_id=[%s].`, async ([user_id]) => {
         return transactionRollback(prisma, async (prisma) => {
-          const ctx = await createContext(mockopts(), prisma);
+          const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
           const input: z.infer<typeof UserRouterSchema.getInput> = {
@@ -419,7 +419,7 @@ describe(`UserRouter`, () => {
     describe(`test output`, () => {
       test(`full`, async () => {
         return transactionRollback(prisma, async (prisma) => {
-          const ctx = await createContext(mockopts(), prisma);
+          const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
           await prisma.user.create({
@@ -455,7 +455,7 @@ describe(`UserRouter`, () => {
       });
       test(`min`, async () => {
         return transactionRollback(prisma, async (prisma) => {
-          const ctx = await createContext(mockopts(), prisma);
+          const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
           await prisma.user.create({
@@ -496,7 +496,7 @@ describe(`UserRouter`, () => {
     describe(`test decision table`, () => {
       test(`success!`, async () => {
         return transactionRollback(prisma, async (prisma) => {
-          const ctx = await createContext(mockopts(), prisma);
+          const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
 
@@ -524,7 +524,7 @@ describe(`UserRouter`, () => {
       });
       test(`fail. duplicate is existing.`, async () => {
         return transactionRollback(prisma, async (prisma) => {
-          const ctx = await createContext(mockopts(), prisma);
+          const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
           await prisma.user.create({
@@ -612,7 +612,7 @@ describe(`UserRouter`, () => {
         `fail. username=[%s] email=[%s] password=[%s].`,
         async ([username, email, password, message]) => {
           return transactionRollback(prisma, async (prisma) => {
-            const ctx = await createContext(mockopts(), prisma);
+            const ctx = createContext(mockopts(), prisma);
             const caller = createCaller(ctx);
             //
             const input: z.infer<typeof UserRouterSchema.createInput> = {
@@ -637,7 +637,7 @@ describe(`UserRouter`, () => {
     describe(`test output`, () => {
       test(`full`, async () => {
         return transactionRollback(prisma, async (prisma) => {
-          const ctx = await createContext(mockopts(), prisma);
+          const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
 
@@ -665,7 +665,7 @@ describe(`UserRouter`, () => {
       });
       test(`min`, async () => {
         return transactionRollback(prisma, async (prisma) => {
-          const ctx = await createContext(mockopts(), prisma);
+          const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
 
@@ -695,7 +695,7 @@ describe(`UserRouter`, () => {
     describe(`test data access`, () => {
       test(`UserRepository.createUser`, async () => {
         return transactionRollback(prisma, async (prisma) => {
-          const ctx = await createContext(mockopts(), prisma);
+          const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
 
@@ -742,7 +742,7 @@ describe(`UserRouter`, () => {
     describe(`test decision table`, () => {
       test(`success!`, async () => {
         return transactionRollback(prisma, async (prisma) => {
-          const ctx = await createContext(mockopts(), prisma);
+          const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
           const { user_id, updated_at } = await createUser(prisma);
@@ -773,7 +773,7 @@ describe(`UserRouter`, () => {
       });
       test(`fail. duplicate is existing.`, async () => {
         return transactionRollback(prisma, async (prisma) => {
-          const ctx = await createContext(mockopts(), prisma);
+          const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
           await prisma.user.create({
@@ -810,7 +810,7 @@ describe(`UserRouter`, () => {
       });
       test(`fail. previous is updated.`, async () => {
         return transactionRollback(prisma, async (prisma) => {
-          const ctx = await createContext(mockopts(), prisma);
+          const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
           const { user_id } = await createUser(prisma);
@@ -890,7 +890,7 @@ describe(`UserRouter`, () => {
         `fail. username=[%s] email=[%s] password=[%s].`,
         async ([username, email, password, message]) => {
           return transactionRollback(prisma, async (prisma) => {
-            const ctx = await createContext(mockopts(), prisma);
+            const ctx = createContext(mockopts(), prisma);
             const caller = createCaller(ctx);
             //
             const { user_id, updated_at } = await createUser(prisma);
@@ -919,7 +919,7 @@ describe(`UserRouter`, () => {
     describe(`test output`, () => {
       test(`full`, async () => {
         return transactionRollback(prisma, async (prisma) => {
-          const ctx = await createContext(mockopts(), prisma);
+          const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
 
@@ -951,7 +951,7 @@ describe(`UserRouter`, () => {
       });
       test(`min`, async () => {
         return transactionRollback(prisma, async (prisma) => {
-          const ctx = await createContext(mockopts(), prisma);
+          const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
 
@@ -985,7 +985,7 @@ describe(`UserRouter`, () => {
     describe(`test data access`, () => {
       test(`UserRepository.updateUser`, async () => {
         return transactionRollback(prisma, async (prisma) => {
-          const ctx = await createContext(mockopts(), prisma);
+          const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
 
@@ -1021,7 +1021,7 @@ describe(`UserRouter`, () => {
     describe(`test decision table`, () => {
       test(`success!`, async () => {
         return transactionRollback(prisma, async (prisma) => {
-          const ctx = await createContext(mockopts(), prisma);
+          const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
           const user = await createUser(prisma);
@@ -1039,7 +1039,7 @@ describe(`UserRouter`, () => {
       });
       test(`fail. previous is updated.`, async () => {
         return transactionRollback(prisma, async (prisma) => {
-          const ctx = await createContext(mockopts(), prisma);
+          const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
           const { user_id } = await createUser(prisma);
@@ -1058,11 +1058,31 @@ describe(`UserRouter`, () => {
           );
         });
       });
+      test(`fail. data is not exist.`, async () => {
+        return transactionRollback(prisma, async (prisma) => {
+          const ctx = createContext(mockopts(), prisma);
+          const caller = createCaller(ctx);
+          //
+
+          const input: z.infer<typeof UserRouterSchema.deleteInput> = {
+            user_id: 9999, // not found
+            updated_at: new Date(2001, 2, 4),
+          };
+
+          //
+          await expect(caller.user.delete(input)).rejects.toThrow(
+            new TRPCError({
+              code: 'NOT_FOUND',
+              message: MESSAGE_DATA_IS_NOT_EXIST,
+            }),
+          );
+        });
+      });
     });
     describe(`test data access`, () => {
       test(`UserRepository.deleteUser`, async () => {
         return transactionRollback(prisma, async (prisma) => {
-          const ctx = await createContext(mockopts(), prisma);
+          const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
           const user = await createUser(prisma);

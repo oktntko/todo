@@ -8,7 +8,7 @@ import { UserWithRelationsSchema } from './UserSchema.js';
 
 export const FileSchema = z.object({
   file_id: z.string().uuid(),
-  originalname: z.string().trim().min(1).max(255),
+  filename: z.string().trim().min(1).max(255),
   mimetype: z.string().trim().min(1).max(100),
   size: z.number().int(),
   created_at: z.coerce.date(),

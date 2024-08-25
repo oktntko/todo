@@ -66,7 +66,7 @@ async function createUser(
 async function updateUser(
   prisma: PrismaClient,
   params: {
-    where: RequireOne<Pick<Prisma.UserWhereUniqueInput, 'user_id' | 'email'>>;
+    where: Prisma.UserWhereUniqueInput;
     data: Omit<Prisma.UserCreateInput, CommonColumn | 'session_list' | 'file_list'>;
   },
 ) {
@@ -84,7 +84,7 @@ async function updateUser(
 async function deleteUser(
   prisma: PrismaClient,
   params: {
-    where: RequireOne<Pick<Prisma.UserWhereUniqueInput, 'user_id' | 'email'>>;
+    where: Prisma.UserWhereUniqueInput;
   },
 ) {
   return prisma.user.delete({

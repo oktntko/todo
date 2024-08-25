@@ -10,9 +10,9 @@ export const user = router({
     .input(UserRouterSchema.listInput)
     .output(UserRouterSchema.listOutput)
     .query(async ({ ctx, input }) => {
-      return $transaction(ctx.prisma, async (prisma) =>
-        UserService.listUser(ctx.req.reqid, prisma, ctx.operator_id, input),
-      );
+      return $transaction(ctx.prisma, async (prisma) => {
+        return UserService.listUser(ctx.req.reqid, prisma, ctx.operator_id, input);
+      });
     }),
 
   // user.get
@@ -20,9 +20,9 @@ export const user = router({
     .input(UserRouterSchema.getInput)
     .output(UserSchema)
     .query(async ({ ctx, input }) => {
-      return $transaction(ctx.prisma, async (prisma) =>
-        UserService.getUser(ctx.req.reqid, prisma, ctx.operator_id, input),
-      );
+      return $transaction(ctx.prisma, async (prisma) => {
+        return UserService.getUser(ctx.req.reqid, prisma, ctx.operator_id, input);
+      });
     }),
 
   // user.create
@@ -30,9 +30,9 @@ export const user = router({
     .input(UserRouterSchema.createInput)
     .output(UserSchema)
     .mutation(async ({ ctx, input }) => {
-      return $transaction(ctx.prisma, async (prisma) =>
-        UserService.createUser(ctx.req.reqid, prisma, ctx.operator_id, input),
-      );
+      return $transaction(ctx.prisma, async (prisma) => {
+        return UserService.createUser(ctx.req.reqid, prisma, ctx.operator_id, input);
+      });
     }),
 
   // user.update
@@ -40,9 +40,9 @@ export const user = router({
     .input(UserRouterSchema.updateInput)
     .output(UserSchema)
     .mutation(async ({ ctx, input }) => {
-      return $transaction(ctx.prisma, async (prisma) =>
-        UserService.updateUser(ctx.req.reqid, prisma, ctx.operator_id, input),
-      );
+      return $transaction(ctx.prisma, async (prisma) => {
+        return UserService.updateUser(ctx.req.reqid, prisma, ctx.operator_id, input);
+      });
     }),
 
   // user.delete
@@ -50,8 +50,8 @@ export const user = router({
     .input(UserRouterSchema.deleteInput)
     .output(UserSchema)
     .mutation(async ({ ctx, input }) => {
-      return $transaction(ctx.prisma, async (prisma) =>
-        UserService.deleteUser(ctx.req.reqid, prisma, ctx.operator_id, input),
-      );
+      return $transaction(ctx.prisma, async (prisma) => {
+        return UserService.deleteUser(ctx.req.reqid, prisma, ctx.operator_id, input);
+      });
     }),
 });
