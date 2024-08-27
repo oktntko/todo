@@ -17,4 +17,7 @@ export const env = {
     SESSION_DOMAIN: process.env.SESSION_DOMAIN || undefined,
     SESSION_PATH: process.env.SESSION_PATH || '/',
   },
+  secret: {
+    SECRET_KEY: process.env.SECRET_KEY || '6vTCQwmAwCs4XrybYIeRKCu5gh581AE=',
+  },
 } as const;

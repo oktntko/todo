@@ -4,7 +4,11 @@ import superjson from 'superjson';
 import { ZodError } from 'zod';
 import { generatePrisma, PrismaClient } from '~/middleware/prisma.js';
 import { SessionService } from '~/middleware/session.js';
-import { MESSAGE_INPUT_INVALID, MESSAGE_INTERNAL_SERVER_ERROR } from '~/repository/_repository.js';
+import {
+  MESSAGE_INPUT_INVALID,
+  MESSAGE_INTERNAL_SERVER_ERROR,
+  MESSAGE_UNAUTHORIZED,
+} from '~/repository/_repository.js';
 
 // The app's context - is generated for each incoming request
 export function createContext(
@@ -25,18 +29,22 @@ type Context = Awaited<ReturnType<typeof createContext>>;
 const t = initTRPC.context<Context>().create({
   errorFormatter(opts) {
     return {
-      code: opts.error.code,
+      code: opts.shape.code, // TRPC_ERROR_CODE_NUMBER
       message:
         opts.error.code === 'INTERNAL_SERVER_ERROR'
           ? MESSAGE_INTERNAL_SERVER_ERROR
           : opts.error.code === 'BAD_REQUEST' && opts.error.cause instanceof ZodError
             ? MESSAGE_INPUT_INVALID
             : opts.shape.message, // string,
-      path: opts.shape.data.path,
-      cause:
-        opts.error.code === 'BAD_REQUEST' && opts.error.cause instanceof ZodError
-          ? opts.error.cause.flatten()
-          : undefined,
+      data: {
+        httpStatus: opts.shape.data.httpStatus,
+        code: opts.error.code, // TRPC_ERROR_CODE_KEY
+        path: opts.shape.data.path,
+        cause:
+          opts.error.code === 'BAD_REQUEST' && opts.error.cause instanceof ZodError
+            ? opts.error.cause.flatten()
+            : undefined,
+      },
     };
   },
   transformer: superjson, // Date to Date
@@ -58,7 +66,10 @@ const isAuthed = middleware(async ({ next, ctx }) => {
     user_id: ctx.req.session.user_id,
   });
   if (!user) {
-    throw new TRPCError({ code: 'UNAUTHORIZED' });
+    throw new TRPCError({
+      code: 'UNAUTHORIZED',
+      message: MESSAGE_UNAUTHORIZED,
+    });
   }
 
   return next({

@@ -17,6 +17,14 @@ export const UserSchema = z.object({
   password: z.string().trim().min(1).max(255),
   username: z.string().trim().min(1).max(100),
   description: z.string().trim().max(400),
+  /**
+   * 二要素認証の有効化 `true`: 有効 / `false`: 無効
+   */
+  twofa_enable: z.boolean(),
+  /**
+   * 二要素認証の秘密鍵
+   */
+  twofa_secret: z.string().trim().max(255),
   created_at: z.coerce.date(),
   updated_at: z.coerce.date(),
 });

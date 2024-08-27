@@ -1,10 +1,12 @@
 import { createCallerFactory, router } from '~/middleware/trpc.js';
+import { auth } from '~/router/AuthRouter.js';
 import { file, FileRouter } from '~/router/FileRouter.js';
 import { user } from '~/router/UserRouter.js';
 
 export const TrpcRouter = router({
-  user,
+  auth,
   file,
+  user,
 });
 
 export const ExpressRouter = [FileRouter];

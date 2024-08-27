@@ -7,7 +7,11 @@ import { z } from '~/lib/zod.js';
 import { PrismaClient } from '~/middleware/prisma.js';
 import { SessionService } from '~/middleware/session.js';
 import { createContext } from '~/middleware/trpc.js';
-import { MESSAGE_INPUT_INVALID, MESSAGE_INTERNAL_SERVER_ERROR } from '~/repository/_repository.js';
+import {
+  MESSAGE_INPUT_INVALID,
+  MESSAGE_INTERNAL_SERVER_ERROR,
+  MESSAGE_UNAUTHORIZED,
+} from '~/repository/_repository.js';
 
 // # Custom Request
 // node_modules/@types/express-session/index.d.ts
@@ -138,7 +142,12 @@ export function createHandler<T extends z.ZodRawShape>(
 
       const result = schema.safeParse(req);
       if (result.error) {
-        return next(new TRPCError({ code: 'BAD_REQUEST', message: MESSAGE_INPUT_INVALID }));
+        return next(
+          new TRPCError({
+            code: 'BAD_REQUEST',
+            message: MESSAGE_INPUT_INVALID,
+          }),
+        );
       }
 
       return await resolver({
@@ -175,12 +184,22 @@ export function createProtecteHandler<T extends z.ZodRawShape>(
         user_id: req.session.user_id,
       });
       if (!user) {
-        return next(new TRPCError({ code: 'UNAUTHORIZED' }));
+        return next(
+          new TRPCError({
+            code: 'UNAUTHORIZED',
+            message: MESSAGE_UNAUTHORIZED,
+          }),
+        );
       }
 
       const result = schema.safeParse(req);
       if (result.error) {
-        return next(new TRPCError({ code: 'BAD_REQUEST', message: MESSAGE_INPUT_INVALID }));
+        return next(
+          new TRPCError({
+            code: 'BAD_REQUEST',
+            message: MESSAGE_INPUT_INVALID,
+          }),
+        );
       }
 
       return await resolver({

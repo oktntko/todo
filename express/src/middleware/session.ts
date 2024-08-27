@@ -13,7 +13,18 @@ import { prisma } from '~/lib/prisma.js';
 declare module 'express-session' {
   interface SessionData {
     user_id?: number | null;
-    data: NonNullable<unknown>; // {}
+    data?: {
+      // 二要素認証 設定
+      setting_twofa?: {
+        expires: Date;
+        twofa_secret: string;
+      };
+      // 二要素認証 ログイン
+      auth_twofa?: {
+        expires: Date;
+        user_id: number;
+      };
+    };
   }
 }
 

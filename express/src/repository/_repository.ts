@@ -1,6 +1,7 @@
 import { TRPCError } from '@trpc/server';
 import * as R from 'remeda';
 
+export const MESSAGE_UNAUTHORIZED = 'ログインしていません。';
 export const MESSAGE_INTERNAL_SERVER_ERROR = 'システムエラーが発生しました。';
 export const MESSAGE_INPUT_INVALID = '入力値に誤りがあります。';
 export const MESSAGE_DATA_IS_NOT_EXIST = '対象のデータは既に削除されています。';

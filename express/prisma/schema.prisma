@@ -57,10 +57,14 @@ model Todo {
 model User {
   user_id Int @id @default(autoincrement())
 
-  email       String @unique @db.VarChar(255) /// @zod.string.trim().min(1).max(255).email()
-  password    String @db.VarChar(255) /// @zod.string.trim().min(1).max(255)
-  username    String @db.VarChar(100) /// @zod.string.trim().min(1).max(100)
-  description String @default("") @db.VarChar(400) /// @zod.string.trim().max(400)
+  email        String  @unique @db.VarChar(255) /// @zod.string.trim().min(1).max(255).email()
+  password     String  @db.VarChar(255) /// @zod.string.trim().min(1).max(255)
+  username     String  @db.VarChar(100) /// @zod.string.trim().min(1).max(100)
+  description  String  @default("") @db.VarChar(400) /// @zod.string.trim().max(400)
+  /// 二要素認証の有効化 `true`: 有効 / `false`: 無効
+  twofa_enable Boolean @default(false)
+  /// 二要素認証の秘密鍵
+  twofa_secret String  @default("") @db.VarChar(255) /// @zod.string.trim().max(255)
 
   created_at DateTime @default(now()) @db.DateTime(3)
   updated_at DateTime @updatedAt @db.DateTime(3)
