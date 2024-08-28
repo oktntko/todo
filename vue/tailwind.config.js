@@ -8,7 +8,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Murecho"', 'sans-serif'],
+        sans: ['"Noto Sans JP"', 'sans-serif'],
         mono: ['"M PLUS 1 Code"', 'monospace'],
       },
     },
