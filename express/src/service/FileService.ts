@@ -85,7 +85,7 @@ async function createFile(
 
   // テーブルを更新
   const filedata = await FileRepository.createFile(prisma, operator_id, {
-    data: { filename, mimetype: file.mimetype, size: file.size },
+    data: { filename, mimetype: file.mimetype, filesize: file.size },
   });
 
   // ストレージを更新

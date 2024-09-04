@@ -1,6 +1,6 @@
-import dayjs from 'dayjs';
 import { SessionData, Store } from 'express-session';
 import superjson from 'superjson';
+import { dayjs } from '~/lib/dayjs.js';
 import { log } from '~/lib/log4js.js';
 import { prisma } from '~/lib/prisma.js';
 

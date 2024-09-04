@@ -4,7 +4,7 @@ export const FileScalarFieldEnumSchema = z.enum([
   'file_id',
   'filename',
   'mimetype',
-  'size',
+  'filesize',
   'created_at',
   'created_by',
   'updated_at',

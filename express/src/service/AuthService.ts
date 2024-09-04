@@ -1,9 +1,10 @@
 import { TRPCError } from '@trpc/server';
-import dayjs from 'dayjs';
 import type { z } from 'zod';
+import { dayjs } from '~/lib/dayjs.js';
 import { log } from '~/lib/log4js.js';
 import { HashPassword, OnetimePassword, SecretPassword } from '~/lib/secret.js';
 import type { PrismaClient } from '~/middleware/prisma.js';
+import { SpaceRepository } from '~/repository/SpaceRepository.js';
 import { UserRepository } from '~/repository/UserRepository.js';
 import { checkDataExist, checkDuplicate } from '~/repository/_repository.js';
 import { AuthRouterSchema } from '~/schema/AuthRouterSchema.js';
@@ -30,13 +31,26 @@ async function signup(
 
   const hashedPassword = HashPassword.hash(input.new_password);
 
-  return UserRepository.createUser(prisma, {
+  const user = await UserRepository.createUser(prisma, {
     data: {
       username: input.email,
       email: input.email,
       password: hashedPassword,
     },
   });
+
+  await SpaceRepository.createSpace(prisma, {
+    data: {
+      owner_id: user.user_id,
+      space_name: 'MyTodo',
+      space_description: 'This is the default workspace.',
+      space_order: 0,
+      space_image: '',
+    },
+    operator_id: user.user_id,
+  });
+
+  return user;
 }
 
 async function signin(

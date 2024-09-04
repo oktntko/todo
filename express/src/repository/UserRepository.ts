@@ -51,14 +51,15 @@ async function findUniqueUser(
 
 async function createUser(
   prisma: PrismaClient,
-  params: { data: Omit<Prisma.UserCreateInput, CommonColumn | 'session_list' | 'file_list'> },
+  params: {
+    data: Omit<Prisma.UserUncheckedCreateInput, CommonColumn | 'session_list' | 'file_list'>;
+  },
 ) {
   return prisma.user.create({
     data: {
       email: params.data.email,
       password: params.data.password,
       username: params.data.username,
-      description: params.data.description,
     },
   });
 }
@@ -67,7 +68,9 @@ async function updateUser(
   prisma: PrismaClient,
   params: {
     where: Prisma.UserWhereUniqueInput;
-    data: Omit<Prisma.UserCreateInput, CommonColumn | 'session_list' | 'file_list'>;
+    data: Partial<
+      Omit<Prisma.UserUncheckedUpdateInput, CommonColumn | 'session_list' | 'file_list'>
+    >;
   },
 ) {
   return prisma.user.update({
@@ -75,7 +78,6 @@ async function updateUser(
       email: params.data.email,
       password: params.data.password,
       username: params.data.username,
-      description: params.data.description,
     },
     where: params.where,
   });

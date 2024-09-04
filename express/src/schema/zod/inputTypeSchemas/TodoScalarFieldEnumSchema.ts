@@ -2,9 +2,15 @@ import { z } from '~/lib/zod.js';
 
 export const TodoScalarFieldEnumSchema = z.enum([
   'todo_id',
-  'yarukoto',
-  'kizitu',
+  'space_id',
+  'title',
   'description',
+  'begin_date',
+  'begin_time',
+  'limit_date',
+  'limit_time',
+  'order',
+  'done_at',
   'created_at',
   'created_by',
   'updated_at',

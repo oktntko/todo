@@ -5,38 +5,40 @@ import type { UserWithRelations } from './UserSchema.js';
 import { UserWithRelationsSchema } from './UserSchema.js';
 
 /////////////////////////////////////////
-// FILE SCHEMA
+// SPACE SCHEMA
 /////////////////////////////////////////
 
-export const FileSchema = z.object({
-  file_id: z.string().uuid(),
-  filename: z.string().trim().min(1).max(255),
-  mimetype: z.string().trim().min(1).max(100),
-  filesize: z.number().int(),
+export const SpaceSchema = z.object({
+  space_id: z.number().int(),
+  owner_id: z.number().int(),
+  space_name: z.string().trim().min(1).max(100),
+  space_description: z.string().trim().max(400),
+  space_order: z.number().int(),
+  space_image: z.string().trim().max(15000),
   created_at: z.coerce.date(),
   created_by: z.number().int(),
   updated_at: z.coerce.date(),
   updated_by: z.number().int(),
 });
 
-export type File = z.infer<typeof FileSchema>;
+export type Space = z.infer<typeof SpaceSchema>;
 
 /////////////////////////////////////////
-// FILE RELATION SCHEMA
+// SPACE RELATION SCHEMA
 /////////////////////////////////////////
 
-export type FileRelations = {
-  user_list: UserWithRelations[];
+export type SpaceRelations = {
+  owner: UserWithRelations;
   todo_list: TodoWithRelations[];
 };
 
-export type FileWithRelations = z.infer<typeof FileSchema> & FileRelations;
+export type SpaceWithRelations = z.infer<typeof SpaceSchema> & SpaceRelations;
 
-export const FileWithRelationsSchema: z.ZodType<FileWithRelations> = FileSchema.merge(
+export const SpaceWithRelationsSchema: z.ZodType<SpaceWithRelations> = SpaceSchema.merge(
   z.object({
-    user_list: z.lazy(() => UserWithRelationsSchema).array(),
+    owner: z.lazy(() => UserWithRelationsSchema),
     todo_list: z.lazy(() => TodoWithRelationsSchema).array(),
   }),
 );
 
-export default FileSchema;
+export default SpaceSchema;

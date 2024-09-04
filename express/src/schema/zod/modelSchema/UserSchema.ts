@@ -3,6 +3,8 @@ import type { FileWithRelations } from './FileSchema.js';
 import { FileWithRelationsSchema } from './FileSchema.js';
 import type { SessionWithRelations } from './SessionSchema.js';
 import { SessionWithRelationsSchema } from './SessionSchema.js';
+import type { SpaceWithRelations } from './SpaceSchema.js';
+import { SpaceWithRelationsSchema } from './SpaceSchema.js';
 
 /////////////////////////////////////////
 // USER SCHEMA
@@ -16,7 +18,6 @@ export const UserSchema = z.object({
   email: z.string().trim().min(1).max(255).email(),
   password: z.string().trim().min(1).max(255),
   username: z.string().trim().min(1).max(100),
-  description: z.string().trim().max(400),
   /**
    * 二要素認証の有効化 `true`: 有効 / `false`: 無効
    */
@@ -38,6 +39,7 @@ export type User = z.infer<typeof UserSchema>;
 export type UserRelations = {
   session_list: SessionWithRelations[];
   file_list: FileWithRelations[];
+  space_list: SpaceWithRelations[];
 };
 
 export type UserWithRelations = z.infer<typeof UserSchema> & UserRelations;
@@ -46,6 +48,7 @@ export const UserWithRelationsSchema: z.ZodType<UserWithRelations> = UserSchema.
   z.object({
     session_list: z.lazy(() => SessionWithRelationsSchema).array(),
     file_list: z.lazy(() => FileWithRelationsSchema).array(),
+    space_list: z.lazy(() => SpaceWithRelationsSchema).array(),
   }),
 );
 

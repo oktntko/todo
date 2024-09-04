@@ -1,5 +1,5 @@
-import dayjs from 'dayjs';
 import type { Session, SessionData } from 'express-session';
+import { dayjs } from '~/lib/dayjs.js';
 import { z } from '~/lib/zod';
 import { $transaction } from '~/middleware/prisma.js';
 import { SessionService } from '~/middleware/session';

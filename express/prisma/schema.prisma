@@ -32,21 +32,75 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/// @zod.import(["import { YYYYMMDDSchema } from '../../_schema';"])
-model Todo {
-  todo_id Int @id @default(autoincrement())
+model Space {
+  space_id Int @id @default(autoincrement())
 
-  yarukoto    String @unique @db.VarChar(100) /// @zod.string.trim().min(1).max(100)
-  kizitu      String @default("") @db.VarChar(10) /// @zod.custom.use(YYYYMMDDSchema.or(z.literal('')))
-  description String @default("") @db.VarChar(400) /// @zod.string.trim().max(400)
+  owner_id Int
+  owner    User @relation(fields: [owner_id], references: [user_id], onDelete: Cascade)
+
+  space_name        String @db.VarChar(100) /// @zod.string.trim().min(1).max(100)
+  space_description String @default("") @db.VarChar(400) /// @zod.string.trim().max(400)
+  space_order       Int    @default(0) /// @zod.number.int()
+  space_image       String @db.Text /// @zod.string.trim().max(15000)
+
+  todo_list Todo[]
 
   created_at DateTime @default(now()) @db.DateTime(3)
   created_by Int
   updated_at DateTime @updatedAt @db.DateTime(3)
   updated_by Int
 
-  @@index([kizitu])
+  @@index([space_name])
+  @@map("space")
+}
+
+/// @zod.import(["import { DateSchema, TimeSchema } from '../../_schema';"])
+model Todo {
+  todo_id String @id @default(uuid()) @db.VarChar(191) /// @zod.string.uuid()
+
+  space_id Int   @db.Int
+  space    Space @relation(fields: [space_id], references: [space_id], onDelete: Cascade)
+
+  title       String    @default("") @db.VarChar(100) /// @zod.string.trim().max(100)
+  description String    @default("") @db.VarChar(400) /// @zod.string.trim().max(400)
+  begin_date  String    @default("") @db.VarChar(10) /// @zod.custom.use(DateSchema.or(z.literal('')))
+  begin_time  String    @default("") @db.VarChar(10) /// @zod.custom.use(TimeSchema.or(z.literal('')))
+  limit_date  String    @default("") @db.VarChar(10) /// @zod.custom.use(DateSchema.or(z.literal('')))
+  limit_time  String    @default("") @db.VarChar(10) /// @zod.custom.use(TimeSchema.or(z.literal('')))
+  order       Int       @default(0) /// @zod.number.int()
+  done_at     DateTime? @db.DateTime(3)
+
+  tag_list  Tag[]
+  file_list File[]
+
+  created_at DateTime @default(now()) @db.DateTime(3)
+  created_by Int
+  updated_at DateTime @updatedAt @db.DateTime(3)
+  updated_by Int
+
+  @@index([title])
+  @@index([begin_date])
+  @@index([limit_date])
   @@map("todo")
+}
+
+/// @zod.import(["import { ColorSchema } from '../../_schema';"])
+model Tag {
+  tag_id Int @id @default(autoincrement())
+
+  tag_name  String @db.VarChar(100) /// @zod.string.trim().min(1).max(100)
+  tag_color String @default("") @db.VarChar(100) /// @zod.custom.use(ColorSchema.or(z.literal('')))
+  tag_order Int    @default(0) /// @zod.number.int()
+
+  todo_list Todo[]
+
+  created_at DateTime @default(now()) @db.DateTime(3)
+  created_by Int
+  updated_at DateTime @updatedAt @db.DateTime(3)
+  updated_by Int
+
+  @@index([tag_name])
+  @@map("tag")
 }
 
 ////////////////////////////////
@@ -60,7 +114,6 @@ model User {
   email        String  @unique @db.VarChar(255) /// @zod.string.trim().min(1).max(255).email()
   password     String  @db.VarChar(255) /// @zod.string.trim().min(1).max(255)
   username     String  @db.VarChar(100) /// @zod.string.trim().min(1).max(100)
-  description  String  @default("") @db.VarChar(400) /// @zod.string.trim().max(400)
   /// 二要素認証の有効化 `true`: 有効 / `false`: 無効
   twofa_enable Boolean @default(false)
   /// 二要素認証の秘密鍵
@@ -71,6 +124,7 @@ model User {
 
   session_list Session[]
   file_list    File[]
+  space_list   Space[]
 
   @@index([username], name: "index_username")
   @@map("user")
@@ -99,7 +153,7 @@ model File {
   file_id  String @id @default(uuid()) @db.VarChar(191) /// @zod.string.uuid()
   filename String @db.VarChar(255) /// @zod.string.trim().min(1).max(255)
   mimetype String @db.VarChar(100) /// @zod.string.trim().min(1).max(100)
-  size     Int
+  filesize Int
 
   created_at DateTime @default(now()) @db.DateTime(3)
   created_by Int
@@ -107,6 +161,7 @@ model File {
   updated_by Int
 
   user_list User[]
+  todo_list Todo[]
 
   @@map("file")
 }

@@ -5,6 +5,7 @@ import { UserSchema } from '~/schema/zod/modelSchema/UserSchema.js';
 
 const createInput = UserSchema.omit({
   user_id: true,
+
   created_at: true,
   updated_at: true,
 });

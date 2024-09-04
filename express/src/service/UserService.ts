@@ -28,7 +28,6 @@ async function listUser(
     where.OR = [
       { username: { contains: input.where.user_keyword } },
       { email: { contains: input.where.user_keyword } },
-      { description: { contains: input.where.user_keyword } },
     ];
   }
   log.debug(reqid, 'where', where);
