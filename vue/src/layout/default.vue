@@ -16,7 +16,7 @@
             <ul class="space-y-1 border-l border-gray-600 ml-3">
               <li>
                 <RouterLink
-                  to="/"
+                  to="/todo/list"
                   class="flex items-center w-full p-2 transition duration-75 pl-3 rounded-lg group hover:bg-gray-800 text-gray-200 hover:text-white text-base"
                 >
                   <span
@@ -28,7 +28,7 @@
               </li>
               <li>
                 <RouterLink
-                  to="/"
+                  to="/todo/list"
                   class="flex items-center w-full p-2 transition duration-75 pl-3 rounded-lg group hover:bg-gray-800 text-gray-200 hover:text-white text-base"
                 >
                   <span
@@ -40,7 +40,7 @@
               </li>
               <li>
                 <RouterLink
-                  to="/"
+                  to="/todo/list"
                   class="flex items-center w-full p-2 transition duration-75 pl-3 rounded-lg group hover:bg-gray-800 text-gray-200 hover:text-white text-base"
                 >
                   <span
@@ -52,7 +52,7 @@
               </li>
               <li>
                 <RouterLink
-                  to="/"
+                  to="/todo/list"
                   class="flex items-center w-full p-2 transition duration-75 pl-3 rounded-lg group hover:bg-gray-800 text-gray-200 hover:text-white text-base"
                 >
                   <span
@@ -112,6 +112,7 @@
           <button
             type="button"
             class="flex items-center justify-center rounded-full p-1.5 hover:bg-gray-200 transition-colors"
+            title="bookmark"
           >
             <span class="icon-[bxs--bookmark] h-5 w-5"></span>
             <span class="sr-only capitalize">bookmark</span>
@@ -119,6 +120,7 @@
           <button
             type="button"
             class="flex items-center justify-center rounded-full p-1.5 hover:bg-gray-200 transition-colors"
+            title="notification"
           >
             <span class="icon-[bx--notification] h-5 w-5"></span>
             <span class="sr-only capitalize">notification</span>
@@ -126,6 +128,7 @@
           <button
             type="button"
             class="flex items-center justify-center rounded-full p-1.5 hover:bg-gray-200 transition-colors"
+            title="avatar"
           >
             <span class="icon-[radix-icons--avatar] h-5 w-5"></span>
             <span class="sr-only capitalize">avatar</span>
@@ -133,7 +136,7 @@
         </nav>
       </header>
 
-      <div class="grow px-4">
+      <div class="grow">
         <RouterView />
       </div>
     </div>

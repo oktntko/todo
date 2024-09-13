@@ -4,11 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "pnpm symlink && vite",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "symlink": "run-p symlink:*",
-    "symlink:@types": "ln --symbolic --force --relative --no-target-directory '../express/@types' './src/@types:express'",
+    "symlink:@types": "ln --symbolic --force --relative --no-target-directory '../express/@types' './src/@types/express'",
     "symlink:schema": "ln --symbolic --force --relative '../express/src/schema' --target-directory='./src'",
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",

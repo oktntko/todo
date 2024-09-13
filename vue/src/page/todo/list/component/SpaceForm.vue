@@ -1,0 +1,153 @@
+<script setup lang="ts">
+import { useValidate } from '~/composable/useValidate';
+import { bytesToBase64 } from '~/lib/file';
+import type { z } from '~/lib/zod';
+import { useDialog } from '~/plugin/DialogPlugin';
+import { SpaceRouterSchema } from '~/schema/SpaceRouterSchema';
+
+export type ModelValue = z.infer<typeof SpaceRouterSchema.createInput>;
+export type Reset = (modelValue: ModelValue) => void;
+
+const $dialog = useDialog();
+
+const emit = defineEmits<{
+  submit: [ModelValue, Reset];
+}>();
+
+const modelValue = defineModel<ModelValue>({ required: true });
+
+const { validateSubmit, ErrorMessage, reset, isDirty } = useValidate(
+  SpaceRouterSchema.createInput,
+  modelValue,
+);
+
+const handleSubmit = validateSubmit(async () => {
+  emit('submit', modelValue.value, reset);
+});
+
+const dragging = ref(false);
+
+async function handleFileInput(files?: FileList | null) {
+  if (files == null || files.length === 0) {
+    return;
+  }
+
+  const file = files[0];
+
+  if (!file.type.startsWith('image/')) {
+    $dialog.alert('Choose a IMAGE file.');
+    return;
+  }
+
+  if (file.size > 1024 * 10 /* 10KB */) {
+    $dialog.alert('The upper limit is 10KB.');
+    return;
+  }
+
+  modelValue.value.space_image = await bytesToBase64(file);
+}
+</script>
+
+<template>
+  <form class="flex flex-col gap-6" autocomplete="off" @submit.prevent="handleSubmit">
+    <section class="flex flex-col gap-2">
+      <div class="flex gap-6">
+        <div class="flex items-start">
+          <!-- 画像があるとき -->
+          <div v-if="modelValue.space_image" class="relative h-16 w-16">
+            <img
+              :src="modelValue.space_image"
+              width="64"
+              height="64"
+              decoding="async"
+              class="h-16 w-16 rounded object-cover object-center"
+              alt="space image"
+            />
+            <button
+              type="button"
+              class="bg-white border border-gray-300 flex items-center justify-center hover:bg-gray-200 h-4 w-4 transition-colors rounded-full text-gray-900 absolute right-[-8px] top-[-8px]"
+              aria-label="Close"
+              @click="modelValue.space_image = ''"
+            >
+              <span class="h-4 w-4 icon-[bi--x]" />
+            </button>
+          </div>
+
+          <!-- 画像がないとき -->
+          <label
+            v-else
+            :class="[
+              'flex h-16 w-16 cursor-pointer text-center flex-col items-center justify-center gap-0.5 text-gray-400 rounded border-2 border-dashed border-gray-300 bg-gray-100 px-1 transition-colors hover:bg-gray-200',
+              dragging ? 'border-gray-500 bg-gray-200 ' : '',
+            ]"
+            @dragenter="dragging = true"
+            @dragleave="
+              (e) => {
+                // 子要素へ dragenter すると自身の dragleave が発火するため、子要素かどうか判定する
+                // https://qiita.com/keiliving/items/5e8b26e6567efbc15765
+                if (e.relatedTarget && e.currentTarget) {
+                  const currentTarget = e.currentTarget as Node;
+                  const relatedTarget = e.relatedTarget as Node;
+                  if (currentTarget.contains(relatedTarget)) {
+                    return;
+                  }
+                }
+
+                dragging = false;
+              }
+            "
+            @dragover.prevent
+            @drop.prevent="
+              (e) => {
+                dragging = false;
+                handleFileInput(e.dataTransfer?.files);
+              }
+            "
+          >
+            <span class="sr-only capitalize">space image</span>
+            <span class="icon-[ri--image-circle-fill] h-4 w-4"> </span>
+            <span class="text-xs capitalize">limit: 10KB</span>
+            <input
+              type="file"
+              class="hidden"
+              accept="image/*"
+              @change="(e) => handleFileInput((e.target as HTMLInputElement | null)?.files)"
+            />
+          </label>
+        </div>
+
+        <div class="focus-container flex flex-col gap-1 grow">
+          <label for="space_name" class="text-sm capitalize required"> name </label>
+          <input
+            id="space_name"
+            v-model.lazy="modelValue.space_name"
+            type="text"
+            class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
+            maxlength="100"
+            required
+          />
+          <ErrorMessage class="text-xs text-red-600" for="space_name" />
+        </div>
+      </div>
+
+      <div class="focus-container flex flex-col gap-1">
+        <label for="description" class="text-sm capitalize optional"> description </label>
+        <textarea
+          id="description"
+          v-model.lazy="modelValue.space_description"
+          class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
+          rows="4"
+          maxlength="400"
+        ></textarea>
+
+        <ErrorMessage class="text-xs text-red-600" for="space_description" />
+      </div>
+    </section>
+
+    <section class="flex gap-2">
+      <button type="submit" :class="['button button-text button-green']" :disabled="!isDirty">
+        save
+      </button>
+    </section>
+  </form>
+</template>

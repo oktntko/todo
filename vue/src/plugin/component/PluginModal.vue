@@ -3,14 +3,16 @@
 withDefaults(
   defineProps<{
     component: unknown;
-    componentProps: object;
-    componentEvents: unknown;
+    componentProps?: object;
+    componentEvents?: unknown;
     componentClass?: string;
     dialogClass?: string;
   }>(),
   {
     componentClass: '',
     dialogClass: '',
+    componentProps: () => ({}),
+    componentEvents: () => ({}),
   },
 );
 
@@ -62,7 +64,7 @@ function closeDelay(returnValue?: unknown | undefined) {
 </script>
 
 <template>
-  <dialog ref="refDialog" :class="['rounded-lg shadow-xl', { open }, dialogClass]">
+  <dialog ref="refDialog" :class="['rounded-lg shadow-xl text-gray-900', { open }, dialogClass]">
     <component
       :is="component"
       :class="componentClass"

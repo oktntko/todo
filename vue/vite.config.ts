@@ -17,7 +17,7 @@ export default defineConfig({
     VueRouter({
       extensions: ['.vue'],
       routesFolder: 'src/page',
-      exclude: ['**/component'],
+      exclude: ['**/component', '**/modal'],
       dts: 'src/vue-router.d.ts',
     }),
     Vue(),
@@ -26,7 +26,7 @@ export default defineConfig({
       layoutsDirs: 'src/layout',
       pagesDirs: 'src/page',
       extensions: ['vue'],
-      exclude: ['**/component'],
+      exclude: ['**/component', '**/modal'],
       defaultLayout: 'default',
     }),
     Unfonts({

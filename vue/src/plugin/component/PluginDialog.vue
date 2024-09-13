@@ -97,7 +97,7 @@ function closeDelay(returnValue?: typeof CONFIRMED_VALUE | undefined) {
         <h3>{{ title }}</h3>
       </header>
 
-      <main class="flex items-start gap-4 px-4 py-6">
+      <main class="flex items-center gap-4 px-4 py-6">
         <div
           v-if="icon"
           class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full sm:mx-0 sm:h-10 sm:w-10"
@@ -111,11 +111,9 @@ function closeDelay(returnValue?: typeof CONFIRMED_VALUE | undefined) {
           <span :class="['h-6 w-6', icon]"></span>
         </div>
 
-        <div>
-          <p class="whitespace-pre-wrap text-sm text-gray-500">
-            {{ message }}
-          </p>
-        </div>
+        <p class="whitespace-pre-wrap text-sm text-gray-500">
+          {{ message }}
+        </p>
       </main>
 
       <footer class="flex gap-4 bg-gray-50 px-4 py-3">

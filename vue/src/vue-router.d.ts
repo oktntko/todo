@@ -23,5 +23,7 @@ declare module 'vue-router/auto-routes' {
     '/about': RouteRecordInfo<'/about', '/about', Record<never, never>, Record<never, never>>,
     '/login': RouteRecordInfo<'/login', '/login', Record<never, never>, Record<never, never>>,
     '/signup': RouteRecordInfo<'/signup', '/signup', Record<never, never>, Record<never, never>>,
+    '/todo/list': RouteRecordInfo<'/todo/list', '/todo/list', Record<never, never>, Record<never, never>>,
+    '/todo/list/[space_id]': RouteRecordInfo<'/todo/list/[space_id]', '/todo/list/:space_id', { space_id: ParamValue<true> }, { space_id: ParamValue<false> }>,
   }
 }

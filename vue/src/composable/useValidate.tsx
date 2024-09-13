@@ -43,7 +43,7 @@ export function useValidate<T extends z.ZodRawShape>(
 
   // バリデーションする
   function validateSubmit(
-    callback: () => void,
+    callback: (value: z.infer<typeof schema>) => void,
     onInvalidSubmit: (
       eroor: z.ZodFormattedError<SafeParseReturnType>,
     ) => void = handleInvalidSubmit,
@@ -56,7 +56,7 @@ export function useValidate<T extends z.ZodRawShape>(
 
       if (validateResult.success) {
         submitCount.value = 0;
-        return callback();
+        return callback(validateResult.data);
       } else {
         error.value = validateResult.error.format();
         return onInvalidSubmit ? onInvalidSubmit(error.value) : undefined;
@@ -103,7 +103,11 @@ export function useValidate<T extends z.ZodRawShape>(
       return errorValue._errors[0];
     });
 
-    return <span>{message.value}</span>;
+    if (message.value) {
+      return <span>{message.value}</span>;
+    } else {
+      return <></>;
+    }
   };
 
   return {

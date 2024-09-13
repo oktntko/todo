@@ -78,8 +78,8 @@ function installDialogPlugin(parentApp: App) {
         message,
         colorset: 'yellow',
         icon: 'icon-[bx--info-circle]',
-        confirmText: 'OK',
-        cancelText: 'やめる',
+        confirmText: 'YES',
+        cancelText: 'NO',
       });
     },
   };
