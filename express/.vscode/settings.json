@@ -10,10 +10,8 @@
   "files.eol": "\n",
   "files.insertFinalNewline": true,
   "files.trimFinalNewlines": true,
-  // "type": "module",
   "javascript.preferences.importModuleSpecifierEnding": "js",
   "typescript.preferences.importModuleSpecifierEnding": "js",
-  //
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
   }

@@ -2,9 +2,18 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import {hc} from 'hono/client'
+import {TypeHonoRouter} from './@types/hono/router/_router'
 
 function App() {
   const [count, setCount] = useState(0)
+
+  const client = hc<TypeHonoRouter>('/')
+  client.api.user.$post({json:{
+    age:1,
+    name:''
+  }})
+
 
   return (
     <>

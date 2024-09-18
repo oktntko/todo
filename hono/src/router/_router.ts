@@ -1,6 +1,6 @@
 import { Hono } from "hono";
-import { user } from "./UserRouter.js";
+import { UserRouter } from "./UserRouter.js";
 
-export const HonoRouter = new Hono();
+export const HonoRouter = new Hono().route("/", UserRouter);
 
-HonoRouter.route("/", user);
+export type TypeHonoRouter = typeof HonoRouter;
