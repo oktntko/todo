@@ -1,32 +1,52 @@
 <script setup lang="ts">
 import { vOnClickOutside } from '@vueuse/components';
 import * as R from 'remeda';
+import type { DownloadFile } from '~/component/MyDownloadFileList.vue';
+import MyInputFile from '~/component/MyInputFile.vue';
+import { useFile } from '~/composable/useFile';
 import { useValidate } from '~/composable/useValidate';
 import { trpc } from '~/lib/trpc';
 import type { z } from '~/lib/zod';
 import { TodoRouterSchema } from '~/schema/TodoRouterSchema';
 
-export type ModelValue = z.infer<typeof TodoRouterSchema.upsertInput>;
+export type ModelValue = z.infer<typeof TodoRouterSchema.upsertInput> & {
+  is_new?: boolean;
+};
 export type Reset = (modelValue: ModelValue) => void;
 
 const modelValue = defineModel<ModelValue>({ required: true });
+const modelValueFileList = defineModel<DownloadFile[]>('file_list', {
+  required: false,
+  default: () => [],
+});
 
 defineEmits<{
   change: [];
 }>();
 
+const { uploadManyFiles } = useFile();
+
 const { validateSubmit } = useValidate(TodoRouterSchema.upsertInput, modelValue);
 
-const edit = ref(false);
-const status = ref<'' | 'saving...' | 'saved!'>('');
-const debounceResetStatus = R.debounce(() => (status.value = ''), { waitMs: 1000 });
+const status = ref<{
+  editing: boolean;
+  fixedEditing: boolean;
+  save: '' | 'saving...' | 'saved!';
+}>({
+  editing: false,
+  fixedEditing: false,
+  save: '',
+});
+const debounceResetStatus = R.debounce(() => (status.value.save = ''), { waitMs: 1000 });
 
 const handleSubmit = validateSubmit(async (value) => {
   try {
-    status.value = 'saving...';
+    status.value.save = 'saving...';
     await trpc.todo.upsert.mutate(value);
 
-    status.value = 'saved!';
+    modelValue.value.is_new = false;
+
+    status.value.save = 'saved!';
     debounceResetStatus.call();
   } finally {
     //
@@ -44,14 +64,20 @@ async function handleInput() {
 
 <template>
   <form
-    v-on-click-outside="() => (edit = false)"
+    v-on-click-outside="
+      () => {
+        if (!status.fixedEditing) {
+          status.editing = false;
+        }
+      }
+    "
     class="px-6 py-2 text-sm relative"
-    :class="[edit ? 'bg-gray-100' : '']"
+    :class="[status.editing ? 'bg-gray-100' : '']"
     autocomplete="off"
-    @click="edit = true"
+    @click="status.editing = true"
     @submit.prevent="handleSubmit"
   >
-    <div v-show="edit" class="inset-y-0 left-0 absolute flex items-center justify-center">
+    <div v-show="status.editing" class="inset-y-0 left-0 absolute flex items-center justify-center">
       <button type="button" class="flex items-center justify-center cursor-move" title="handle">
         <span class="icon-[radix-icons--drag-handle-dots-2] h-5 w-5"></span>
         <span class="sr-only capitalize">handle</span>
@@ -61,7 +87,7 @@ async function handleInput() {
     <div class="flex flex-row gap-2 relative">
       <div class="flex items-start justify-center">
         <button
-          v-if="status === '' && modelValue.done_at == null"
+          v-if="status.save === '' && modelValue.done_at == null"
           type="button"
           class="flex items-center justify-center hover:bg-gray-200 text-gray-900 hover:text-green-500 transition-colors group rounded-full p-1.5"
           title="done"
@@ -79,7 +105,7 @@ async function handleInput() {
           <span class="sr-only capitalize">done</span>
         </button>
         <button
-          v-if="status === '' && modelValue.done_at != null"
+          v-if="status.save === '' && modelValue.done_at != null"
           type="button"
           class="flex items-center justify-center hover:bg-gray-200 hover:text-gray-900 text-green-500 transition-colors group rounded-full p-1.5"
           title="active"
@@ -97,7 +123,7 @@ async function handleInput() {
           <span class="sr-only capitalize">done</span>
         </button>
         <div
-          v-if="status === 'saving...'"
+          v-if="status.save === 'saving...'"
           class="flex items-center justify-center transition-colors rounded-full p-1.5"
           title="status"
         >
@@ -105,7 +131,7 @@ async function handleInput() {
           <span class="sr-only capitalize">saving</span>
         </div>
         <div
-          v-if="status === 'saved!'"
+          v-if="status.save === 'saved!'"
           class="flex items-center justify-center transition-colors rounded-full p-1.5"
           title="status"
         >
@@ -125,7 +151,7 @@ async function handleInput() {
             @input="handleInput"
           />
 
-          <MyDropdown v-show="edit">
+          <MyDropdown v-show="status.editing">
             <template #button="{ toggle }">
               <button
                 type="button"
@@ -141,11 +167,47 @@ async function handleInput() {
                 <li>
                   <button
                     type="button"
+                    class="flex items-center w-full p-2 transition duration-75 group hover:bg-gray-200 disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100"
+                    :disabled="modelValue.is_new"
+                    @click="
+                      async () => {
+                        status.fixedEditing = true;
+                        try {
+                          const files = await $modal.open<File[]>({
+                            component: MyInputFile,
+                            componentProps: {
+                              multiple: true,
+                            },
+                          });
+
+                          if (files && files.length > 0) {
+                            const { data } = await uploadManyFiles(files, {
+                              todo_id: modelValue.todo_id,
+                            });
+
+                            modelValueFileList = [...modelValueFileList, ...data];
+                          }
+                        } finally {
+                          status.fixedEditing = false;
+                        }
+                      }
+                    "
+                  >
+                    <span class="icon-[material-symbols--upload-file] w-4 h-4"></span>
+                    <span class="ms-1 capitalize">upload file</span>
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
                     class="flex items-center w-full p-2 transition duration-75 group hover:bg-gray-200 text-yellow-600"
                     @click="
                       async () => {
-                        await trpc.todo.delete.mutate(modelValue);
+                        if (!modelValue.is_new) {
+                          await trpc.todo.delete.mutate(modelValue);
+                        }
                         $emit('change');
+                        $toast.success('Todo has been deleted.');
                       }
                     "
                   >
@@ -160,7 +222,7 @@ async function handleInput() {
 
         <div
           v-show="
-            edit ||
+            status.editing ||
             modelValue.limit_date ||
             modelValue.limit_time ||
             modelValue.begin_date ||
@@ -169,7 +231,7 @@ async function handleInput() {
           class="flex flex-row-reverse justify-end items-center gap-2"
         >
           <div class="flex flex-row gap-2">
-            <div v-show="edit || modelValue.limit_date">
+            <div v-show="status.editing || modelValue.limit_date">
               <input
                 :id="`${modelValue.todo_id}-limit_date`"
                 v-model="modelValue.limit_date"
@@ -178,7 +240,7 @@ async function handleInput() {
                 @input="handleInput"
               />
             </div>
-            <div v-show="edit || modelValue.limit_time">
+            <div v-show="status.editing || modelValue.limit_time">
               <input
                 :id="`${modelValue.todo_id}-limit_time`"
                 v-model="modelValue.limit_time"
@@ -190,7 +252,7 @@ async function handleInput() {
           </div>
           <div>～</div>
           <div class="flex flex-row gap-2">
-            <div v-show="edit || modelValue.begin_date">
+            <div v-show="status.editing || modelValue.begin_date">
               <input
                 :id="`${modelValue.todo_id}-begin_date`"
                 v-model="modelValue.begin_date"
@@ -199,7 +261,7 @@ async function handleInput() {
                 @input="handleInput"
               />
             </div>
-            <div v-show="edit || modelValue.begin_time">
+            <div v-show="status.editing || modelValue.begin_time">
               <input
                 :id="`${modelValue.todo_id}-begin_time`"
                 v-model="modelValue.begin_time"
@@ -213,7 +275,7 @@ async function handleInput() {
 
         <div class="text-xs">
           <textarea
-            v-show="edit"
+            v-show="status.editing"
             :id="`${modelValue.todo_id}-description`"
             v-model.trim="modelValue.description"
             class="block bg-inherit w-full outline-none border-b border-b-gray-400 pb-0.5"
@@ -223,13 +285,22 @@ async function handleInput() {
             @input="handleInput"
           ></textarea>
           <label
-            v-show="!edit && modelValue.description"
+            v-show="!status.editing && modelValue.description"
             :for="`${modelValue.todo_id}-description`"
             class="text-gray-500 inline-block max-w-full break-words whitespace-pre-wrap"
           >
             {{ modelValue.description }}
           </label>
         </div>
+
+        <MyDownloadFileList
+          :file_list="modelValueFileList"
+          @deleted="
+            (deletedIndex) => {
+              modelValueFileList = modelValueFileList.filter((_, i) => i !== deletedIndex);
+            }
+          "
+        ></MyDownloadFileList>
       </div>
     </div>
   </form>

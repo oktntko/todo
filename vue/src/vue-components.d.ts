@@ -7,8 +7,8 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    MyDownloadFileList: typeof import('./component/MyDownloadFileList.vue')['default']
     MyDropdown: typeof import('./component/MyDropdown.vue')['default']
-    MyImage: typeof import('./component/MyImage.vue')['default']
     MyInputFile: typeof import('./component/MyInputFile.vue')['default']
     MyInputPassword: typeof import('./component/MyInputPassword.vue')['default']
     MyLoading: typeof import('./component/MyLoading.vue')['default']

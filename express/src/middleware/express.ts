@@ -202,7 +202,7 @@ export function createProtecteHandler<T extends z.ZodRawShape>(
         );
       }
 
-      return await resolver({
+      return resolver({
         ctx: { ...ctx, next, operator_id: user.user_id },
         input: result.data,
       });

@@ -1,6 +1,6 @@
-import AxiosStatic from 'axios';
+import AxiosStatic, { type AxiosResponse } from 'axios';
 
-export const axios = AxiosStatic.create({ timeout: 5000 });
+export const axios = AxiosStatic.create({ timeout: 5000, baseURL: import.meta.env.BASE_URL });
 
 axios.interceptors.response.use(
   (response) => response,
@@ -13,6 +13,21 @@ axios.interceptors.response.use(
     return Promise.reject(error);
   },
 );
+
+export async function saveAsFile(response: AxiosResponse) {
+  const headerFilename = response.headers['content-disposition'].split('filename=')[1];
+  const filename = decodeURI(headerFilename).replace(/\+/g, ' ');
+
+  const href = window.URL.createObjectURL(response.data);
+  const link = document.createElement('a');
+  link.href = href;
+  link.setAttribute('download', filename);
+  document.body.appendChild(link);
+  link.click();
+
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(href);
+}
 
 async function blobToJson(blob: Blob): Promise<unknown> {
   // typeof blob => object
@@ -31,20 +46,4 @@ async function blobToJson(blob: Blob): Promise<unknown> {
   })
     .then((data) => JSON.parse(data))
     .catch(console.error);
-}
-
-export async function uploadSingleFile(file: File) {
-  const multipartFormData = new FormData();
-  multipartFormData.append('file', file, encodeURIComponent(`${file.name}`));
-  return axios.post<{ file_id: string }>('/api/file/upload/single', multipartFormData);
-}
-
-export async function uploadArrayFiles(fileList: FileList | File[]) {
-  const files = Array.from(fileList);
-
-  const multipartFormData = new FormData();
-  files.forEach((file) =>
-    multipartFormData.append('files', file, encodeURIComponent(`${file.name}`)),
-  );
-  return axios.post<{ file_id: string }[]>('/api/file/upload/array', multipartFormData);
 }

@@ -1,11 +1,10 @@
 import { z } from '~/lib/zod.js';
-import { CommonColumn } from '~/schema/_schema.js';
 import { SortOrderSchema } from '~/schema/zod/inputTypeSchemas/SortOrderSchema.js';
 import { TodoScalarFieldEnumSchema } from '~/schema/zod/inputTypeSchemas/TodoScalarFieldEnumSchema.js';
 import { FileSchema } from '~/schema/zod/modelSchema/FileSchema.js';
 import { TagSchema } from '~/schema/zod/modelSchema/TagSchema.js';
 import { TodoSchema } from '~/schema/zod/modelSchema/TodoSchema.js';
-import { TodoStatusSchema } from './zod/option/OptionTodoStatus.js';
+import { TodoStatusSchema } from '~/schema/zod/option/OptionTodoStatus.js';
 
 const upsertInput = TodoSchema.omit({
   order: true,
@@ -40,10 +39,10 @@ const listInput = z.object({
   }),
 });
 
-export const TodoOutputSchema = TodoSchema.omit(CommonColumn).merge(
+export const TodoOutputSchema = TodoSchema.merge(
   z.object({
-    tag_list: z.lazy(() => TagSchema.omit(CommonColumn)).array(),
-    file_list: z.lazy(() => FileSchema.omit(CommonColumn)).array(),
+    tag_list: z.lazy(() => TagSchema).array(),
+    file_list: z.lazy(() => FileSchema).array(),
   }),
 );
 

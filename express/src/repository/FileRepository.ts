@@ -34,13 +34,17 @@ async function findUniqueFile(
 async function createFile(
   prisma: PrismaClient,
   operator_id: number,
-  params: { data: Omit<Prisma.FileUncheckedCreateInput, CommonColumn | 'user_list'> },
+  params: { data: Omit<Prisma.FileUncheckedCreateInput, CommonColumn> },
 ) {
   return prisma.file.create({
     data: {
       filename: params.data.filename,
       mimetype: params.data.mimetype,
       filesize: params.data.filesize,
+
+      todo_list: params.data.todo_list,
+      user_list: params.data.user_list,
+
       created_by: operator_id,
       updated_by: operator_id,
     },

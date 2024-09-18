@@ -77,19 +77,36 @@ async function createFile(
   reqid: string,
   prisma: PrismaClient,
   operator_id: number,
-  file: Express.Multer.File,
+  input: z.infer<typeof FileRouterSchema.createInput>,
 ) {
-  log.trace(reqid, 'createFile', operator_id, file);
+  log.trace(reqid, 'createFile', operator_id, input);
 
-  const filename = decodeURIComponent(file.originalname);
+  const filename = decodeURIComponent(input.file.originalname);
 
   // テーブルを更新
   const filedata = await FileRepository.createFile(prisma, operator_id, {
-    data: { filename, mimetype: file.mimetype, filesize: file.size },
+    data: {
+      filename,
+      mimetype: input.file.mimetype,
+      filesize: input.file.size,
+
+      todo_list: input.body.todo_id
+        ? {
+            connect: {
+              todo_id: input.body.todo_id,
+            },
+          }
+        : undefined,
+      user_list: {
+        connect: {
+          user_id: operator_id,
+        },
+      },
+    },
   });
 
   // ストレージを更新
-  await FileRepository.writeFile(filedata, file.buffer);
+  await FileRepository.writeFile(filedata, input.file.buffer);
 
   return filedata;
 }
@@ -99,11 +116,18 @@ async function createManyFile(
   reqid: string,
   prisma: PrismaClient,
   operator_id: number,
-  files: Express.Multer.File[],
+  input: z.infer<typeof FileRouterSchema.createManyInput>,
 ) {
-  log.trace(reqid, 'createManyFile', operator_id, files);
+  log.trace(reqid, 'createManyFile', operator_id, input);
 
-  return Promise.all(files.map((x) => FileService.createFile(reqid, prisma, operator_id, x)));
+  return Promise.all(
+    input.files.map((file) =>
+      FileService.createFile(reqid, prisma, operator_id, {
+        file,
+        body: { todo_id: input.body.todo_id },
+      }),
+    ),
+  );
 }
 
 // # file.delete

@@ -23,7 +23,7 @@ const modelValue = ref<z.infer<typeof TodoRouterSchema.listInput>>({
 });
 
 const space = ref<RouterOutput['space']['get']>();
-const todo_list = ref<RouterOutput['todo']['get'][]>([]);
+const todo_list = ref<(RouterOutput['todo']['get'] & { is_new?: boolean })[]>([]);
 
 const loading = ref(true);
 
@@ -34,7 +34,7 @@ const handleSubmit = validateSubmit(async () => {
   loading.value = true;
   try {
     const data = await trpc.todo.list.query(modelValue.value);
-    todo_list.value = data.todo_list.map((x) => ({ ...x, id: String(x.todo_id) }));
+    todo_list.value = data.todo_list;
   } finally {
     loading.value = false;
   }
@@ -52,8 +52,16 @@ function createNewEmptyTodo(params: { space_id: number }) {
     limit_time: '',
     order: 0,
     done_at: null,
+
     tag_list: [],
     file_list: [],
+
+    created_at: new Date(),
+    created_by: 0,
+    updated_at: new Date(),
+    updated_by: 0,
+
+    is_new: true,
   };
 }
 
@@ -83,7 +91,6 @@ watch(
 );
 
 const debounce = R.debounce(handleSubmit, { waitMs: 500 });
-watchDeep(modelValue, () => debounce.call());
 </script>
 
 <template>
@@ -219,6 +226,7 @@ watchDeep(modelValue, () => debounce.call());
                   v-model="modelValue.where.todo_keyword"
                   class="block w-full rounded-lg border border-gray-300 bg-white py-1 ps-6 pe-2 text-gray-900"
                   maxlength="255"
+                  @input="() => debounce.call()"
                 />
                 <button
                   type="button"
@@ -226,6 +234,7 @@ watchDeep(modelValue, () => debounce.call());
                   @click="
                     () => {
                       modelValue.sort.order = modelValue.sort.order === 'desc' ? 'asc' : 'desc';
+                      handleSubmit();
                     }
                   "
                 >
@@ -247,6 +256,7 @@ watchDeep(modelValue, () => debounce.call());
                   type="radio"
                   value="active"
                   class="mr-1 h-4 w-4 border-gray-300 bg-gray-100 text-blue-600"
+                  @change="handleSubmit"
                 />
                 active
               </label>
@@ -260,9 +270,15 @@ watchDeep(modelValue, () => debounce.call());
                   type="radio"
                   value="done"
                   class="mr-1 h-4 w-4 border-gray-300 bg-gray-100 text-blue-600"
+                  @change="handleSubmit"
                 />
                 done
               </label>
+
+              <span
+                v-show="loading"
+                class="icon-[svg-spinners--3-dots-fade] h-4 w-4 text-gray-600 text-opacity-60 animate-pulse"
+              />
             </form>
           </div>
 
@@ -270,6 +286,7 @@ watchDeep(modelValue, () => debounce.call());
             <li v-for="(todo, i) of todo_list" :key="todo.todo_id">
               <TodoForm
                 v-model="todo_list[i]"
+                :file_list="todo_list[i].file_list"
                 @change="
                   () => {
                     todo_list = todo_list.filter((_, index) => index !== i);

@@ -61,9 +61,9 @@ FileRouter.get(
 FileRouter.post(
   '/api/file/upload/single',
   upload.single('file'),
-  createProtecteHandler(z.object({ file: FileRouterSchema.createInput }), ({ ctx, input }) => {
+  createProtecteHandler(FileRouterSchema.createInput, ({ ctx, input }) => {
     return $transaction(ctx.prisma, async (prisma) => {
-      const json = await FileService.createFile(ctx.req.reqid, prisma, ctx.operator_id, input.file);
+      const json = await FileService.createFile(ctx.req.reqid, prisma, ctx.operator_id, input);
 
       return ctx.res.json(json);
     });
@@ -73,21 +73,13 @@ FileRouter.post(
 FileRouter.post(
   '/api/file/upload/many',
   upload.array('files'),
-  createProtecteHandler(
-    z.object({ files: FileRouterSchema.createInput.array().min(1) }),
-    ({ ctx, input }) => {
-      return $transaction(ctx.prisma, async (prisma) => {
-        const json = await FileService.createManyFile(
-          ctx.req.reqid,
-          prisma,
-          ctx.operator_id,
-          input.files,
-        );
+  createProtecteHandler(FileRouterSchema.createManyInput, ({ ctx, input }) => {
+    return $transaction(ctx.prisma, async (prisma) => {
+      const json = await FileService.createManyFile(ctx.req.reqid, prisma, ctx.operator_id, input);
 
-        return ctx.res.json(json);
-      });
-    },
-  ),
+      return ctx.res.json(json);
+    });
+  }),
 );
 
 ////////////////////////////////////////////////

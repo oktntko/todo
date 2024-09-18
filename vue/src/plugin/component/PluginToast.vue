@@ -43,7 +43,7 @@ function close() {
   >
     <div
       v-if="open"
-      class="mt-4 flex max-w-xs justify-between rounded-lg p-4 text-gray-500 shadow-md dark:bg-gray-800 dark:text-gray-400"
+      class="mt-4 flex max-w-xs justify-between rounded-lg p-2 text-gray-500 shadow-md relative"
       :class="{
         'bg-green-100 dark:bg-green-800' /*   */: colorset === 'green',
         'bg-yellow-100 dark:bg-yellow-800' /* */: colorset === 'yellow',
@@ -63,17 +63,23 @@ function close() {
         >
           <span class="h-5 w-5 icon" :class="icon" />
         </div>
-        <div class="text-sm font-normal">{{ message }}</div>
-      </div>
 
-      <button
-        type="button"
-        class="rounded-lg bg-transparent p-1.5 text-gray-400 hover:text-gray-900 focus:ring-2 focus:ring-gray-300 dark:text-gray-500 dark:hover:text-white"
-        aria-label="Close"
-        @click="close"
-      >
-        <span class="h-5 w-5 icon-[bi--x]" />
-      </button>
+        <div class="grow min-w-0">
+          <div class="text-sm inline-block max-w-full break-words whitespace-pre-wrap">
+            {{ message }}
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="flex items-center justify-center rounded-full p-0.5 hover:bg-gray-200 transition-colors"
+          aria-label="Close"
+          @click="close"
+        >
+          <span class="h-5 w-5 icon-[bi--x]" />
+          <span class="sr-only capitalize">close</span>
+        </button>
+      </div>
     </div>
   </Transition>
 </template>
