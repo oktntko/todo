@@ -82,7 +82,7 @@ const showMenu = ref(false);
     >
       <div
         v-show="showMenu"
-        class="absolute right-0 z-10 w-full bg-white shadow"
+        class="absolute right-0 z-10 w-full bg-white rounded border border-gray-300 shadow-md"
         role="menu"
         aria-orientation="vertical"
         tabindex="-1"
@@ -108,7 +108,7 @@ const showMenu = ref(false);
               }
             "
           >
-            <div class="text-sm inline-flex flex-row gap-px items-center">
+            <div class="text-sm inline-flex flex-row gap-1 items-center">
               <span
                 class="icon-[mingcute--tag-chevron-fill]"
                 :style="{

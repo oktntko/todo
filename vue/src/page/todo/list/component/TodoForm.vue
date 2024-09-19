@@ -72,7 +72,7 @@ async function handleInput() {
         }
       }
     "
-    class="px-6 py-2 text-sm relative"
+    class="text-sm relative"
     :class="[modelValue.editing ? 'bg-gray-100' : '']"
     autocomplete="off"
     @click="modelValue.editing = true"
@@ -93,7 +93,7 @@ async function handleInput() {
         <button
           v-if="status.save === '' && modelValue.done_at == null"
           type="button"
-          class="flex items-center justify-center hover:bg-gray-200 text-gray-900 hover:text-green-500 transition-colors group rounded-full p-1.5"
+          class="flex items-center justify-center hover:bg-gray-200 text-gray-900 hover:text-green-500 transition-colors group rounded-full"
           title="done"
           @click.prevent="
             async () => {
@@ -111,7 +111,7 @@ async function handleInput() {
         <button
           v-if="status.save === '' && modelValue.done_at != null"
           type="button"
-          class="flex items-center justify-center hover:bg-gray-200 hover:text-gray-900 text-green-500 transition-colors group rounded-full p-1.5"
+          class="flex items-center justify-center hover:bg-gray-200 hover:text-gray-900 text-green-500 transition-colors group rounded-full"
           title="active"
           @click.prevent="
             async () => {
@@ -128,7 +128,7 @@ async function handleInput() {
         </button>
         <div
           v-if="status.save === 'saving...'"
-          class="flex items-center justify-center transition-colors rounded-full p-1.5"
+          class="flex items-center justify-center transition-colors rounded-full"
           title="status"
         >
           <span class="icon-[eos-icons--bubble-loading] h-5 w-5 text-gray-500"></span>
@@ -136,7 +136,7 @@ async function handleInput() {
         </div>
         <div
           v-if="status.save === 'saved!'"
-          class="flex items-center justify-center transition-colors rounded-full p-1.5"
+          class="flex items-center justify-center transition-colors rounded-full"
           title="status"
         >
           <span class="icon-[bi--brightness-high-fill] h-5 w-5 text-pink-500"></span>
@@ -232,29 +232,8 @@ async function handleInput() {
             modelValue.begin_date ||
             modelValue.begin_time
           "
-          class="flex flex-row-reverse justify-end items-center gap-2"
+          class="flex flex-row justify-start items-center gap-2"
         >
-          <div class="flex flex-row gap-2">
-            <div v-show="modelValue.editing || modelValue.limit_date">
-              <input
-                :id="`${modelValue.todo_id}-limit_date`"
-                v-model="modelValue.limit_date"
-                type="date"
-                class="block bg-inherit outline-none border-b border-b-gray-400 pb-0.5 sm:text-sm"
-                @input="handleInput"
-              />
-            </div>
-            <div v-show="modelValue.editing || modelValue.limit_time">
-              <input
-                :id="`${modelValue.todo_id}-limit_time`"
-                v-model="modelValue.limit_time"
-                type="time"
-                class="block bg-inherit outline-none border-b border-b-gray-400 pb-0.5 sm:text-sm"
-                @input="handleInput"
-              />
-            </div>
-          </div>
-          <div>～</div>
           <div class="flex flex-row gap-2">
             <div v-show="modelValue.editing || modelValue.begin_date">
               <input
@@ -269,6 +248,27 @@ async function handleInput() {
               <input
                 :id="`${modelValue.todo_id}-begin_time`"
                 v-model="modelValue.begin_time"
+                type="time"
+                class="block bg-inherit outline-none border-b border-b-gray-400 pb-0.5 sm:text-sm"
+                @input="handleInput"
+              />
+            </div>
+          </div>
+          <div>～</div>
+          <div class="flex flex-row gap-2">
+            <div v-show="modelValue.editing || modelValue.limit_date">
+              <input
+                :id="`${modelValue.todo_id}-limit_date`"
+                v-model="modelValue.limit_date"
+                type="date"
+                class="block bg-inherit outline-none border-b border-b-gray-400 pb-0.5 sm:text-sm"
+                @input="handleInput"
+              />
+            </div>
+            <div v-show="modelValue.editing || modelValue.limit_time">
+              <input
+                :id="`${modelValue.todo_id}-limit_time`"
+                v-model="modelValue.limit_time"
                 type="time"
                 class="block bg-inherit outline-none border-b border-b-gray-400 pb-0.5 sm:text-sm"
                 @input="handleInput"

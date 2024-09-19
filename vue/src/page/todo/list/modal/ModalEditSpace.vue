@@ -45,7 +45,7 @@ async function handleSubmit(input: ModelValue) {
 
 <template>
   <div class="sm:w-96 p-4">
-    <header class="capitalize mb-4">edit space</header>
+    <header class="capitalize mb-4 text-lg font-bold">edit space</header>
     <Transition
       mode="out-in"
       enter-from-class="transform opacity-0"

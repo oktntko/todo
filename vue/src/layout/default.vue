@@ -8,7 +8,7 @@ fetchTagList();
 
 <template>
   <div class="flex min-h-screen">
-    <aside class="w-60 shrink-0 bg-gray-900 text-gray-50 p-4 flex flex-col gap-6">
+    <aside class="w-56 shrink-0 bg-gray-900 text-gray-50 p-4 flex flex-col gap-6">
       <h1 class="flex items-center gap-1 text-2xl font-semibold">
         <span class="icon-[flat-color-icons--todo-list] h-8 w-8 p-2"></span>
         <span class="">MyTodo</span>
@@ -103,12 +103,12 @@ fetchTagList();
     <div
       class="grow flex flex-col bg-gradient-to-b from-white to-gray-200 min-h-screen text-gray-900"
     >
-      <header class="flex flex-nowrap items-center justify-between px-4 py-2 flex-row">
+      <header class="flex flex-nowrap items-center justify-between p-4 flex-row">
         <nav class="flex items-center">
           <button
             type="button"
             :class="[
-              'w-48 flex items-center gap-2 bg-gray-100 border px-4 py-2 border-gray-300 text-gray-900 text-sm rounded-lg hover:ring-blue-500 hover:border-blue-500 transition-colors hover:bg-white',
+              'w-48 flex items-center gap-2 bg-gray-100 border p-2 border-gray-300 text-gray-900 text-sm rounded-lg hover:ring-blue-500 hover:border-blue-500 transition-colors hover:bg-white',
             ]"
           >
             <span class="icon-[bx--search] h-4 w-4"> </span>

@@ -48,23 +48,23 @@ watchDeep(modelValue, () => debounce.call());
 </script>
 
 <template>
-  <aside class="flex flex-col p-2 gap-2">
+  <aside class="flex flex-col px-4 gap-2">
     <h1 class="flex items-center gap-1 text-xs text-gray-500">
       <span class="capitalize">space</span>
     </h1>
 
-    <form class="gap-1 relative text-sm" @submit.prevent="">
+    <form class="relative flex flex-row items-center text-sm" @submit.prevent="handleSubmit">
       <div class="absolute inset-y-0 start-0 flex items-center ps-2 pointer-events-none">
         <span class="w-4 h-4 text-gray-500 icon-[line-md--filter]"></span>
       </div>
       <input
         v-model="modelValue.where.space_keyword"
-        class="block w-full rounded-lg border border-gray-300 bg-white py-1 ps-6 pe-2 text-gray-900"
+        class="inline-block rounded-s-lg border border-gray-300 bg-white py-1 ps-6 pe-2 w-full text-gray-900"
         maxlength="255"
       />
       <button
         type="button"
-        class="absolute inset-y-0 end-0 flex items-center px-2 border rounded-e-lg border-gray-300 bg-white"
+        class="inline-flex items-center p-1.5 border-y border-e rounded-e-lg border-gray-300 bg-white"
         @click="
           () => {
             modelValue.sort.order = modelValue.sort.order === 'desc' ? 'asc' : 'desc';
