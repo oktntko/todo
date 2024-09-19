@@ -58,7 +58,10 @@ async function createTag(
 ) {
   return prisma.tag.create({
     data: {
+      owner_id: params.data.owner_id,
+
       tag_name: params.data.tag_name,
+      tag_description: params.data.tag_description,
       tag_color: params.data.tag_color,
       tag_order: params.data.tag_order,
 
@@ -79,6 +82,7 @@ async function updateTag(
   return prisma.tag.update({
     data: {
       tag_name: params.data.tag_name,
+      tag_description: params.data.tag_description,
       tag_color: params.data.tag_color,
       tag_order: params.data.tag_order,
 

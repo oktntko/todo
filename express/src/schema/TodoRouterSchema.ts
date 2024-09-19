@@ -1,10 +1,10 @@
 import { z } from '~/lib/zod.js';
+import { TodoStatusSchema } from '~/schema/option/OptionTodoStatus.js';
 import { SortOrderSchema } from '~/schema/zod/inputTypeSchemas/SortOrderSchema.js';
 import { TodoScalarFieldEnumSchema } from '~/schema/zod/inputTypeSchemas/TodoScalarFieldEnumSchema.js';
 import { FileSchema } from '~/schema/zod/modelSchema/FileSchema.js';
 import { TagSchema } from '~/schema/zod/modelSchema/TagSchema.js';
 import { TodoSchema } from '~/schema/zod/modelSchema/TodoSchema.js';
-import { TodoStatusSchema } from '~/schema/zod/option/OptionTodoStatus.js';
 
 const upsertInput = TodoSchema.omit({
   order: true,

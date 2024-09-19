@@ -1,3 +1,11 @@
+<script setup lang="ts">
+import { useTagStore } from '~/store/TagStore';
+
+const { fetchTagList } = useTagStore();
+
+fetchTagList();
+</script>
+
 <template>
   <div class="flex min-h-screen">
     <aside class="w-60 shrink-0 bg-gray-900 text-gray-50 p-4 flex flex-col gap-6">

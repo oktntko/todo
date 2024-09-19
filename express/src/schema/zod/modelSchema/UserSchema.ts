@@ -5,6 +5,8 @@ import type { SessionWithRelations } from './SessionSchema.js';
 import { SessionWithRelationsSchema } from './SessionSchema.js';
 import type { SpaceWithRelations } from './SpaceSchema.js';
 import { SpaceWithRelationsSchema } from './SpaceSchema.js';
+import type { TagWithRelations } from './TagSchema.js';
+import { TagWithRelationsSchema } from './TagSchema.js';
 
 /////////////////////////////////////////
 // USER SCHEMA
@@ -40,6 +42,7 @@ export type UserRelations = {
   session_list: SessionWithRelations[];
   file_list: FileWithRelations[];
   space_list: SpaceWithRelations[];
+  tag_list: TagWithRelations[];
 };
 
 export type UserWithRelations = z.infer<typeof UserSchema> & UserRelations;
@@ -49,6 +52,7 @@ export const UserWithRelationsSchema: z.ZodType<UserWithRelations> = UserSchema.
     session_list: z.lazy(() => SessionWithRelationsSchema).array(),
     file_list: z.lazy(() => FileWithRelationsSchema).array(),
     space_list: z.lazy(() => SpaceWithRelationsSchema).array(),
+    tag_list: z.lazy(() => TagWithRelationsSchema).array(),
   }),
 );
 

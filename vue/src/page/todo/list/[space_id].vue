@@ -23,7 +23,9 @@ const modelValue = ref<z.infer<typeof TodoRouterSchema.listInput>>({
 });
 
 const space = ref<RouterOutput['space']['get']>();
-const todo_list = ref<(RouterOutput['todo']['get'] & { is_new?: boolean })[]>([]);
+const todo_list = ref<(RouterOutput['todo']['get'] & { is_new?: boolean; editing?: boolean })[]>(
+  [],
+);
 
 const loading = ref(true);
 
@@ -40,7 +42,9 @@ const handleSubmit = validateSubmit(async () => {
   }
 });
 
-function createNewEmptyTodo(params: { space_id: number }) {
+function createNewEmptyTodo(params: {
+  space_id: number;
+}): RouterOutput['todo']['get'] & { is_new?: boolean; editing?: boolean } {
   return {
     todo_id: window.crypto.randomUUID(),
     space_id: params.space_id,
@@ -62,6 +66,7 @@ function createNewEmptyTodo(params: { space_id: number }) {
     updated_by: 0,
 
     is_new: true,
+    editing: true,
   };
 }
 

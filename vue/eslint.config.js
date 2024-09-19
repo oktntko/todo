@@ -40,6 +40,7 @@ export default ts.config(
           ignoreRestSiblings: true,
         },
       ],
+      'vue/prop-name-casing': ['warn', 'snake_case'],
     },
   },
 );

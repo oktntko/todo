@@ -1,4 +1,6 @@
 import { z } from '~/lib/zod.js';
+import type { TagWithRelations } from './TagSchema.js';
+import { TagWithRelationsSchema } from './TagSchema.js';
 import type { TodoWithRelations } from './TodoSchema.js';
 import { TodoWithRelationsSchema } from './TodoSchema.js';
 import type { UserWithRelations } from './UserSchema.js';
@@ -30,6 +32,7 @@ export type Space = z.infer<typeof SpaceSchema>;
 export type SpaceRelations = {
   owner: UserWithRelations;
   todo_list: TodoWithRelations[];
+  tag_list: TagWithRelations[];
 };
 
 export type SpaceWithRelations = z.infer<typeof SpaceSchema> & SpaceRelations;
@@ -38,6 +41,7 @@ export const SpaceWithRelationsSchema: z.ZodType<SpaceWithRelations> = SpaceSche
   z.object({
     owner: z.lazy(() => UserWithRelationsSchema),
     todo_list: z.lazy(() => TodoWithRelationsSchema).array(),
+    tag_list: z.lazy(() => TagWithRelationsSchema).array(),
   }),
 );
 

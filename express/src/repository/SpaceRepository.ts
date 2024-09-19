@@ -59,6 +59,7 @@ async function createSpace(
   return prisma.space.create({
     data: {
       owner_id: params.data.owner_id,
+
       space_name: params.data.space_name,
       space_description: params.data.space_description,
       space_order: params.data.space_order,

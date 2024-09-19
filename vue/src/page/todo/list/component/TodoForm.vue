@@ -8,17 +8,20 @@ import { useValidate } from '~/composable/useValidate';
 import { trpc } from '~/lib/trpc';
 import type { z } from '~/lib/zod';
 import { TodoRouterSchema } from '~/schema/TodoRouterSchema';
+import { useTagStore } from '~/store/TagStore';
+
+import MyTagInput from './MyTagInput.vue';
 
 export type ModelValue = z.infer<typeof TodoRouterSchema.upsertInput> & {
   is_new?: boolean;
+  editing?: boolean;
 };
 export type Reset = (modelValue: ModelValue) => void;
 
+const { tagStoreData } = storeToRefs(useTagStore());
+
 const modelValue = defineModel<ModelValue>({ required: true });
-const modelValueFileList = defineModel<DownloadFile[]>('file_list', {
-  required: false,
-  default: () => [],
-});
+const modelValueFileList = defineModel<DownloadFile[]>('file_list', { required: true });
 
 defineEmits<{
   change: [];
@@ -29,11 +32,9 @@ const { uploadManyFiles } = useFile();
 const { validateSubmit } = useValidate(TodoRouterSchema.upsertInput, modelValue);
 
 const status = ref<{
-  editing: boolean;
   fixedEditing: boolean;
   save: '' | 'saving...' | 'saved!';
 }>({
-  editing: false,
   fixedEditing: false,
   save: '',
 });
@@ -67,17 +68,20 @@ async function handleInput() {
     v-on-click-outside="
       () => {
         if (!status.fixedEditing) {
-          status.editing = false;
+          modelValue.editing = false;
         }
       }
     "
     class="px-6 py-2 text-sm relative"
-    :class="[status.editing ? 'bg-gray-100' : '']"
+    :class="[modelValue.editing ? 'bg-gray-100' : '']"
     autocomplete="off"
-    @click="status.editing = true"
+    @click="modelValue.editing = true"
     @submit.prevent="handleSubmit"
   >
-    <div v-show="status.editing" class="inset-y-0 left-0 absolute flex items-center justify-center">
+    <div
+      v-show="modelValue.editing"
+      class="inset-y-0 left-0 absolute flex items-center justify-center"
+    >
       <button type="button" class="flex items-center justify-center cursor-move" title="handle">
         <span class="icon-[radix-icons--drag-handle-dots-2] h-5 w-5"></span>
         <span class="sr-only capitalize">handle</span>
@@ -151,7 +155,7 @@ async function handleInput() {
             @input="handleInput"
           />
 
-          <MyDropdown v-show="status.editing">
+          <MyDropdown v-show="modelValue.editing">
             <template #button="{ toggle }">
               <button
                 type="button"
@@ -221,8 +225,8 @@ async function handleInput() {
         </div>
 
         <div
-          v-show="
-            status.editing ||
+          v-if="
+            modelValue.editing ||
             modelValue.limit_date ||
             modelValue.limit_time ||
             modelValue.begin_date ||
@@ -231,7 +235,7 @@ async function handleInput() {
           class="flex flex-row-reverse justify-end items-center gap-2"
         >
           <div class="flex flex-row gap-2">
-            <div v-show="status.editing || modelValue.limit_date">
+            <div v-show="modelValue.editing || modelValue.limit_date">
               <input
                 :id="`${modelValue.todo_id}-limit_date`"
                 v-model="modelValue.limit_date"
@@ -240,7 +244,7 @@ async function handleInput() {
                 @input="handleInput"
               />
             </div>
-            <div v-show="status.editing || modelValue.limit_time">
+            <div v-show="modelValue.editing || modelValue.limit_time">
               <input
                 :id="`${modelValue.todo_id}-limit_time`"
                 v-model="modelValue.limit_time"
@@ -252,7 +256,7 @@ async function handleInput() {
           </div>
           <div>～</div>
           <div class="flex flex-row gap-2">
-            <div v-show="status.editing || modelValue.begin_date">
+            <div v-show="modelValue.editing || modelValue.begin_date">
               <input
                 :id="`${modelValue.todo_id}-begin_date`"
                 v-model="modelValue.begin_date"
@@ -261,7 +265,7 @@ async function handleInput() {
                 @input="handleInput"
               />
             </div>
-            <div v-show="status.editing || modelValue.begin_time">
+            <div v-show="modelValue.editing || modelValue.begin_time">
               <input
                 :id="`${modelValue.todo_id}-begin_time`"
                 v-model="modelValue.begin_time"
@@ -273,9 +277,9 @@ async function handleInput() {
           </div>
         </div>
 
-        <div class="text-xs">
+        <div v-if="modelValue.editing || modelValue.description" class="text-xs">
           <textarea
-            v-show="status.editing"
+            v-show="modelValue.editing"
             :id="`${modelValue.todo_id}-description`"
             v-model.trim="modelValue.description"
             class="block bg-inherit w-full outline-none border-b border-b-gray-400 pb-0.5"
@@ -285,7 +289,7 @@ async function handleInput() {
             @input="handleInput"
           ></textarea>
           <label
-            v-show="!status.editing && modelValue.description"
+            v-show="!modelValue.editing && modelValue.description"
             :for="`${modelValue.todo_id}-description`"
             class="text-gray-500 inline-block max-w-full break-words whitespace-pre-wrap"
           >
@@ -293,7 +297,17 @@ async function handleInput() {
           </label>
         </div>
 
+        <div v-if="modelValue.editing || modelValue.tag_list.length > 0">
+          <MyTagInput
+            v-model="modelValue.tag_list"
+            :tag_list="tagStoreData.tag_list"
+            :editing="modelValue.editing"
+            @change="handleInput"
+          />
+        </div>
+
         <MyDownloadFileList
+          v-if="modelValue.editing || modelValueFileList.length > 0"
           :file_list="modelValueFileList"
           @deleted="
             (deletedIndex) => {
