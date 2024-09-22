@@ -27,6 +27,10 @@ defineEmits<{
   change: [];
 }>();
 
+const props = defineProps<{
+  order: number;
+}>();
+
 const { uploadManyFiles } = useFile();
 
 const { validateSubmit } = useValidate(TodoRouterSchema.upsertInput, modelValue);
@@ -61,6 +65,13 @@ async function handleInput() {
   // ので @inputイベントを監視して submit を発火する
   debounceHandleSubmit.call();
 }
+
+watch(
+  () => props.order,
+  () => {
+    handleSubmit();
+  },
+);
 </script>
 
 <template>
@@ -73,7 +84,6 @@ async function handleInput() {
       }
     "
     class="text-sm relative"
-    :class="[modelValue.editing ? 'bg-gray-100' : '']"
     autocomplete="off"
     @click="modelValue.editing = true"
     @submit.prevent="handleSubmit"
@@ -82,7 +92,11 @@ async function handleInput() {
       v-show="modelValue.editing"
       class="inset-y-0 left-0 absolute flex items-center justify-center"
     >
-      <button type="button" class="flex items-center justify-center cursor-move" title="handle">
+      <button
+        type="button"
+        class="my-handle flex items-center justify-center cursor-move"
+        title="handle"
+      >
         <span class="icon-[radix-icons--drag-handle-dots-2] h-5 w-5"></span>
         <span class="sr-only capitalize">handle</span>
       </button>

@@ -109,15 +109,6 @@ async function upsertTodo(
     });
   }
 
-  // edit input [order]
-  const previous = await TodoRepository.findUniqueTodo(prisma, {
-    where: { todo_id: input.todo_id },
-  });
-  const order =
-    previous != null
-      ? previous.order
-      : await TodoRepository.countTodo(prisma, { where: { space_id: input.space_id } });
-
   return TodoRepository.upsertTodo(prisma, {
     where: {
       todo_id: input.todo_id,
@@ -133,7 +124,7 @@ async function upsertTodo(
       begin_time: input.begin_time,
       limit_date: input.limit_date,
       limit_time: input.limit_time,
-      order: order,
+      order: input.order,
       done_at: input.done_at,
 
       tag_list: input.tag_list,

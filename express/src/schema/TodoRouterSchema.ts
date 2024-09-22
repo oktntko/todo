@@ -7,8 +7,6 @@ import { TagSchema } from '~/schema/zod/modelSchema/TagSchema.js';
 import { TodoSchema } from '~/schema/zod/modelSchema/TodoSchema.js';
 
 const upsertInput = TodoSchema.omit({
-  order: true,
-
   created_by: true,
   created_at: true,
   updated_by: true,

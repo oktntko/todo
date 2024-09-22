@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import * as R from 'remeda';
+import Sortable from 'sortablejs';
 import { useValidate } from '~/composable/useValidate';
 import { trpc, type RouterOutput } from '~/lib/trpc';
 import type { z } from '~/lib/zod';
@@ -18,7 +19,7 @@ const modelValue = ref<z.infer<typeof TodoRouterSchema.listInput>>({
   },
   sort: {
     field: 'order',
-    order: 'desc',
+    order: 'asc',
   },
 });
 
@@ -54,7 +55,11 @@ function createNewEmptyTodo(params: {
     begin_time: '',
     limit_date: '',
     limit_time: '',
-    order: 0,
+    order:
+      (R.firstBy(
+        todo_list.value.map((x) => x.order),
+        [(x) => x, 'desc'],
+      ) ?? -1) + 1,
     done_at: null,
 
     tag_list: [],
@@ -70,10 +75,13 @@ function createNewEmptyTodo(params: {
   };
 }
 
+const sortable = ref<Sortable>();
 // unplugin-vue-router/data-loaders だと modelValue(検索条件)を引き回すことができない(できるかもしれないけど分からない)
 // vue-router onBeforeRouteUpdate だと route の型が不明で params が取得できない
 // 地道にwatchで実装する https://router.vuejs.org/guide/essentials/dynamic-matching#Reacting-to-Params-Changes
 async function load(params: { space_id: string }) {
+  sortable.value?.destroy();
+
   space.value = undefined;
   todo_list.value = [];
 
@@ -82,6 +90,27 @@ async function load(params: { space_id: string }) {
 
   modelValue.value.where.space_id = space_id;
   await handleSubmit();
+
+  await nextTick();
+  const el = document.getElementById('sortable-container')!;
+
+  sortable.value = Sortable.create(el, {
+    animation: 150,
+    handle: '.my-handle',
+    chosenClass: 'chosenClass',
+    dragClass: 'dragClass',
+
+    onEnd(e) {
+      if (e.oldIndex == null || e.newIndex == null || e.oldIndex === e.newIndex) return;
+
+      const todo = todo_list.value[e.oldIndex];
+      const tail = todo_list.value.slice(e.oldIndex + 1);
+
+      todo_list.value.splice(e.oldIndex);
+      todo_list.value.push(...tail);
+      todo_list.value.splice(e.newIndex, 0, todo);
+    },
+  });
 }
 
 onMounted(async () => {
@@ -94,8 +123,6 @@ watch(
     load(route.params);
   },
 );
-
-const debounce = R.debounce(handleSubmit, { waitMs: 500 });
 </script>
 
 <template>
@@ -221,34 +248,6 @@ const debounce = R.debounce(handleSubmit, { waitMs: 500 });
           </button>
 
           <form class="text-sm flex flex-row gap-2 items-center" @submit.prevent="handleSubmit">
-            <div class="relative flex flex-row items-center">
-              <div class="absolute inset-y-0 start-0 flex items-center ps-2 pointer-events-none">
-                <span class="w-4 h-4 text-gray-500 icon-[line-md--filter]"></span>
-              </div>
-              <input
-                v-model="modelValue.where.todo_keyword"
-                class="inline-block rounded-s-lg border border-gray-300 bg-white py-1 ps-6 pe-2 w-full text-gray-900"
-                maxlength="255"
-                @input="() => debounce.call()"
-              />
-              <button
-                type="button"
-                class="inline-flex items-center p-1.5 border-y border-e rounded-e-lg border-gray-300 bg-white"
-                @click="
-                  () => {
-                    modelValue.sort.order = modelValue.sort.order === 'desc' ? 'asc' : 'desc';
-                    handleSubmit();
-                  }
-                "
-              >
-                <span
-                  v-if="modelValue.sort.order === 'desc'"
-                  class="w-4 h-4 icon-[hugeicons--sorting-01]"
-                ></span
-                ><span v-else class="w-4 h-4 icon-[hugeicons--sorting-02]"></span>
-              </button>
-            </div>
-
             <label
               for="status-active"
               class="flex items-center font-medium text-gray-900 capitalize"
@@ -282,12 +281,18 @@ const debounce = R.debounce(handleSubmit, { waitMs: 500 });
           </form>
         </div>
 
-        <ul class="divide-y divide-dotted">
-          <li v-for="(todo, i) of todo_list" :key="todo.todo_id">
+        <ul id="sortable-container">
+          <li
+            v-for="(todo, i) of todo_list"
+            :key="todo.todo_id"
+            class="hover:bg-gray-100"
+            :class="{ 'bg-gray-100': todo.editing }"
+          >
             <TodoForm
               v-model="todo_list[i]"
               class="px-6 py-2"
               :file_list="todo_list[i].file_list"
+              :order="i"
               @change="
                 () => {
                   todo_list = todo_list.filter((_, index) => index !== i);
@@ -301,3 +306,12 @@ const debounce = R.debounce(handleSubmit, { waitMs: 500 });
     </Transition>
   </div>
 </template>
+
+<style lang="postcss" scoped>
+.chosenClass {
+  @apply bg-blue-100;
+}
+.dragClass {
+  @apply bg-blue-100;
+}
+</style>
