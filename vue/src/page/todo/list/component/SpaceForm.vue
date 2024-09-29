@@ -65,11 +65,11 @@ async function handleFileInput(files?: FileList | null) {
             />
             <button
               type="button"
-              class="bg-white border border-gray-300 flex items-center justify-center hover:bg-gray-200 h-4 w-4 transition-colors rounded-full text-gray-900 absolute right-[-8px] top-[-8px]"
+              class="absolute right-[-8px] top-[-8px] flex h-4 w-4 items-center justify-center rounded-full border border-gray-300 bg-white text-gray-900 transition-colors hover:bg-gray-200"
               aria-label="Close"
               @click="modelValue.space_image = ''"
             >
-              <span class="h-4 w-4 icon-[bi--x]" />
+              <span class="icon-[bi--x] h-4 w-4" />
             </button>
           </div>
 
@@ -77,8 +77,8 @@ async function handleFileInput(files?: FileList | null) {
           <label
             v-else
             :class="[
-              'flex h-16 w-16 cursor-pointer text-center flex-col items-center justify-center gap-0.5 text-gray-400 rounded border-2 border-dashed border-gray-300 bg-gray-100 px-1 transition-colors hover:bg-gray-200',
-              dragging ? 'border-gray-500 bg-gray-200 ' : '',
+              'flex h-16 w-16 cursor-pointer flex-col items-center justify-center gap-0.5 rounded border-2 border-dashed border-gray-300 bg-gray-100 px-1 text-center text-gray-400 transition-colors hover:bg-gray-200',
+              dragging ? 'border-gray-500 bg-gray-200' : '',
             ]"
             @dragenter="dragging = true"
             @dragleave="
@@ -116,8 +116,8 @@ async function handleFileInput(files?: FileList | null) {
           </label>
         </div>
 
-        <div class="focus-container flex flex-col gap-1 grow">
-          <label for="space_name" class="text-sm capitalize required"> name </label>
+        <div class="focus-container flex grow flex-col gap-1">
+          <label for="space_name" class="required text-sm capitalize"> name </label>
           <input
             id="space_name"
             v-model.lazy="modelValue.space_name"
@@ -131,7 +131,7 @@ async function handleFileInput(files?: FileList | null) {
       </div>
 
       <div class="focus-container flex flex-col gap-1">
-        <label for="description" class="text-sm capitalize optional"> description </label>
+        <label for="description" class="optional text-sm capitalize"> description </label>
         <textarea
           id="description"
           v-model.lazy="modelValue.space_description"
@@ -145,7 +145,11 @@ async function handleFileInput(files?: FileList | null) {
     </section>
 
     <section class="flex gap-2">
-      <button type="submit" :class="['button button-text button-green']" :disabled="!isDirty">
+      <button
+        type="submit"
+        :class="['button button-text button-green', 'capitalize']"
+        :disabled="!isDirty"
+      >
         save
       </button>
     </section>

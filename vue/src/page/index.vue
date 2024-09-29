@@ -1,7 +1,7 @@
 <template>
   <div class="about">
     <h1>This is an home page</h1>
-    <RouterLink to="/about">
+    <RouterLink :to="{ name: '/about' }">
       <span>about</span>
     </RouterLink>
   </div>

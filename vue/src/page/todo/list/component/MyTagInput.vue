@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { vOnClickOutside } from '@vueuse/components';
+import MyTag from '~/page/component/MyTag.vue';
 
 export type TagInput = {
   tag_id: number;
@@ -42,7 +43,7 @@ const showMenu = ref(false);
     class="relative block"
   >
     <label
-      class="flex flex-row flex-wrap border-b gap-1.5 px-px border-b-gray-400 pb-px sm:text-sm relative hover:bg-gray-200 transition-colors cursor-pointer"
+      class="relative flex cursor-pointer flex-row flex-wrap gap-1.5 border-b border-b-gray-400 px-px pb-px transition-colors hover:bg-gray-200 sm:text-sm"
       :class="{
         'border-b-gray-400': editing,
         'border-b-transparent': !editing,
@@ -57,19 +58,8 @@ const showMenu = ref(false);
         }
       "
     >
-      <div
-        v-for="tag of displayTagList"
-        :key="tag.tag_id"
-        class="text-xs py-px px-1.5 inline-flex flex-row gap-px items-center rounded-full"
-        :style="{
-          color: tag.tag_color,
-          backgroundColor: 'color-mix(in srgb, currentColor 10%, transparent)',
-        }"
-      >
-        <span class="icon-[mingcute--tag-chevron-fill]"></span>
-        <span> {{ tag.tag_name }} </span>
-      </div>
-      <div v-if="modelValue.length === 0" class="text-xs py-px text-gray-400">Tag</div>
+      <MyTag v-for="tag of displayTagList" :key="tag.tag_id" :tag="tag"> </MyTag>
+      <div v-if="modelValue.length === 0" class="py-px text-xs text-gray-400">Tag</div>
     </label>
 
     <Transition
@@ -82,7 +72,7 @@ const showMenu = ref(false);
     >
       <div
         v-show="showMenu"
-        class="absolute right-0 z-10 w-full bg-white rounded border border-gray-300 shadow-md"
+        class="absolute right-0 z-10 w-full rounded border border-gray-300 bg-white shadow-md"
         role="menu"
         aria-orientation="vertical"
         tabindex="-1"
@@ -91,7 +81,7 @@ const showMenu = ref(false);
           <li
             v-for="tag of tag_list"
             :key="tag.tag_id"
-            class="flex justify-between items-center py-1 px-1.5 cursor-pointer hover:bg-gray-100"
+            class="flex cursor-pointer items-center justify-between px-1.5 py-1 hover:bg-gray-100"
             :class="{
               'bg-blue-100': !!modelValue.find((x) => x.tag_id === tag.tag_id),
               'hover:bg-blue-200': !!modelValue.find((x) => x.tag_id === tag.tag_id),
@@ -108,7 +98,7 @@ const showMenu = ref(false);
               }
             "
           >
-            <div class="text-sm inline-flex flex-row gap-1 items-center">
+            <div class="inline-flex flex-row items-center gap-1 text-sm">
               <span
                 class="icon-[mingcute--tag-chevron-fill]"
                 :style="{

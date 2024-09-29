@@ -18,7 +18,7 @@ defineEmits<{
 
 <template>
   <form
-    class="flex flex-col gap-8 laptop:max-w-3xl desktop:max-w-4xl"
+    class="laptop:max-w-3xl desktop:max-w-4xl flex flex-col gap-8"
     :class="['container mx-auto w-96 p-4']"
     autocomplete="off"
     @submit.prevent="

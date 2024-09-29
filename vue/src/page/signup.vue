@@ -21,7 +21,7 @@ const { validateSubmit, ErrorMessage } = useValidate(AuthRouterSchema.signupInpu
   <div class="bg-gradient-to-b from-white to-gray-200">
     <div class="mx-auto flex h-screen flex-col items-center justify-center px-6 py-8 lg:py-0">
       <!-- タイトル -->
-      <h1 class="mb-6 flex items-center gap-1 mx-auto text-2xl font-semibold">
+      <h1 class="mx-auto mb-6 flex items-center gap-1 text-2xl font-semibold">
         <span class="icon-[flat-color-icons--todo-list] ml-[-16px] h-8 w-8 p-2"></span>
         <span class="">MyTodo</span>
       </h1>
@@ -105,7 +105,7 @@ const { validateSubmit, ErrorMessage } = useValidate(AuthRouterSchema.signupInpu
           <div class="text-sm font-light text-gray-500">
             アカウントを持っていますか？
             <RouterLink
-              to="/login"
+              :to="{ name: '/login' }"
               class="text-primary-600 font-medium text-blue-600 hover:underline"
             >
               ログインする

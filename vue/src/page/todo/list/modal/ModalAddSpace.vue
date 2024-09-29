@@ -33,8 +33,8 @@ async function handleSubmit(input: ModelValue) {
 </script>
 
 <template>
-  <div class="sm:w-96 p-4">
-    <header class="capitalize mb-4 text-lg font-bold">create new space</header>
+  <div class="p-4 sm:w-96">
+    <header class="mb-4 text-lg font-bold capitalize">create new space</header>
     <SpaceForm v-model="modelValue" @submit="handleSubmit"> </SpaceForm>
   </div>
 </template>

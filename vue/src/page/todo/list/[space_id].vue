@@ -15,7 +15,7 @@ const modelValue = ref<z.infer<typeof TodoRouterSchema.listInput>>({
   where: {
     space_id: null,
     todo_keyword: '',
-    todo_status: 'active',
+    todo_status: ['active'],
   },
   sort: {
     field: 'order',
@@ -32,8 +32,6 @@ const loading = ref(true);
 
 const { validateSubmit } = useValidate(TodoRouterSchema.listInput, modelValue);
 const handleSubmit = validateSubmit(async () => {
-  if (space.value == null) return;
-
   loading.value = true;
   try {
     const data = await trpc.todo.list.query(modelValue.value);
@@ -126,7 +124,7 @@ watch(
 </script>
 
 <template>
-  <div class="px-4 flex flex-row gap-2 mb-8">
+  <div class="mb-8 flex flex-row gap-2 px-4">
     <Transition
       mode="out-in"
       enter-from-class="transform opacity-0"
@@ -135,7 +133,7 @@ watch(
     >
       <div
         v-if="space"
-        class="container flex flex-col gap-2 text-sm max-w-2xl self-start bg-white rounded border pb-4 border-gray-300 py-4"
+        class="container flex max-w-2xl flex-col gap-2 self-start rounded border border-gray-300 bg-white py-4 pb-4 text-sm shadow"
       >
         <div class="flex justify-between px-4">
           <div>
@@ -146,14 +144,14 @@ watch(
                 width="24"
                 height="24"
                 decoding="async"
-                class="w-6 h-6 rounded object-cover object-center"
+                class="h-6 w-6 rounded object-cover object-center"
               />
-              <span v-else class="icon-[ri--image-circle-fill] w-6 h-6"></span>
+              <span v-else class="icon-[ri--image-circle-fill] h-6 w-6"></span>
               <span class="ms-1">{{ space.space_name }}</span>
             </div>
             <div
               v-if="space.space_description"
-              class="ml-4 text-gray-500 text-xs inline-block max-w-full break-words whitespace-pre-wrap"
+              class="ml-4 inline-block max-w-full whitespace-pre-wrap break-words text-xs text-gray-500"
             >
               {{ space.space_description }}
             </div>
@@ -163,7 +161,7 @@ watch(
             <template #button="{ toggle }">
               <button
                 type="button"
-                class="flex items-center justify-center rounded-full p-1.5 hover:bg-gray-200 transition-colors"
+                class="flex items-center justify-center rounded-full p-1.5 transition-colors hover:bg-gray-200"
                 @click="toggle"
               >
                 <span class="icon-[bx--menu] h-4 w-4"></span>
@@ -171,11 +169,11 @@ watch(
               </button>
             </template>
             <template #default>
-              <ul class="w-48 bg-white rounded border border-gray-300 shadow-md">
+              <ul class="w-48 rounded border border-gray-300 bg-white shadow-md">
                 <li>
                   <button
                     type="button"
-                    class="flex items-center w-full p-2 transition duration-75 group hover:bg-gray-200 text-blue-600"
+                    class="group flex w-full items-center p-2 text-blue-600 transition duration-75 hover:bg-gray-200"
                     @click="
                       async () => {
                         if (space == null) return;
@@ -191,14 +189,14 @@ watch(
                       }
                     "
                   >
-                    <span class="icon-[icon-park-solid--edit] w-4 h-4"></span>
+                    <span class="icon-[icon-park-solid--edit] h-4 w-4"></span>
                     <span class="ms-1 capitalize">edit space</span>
                   </button>
                 </li>
                 <li>
                   <button
                     type="button"
-                    class="flex items-center w-full p-2 transition duration-75 group hover:bg-gray-200 text-yellow-600"
+                    class="group flex w-full items-center p-2 text-yellow-600 transition duration-75 hover:bg-gray-200"
                     @click="
                       async () => {
                         if (space == null) return;
@@ -222,7 +220,7 @@ watch(
                       }
                     "
                   >
-                    <span class="icon-[tabler--trash-filled] w-4 h-4"></span>
+                    <span class="icon-[tabler--trash-filled] h-4 w-4"></span>
                     <span class="ms-1 capitalize">delete space</span>
                   </button>
                 </li>
@@ -231,10 +229,10 @@ watch(
           </MyDropdown>
         </div>
 
-        <div class="flex flex-row gap-2 items-center text-sm ps-2 pe-4">
+        <div class="flex flex-row items-center gap-2 pe-4 ps-2 text-sm">
           <button
             type="button"
-            class="flex rounded-full items-center py-2 px-4 transition duration-75 group hover:bg-gray-200 text-blue-600"
+            class="group flex items-center rounded-full px-4 py-2 text-blue-600 transition duration-75 hover:bg-gray-200"
             @click="
               () => {
                 if (space == null) return;
@@ -243,31 +241,31 @@ watch(
               }
             "
           >
-            <span class="icon-[icon-park-solid--add-one] w-4 h-4"></span>
+            <span class="icon-[icon-park-solid--add-one] h-4 w-4"></span>
             <span class="ms-1 capitalize">add todo</span>
           </button>
 
-          <form class="text-sm flex flex-row gap-2 items-center" @submit.prevent="handleSubmit">
+          <form class="flex flex-row items-center gap-2 text-sm" @submit.prevent="handleSubmit">
             <label
               for="status-active"
-              class="flex items-center font-medium text-gray-900 capitalize"
+              class="flex items-center font-medium capitalize text-gray-900"
             >
               <input
                 id="status-active"
                 v-model="modelValue.where.todo_status"
                 type="radio"
-                value="active"
+                :value="['active']"
                 class="mr-1 h-4 w-4 border-gray-300 bg-gray-100 text-blue-600"
                 @change="handleSubmit"
               />
               active
             </label>
-            <label for="status-done" class="flex items-center font-medium text-gray-900 capitalize">
+            <label for="status-done" class="flex items-center font-medium capitalize text-gray-900">
               <input
                 id="status-done"
                 v-model="modelValue.where.todo_status"
                 type="radio"
-                value="done"
+                :value="['done']"
                 class="mr-1 h-4 w-4 border-gray-300 bg-gray-100 text-blue-600"
                 @change="handleSubmit"
               />
@@ -276,7 +274,7 @@ watch(
 
             <span
               v-show="loading"
-              class="icon-[svg-spinners--3-dots-fade] h-4 w-4 text-gray-600 text-opacity-60 animate-pulse"
+              class="icon-[svg-spinners--3-dots-fade] h-4 w-4 animate-pulse text-gray-600 text-opacity-60"
             />
           </form>
         </div>

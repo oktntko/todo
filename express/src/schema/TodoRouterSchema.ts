@@ -29,7 +29,7 @@ const listInput = z.object({
   where: z.object({
     space_id: z.number().nullable(),
     todo_keyword: z.string().trim().max(255),
-    todo_status: TodoStatusSchema,
+    todo_status: TodoStatusSchema.array(),
   }),
   sort: z.object({
     field: TodoScalarFieldEnumSchema,

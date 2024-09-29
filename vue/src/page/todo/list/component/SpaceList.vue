@@ -48,23 +48,23 @@ watchDeep(modelValue, () => debounce.call());
 </script>
 
 <template>
-  <aside class="flex flex-col px-4 gap-2">
+  <aside class="flex flex-col gap-2 px-4">
     <h1 class="flex items-center gap-1 text-xs text-gray-500">
       <span class="capitalize">space</span>
     </h1>
 
     <form class="relative flex flex-row items-center text-sm" @submit.prevent="handleSubmit">
-      <div class="absolute inset-y-0 start-0 flex items-center ps-2 pointer-events-none">
-        <span class="w-4 h-4 text-gray-500 icon-[line-md--filter]"></span>
+      <div class="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-2">
+        <span class="icon-[line-md--filter] h-4 w-4 text-gray-500"></span>
       </div>
       <input
         v-model="modelValue.where.space_keyword"
-        class="inline-block rounded-s-lg border border-gray-300 bg-white py-1 ps-6 pe-2 w-full text-gray-900"
+        class="inline-block w-full rounded-s-lg border border-gray-300 bg-white py-1 pe-2 ps-6 text-gray-900"
         maxlength="255"
       />
       <button
         type="button"
-        class="inline-flex items-center p-1.5 border-y border-e rounded-e-lg border-gray-300 bg-white"
+        class="inline-flex items-center rounded-e-lg border-y border-e border-gray-300 bg-white p-1.5"
         @click="
           () => {
             modelValue.sort.order = modelValue.sort.order === 'desc' ? 'asc' : 'desc';
@@ -73,9 +73,9 @@ watchDeep(modelValue, () => debounce.call());
       >
         <span
           v-if="modelValue.sort.order === 'desc'"
-          class="w-4 h-4 icon-[hugeicons--sorting-01]"
+          class="icon-[hugeicons--sorting-01] h-4 w-4"
         ></span
-        ><span v-else class="w-4 h-4 icon-[hugeicons--sorting-02]"></span>
+        ><span v-else class="icon-[hugeicons--sorting-02] h-4 w-4"></span>
       </button>
     </form>
 
@@ -89,7 +89,7 @@ watchDeep(modelValue, () => debounce.call());
         <ul class="text-sm">
           <li v-for="space of data.space_list" :key="space.space_id">
             <RouterLink
-              class="relative flex w-full p-2 rounded-e-full items-center transition duration-75 group hover:bg-gray-200"
+              class="group relative flex w-full items-center rounded-e-full p-2 transition duration-75 hover:bg-gray-200"
               exact-active-class="bg-gray-300"
               :to="{
                 name: '/todo/list/[space_id]',
@@ -102,16 +102,16 @@ watchDeep(modelValue, () => debounce.call());
                 width="16"
                 height="16"
                 decoding="async"
-                class="w-4 h-4 rounded object-cover object-center"
+                class="h-4 w-4 rounded object-cover object-center"
               />
-              <span v-else class="icon-[ri--image-circle-fill] w-4 h-4"></span>
+              <span v-else class="icon-[ri--image-circle-fill] h-4 w-4"></span>
               <span class="ms-1">{{ space.space_name }}</span>
             </RouterLink>
           </li>
           <li>
             <button
               type="button"
-              class="flex rounded-e-full items-center w-full p-2 transition duration-75 group hover:bg-gray-200 text-blue-600"
+              class="group flex w-full items-center rounded-e-full p-2 text-blue-600 transition duration-75 hover:bg-gray-200"
               @click="
                 async () => {
                   if (data == null) return;
@@ -126,7 +126,7 @@ watchDeep(modelValue, () => debounce.call());
                 }
               "
             >
-              <span class="icon-[icon-park-solid--add-one] w-4 h-4"></span>
+              <span class="icon-[icon-park-solid--add-one] h-4 w-4"></span>
               <span class="ms-1 capitalize">create new space</span>
             </button>
           </li>

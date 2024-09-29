@@ -69,7 +69,7 @@ async function handleInput() {
 watch(
   () => props.order,
   () => {
-    handleSubmit();
+    debounceHandleSubmit.call();
   },
 );
 </script>
@@ -83,18 +83,18 @@ watch(
         }
       }
     "
-    class="text-sm relative"
+    class="relative text-sm"
     autocomplete="off"
     @click="modelValue.editing = true"
     @submit.prevent="handleSubmit"
   >
     <div
       v-show="modelValue.editing"
-      class="inset-y-0 left-0 absolute flex items-center justify-center"
+      class="absolute inset-y-0 left-0 flex items-center justify-center"
     >
       <button
         type="button"
-        class="my-handle flex items-center justify-center cursor-move"
+        class="my-handle flex cursor-move items-center justify-center"
         title="handle"
       >
         <span class="icon-[radix-icons--drag-handle-dots-2] h-5 w-5"></span>
@@ -102,12 +102,12 @@ watch(
       </button>
     </div>
 
-    <div class="flex flex-row gap-2 relative">
+    <div class="relative flex flex-row gap-2">
       <div class="flex items-start justify-center">
         <button
           v-if="status.save === '' && modelValue.done_at == null"
           type="button"
-          class="flex items-center justify-center hover:bg-gray-200 text-gray-900 hover:text-green-500 transition-colors group rounded-full"
+          class="group flex items-center justify-center rounded-full text-gray-900 transition-colors hover:bg-gray-200 hover:text-green-500"
           title="done"
           @click.prevent="
             async () => {
@@ -118,14 +118,14 @@ watch(
           "
         >
           <span
-            class="group-hover:icon-[material-symbols--check-circle-outline-rounded] icon-[material-symbols--circle-outline] group-hover:h-5 h-5 group-hover:w-5 w-5"
+            class="icon-[material-symbols--circle-outline] h-5 w-5 group-hover:icon-[material-symbols--check-circle-outline-rounded] group-hover:h-5 group-hover:w-5"
           ></span>
           <span class="sr-only capitalize">done</span>
         </button>
         <button
           v-if="status.save === '' && modelValue.done_at != null"
           type="button"
-          class="flex items-center justify-center hover:bg-gray-200 hover:text-gray-900 text-green-500 transition-colors group rounded-full"
+          class="group flex items-center justify-center rounded-full text-green-500 transition-colors hover:bg-gray-200 hover:text-gray-900"
           title="active"
           @click.prevent="
             async () => {
@@ -136,13 +136,13 @@ watch(
           "
         >
           <span
-            class="icon-[material-symbols--check-circle-outline-rounded] group-hover:icon-[material-symbols--circle-outline] group-hover:h-5 h-5 group-hover:w-5 w-5"
+            class="icon-[material-symbols--check-circle-outline-rounded] h-5 w-5 group-hover:icon-[material-symbols--circle-outline] group-hover:h-5 group-hover:w-5"
           ></span>
           <span class="sr-only capitalize">done</span>
         </button>
         <div
           v-if="status.save === 'saving...'"
-          class="flex items-center justify-center transition-colors rounded-full"
+          class="flex items-center justify-center rounded-full transition-colors"
           title="status"
         >
           <span class="icon-[eos-icons--bubble-loading] h-5 w-5 text-gray-500"></span>
@@ -150,7 +150,7 @@ watch(
         </div>
         <div
           v-if="status.save === 'saved!'"
-          class="flex items-center justify-center transition-colors rounded-full"
+          class="flex items-center justify-center rounded-full transition-colors"
           title="status"
         >
           <span class="icon-[bi--brightness-high-fill] h-5 w-5 text-pink-500"></span>
@@ -158,12 +158,12 @@ watch(
         </div>
       </div>
 
-      <div class="flex flex-col relative gap-1.5 grow min-w-0">
-        <div class="flex flex-row gap-1 relative">
+      <div class="relative flex min-w-0 grow flex-col gap-1.5">
+        <div class="relative flex flex-row gap-1">
           <input
             v-model.trim="modelValue.title"
             type="text"
-            class="block bg-inherit w-full outline-none border-b border-b-gray-400 pb-0.5 sm:text-sm"
+            class="block w-full border-b border-b-gray-400 bg-inherit pb-0.5 outline-none sm:text-sm"
             placeholder="Title"
             maxlength="100"
             @input="handleInput"
@@ -173,7 +173,7 @@ watch(
             <template #button="{ toggle }">
               <button
                 type="button"
-                class="flex items-center justify-center rounded-full p-0.5 hover:bg-gray-200 transition-colors"
+                class="flex items-center justify-center rounded-full p-0.5 transition-colors hover:bg-gray-200"
                 @click="toggle"
               >
                 <span class="icon-[bx--menu] h-4 w-4"></span>
@@ -181,11 +181,11 @@ watch(
               </button>
             </template>
             <template #default>
-              <ul class="w-48 bg-white rounded border border-gray-300 shadow-md">
+              <ul class="w-48 rounded border border-gray-300 bg-white shadow-md">
                 <li>
                   <button
                     type="button"
-                    class="flex items-center w-full p-2 transition duration-75 group hover:bg-gray-200 disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100"
+                    class="group flex w-full items-center p-2 transition duration-75 hover:bg-gray-200 disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100"
                     :disabled="modelValue.is_new"
                     @click="
                       async () => {
@@ -211,14 +211,14 @@ watch(
                       }
                     "
                   >
-                    <span class="icon-[material-symbols--upload-file] w-4 h-4"></span>
+                    <span class="icon-[material-symbols--upload-file] h-4 w-4"></span>
                     <span class="ms-1 capitalize">upload file</span>
                   </button>
                 </li>
                 <li>
                   <button
                     type="button"
-                    class="flex items-center w-full p-2 transition duration-75 group hover:bg-gray-200 text-yellow-600"
+                    class="group flex w-full items-center p-2 text-yellow-600 transition duration-75 hover:bg-gray-200"
                     @click="
                       async () => {
                         if (!modelValue.is_new) {
@@ -229,7 +229,7 @@ watch(
                       }
                     "
                   >
-                    <span class="icon-[tabler--trash-filled] w-4 h-4"></span>
+                    <span class="icon-[tabler--trash-filled] h-4 w-4"></span>
                     <span class="ms-1 capitalize">delete todo</span>
                   </button>
                 </li>
@@ -246,7 +246,7 @@ watch(
             modelValue.begin_date ||
             modelValue.begin_time
           "
-          class="flex flex-row justify-start items-center gap-2"
+          class="flex flex-row items-center justify-start gap-2"
         >
           <div class="flex flex-row gap-2">
             <div v-show="modelValue.editing || modelValue.begin_date">
@@ -254,7 +254,7 @@ watch(
                 :id="`${modelValue.todo_id}-begin_date`"
                 v-model="modelValue.begin_date"
                 type="date"
-                class="block bg-inherit outline-none border-b border-b-gray-400 pb-0.5 sm:text-sm"
+                class="block border-b border-b-gray-400 bg-inherit pb-0.5 outline-none sm:text-sm"
                 @input="handleInput"
               />
             </div>
@@ -263,7 +263,7 @@ watch(
                 :id="`${modelValue.todo_id}-begin_time`"
                 v-model="modelValue.begin_time"
                 type="time"
-                class="block bg-inherit outline-none border-b border-b-gray-400 pb-0.5 sm:text-sm"
+                class="block border-b border-b-gray-400 bg-inherit pb-0.5 outline-none sm:text-sm"
                 @input="handleInput"
               />
             </div>
@@ -275,7 +275,7 @@ watch(
                 :id="`${modelValue.todo_id}-limit_date`"
                 v-model="modelValue.limit_date"
                 type="date"
-                class="block bg-inherit outline-none border-b border-b-gray-400 pb-0.5 sm:text-sm"
+                class="block border-b border-b-gray-400 bg-inherit pb-0.5 outline-none sm:text-sm"
                 @input="handleInput"
               />
             </div>
@@ -284,7 +284,7 @@ watch(
                 :id="`${modelValue.todo_id}-limit_time`"
                 v-model="modelValue.limit_time"
                 type="time"
-                class="block bg-inherit outline-none border-b border-b-gray-400 pb-0.5 sm:text-sm"
+                class="block border-b border-b-gray-400 bg-inherit pb-0.5 outline-none sm:text-sm"
                 @input="handleInput"
               />
             </div>
@@ -296,7 +296,7 @@ watch(
             v-show="modelValue.editing"
             :id="`${modelValue.todo_id}-description`"
             v-model.trim="modelValue.description"
-            class="block bg-inherit w-full outline-none border-b border-b-gray-400 pb-0.5"
+            class="block w-full border-b border-b-gray-400 bg-inherit pb-0.5 outline-none"
             rows="4"
             maxlength="400"
             placeholder="Description"
@@ -305,7 +305,7 @@ watch(
           <label
             v-show="!modelValue.editing && modelValue.description"
             :for="`${modelValue.todo_id}-description`"
-            class="text-gray-500 inline-block max-w-full break-words whitespace-pre-wrap"
+            class="inline-block max-w-full whitespace-pre-wrap break-words text-gray-500"
           >
             {{ modelValue.description }}
           </label>

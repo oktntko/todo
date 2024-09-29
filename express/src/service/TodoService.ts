@@ -6,6 +6,7 @@ import { PrismaClient } from '~/middleware/prisma.js';
 import { checkDataExist } from '~/repository/_repository.js';
 import { SpaceRepository } from '~/repository/SpaceRepository.js';
 import { TodoRepository } from '~/repository/TodoRepository.js';
+import { TodoStatusSchema } from '~/schema/option/OptionTodoStatus.js';
 import { TodoRouterSchema } from '~/schema/TodoRouterSchema.js';
 
 export const TodoService = {
@@ -24,30 +25,41 @@ async function listTodo(
 ) {
   log.trace(reqid, 'listTodo', operator_id, input);
 
-  const where: Prisma.TodoWhereInput = {
-    space: { owner_id: operator_id },
-  };
+  const AND: Prisma.TodoWhereInput[] = [];
+
   if (input.where.space_id) {
-    where.space_id = input.where.space_id;
+    AND.push({ space_id: input.where.space_id });
   }
   if (input.where.todo_keyword) {
-    where.OR = [
-      { title: { contains: input.where.todo_keyword } },
-      { description: { contains: input.where.todo_keyword } },
-    ];
+    AND.push({
+      OR: [
+        { title: { contains: input.where.todo_keyword } },
+        { description: { contains: input.where.todo_keyword } },
+      ],
+    });
   }
-  if (input.where.todo_status) {
-    switch (input.where.todo_status) {
-      case 'active': {
-        where.done_at = { equals: null };
-        break;
-      }
-      case 'done': {
-        where.done_at = { not: null };
-        break;
-      }
-    }
+  if (
+    input.where.todo_status.length > 0 &&
+    input.where.todo_status.length !== TodoStatusSchema.options.length
+  ) {
+    AND.push({
+      OR: input.where.todo_status.map((todo_status) => {
+        switch (todo_status) {
+          case 'active': {
+            return { done_at: { equals: null } };
+          }
+          case 'done': {
+            return { done_at: { not: null } };
+          }
+        }
+      }),
+    });
   }
+
+  const where: Prisma.TodoWhereInput = {
+    space: { owner_id: operator_id },
+    AND,
+  };
   log.debug(reqid, 'where', where);
 
   const total = await TodoRepository.countTodo(prisma, {

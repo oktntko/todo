@@ -7,7 +7,7 @@ body {
 }
 
 ::-webkit-scrollbar {
-  @apply w-2.5; /* スクロールバー */
+  @apply h-2.5 w-2.5; /* スクロールバー */
 }
 ::-webkit-scrollbar-track {
   @apply bg-gray-200; /* スクロールバーの背景色 */
@@ -53,27 +53,27 @@ input[type='week']::-webkit-calendar-picker-indicator {
   }
   .button-green {
     @apply border-green-700 bg-green-600 text-white hover:bg-green-800;
-  }
-  .button-green-secondary {
-    @apply border-green-700 bg-white text-green-700 hover:bg-green-800 hover:text-white;
+    &.secondary {
+      @apply border-green-700 bg-white text-green-700 hover:bg-green-800 hover:text-white;
+    }
   }
   .button-yellow {
     @apply border-yellow-500 bg-yellow-400 text-gray-800 hover:bg-yellow-600;
-  }
-  .button-yellow-secondary {
-    @apply border-yellow-500 bg-white text-yellow-800 hover:bg-yellow-500 hover:text-gray-800;
+    &.secondary {
+      @apply border-yellow-500 bg-white text-yellow-800 hover:bg-yellow-500 hover:text-gray-800;
+    }
   }
   .button-red {
     @apply border-red-700 bg-red-600 text-white hover:bg-red-800;
-  }
-  .button-red-secondary {
-    @apply border-red-700 bg-white text-red-700 hover:bg-red-800 hover:text-white;
+    &.secondary {
+      @apply border-red-700 bg-white text-red-700 hover:bg-red-800 hover:text-white;
+    }
   }
   .button-blue {
     @apply border-blue-700 bg-blue-600 text-white hover:bg-blue-800;
-  }
-  .button-blue-secondary {
-    @apply border-blue-700 bg-white text-blue-700 hover:bg-blue-800 hover:text-white;
+    &.secondary {
+      @apply border-blue-700 bg-white text-blue-700 hover:bg-blue-800 hover:text-white;
+    }
   }
   .button-white {
     @apply border-gray-300 bg-white text-gray-800 hover:bg-gray-200;
