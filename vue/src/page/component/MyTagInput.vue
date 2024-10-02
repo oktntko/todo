@@ -1,36 +1,25 @@
 <script setup lang="ts">
 import { vOnClickOutside } from '@vueuse/components';
-import MyTag from '~/page/component/MyTag.vue';
+import { useTagStore } from '~/store/TagStore';
 
-export type TagInput = {
-  tag_id: number;
-  tag_name: string;
-  tag_color: string;
-  tag_order: number;
-};
+const { tagStoreData } = storeToRefs(useTagStore());
 
-const props = withDefaults(
-  defineProps<{
-    editing?: boolean;
-    tag_list?: TagInput[];
-  }>(),
-  {
-    editing: false,
-    tag_list: () => [],
-  },
-);
+const modelValue = defineModel<Pick<{ tag_id: number }, 'tag_id'>[]>({ required: true });
+
+const showMenu = ref(false);
+function toggle(params?: { showMenu: boolean }) {
+  showMenu.value = params ? params.showMenu : !showMenu.value;
+}
 
 defineEmits<{
   change: [];
 }>();
 
-const modelValue = defineModel<Pick<TagInput, 'tag_id'>[]>({ required: true });
-
-const displayTagList = computed(() => {
-  return props.tag_list.filter((tag) => modelValue.value.find((x) => x.tag_id === tag.tag_id));
-});
-
-const showMenu = ref(false);
+const displayTagList = computed(() =>
+  tagStoreData.value.tag_list.filter((tag) =>
+    modelValue.value.find((x) => x.tag_id === tag.tag_id),
+  ),
+);
 </script>
 
 <template>
@@ -42,25 +31,7 @@ const showMenu = ref(false);
     "
     class="relative block"
   >
-    <label
-      class="relative flex cursor-pointer flex-row flex-wrap gap-1.5 border-b border-b-gray-400 px-px pb-px transition-colors hover:bg-gray-200 sm:text-sm"
-      :class="{
-        'border-b-gray-400': editing,
-        'border-b-transparent': !editing,
-      }"
-      @click="
-        () => {
-          if (editing) {
-            showMenu = !showMenu;
-          } else {
-            showMenu = false;
-          }
-        }
-      "
-    >
-      <MyTag v-for="tag of displayTagList" :key="tag.tag_id" :tag="tag"> </MyTag>
-      <div v-if="modelValue.length === 0" class="py-px text-xs text-gray-400">Tag</div>
-    </label>
+    <slot name="input" :toggle="toggle" :display-tag-list="displayTagList"> </slot>
 
     <Transition
       enter-from-class="transform opacity-0 scale-95"
@@ -72,14 +43,14 @@ const showMenu = ref(false);
     >
       <div
         v-show="showMenu"
-        class="absolute right-0 z-10 w-full rounded border border-gray-300 bg-white shadow-md"
+        class="absolute right-0 z-10 w-full"
         role="menu"
         aria-orientation="vertical"
         tabindex="-1"
       >
-        <ul class="flex flex-col">
+        <ul class="rounded border border-gray-300 bg-white shadow-md">
           <li
-            v-for="tag of tag_list"
+            v-for="tag of tagStoreData.tag_list"
             :key="tag.tag_id"
             class="flex cursor-pointer items-center justify-between px-1.5 py-1 hover:bg-gray-100"
             :class="{

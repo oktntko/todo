@@ -42,11 +42,14 @@ const handleSubmit = validateSubmit(async () => {
 });
 
 function createNewEmptyTodo(params: {
-  space_id: number;
+  space: RouterOutput['space']['get'];
 }): RouterOutput['todo']['get'] & { is_new?: boolean; editing?: boolean } {
   return {
     todo_id: window.crypto.randomUUID(),
-    space_id: params.space_id,
+
+    space: params.space,
+    space_id: params.space.space_id,
+
     title: '',
     description: '',
     begin_date: '',
@@ -237,7 +240,7 @@ watch(
               () => {
                 if (space == null) return;
 
-                todo_list.unshift(createNewEmptyTodo({ space_id: space.space_id }));
+                todo_list.unshift(createNewEmptyTodo({ space }));
               }
             "
           >

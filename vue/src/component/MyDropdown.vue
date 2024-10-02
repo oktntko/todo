@@ -21,7 +21,7 @@ function toggle() {
     >
       <div
         v-show="showMenu"
-        class="absolute right-0 z-10"
+        class="absolute right-0 z-10 w-full"
         role="menu"
         aria-orientation="vertical"
         tabindex="-1"

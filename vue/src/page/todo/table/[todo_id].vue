@@ -1,7 +1,95 @@
 <script setup lang="ts">
+import type { z } from 'zod';
+import type { DownloadFile } from '~/component/MyDownloadFileList.vue';
+import { trpc } from '~/lib/trpc';
+import { useLoading } from '~/plugin/LoadingPlugin';
+import type SpaceSchema from '~/schema/zod/modelSchema/SpaceSchema';
+import TodoForm, { type ModelValue } from './component/TodoForm.vue';
+
+const router = useRouter();
 const route = useRoute('/todo/table/[todo_id]');
+const todo_id = route.params.todo_id;
+
+const modelValue = ref<ModelValue>();
+const modelValueFileList = ref<DownloadFile[]>([]);
+const modelValueSpace = ref<z.infer<typeof SpaceSchema>>();
+let updated_at = new Date();
+
+onMounted(async () => {
+  const todo = await trpc.todo.get.query({ todo_id });
+
+  modelValue.value = todo;
+  modelValueFileList.value = todo.file_list;
+  modelValueSpace.value = todo.space;
+  updated_at = todo.updated_at;
+});
+
+const $loading = useLoading();
+async function handleSubmit(value: ModelValue) {
+  const loading = $loading.open();
+  try {
+    await trpc.todo.update.mutate({ ...value, todo_id, updated_at });
+
+    router.push('/todo/table');
+  } finally {
+    loading.close();
+  }
+}
 </script>
 
 <template>
-  <div class="flex flex-row">{{ route.path }}</div>
+  <div class="mb-8 flex flex-col gap-6 px-4">
+    <div class="flex flex-col gap-4">
+      <div class="flex flex-col gap-2">
+        <nav class="flex" aria-label="Breadcrumb">
+          <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
+            <li class="inline-flex items-center">
+              <RouterLink
+                :to="{ name: '/todo/table/' }"
+                class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-blue-600"
+              >
+                <span class="icon-[fontisto--table-2] h-3 w-3 transition duration-75"> </span>
+                <span class="ms-1 capitalize">table</span>
+              </RouterLink>
+            </li>
+            <li class="inline-flex items-center">
+              <span class="icon-[weui--arrow-filled]"></span>
+            </li>
+            <li class="inline-flex items-center">
+              <RouterLink
+                :to="{ name: '/todo/table/[todo_id]', params: { todo_id } }"
+                class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-blue-600"
+              >
+                <span class="ms-1 capitalize">edit todo</span>
+              </RouterLink>
+            </li>
+          </ol>
+        </nav>
+
+        <div class="flex items-center gap-1 text-lg font-bold">
+          <span class="icon-[icon-park-solid--edit] h-5 w-5"></span>
+          <span class="capitalize">edit todo</span>
+        </div>
+      </div>
+    </div>
+
+    <Transition
+      mode="out-in"
+      enter-from-class="transform opacity-0"
+      enter-active-class="transition ease-out duration-200"
+      enter-to-class="transform opacity-100"
+    >
+      <TodoForm
+        v-if="modelValue"
+        v-model="modelValue"
+        v-model:file_list="modelValueFileList"
+        v-model:space="modelValueSpace"
+        class="px-4"
+        @submit="handleSubmit"
+      >
+      </TodoForm>
+
+      <MyLoading v-else> </MyLoading>
+    </Transition>
+  </div>
 </template>

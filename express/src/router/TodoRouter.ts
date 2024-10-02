@@ -35,9 +35,29 @@ export const todo = router({
       });
     }),
 
+  // todo.create
+  create: protectedProcedure
+    .input(TodoRouterSchema.createInput)
+    .output(TodoOutputSchema)
+    .mutation(async ({ ctx, input }) => {
+      return $transaction(ctx.prisma, async (prisma) => {
+        return TodoService.createTodo(ctx.req.reqid, prisma, ctx.operator_id, input);
+      });
+    }),
+
+  // todo.update
+  update: protectedProcedure
+    .input(TodoRouterSchema.updateInput)
+    .output(TodoOutputSchema)
+    .mutation(async ({ ctx, input }) => {
+      return $transaction(ctx.prisma, async (prisma) => {
+        return TodoService.updateTodo(ctx.req.reqid, prisma, ctx.operator_id, input);
+      });
+    }),
+
   // todo.delete
   delete: protectedProcedure
-    .input(TodoRouterSchema.deleteInput)
+    .input(TodoRouterSchema.getInput)
     .output(TodoSchema)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {

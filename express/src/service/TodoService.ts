@@ -1,9 +1,10 @@
 import { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
+import * as R from 'remeda';
 import { log } from '~/lib/log4js.js';
 import { z } from '~/lib/zod.js';
 import { PrismaClient } from '~/middleware/prisma.js';
-import { checkDataExist } from '~/repository/_repository.js';
+import { checkDataExist, checkPreviousVersion } from '~/repository/_repository.js';
 import { SpaceRepository } from '~/repository/SpaceRepository.js';
 import { TodoRepository } from '~/repository/TodoRepository.js';
 import { TodoStatusSchema } from '~/schema/option/OptionTodoStatus.js';
@@ -13,6 +14,8 @@ export const TodoService = {
   listTodo,
   getTodo,
   upsertTodo,
+  createTodo,
+  updateTodo,
   deleteTodo,
 };
 
@@ -104,21 +107,16 @@ async function upsertTodo(
 ) {
   log.trace(reqid, 'upsertTodo', operator_id, input);
 
-  // check relation
-  const space = await SpaceRepository.findUniqueSpace(prisma, {
-    where: { space_id: input.space_id },
+  await checkRelation(prisma, {
+    space_id: input.space_id,
+    operator_id,
   });
-  if (space == null) {
-    throw new TRPCError({
-      code: 'BAD_REQUEST',
-      message: '',
-    });
-  }
-  if (space.owner_id !== operator_id) {
-    throw new TRPCError({
-      code: 'FORBIDDEN',
-      message: '',
-    });
+
+  const previous = await TodoRepository.findUniqueTodo(prisma, {
+    where: { todo_id: input.todo_id },
+  });
+  if (previous) {
+    checkSpaceOwner({ data: previous, operator_id });
   }
 
   return TodoRepository.upsertTodo(prisma, {
@@ -145,25 +143,144 @@ async function upsertTodo(
   });
 }
 
+// todo.create
+async function createTodo(
+  reqid: string,
+  prisma: PrismaClient,
+  operator_id: number,
+  input: z.infer<typeof TodoRouterSchema.createInput>,
+) {
+  log.trace(reqid, 'createTodo', operator_id, input);
+
+  await checkRelation(prisma, {
+    space_id: input.space_id,
+    operator_id,
+  });
+
+  return TodoRepository.createTodo(prisma, {
+    data: {
+      space_id: input.space_id,
+
+      title: input.title,
+      description: input.description,
+      begin_date: input.begin_date,
+      begin_time: input.begin_time,
+      limit_date: input.limit_date,
+      limit_time: input.limit_time,
+      order: input.order,
+      done_at: input.done_at,
+
+      tag_list: input.tag_list,
+    },
+    operator_id,
+  });
+}
+
+// todo.update
+async function updateTodo(
+  reqid: string,
+  prisma: PrismaClient,
+  operator_id: number,
+  input: z.infer<typeof TodoRouterSchema.updateInput>,
+) {
+  log.trace(reqid, 'createTodo', operator_id, input);
+
+  await checkRelation(prisma, {
+    space_id: input.space_id,
+    operator_id,
+  });
+
+  await checkSpaceOwner({
+    data: checkPreviousVersion({
+      previous: TodoRepository.findUniqueTodo(prisma, { where: { todo_id: input.todo_id } }),
+      updated_at: input.updated_at,
+    }),
+    operator_id,
+  });
+
+  return TodoRepository.updateTodo(prisma, {
+    data: {
+      space_id: input.space_id,
+
+      title: input.title,
+      description: input.description,
+      begin_date: input.begin_date,
+      begin_time: input.begin_time,
+      limit_date: input.limit_date,
+      limit_time: input.limit_time,
+      order: input.order,
+      done_at: input.done_at,
+
+      tag_list: input.tag_list,
+    },
+    where: {
+      todo_id: input.todo_id,
+    },
+    operator_id,
+  });
+}
+
 // todo.delete
 async function deleteTodo(
   reqid: string,
   prisma: PrismaClient,
   operator_id: number,
-  input: z.infer<typeof TodoRouterSchema.deleteInput>,
+  input: z.infer<typeof TodoRouterSchema.getInput>,
 ) {
   log.trace(reqid, 'deleteTodo', operator_id, input);
 
-  await checkDataExist({
-    data: TodoRepository.findUniqueTodo(prisma, {
-      where: {
-        todo_id: input.todo_id,
-        space: { owner_id: operator_id },
-      },
+  await checkSpaceOwner({
+    data: checkDataExist({
+      data: TodoRepository.findUniqueTodo(prisma, {
+        where: { todo_id: input.todo_id },
+      }),
     }),
+    operator_id,
   });
 
   return TodoRepository.deleteTodo(prisma, {
     where: { todo_id: input.todo_id },
   });
+}
+
+// ================================================================ //
+async function checkRelation(
+  prisma: PrismaClient,
+  params: { space_id: number; operator_id: number },
+) {
+  const space = await SpaceRepository.findUniqueSpace(prisma, {
+    where: { space_id: params.space_id },
+  });
+  if (space == null) {
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: '',
+    });
+  }
+  if (space.owner_id !== params.operator_id) {
+    throw new TRPCError({
+      code: 'FORBIDDEN',
+      message: '',
+    });
+  }
+
+  return space;
+}
+
+async function checkSpaceOwner(params: {
+  data:
+    | Promise<NonNullable<AwaitedReturnType<typeof TodoRepository.findUniqueTodo>>>
+    | NonNullable<AwaitedReturnType<typeof TodoRepository.findUniqueTodo>>;
+  operator_id: number;
+}) {
+  const data = R.isPromise(params.data) ? await params.data : params.data;
+
+  if (data.space.owner_id !== params.operator_id) {
+    throw new TRPCError({
+      code: 'FORBIDDEN',
+      message: '',
+    });
+  }
+
+  return data;
 }

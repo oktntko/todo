@@ -6,6 +6,8 @@ export const TodoRepository = {
   findManyTodo,
   findUniqueTodo,
   upsertTodo,
+  createTodo,
+  updateTodo,
   deleteTodo,
 };
 
@@ -31,6 +33,7 @@ async function findManyTodo(
 ) {
   return prisma.todo.findMany({
     include: {
+      space: true,
       tag_list: { orderBy: { tag_order: 'asc' } },
       file_list: { orderBy: { created_at: 'asc' } },
     },
@@ -49,6 +52,7 @@ async function findUniqueTodo(
 ) {
   return prisma.todo.findUnique({
     include: {
+      space: true,
       tag_list: { orderBy: { tag_order: 'asc' } },
       file_list: { orderBy: { created_at: 'asc' } },
     },
@@ -68,6 +72,7 @@ async function upsertTodo(
 ) {
   return prisma.todo.upsert({
     include: {
+      space: true,
       tag_list: { orderBy: { tag_order: 'asc' } },
       file_list: { orderBy: { created_at: 'asc' } },
     },
@@ -104,6 +109,78 @@ async function upsertTodo(
 
       tag_list: { connect: params.data.tag_list },
 
+      updated_by: params.operator_id,
+    },
+    where: params.where,
+  });
+}
+
+async function createTodo(
+  prisma: PrismaClient,
+  params: {
+    data: Omit<Prisma.TodoUncheckedCreateInput, CommonColumn | 'todo_id' | 'tag_list'> & {
+      tag_list: Prisma.TagWhereUniqueInput[];
+    };
+    operator_id: number;
+  },
+) {
+  return prisma.todo.create({
+    include: {
+      space: true,
+      tag_list: { orderBy: { tag_order: 'asc' } },
+      file_list: { orderBy: { created_at: 'asc' } },
+    },
+    data: {
+      space_id: params.data.space_id,
+
+      title: params.data.title,
+      description: params.data.description,
+      begin_date: params.data.begin_date,
+      begin_time: params.data.begin_time,
+      limit_date: params.data.limit_date,
+      limit_time: params.data.limit_time,
+      order: params.data.order,
+      done_at: params.data.done_at,
+
+      tag_list: { connect: params.data.tag_list },
+
+      created_by: params.operator_id,
+      updated_by: params.operator_id,
+    },
+  });
+}
+
+async function updateTodo(
+  prisma: PrismaClient,
+  params: {
+    where: Prisma.TodoWhereUniqueInput;
+    data: Omit<Prisma.TodoUncheckedCreateInput, CommonColumn | 'todo_id' | 'tag_list'> & {
+      tag_list: Prisma.TagWhereUniqueInput[];
+    };
+    operator_id: number;
+  },
+) {
+  return prisma.todo.update({
+    include: {
+      space: true,
+      tag_list: { orderBy: { tag_order: 'asc' } },
+      file_list: { orderBy: { created_at: 'asc' } },
+    },
+    data: {
+      space_id: params.data.space_id,
+
+      title: params.data.title,
+      description: params.data.description,
+      begin_date: params.data.begin_date,
+      begin_time: params.data.begin_time,
+      limit_date: params.data.limit_date,
+      limit_time: params.data.limit_time,
+      order: params.data.order,
+      done_at: params.data.done_at,
+
+      tag_list: { connect: params.data.tag_list },
+
+      created_by: params.operator_id,
       updated_by: params.operator_id,
     },
     where: params.where,

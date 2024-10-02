@@ -7,18 +7,15 @@ import { useFile } from '~/composable/useFile';
 import { useValidate } from '~/composable/useValidate';
 import { trpc } from '~/lib/trpc';
 import type { z } from '~/lib/zod';
+import MyTag from '~/page/component/MyTag.vue';
+import MyTagInput from '~/page/component/MyTagInput.vue';
 import { TodoRouterSchema } from '~/schema/TodoRouterSchema';
-import { useTagStore } from '~/store/TagStore';
-
-import MyTagInput from './MyTagInput.vue';
 
 export type ModelValue = z.infer<typeof TodoRouterSchema.upsertInput> & {
   is_new?: boolean;
   editing?: boolean;
 };
 export type Reset = (modelValue: ModelValue) => void;
-
-const { tagStoreData } = storeToRefs(useTagStore());
 
 const modelValue = defineModel<ModelValue>({ required: true });
 const modelValueFileList = defineModel<DownloadFile[]>('file_list', { required: true });
@@ -47,7 +44,7 @@ const debounceResetStatus = R.debounce(() => (status.value.save = ''), { waitMs:
 const handleSubmit = validateSubmit(async (value) => {
   try {
     status.value.save = 'saving...';
-    await trpc.todo.upsert.mutate(value);
+    await trpc.todo.upsert.mutate({ ...value, order: props.order });
 
     modelValue.value.is_new = false;
 
@@ -312,12 +309,29 @@ watch(
         </div>
 
         <div v-if="modelValue.editing || modelValue.tag_list.length > 0">
-          <MyTagInput
-            v-model="modelValue.tag_list"
-            :tag_list="tagStoreData.tag_list"
-            :editing="modelValue.editing"
-            @change="handleInput"
-          />
+          <MyTagInput v-model="modelValue.tag_list" @change="handleInput">
+            <template #input="{ toggle, displayTagList }">
+              <label
+                class="relative flex cursor-pointer flex-row flex-wrap gap-1.5 border-b border-b-gray-400 px-px pb-px transition-colors hover:bg-gray-200 sm:text-sm"
+                :class="{
+                  'border-b-gray-400': modelValue.editing,
+                  'border-b-transparent': !modelValue.editing,
+                }"
+                @click="
+                  () => {
+                    if (modelValue.editing) {
+                      toggle();
+                    }
+                  }
+                "
+              >
+                <MyTag v-for="tag of displayTagList" :key="tag.tag_id" :tag="tag"> </MyTag>
+                <div v-if="modelValue.tag_list.length === 0" class="py-px text-xs text-gray-400">
+                  Tags
+                </div>
+              </label>
+            </template>
+          </MyTagInput>
         </div>
 
         <MyDownloadFileList

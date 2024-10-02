@@ -55,7 +55,7 @@ onMounted(() => {
             <li class="inline-flex items-center">
               <RouterLink
                 :to="{ name: '/todo/table/' }"
-                class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white"
+                class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-blue-600"
               >
                 <span class="icon-[fontisto--table-2] h-3 w-3 transition duration-75"> </span>
                 <span class="ms-1 capitalize">table</span>
@@ -64,8 +64,8 @@ onMounted(() => {
           </ol>
         </nav>
 
-        <div class="flex items-center text-lg font-bold">
-          <span class="icon-[bx--search] h-6 w-6"></span>
+        <div class="flex items-center gap-1 text-lg font-bold">
+          <span class="icon-[bx--search] h-5 w-5"></span>
           <span class="capitalize">search todo</span>
         </div>
       </div>
@@ -135,13 +135,18 @@ onMounted(() => {
         </RouterLink>
       </header>
 
-      <table class="w-full overflow-x-auto rounded border border-gray-300 bg-gray-50">
+      <table
+        class="h-full w-full overflow-x-auto rounded border border-gray-300 bg-gray-50 text-sm"
+      >
         <thead class="text-gray-900">
           <tr class="divide-x divide-gray-200">
             <th scope="col" class="column">No</th>
             <th scope="col" class="column">
-              <label> <input type="checkbox" /></label>
+              <label class="flex h-full justify-center hover:cursor-pointer">
+                <input type="checkbox" class="hover:cursor-pointer" />
+              </label>
             </th>
+            <th scope="col" class="column">space</th>
             <th scope="col" class="column">title</th>
             <th scope="col" class="column">begin</th>
             <th scope="col" class="column">limit</th>
@@ -171,9 +176,26 @@ onMounted(() => {
               </RouterLink>
             </td>
             <td class="max-w-48">
-              <label class="flex justify-center px-2 py-1 hover:cursor-pointer">
-                <input type="checkbox" class="hover:cursor-pointer"
-              /></label>
+              <label class="flex h-full justify-center hover:cursor-pointer">
+                <input type="checkbox" class="hover:cursor-pointer" />
+              </label>
+            </td>
+            <td class="max-w-48">
+              <div
+                class="line-clamp-1 flex min-w-28 items-center gap-0.5 px-2 py-1"
+                :title="todo.space.space_name"
+              >
+                <img
+                  v-if="todo.space.space_image"
+                  :src="todo.space.space_image"
+                  width="16"
+                  height="16"
+                  decoding="async"
+                  class="h-4 w-4 rounded object-cover object-center"
+                />
+                <span v-else class="icon-[ri--image-circle-fill] h-4 w-4"></span>
+                <span> {{ todo.space.space_name }} </span>
+              </div>
             </td>
             <td class="max-w-48">
               <div class="line-clamp-2 min-w-28 px-2 py-1" :title="todo.title">
@@ -246,7 +268,7 @@ onMounted(() => {
             "
           >
             <option
-              v-for="pageSize of [50, 100, 200, 500]"
+              v-for="pageSize of [10, 50, 100, 200, 500]"
               :key="pageSize"
               :disabled="pageSize === pager.currentPage"
             >
@@ -275,7 +297,7 @@ onMounted(() => {
               :max="Math.ceil(data.total / pager.pageSize)"
               class="h-2 cursor-pointer rounded-lg bg-gray-200"
               :disabled="loading"
-              @input="handleSubmit"
+              @change="handleSubmit"
             />
             <span class="absolute -top-3 end-0 text-xs text-gray-500"> max </span>
             <span class="absolute -bottom-3 end-0 text-xs text-gray-500">
@@ -290,7 +312,7 @@ onMounted(() => {
             step="1"
             class="inline-block rounded border border-gray-300 bg-white px-2 py-1 text-gray-900"
             :disabled="loading"
-            @input="handleSubmit"
+            @change="handleSubmit"
           />
         </div>
       </footer>
@@ -300,6 +322,6 @@ onMounted(() => {
 
 <style lang="postcss">
 .column {
-  @apply sticky top-0 z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize;
+  @apply sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize;
 }
 </style>
