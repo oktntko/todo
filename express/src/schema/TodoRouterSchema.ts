@@ -7,6 +7,14 @@ import { SpaceSchema } from '~/schema/zod/modelSchema/SpaceSchema.js';
 import { TagSchema } from '~/schema/zod/modelSchema/TagSchema.js';
 import { TodoSchema } from '~/schema/zod/modelSchema/TodoSchema.js';
 
+export const TodoOutputSchema = TodoSchema.merge(
+  z.object({
+    space: z.lazy(() => SpaceSchema),
+    tag_list: z.lazy(() => TagSchema).array(),
+    file_list: z.lazy(() => FileSchema).array(),
+  }),
+);
+
 const upsertInput = TodoSchema.omit({
   created_by: true,
   created_at: true,
@@ -42,6 +50,13 @@ const getInput = TodoSchema.pick({
 });
 
 const listInput = z.object({
+  space_id: z.number(),
+  todo_status: TodoStatusSchema,
+});
+
+const listOutput = z.array(TodoOutputSchema);
+
+const searchInput = z.object({
   where: z.object({
     space_id: z.number().nullable(),
     todo_keyword: z.string().trim().max(255),
@@ -51,17 +66,11 @@ const listInput = z.object({
     field: TodoScalarFieldEnumSchema,
     order: SortOrderSchema,
   }),
+  limit: z.number().int().positive(),
+  page: z.number().int().positive(),
 });
 
-export const TodoOutputSchema = TodoSchema.merge(
-  z.object({
-    space: z.lazy(() => SpaceSchema),
-    tag_list: z.lazy(() => TagSchema).array(),
-    file_list: z.lazy(() => FileSchema).array(),
-  }),
-);
-
-const listOutput = z.object({
+const searchOutput = z.object({
   total: z.number(),
   todo_list: z.array(TodoOutputSchema),
 });
@@ -73,4 +82,6 @@ export const TodoRouterSchema = {
   getInput,
   listInput,
   listOutput,
+  searchInput,
+  searchOutput,
 };

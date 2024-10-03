@@ -15,6 +15,16 @@ export const todo = router({
       });
     }),
 
+  // todo.search
+  search: protectedProcedure
+    .input(TodoRouterSchema.searchInput)
+    .output(TodoRouterSchema.searchOutput)
+    .query(async ({ ctx, input }) => {
+      return $transaction(ctx.prisma, async (prisma) => {
+        return TodoService.searchTodo(ctx.req.reqid, prisma, ctx.operator_id, input);
+      });
+    }),
+
   // todo.get
   get: protectedProcedure
     .input(TodoRouterSchema.getInput)

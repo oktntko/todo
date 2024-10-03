@@ -12,6 +12,7 @@ import { TodoRouterSchema } from '~/schema/TodoRouterSchema.js';
 
 export const TodoService = {
   listTodo,
+  searchTodo,
   getTodo,
   upsertTodo,
   createTodo,
@@ -27,6 +28,31 @@ async function listTodo(
   input: z.infer<typeof TodoRouterSchema.listInput>,
 ) {
   log.trace(reqid, 'listTodo', operator_id, input);
+
+  const AND: Prisma.TodoWhereInput[] = [];
+  AND.push({ space_id: input.space_id });
+  AND.push({ done_at: input.todo_status === 'active' ? { equals: null } : { not: null } });
+
+  const where: Prisma.TodoWhereInput = {
+    space: { owner_id: operator_id },
+    AND,
+  };
+  log.debug(reqid, 'where', where);
+
+  return TodoRepository.findManyTodo(prisma, {
+    where,
+    orderBy: { order: 'asc' },
+  });
+}
+
+// todo.search
+async function searchTodo(
+  reqid: string,
+  prisma: PrismaClient,
+  operator_id: number,
+  input: z.infer<typeof TodoRouterSchema.searchInput>,
+) {
+  log.trace(reqid, 'searchTodo', operator_id, input);
 
   const AND: Prisma.TodoWhereInput[] = [];
 
@@ -71,12 +97,14 @@ async function listTodo(
   const todo_list = await TodoRepository.findManyTodo(prisma, {
     where,
     orderBy: { [input.sort.field]: input.sort.order },
+    take: input.limit,
+    skip: input.limit * (input.page - 1),
   });
 
   return {
     total,
     todo_list,
-  } satisfies z.infer<typeof TodoRouterSchema.listOutput>;
+  } satisfies z.infer<typeof TodoRouterSchema.searchOutput>;
 }
 
 // todo.get

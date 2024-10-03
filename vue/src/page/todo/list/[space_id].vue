@@ -12,15 +12,8 @@ const router = useRouter();
 const route = useRoute('/todo/list/[space_id]');
 
 const modelValue = ref<z.infer<typeof TodoRouterSchema.listInput>>({
-  where: {
-    space_id: null,
-    todo_keyword: '',
-    todo_status: ['active'],
-  },
-  sort: {
-    field: 'order',
-    order: 'asc',
-  },
+  space_id: 0,
+  todo_status: 'active',
 });
 
 const space = ref<RouterOutput['space']['get']>();
@@ -31,11 +24,10 @@ const todo_list = ref<(RouterOutput['todo']['get'] & { is_new?: boolean; editing
 const loading = ref(true);
 
 const { validateSubmit } = useValidate(TodoRouterSchema.listInput, modelValue);
-const handleSubmit = validateSubmit(async () => {
+const handleSubmit = validateSubmit(async (value) => {
   loading.value = true;
   try {
-    const data = await trpc.todo.list.query(modelValue.value);
-    todo_list.value = data.todo_list;
+    todo_list.value = await trpc.todo.list.query(value);
   } finally {
     loading.value = false;
   }
@@ -89,7 +81,7 @@ async function load(params: { space_id: string }) {
   const space_id = Number(params.space_id);
   space.value = await trpc.space.get.query({ space_id });
 
-  modelValue.value.where.space_id = space_id;
+  modelValue.value.space_id = space_id;
   await handleSubmit();
 
   await nextTick();
@@ -255,9 +247,9 @@ watch(
             >
               <input
                 id="status-active"
-                v-model="modelValue.where.todo_status"
+                v-model="modelValue.todo_status"
                 type="radio"
-                :value="['active']"
+                value="active"
                 class="mr-1 h-4 w-4 border-gray-300 bg-gray-100 text-blue-600"
                 @change="handleSubmit"
               />
@@ -266,9 +258,9 @@ watch(
             <label for="status-done" class="flex items-center font-medium capitalize text-gray-900">
               <input
                 id="status-done"
-                v-model="modelValue.where.todo_status"
+                v-model="modelValue.todo_status"
                 type="radio"
-                :value="['done']"
+                value="done"
                 class="mr-1 h-4 w-4 border-gray-300 bg-gray-100 text-blue-600"
                 @change="handleSubmit"
               />

@@ -7,7 +7,7 @@ import MyTag from '~/page/component/MyTag.vue';
 import { TodoStatusList } from '~/schema/option/OptionTodoStatus';
 import { TodoRouterSchema } from '~/schema/TodoRouterSchema';
 
-const modelValue = ref<z.infer<typeof TodoRouterSchema.listInput>>({
+const modelValue = ref<z.infer<typeof TodoRouterSchema.searchInput>>({
   where: {
     space_id: null,
     todo_keyword: '',
@@ -17,25 +17,22 @@ const modelValue = ref<z.infer<typeof TodoRouterSchema.listInput>>({
     field: 'order',
     order: 'asc',
   },
+  limit: 50,
+  page: 1,
 });
 
-const data = ref<RouterOutput['todo']['list']>({
+const data = ref<RouterOutput['todo']['search']>({
   total: 0,
   todo_list: [],
 });
 
-const pager = ref({
-  currentPage: 1,
-  pageSize: 50,
-});
-
 const loading = ref(true);
 
-const { validateSubmit, ErrorMessage } = useValidate(TodoRouterSchema.listInput, modelValue);
+const { validateSubmit, ErrorMessage } = useValidate(TodoRouterSchema.searchInput, modelValue);
 const handleSubmit = validateSubmit(async () => {
   loading.value = true;
   try {
-    data.value = await trpc.todo.list.query(modelValue.value);
+    data.value = await trpc.todo.search.query(modelValue.value);
   } finally {
     loading.value = false;
   }
@@ -257,33 +254,33 @@ onMounted(() => {
         <div class="flex flex-row items-center gap-2">
           <span class="capitalize">items per page</span>
           <select
-            v-model="pager.pageSize"
+            v-model.number="modelValue.limit"
             class="inline-block rounded border border-gray-300 bg-white px-2 py-1 text-sm text-gray-900"
             :disabled="loading"
             @change="
               () => {
-                pager.currentPage = 1;
+                modelValue.page = 1;
                 return handleSubmit();
               }
             "
           >
             <option
-              v-for="pageSize of [10, 50, 100, 200, 500]"
-              :key="pageSize"
-              :disabled="pageSize === pager.currentPage"
+              v-for="limit of [10, 50, 100, 200, 500]"
+              :key="limit"
+              :disabled="limit === modelValue.limit"
             >
-              {{ pageSize }}
+              {{ limit }}
             </option>
           </select>
         </div>
 
         <div class="flex flex-row items-center gap-2">
           <span class="min-w-4 text-right">
-            {{ Math.min(data.total, pager.pageSize * (pager.currentPage - 1) + 1) }}
+            {{ Math.min(data.total, modelValue.limit * (modelValue.page - 1) + 1) }}
           </span>
           -
           <span class="min-w-4 text-right">
-            {{ Math.min(data.total, pager.pageSize * pager.currentPage) }}
+            {{ Math.min(data.total, modelValue.limit * modelValue.page) }}
           </span>
           <span> of {{ data.total }} items </span>
         </div>
@@ -291,24 +288,24 @@ onMounted(() => {
         <div class="flex flex-row items-center gap-2">
           <div class="relative inline-block">
             <input
-              v-model.number="pager.currentPage"
+              v-model.number="modelValue.page"
               type="range"
               min="1"
-              :max="Math.ceil(data.total / pager.pageSize)"
+              :max="Math.ceil(data.total / modelValue.limit)"
               class="h-2 cursor-pointer rounded-lg bg-gray-200"
               :disabled="loading"
               @change="handleSubmit"
             />
             <span class="absolute -top-3 end-0 text-xs text-gray-500"> max </span>
             <span class="absolute -bottom-3 end-0 text-xs text-gray-500">
-              {{ Math.ceil(data.total / pager.pageSize) }}
+              {{ Math.ceil(data.total / modelValue.limit) }}
             </span>
           </div>
           <input
-            v-model.number="pager.currentPage"
+            v-model.number="modelValue.page"
             type="number"
             min="1"
-            :max="Math.ceil(data.total / pager.pageSize)"
+            :max="Math.ceil(data.total / modelValue.limit)"
             step="1"
             class="inline-block rounded border border-gray-300 bg-white px-2 py-1 text-gray-900"
             :disabled="loading"
