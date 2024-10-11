@@ -44,16 +44,16 @@ const { downloadSingleFile } = useFile();
               `Do you really want to delete this file?
 '${file.filename}'`,
             );
-            if (yes) {
-              const loading = $loading.open();
-              try {
-                await trpc.file.delete.mutate(file);
+            if (!yes) return;
 
-                $emit('deleted', i);
-                $toast.success('Data has been deleted.');
-              } finally {
-                loading.close();
-              }
+            const loading = $loading.open();
+            try {
+              await trpc.file.delete.mutate(file);
+
+              $emit('deleted', i);
+              $toast.success('Data has been deleted.');
+            } finally {
+              loading.close();
             }
           }
         "

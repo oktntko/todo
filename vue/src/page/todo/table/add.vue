@@ -54,7 +54,7 @@ async function handleSubmit(value: ModelValue) {
             <li class="inline-flex items-center">
               <RouterLink
                 :to="{ name: '/todo/table/add' }"
-                class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-blue-600"
+                class="inline-flex items-center text-sm font-medium text-gray-900 hover:text-blue-600"
               >
                 <span class="ms-1 capitalize">add todo</span>
               </RouterLink>

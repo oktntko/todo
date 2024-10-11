@@ -58,7 +58,7 @@ async function handleSubmit(value: ModelValue) {
             <li class="inline-flex items-center">
               <RouterLink
                 :to="{ name: '/todo/table/[todo_id]', params: { todo_id } }"
-                class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-blue-600"
+                class="inline-flex items-center text-sm font-medium text-gray-900 hover:text-blue-600"
               >
                 <span class="ms-1 capitalize">edit todo</span>
               </RouterLink>
@@ -84,9 +84,34 @@ async function handleSubmit(value: ModelValue) {
         v-model="modelValue"
         v-model:file_list="modelValueFileList"
         v-model:space="modelValueSpace"
+        :todo_id="todo_id"
         class="px-4"
         @submit="handleSubmit"
       >
+        <template #buttons>
+          <button
+            type="button"
+            :class="['button button-text button-yellow secondary', 'capitalize']"
+            @click="
+              async () => {
+                const yes = await $dialog.confirm(`Do you really want to delete this data?`);
+                if (!yes) {
+                  return;
+                }
+                const loading = $loading.open();
+                try {
+                  await trpc.todo.delete.mutate({ todo_id });
+
+                  router.replace({ name: '/todo/table/' });
+                } finally {
+                  loading.close();
+                }
+              }
+            "
+          >
+            delete
+          </button>
+        </template>
       </TodoForm>
 
       <MyLoading v-else> </MyLoading>

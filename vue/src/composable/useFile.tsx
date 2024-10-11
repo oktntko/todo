@@ -1,6 +1,8 @@
 import { axios, saveAsFile } from '~/lib/axios';
 import type { RouterOutput } from '~/lib/trpc';
+import type { z } from '~/lib/zod';
 import { useLoading } from '~/plugin/LoadingPlugin';
+import type { FileRouterSchema } from '~/schema/FileRouterSchema';
 
 export function useFile() {
   const $loading = useLoading();
@@ -47,7 +49,7 @@ export function useFile() {
       .finally(loading.close);
   }
 
-  async function downloadManyFiles(params: { file_id: string }[]) {
+  async function downloadManyFiles(params: z.infer<typeof FileRouterSchema.getManyInput>) {
     const loading = $loading.open();
     return axios
       .get('/api/file/download/many', {

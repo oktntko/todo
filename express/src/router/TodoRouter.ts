@@ -65,6 +65,15 @@ export const todo = router({
       });
     }),
 
+  // todo.updateMany
+  updateMany: protectedProcedure
+    .input(TodoRouterSchema.updateManyInput)
+    .mutation(async ({ ctx, input }) => {
+      return $transaction(ctx.prisma, async (prisma) => {
+        return TodoService.updateManyTodo(ctx.req.reqid, prisma, ctx.operator_id, input);
+      });
+    }),
+
   // todo.delete
   delete: protectedProcedure
     .input(TodoRouterSchema.getInput)
@@ -72,6 +81,15 @@ export const todo = router({
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
         return TodoService.deleteTodo(ctx.req.reqid, prisma, ctx.operator_id, input);
+      });
+    }),
+
+  // todo.deleteMany
+  deleteMany: protectedProcedure
+    .input(TodoRouterSchema.deleteManyInput)
+    .mutation(async ({ ctx, input }) => {
+      return $transaction(ctx.prisma, async (prisma) => {
+        return TodoService.deleteManyTodo(ctx.req.reqid, prisma, ctx.operator_id, input);
       });
     }),
 });

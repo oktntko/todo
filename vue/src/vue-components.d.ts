@@ -12,6 +12,7 @@ declare module 'vue' {
     MyInputFile: typeof import('./component/MyInputFile.vue')['default']
     MyInputPassword: typeof import('./component/MyInputPassword.vue')['default']
     MyLoading: typeof import('./component/MyLoading.vue')['default']
+    MySortButton: typeof import('./component/MySortButton.vue')['default']
     OnClickOutside: typeof import('@vueuse/components')['OnClickOutside']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

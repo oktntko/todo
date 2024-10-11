@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import dayjs from 'dayjs';
+import { useFile } from '~/composable/useFile';
 import { useValidate } from '~/composable/useValidate';
 import { trpc, type RouterOutput } from '~/lib/trpc';
 import type { z } from '~/lib/zod';
 import MyTag from '~/page/component/MyTag.vue';
 import { TodoStatusList } from '~/schema/option/OptionTodoStatus';
 import { TodoRouterSchema } from '~/schema/TodoRouterSchema';
+
+const { downloadManyFiles } = useFile();
 
 const modelValue = ref<z.infer<typeof TodoRouterSchema.searchInput>>({
   where: {
@@ -14,14 +17,17 @@ const modelValue = ref<z.infer<typeof TodoRouterSchema.searchInput>>({
     todo_status: ['active'],
   },
   sort: {
-    field: 'order',
-    order: 'asc',
+    field: 'updated_at',
+    order: 'desc',
   },
   limit: 50,
   page: 1,
 });
 
-const data = ref<RouterOutput['todo']['search']>({
+const data = ref<{
+  total: number;
+  todo_list: (RouterOutput['todo']['get'] & { checked?: boolean })[];
+}>({
   total: 0,
   todo_list: [],
 });
@@ -41,6 +47,30 @@ const handleSubmit = validateSubmit(async () => {
 onMounted(() => {
   handleSubmit();
 });
+
+async function changeSortOrder(field: typeof modelValue.value.sort.field) {
+  if (modelValue.value.sort.field !== field) {
+    modelValue.value.sort = {
+      field: field,
+      order: 'asc',
+    };
+  } else {
+    modelValue.value.sort.order = modelValue.value.sort.order === 'asc' ? 'desc' : 'asc';
+  }
+
+  return handleSubmit();
+}
+
+const checkedList = computed(() => {
+  return data.value.todo_list.filter((x) => x.checked);
+});
+const headerCheckbox = computed(() => {
+  return {
+    checked: checkedList.value.length > 0,
+    indeterminate:
+      checkedList.value.length > 0 && checkedList.value.length < data.value.todo_list.length,
+  };
+});
 </script>
 
 <template>
@@ -52,7 +82,7 @@ onMounted(() => {
             <li class="inline-flex items-center">
               <RouterLink
                 :to="{ name: '/todo/table/' }"
-                class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-blue-600"
+                class="inline-flex items-center text-sm font-medium text-gray-900 hover:text-blue-600"
               >
                 <span class="icon-[fontisto--table-2] h-3 w-3 transition duration-75"> </span>
                 <span class="ms-1 capitalize">table</span>
@@ -130,6 +160,85 @@ onMounted(() => {
           <span class="icon-[icon-park-solid--add-one] h-4 w-4"></span>
           <span class="ms-1 capitalize">add todo</span>
         </RouterLink>
+        <button
+          type="button"
+          :class="['button button-text button-green secondary', 'capitalize']"
+          :disabled="loading || checkedList.length === 0"
+          @click="
+            async () => {
+              const yes = await $dialog.confirm(`Do you really want to done checked data?`);
+              if (!yes) {
+                return;
+              }
+
+              loading = true;
+              try {
+                await trpc.todo.updateMany.mutate({
+                  done_at: new Date(),
+                  list: checkedList,
+                });
+                $toast.success('Todo have been done.');
+
+                await handleSubmit();
+              } finally {
+                loading = false;
+              }
+            }
+          "
+        >
+          <span class="icon-[material-symbols--check-circle-outline-rounded] h-4 w-4"></span>
+          <span class="ms-1 capitalize">done</span>
+        </button>
+        <button
+          type="button"
+          :class="['button button-text button-white secondary', 'capitalize']"
+          :disabled="loading || checkedList.length === 0"
+          @click="
+            async () => {
+              const file_id_list = checkedList.flatMap((x) => x.file_list).map((x) => x.file_id);
+              if (file_id_list.length === 0) {
+                $dialog.alert('There are no files in the checked line.');
+                return;
+              }
+
+              loading = true;
+              try {
+                await downloadManyFiles({ file_id_list });
+              } finally {
+                loading = false;
+              }
+            }
+          "
+        >
+          <span class="icon-[simple-line-icons--cloud-download] h-4 w-4"></span>
+          <span class="ms-1 capitalize">download</span>
+        </button>
+        <button
+          type="button"
+          :class="['button button-text button-white secondary', 'capitalize']"
+          :disabled="loading || checkedList.length === 0"
+          @click="
+            async () => {
+              const yes = await $dialog.confirm(`Do you really want to delete checked data?`);
+              if (!yes) {
+                return;
+              }
+
+              loading = true;
+              try {
+                await trpc.todo.deleteMany.mutate(checkedList);
+                $toast.success('Todo have been deleted.');
+
+                await handleSubmit();
+              } finally {
+                loading = false;
+              }
+            }
+          "
+        >
+          <span class="icon-[tabler--trash-filled] h-4 w-4"></span>
+          <span class="ms-1 capitalize">delete</span>
+        </button>
       </header>
 
       <table
@@ -140,17 +249,92 @@ onMounted(() => {
             <th scope="col" class="column">No</th>
             <th scope="col" class="column">
               <label class="flex h-full justify-center hover:cursor-pointer">
-                <input type="checkbox" class="hover:cursor-pointer" />
+                <input
+                  type="checkbox"
+                  class="hover:cursor-pointer"
+                  :checked="headerCheckbox.checked"
+                  :indeterminate="headerCheckbox.indeterminate"
+                  @click="
+                    () => {
+                      const checked = headerCheckbox.checked;
+                      data.todo_list.forEach((x) => (x.checked = !checked));
+                    }
+                  "
+                />
               </label>
             </th>
-            <th scope="col" class="column">space</th>
-            <th scope="col" class="column">title</th>
-            <th scope="col" class="column">begin</th>
-            <th scope="col" class="column">limit</th>
-            <th scope="col" class="column">description</th>
+            <th scope="col" class="column">
+              <div class="flex items-center justify-center">
+                space
+                <MySortButton
+                  :sort="modelValue.sort"
+                  field="space"
+                  @click="changeSortOrder('space')"
+                ></MySortButton>
+              </div>
+            </th>
+            <th scope="col" class="column">
+              <div class="flex items-center justify-center">
+                title
+                <MySortButton
+                  :sort="modelValue.sort"
+                  field="title"
+                  @click="changeSortOrder('title')"
+                ></MySortButton>
+              </div>
+            </th>
+            <th scope="col" class="column">
+              <div class="flex items-center justify-center">
+                begin
+                <MySortButton
+                  :sort="modelValue.sort"
+                  field="begin_date"
+                  @click="changeSortOrder('begin_date')"
+                ></MySortButton>
+              </div>
+            </th>
+            <th scope="col" class="column">
+              <div class="flex items-center justify-center">
+                limit
+                <MySortButton
+                  :sort="modelValue.sort"
+                  field="limit_date"
+                  @click="changeSortOrder('limit_date')"
+                ></MySortButton>
+              </div>
+            </th>
+            <th scope="col" class="column">
+              <div class="flex items-center justify-center">
+                description
+                <MySortButton
+                  :sort="modelValue.sort"
+                  field="description"
+                  @click="changeSortOrder('description')"
+                ></MySortButton>
+              </div>
+            </th>
             <th scope="col" class="column">tags</th>
             <th scope="col" class="column">files</th>
-            <th scope="col" class="column">done</th>
+            <th scope="col" class="column">
+              <div class="flex items-center justify-center">
+                done
+                <MySortButton
+                  :sort="modelValue.sort"
+                  field="done_at"
+                  @click="changeSortOrder('done_at')"
+                ></MySortButton>
+              </div>
+            </th>
+            <th scope="col" class="column">
+              <div class="flex items-center justify-center">
+                updated
+                <MySortButton
+                  :sort="modelValue.sort"
+                  field="updated_at"
+                  @click="changeSortOrder('updated_at')"
+                ></MySortButton>
+              </div>
+            </th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200 bg-white text-gray-900">
@@ -163,18 +347,16 @@ onMounted(() => {
               <RouterLink
                 :to="{
                   name: '/todo/table/[todo_id]',
-                  params: {
-                    todo_id: todo.todo_id,
-                  },
+                  params: { todo_id: todo.todo_id },
                 }"
-                class="group flex justify-end px-2 py-1 text-blue-600 transition duration-75 hover:underline"
+                class="group flex justify-end px-2 py-1 text-blue-600 hover:underline"
               >
                 #{{ i + 1 }}
               </RouterLink>
             </td>
             <td class="max-w-48">
               <label class="flex h-full justify-center hover:cursor-pointer">
-                <input type="checkbox" class="hover:cursor-pointer" />
+                <input v-model="todo.checked" type="checkbox" class="hover:cursor-pointer" />
               </label>
             </td>
             <td class="max-w-48">
@@ -219,28 +401,32 @@ onMounted(() => {
             </td>
             <td class="max-w-48">
               <div
-                class="line-clamp-1 min-w-28 px-2 py-1"
+                class="line-clamp-4 min-w-28 px-2 py-1"
                 :title="todo.tag_list.map((x) => x.tag_name).join(',')"
               >
-                <MyTag v-for="tag of todo.tag_list" :key="tag.tag_id" :tag="tag">
-                  {{ tag.tag_name }}
-                </MyTag>
+                <MyTag v-for="tag of todo.tag_list" :key="tag.tag_id" :tag="tag"> </MyTag>
               </div>
             </td>
             <td class="max-w-48">
-              <MyDownloadFileList
-                class="flex min-w-32 flex-col px-2 py-1"
-                :file_list="todo.file_list"
-                @deleted="
-                  (deletedIndex) => {
-                    todo.file_list = todo.file_list.filter((_, i) => i !== deletedIndex);
-                  }
-                "
-              ></MyDownloadFileList>
+              <div
+                class="line-clamp-4 min-w-28 break-all px-2 py-1"
+                :title="todo.file_list.map((x) => x.filename).join(',')"
+              >
+                <span v-for="file of todo.file_list" :key="file.file_id" class="mr-1 text-xs">
+                  {{ file.filename }}
+                </span>
+              </div>
             </td>
             <td class="max-w-48">
               <div class="line-clamp-1 min-w-32 px-2 py-1">
                 {{ todo.done_at ? dayjs(todo.done_at).format('YYYY-MM-DD') : '' }}
+              </div>
+            </td>
+            <td class="max-w-48">
+              <div class="line-clamp-1 min-w-32 px-2 py-1">
+                {{
+                  todo.updated_at ? dayjs(todo.updated_at).format('YYYY-MM-DD hh:mm:ss.SSS') : ''
+                }}
               </div>
             </td>
           </tr>

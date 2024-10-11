@@ -79,6 +79,6 @@ input[type='week']::-webkit-calendar-picker-indicator {
     @apply border-gray-300 bg-white text-gray-800 hover:bg-gray-200;
   }
   .button:disabled {
-    @apply cursor-not-allowed border-gray-300 bg-gray-300 text-gray-100;
+    @apply cursor-not-allowed border-gray-300 bg-gray-300 text-gray-100 hover:bg-gray-400 hover:text-gray-200;
   }
 }

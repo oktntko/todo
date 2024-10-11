@@ -8,7 +8,9 @@ export const TodoRepository = {
   upsertTodo,
   createTodo,
   updateTodo,
+  updateManyTodo,
   deleteTodo,
+  deleteManyTodo,
 };
 
 async function countTodo(
@@ -119,7 +121,7 @@ async function createTodo(
   prisma: PrismaClient,
   params: {
     data: Omit<Prisma.TodoUncheckedCreateInput, CommonColumn | 'todo_id' | 'tag_list'> & {
-      tag_list: Prisma.TagWhereUniqueInput[];
+      tag_list?: Prisma.TagWhereUniqueInput[];
     };
     operator_id: number;
   },
@@ -154,8 +156,8 @@ async function updateTodo(
   prisma: PrismaClient,
   params: {
     where: Prisma.TodoWhereUniqueInput;
-    data: Omit<Prisma.TodoUncheckedCreateInput, CommonColumn | 'todo_id' | 'tag_list'> & {
-      tag_list: Prisma.TagWhereUniqueInput[];
+    data: Omit<Prisma.TodoUncheckedUpdateInput, CommonColumn | 'todo_id' | 'tag_list'> & {
+      tag_list?: Prisma.TagWhereUniqueInput[];
     };
     operator_id: number;
   },
@@ -187,6 +189,38 @@ async function updateTodo(
   });
 }
 
+async function updateManyTodo(
+  prisma: PrismaClient,
+  params: {
+    where: { todo_id: string }[];
+    data: Omit<Prisma.TodoUncheckedUpdateInput, CommonColumn | 'todo_id' | 'tag_list'>;
+    operator_id: number;
+  },
+) {
+  return prisma.todo.updateMany({
+    data: {
+      space_id: params.data.space_id,
+
+      title: params.data.title,
+      description: params.data.description,
+      begin_date: params.data.begin_date,
+      begin_time: params.data.begin_time,
+      limit_date: params.data.limit_date,
+      limit_time: params.data.limit_time,
+      order: params.data.order,
+      done_at: params.data.done_at,
+
+      created_by: params.operator_id,
+      updated_by: params.operator_id,
+    },
+    where: {
+      todo_id: {
+        in: params.where.map((x) => x.todo_id),
+      },
+    },
+  });
+}
+
 async function deleteTodo(
   prisma: PrismaClient,
   params: {
@@ -195,5 +229,20 @@ async function deleteTodo(
 ) {
   return prisma.todo.delete({
     where: params.where,
+  });
+}
+
+async function deleteManyTodo(
+  prisma: PrismaClient,
+  params: {
+    where: { todo_id: string }[];
+  },
+) {
+  return prisma.todo.deleteMany({
+    where: {
+      todo_id: {
+        in: params.where.map((x) => x.todo_id),
+      },
+    },
   });
 }

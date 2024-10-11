@@ -38,16 +38,32 @@ const createInput = TodoSchema.omit({
   }),
 );
 
-const updateInput = createInput.merge(
+const updateInput = createInput.partial().merge(
   TodoSchema.pick({
     todo_id: true,
     updated_at: true,
   }),
 );
 
+const updateManyInput = createInput
+  .omit({ tag_list: true })
+  .partial()
+  .merge(
+    z.object({
+      list: TodoSchema.pick({
+        todo_id: true,
+        updated_at: true,
+      })
+        .array()
+        .min(1),
+    }),
+  );
+
 const getInput = TodoSchema.pick({
   todo_id: true,
 });
+
+const deleteManyInput = getInput.array().min(1);
 
 const listInput = z.object({
   space_id: z.number(),
@@ -63,7 +79,7 @@ const searchInput = z.object({
     todo_status: TodoStatusSchema.array(),
   }),
   sort: z.object({
-    field: TodoScalarFieldEnumSchema,
+    field: z.enum([...TodoScalarFieldEnumSchema.options, 'space']),
     order: SortOrderSchema,
   }),
   limit: z.number().int().positive(),
@@ -79,7 +95,9 @@ export const TodoRouterSchema = {
   upsertInput,
   createInput,
   updateInput,
+  updateManyInput,
   getInput,
+  deleteManyInput,
   listInput,
   listOutput,
   searchInput,

@@ -5,7 +5,7 @@ import { TodoSchema } from '~/schema/zod/modelSchema/TodoSchema.js';
 const getInput = FileSchema.pick({
   file_id: true,
 });
-const getManyInput = z.object({ file_id: FileSchema.shape.file_id.array().min(1) });
+const getManyInput = z.object({ file_id_list: FileSchema.shape.file_id.array().min(1) });
 
 const fileInput = z.any().refine(
   (file): file is Express.Multer.File => {

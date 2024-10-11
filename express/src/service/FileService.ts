@@ -58,7 +58,9 @@ async function readManyFile(
   log.trace(reqid, 'readManyFile', operator_id, input);
 
   const dataList = await Promise.all(
-    input.file_id.map((x) => FileService.readFile(reqid, prisma, operator_id, { file_id: x })),
+    input.file_id_list.map((file_id) =>
+      FileService.readFile(reqid, prisma, operator_id, { file_id }),
+    ),
   );
 
   const zip = new AdmZip();

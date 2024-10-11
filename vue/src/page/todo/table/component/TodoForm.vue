@@ -17,6 +17,8 @@ const modelValue = defineModel<ModelValue>({ required: true });
 const modelValueSpace = defineModel<z.infer<typeof SpaceSchema>>('space', { required: false });
 const modelValueFileList = defineModel<DownloadFile[]>('file_list', { required: true });
 
+defineProps<{ todo_id?: string }>();
+
 const emit = defineEmits<{
   submit: [ModelValue, Reset];
 }>();
@@ -189,7 +191,8 @@ onMounted(async () => {
           files
           <button
             type="button"
-            class="flex items-center justify-center rounded-full border bg-white p-1.5 transition-colors hover:border-gray-400 hover:bg-gray-100"
+            :class="['button button-icon button-white secondary']"
+            :disabled="!todo_id"
             @click="
               async () => {
                 const files = await $modal.open<File[]>({
@@ -200,7 +203,9 @@ onMounted(async () => {
                 });
 
                 if (files && files.length > 0) {
-                  const { data } = await uploadManyFiles(files);
+                  const { data } = await uploadManyFiles(files, {
+                    todo_id,
+                  });
 
                   modelValueFileList = [...modelValueFileList, ...data];
                 }
@@ -222,6 +227,7 @@ onMounted(async () => {
       >
         save
       </button>
+      <slot name="buttons"></slot>
     </section>
   </form>
 </template>
