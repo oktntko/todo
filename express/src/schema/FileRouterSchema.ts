@@ -1,4 +1,6 @@
 import { z } from '~/lib/zod.js';
+import FileScalarFieldEnumSchema from '~/schema/zod/inputTypeSchemas/FileScalarFieldEnumSchema.js';
+import SortOrderSchema from '~/schema/zod/inputTypeSchemas/SortOrderSchema.js';
 import { FileSchema } from '~/schema/zod/modelSchema/FileSchema.js';
 import { TodoSchema } from '~/schema/zod/modelSchema/TodoSchema.js';
 
@@ -34,6 +36,29 @@ const deleteInput = FileSchema.pick({
   updated_at: true,
 });
 
+export const FileOutputSchema = FileSchema.merge(
+  z.object({
+    todo_list: z.lazy(() => TodoSchema).array(),
+  }),
+);
+
+const searchInput = z.object({
+  where: z.object({
+    file_keyword: z.string().trim().max(255),
+  }),
+  sort: z.object({
+    field: FileScalarFieldEnumSchema,
+    order: SortOrderSchema,
+  }),
+  limit: z.number().int().positive(),
+  page: z.number().int().positive(),
+});
+
+const searchOutput = z.object({
+  total: z.number(),
+  file_list: z.array(FileOutputSchema),
+});
+
 export const FileRouterSchema = {
   getInput,
   getManyInput,
@@ -41,4 +66,6 @@ export const FileRouterSchema = {
   createManyInput,
   fileInput,
   deleteInput,
+  searchInput,
+  searchOutput,
 };

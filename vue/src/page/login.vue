@@ -38,7 +38,7 @@ const { validateSubmit, ErrorMessage } = useValidate(AuthRouterSchema.signinInpu
               try {
                 const { auth } = await trpc.auth.signin.mutate(modelValue);
                 if (auth) {
-                  router.push('/');
+                  router.push({ name: '/' });
                   return;
                 }
               } finally {
@@ -53,7 +53,7 @@ const { validateSubmit, ErrorMessage } = useValidate(AuthRouterSchema.signinInpu
               });
 
               if (result?.auth) {
-                router.push('/');
+                router.push({ name: '/' });
               }
             })()
           "

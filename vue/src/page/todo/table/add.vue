@@ -4,6 +4,10 @@ import { trpc } from '~/lib/trpc';
 import { useLoading } from '~/plugin/LoadingPlugin';
 import TodoForm, { type ModelValue } from './component/TodoForm.vue';
 
+definePage({
+  alias: ['/todo/add'],
+});
+
 const router = useRouter();
 
 const modelValue = ref<ModelValue>({
@@ -26,7 +30,7 @@ async function handleSubmit(value: ModelValue) {
   try {
     await trpc.todo.create.mutate(value);
 
-    router.push('/todo/table');
+    router.push({ name: '/todo/table/' });
   } finally {
     loading.close();
   }

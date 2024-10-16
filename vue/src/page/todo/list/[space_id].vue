@@ -206,7 +206,7 @@ watch(
                             updated_at: space.updated_at,
                           });
 
-                          router.replace('/todo/list');
+                          router.replace({ name: '/todo/list' });
 
                           $toast.success('Data has been deleted.');
                         } finally {

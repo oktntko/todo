@@ -24,6 +24,11 @@ export default ts.config(
     },
   },
   {
+    globals: {
+      definePage: 'readonly',
+    },
+  },
+  {
     rules: {
       'no-undef': 'off', // When using TypeScript, we recommend to disable no-undef rule directly as TypeScript already check for them and you don't need to worry about this.
       '@typescript-eslint/ban-ts-ignore': 'off',

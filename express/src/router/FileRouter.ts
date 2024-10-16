@@ -86,6 +86,15 @@ FileRouter.post(
 // trpc
 ////////////////////////////////////////////////
 export const file = router({
+  search: protectedProcedure
+    .input(FileRouterSchema.searchInput)
+    .output(FileRouterSchema.searchOutput)
+    .query(async ({ ctx, input }) => {
+      return $transaction(ctx.prisma, async (prisma) => {
+        return FileService.searchFile(ctx.req.reqid, prisma, ctx.operator_id, input);
+      });
+    }),
+
   delete: protectedProcedure
     .input(FileRouterSchema.deleteInput)
     .mutation(async ({ ctx, input }) => {

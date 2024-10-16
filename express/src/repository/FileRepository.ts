@@ -8,6 +8,8 @@ import type { PrismaClient } from '~/middleware/prisma.js';
 
 export const FileRepository = {
   // database
+  countFile,
+  findManyFile,
   findUniqueFile,
   createFile,
   deleteFile,
@@ -20,6 +22,37 @@ export const FileRepository = {
 ////////////////////////////////////////////////
 // database
 ////////////////////////////////////////////////
+async function countFile(
+  prisma: PrismaClient,
+  params: {
+    where: Prisma.FileWhereInput;
+  },
+) {
+  return prisma.file.count({
+    where: params.where,
+  });
+}
+
+async function findManyFile(
+  prisma: PrismaClient,
+  params: {
+    where: Prisma.FileWhereInput;
+    orderBy: Prisma.FileOrderByWithRelationInput;
+    take?: number;
+    skip?: number;
+  },
+) {
+  return prisma.file.findMany({
+    include: {
+      todo_list: { orderBy: { created_at: 'asc' } },
+    },
+    where: params.where,
+    orderBy: params.orderBy,
+    take: params.take,
+    skip: params.skip,
+  });
+}
+
 async function findUniqueFile(
   prisma: PrismaClient,
   params: {

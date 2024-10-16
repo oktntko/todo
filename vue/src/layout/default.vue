@@ -78,7 +78,7 @@ fetchTagList();
           </li>
           <li>
             <RouterLink
-              :to="{ name: '/drive' }"
+              :to="{ name: '/drive/' }"
               class="group flex w-full items-center rounded-e-full p-2 pl-3 text-base text-gray-200 transition duration-75 hover:bg-gray-800 hover:text-white"
               active-class="bg-gray-700"
             >

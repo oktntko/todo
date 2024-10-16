@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import AdmZip from 'adm-zip';
 import type { z } from 'zod';
@@ -18,6 +19,7 @@ export const FileService = {
   createManyFile,
   deleteFile,
   deleteManyFile,
+  searchFile,
 };
 
 // # /api/file/download/single
@@ -168,4 +170,49 @@ async function deleteManyFile(
   log.trace(reqid, 'deleteManyFile', operator_id, input);
 
   return Promise.all(input.map((x) => FileService.deleteFile(reqid, prisma, operator_id, x)));
+}
+
+// file.search
+async function searchFile(
+  reqid: string,
+  prisma: PrismaClient,
+  operator_id: number,
+  input: z.infer<typeof FileRouterSchema.searchInput>,
+) {
+  log.trace(reqid, 'searchFile', operator_id, input);
+
+  const AND: Prisma.FileWhereInput[] = [];
+
+  if (input.where.file_keyword) {
+    AND.push({
+      OR: [
+        { filename: { contains: input.where.file_keyword } },
+        { todo_list: { some: { title: { contains: input.where.file_keyword } } } },
+      ],
+    });
+  }
+
+  const where: Prisma.FileWhereInput = {
+    user_list: { some: { user_id: operator_id } },
+    AND,
+  };
+  log.debug(reqid, 'where', where);
+
+  const orderBy: Prisma.TodoOrderByWithRelationInput = { [input.sort.field]: input.sort.order };
+  log.debug(reqid, 'orderBy', orderBy);
+
+  const total = await FileRepository.countFile(prisma, {
+    where,
+  });
+  const file_list = await FileRepository.findManyFile(prisma, {
+    where,
+    orderBy,
+    take: input.limit,
+    skip: input.limit * (input.page - 1),
+  });
+
+  return {
+    total,
+    file_list,
+  } satisfies z.infer<typeof FileRouterSchema.searchOutput>;
 }

@@ -38,7 +38,7 @@ const { validateSubmit, ErrorMessage } = useValidate(AuthRouterSchema.signupInpu
               try {
                 await trpc.auth.signup.mutate(modelValue);
 
-                router.push('/');
+                router.push({ name: '/' });
               } finally {
                 loading.close();
               }

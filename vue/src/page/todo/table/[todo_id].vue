@@ -6,6 +6,10 @@ import { useLoading } from '~/plugin/LoadingPlugin';
 import type SpaceSchema from '~/schema/zod/modelSchema/SpaceSchema';
 import TodoForm, { type ModelValue } from './component/TodoForm.vue';
 
+definePage({
+  alias: ['/todo/:todo_id'],
+});
+
 const router = useRouter();
 const route = useRoute('/todo/table/[todo_id]');
 const todo_id = route.params.todo_id;
@@ -30,7 +34,7 @@ async function handleSubmit(value: ModelValue) {
   try {
     await trpc.todo.update.mutate({ ...value, todo_id, updated_at });
 
-    router.push('/todo/table');
+    router.push({ name: '/todo/table/' });
   } finally {
     loading.close();
   }

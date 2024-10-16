@@ -1,3 +1,4 @@
+import { isAxiosError } from 'axios';
 import App from '~/App.vue';
 import '~/lib/dayjs';
 import router from '~/lib/router';
@@ -25,19 +26,25 @@ app.mount('#app');
 
 function handleError(error: unknown) {
   console.error('error', error);
-  if (isRouterError(error)) {
-    const status = error.data?.httpStatus ?? 0;
+  if (isAxiosError(error) || isRouterError(error)) {
+    const { status, message } = (function () {
+      if (isAxiosError(error)) {
+        return { status: error.status ?? 0, message: error.message };
+      } else {
+        return { status: error.data?.httpStatus ?? 0, message: error.message };
+      }
+    })();
     const colorset =
       0 < status && status < 400 ? 'blue' : 400 <= status && status < 500 ? 'yellow' : 'red';
 
     if (status === 401 /*UNAUTHORIZED*/ || status === 403 /*FORBIDDEN*/) {
-      router.replace('/login');
+      router.replace({ name: '/login' });
     }
 
     return app.config.globalProperties.$dialog.open({
       colorset,
       icon: colorset === 'blue' ? 'icon-[bx--info-circle]' : 'icon-[bx--error]',
-      message: error.message,
+      message,
       cancelText: 'OK',
     });
   } else {
