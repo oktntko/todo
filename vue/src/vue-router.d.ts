@@ -27,7 +27,6 @@ declare module 'vue-router/auto-routes' {
     '/todo/board': RouteRecordInfo<'/todo/board', '/todo/board', Record<never, never>, Record<never, never>>,
     '/todo/calendar': RouteRecordInfo<'/todo/calendar', '/todo/calendar', Record<never, never>, Record<never, never>>,
     '/todo/list': RouteRecordInfo<'/todo/list', '/todo/list', Record<never, never>, Record<never, never>>,
-    '/todo/list/[space_id]': RouteRecordInfo<'/todo/list/[space_id]', '/todo/list/:space_id', { space_id: ParamValue<true> }, { space_id: ParamValue<false> }>,
     '/todo/table/': RouteRecordInfo<'/todo/table/', '/todo/table', Record<never, never>, Record<never, never>>,
     '/todo/table/[todo_id]': RouteRecordInfo<'/todo/table/[todo_id]', '/todo/table/:todo_id', { todo_id: ParamValue<true> }, { todo_id: ParamValue<false> }>,
     '/todo/table/add': RouteRecordInfo<'/todo/table/add', '/todo/table/add', Record<never, never>, Record<never, never>>,

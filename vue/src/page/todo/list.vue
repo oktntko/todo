@@ -1,32 +1,35 @@
 <script setup lang="ts">
-import SpaceList from '~/page/todo/list/component/SpaceList.vue';
+import Space from '~/page/todo/component/Space.vue';
+import SpaceList from '~/page/todo/component/SpaceList.vue';
+
+const space_id_list = ref([]);
 </script>
 
 <template>
   <div class="flex flex-row">
-    <SpaceList class="w-60 shrink-0"> </SpaceList>
+    <SpaceList class="w-56 shrink-0" type="radio" v-model:space_id_list="space_id_list">
+    </SpaceList>
 
-    <RouterView v-slot="{ Component }" class="grow">
-      <template v-if="Component">
-        <Transition
-          mode="out-in"
-          enter-from-class="transform opacity-0"
-          enter-active-class="transition ease-out duration-200"
-          enter-to-class="transform opacity-100"
+    <!-- 
+      w-[calc(100vw-224px-224px-10px)]
+      224px: グローバルメニュー
+      224px: SpaceList
+       10px: 縦スクロールバーを常時表示しているため
+    -->
+    <div
+      class="h-[calc(100vh-64px)] w-[calc(100vw-224px-224px-10px)] grow-0 overflow-x-auto px-4 pb-4"
+      :class="['pr-56']"
+    >
+      <div class="flex h-full w-full flex-row gap-2">
+        <div
+          v-for="space_id of space_id_list"
+          :key="space_id"
+          class="shrink-0 break-inside-avoid"
+          :class="['mx-auto w-2xl']"
         >
-          <KeepAlive>
-            <Suspense>
-              <!-- main content -->
-              <component :is="Component"></component>
-
-              <!-- loading state -->
-              <template #fallback>
-                <div>loading</div>
-              </template>
-            </Suspense>
-          </KeepAlive>
-        </Transition>
-      </template>
-    </RouterView>
+          <Space :space_id="space_id" class="max-h-full overflow-y-auto"></Space>
+        </div>
+      </div>
+    </div>
   </div>
 </template>

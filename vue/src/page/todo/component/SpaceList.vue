@@ -3,10 +3,13 @@ import * as R from 'remeda';
 import { useValidate } from '~/composable/useValidate';
 import { trpc, type RouterOutput } from '~/lib/trpc';
 import type { z } from '~/lib/zod';
-import ModalAddSpace from '~/page/todo/list/modal/ModalAddSpace.vue';
+import ModalAddSpace from '~/page/todo/modal/ModalAddSpace.vue';
 import { SpaceRouterSchema } from '~/schema/SpaceRouterSchema';
 
-const router = useRouter();
+const props = defineProps<{
+  type: 'checkbox' | 'radio';
+}>();
+const space_id_list = defineModel<number[]>('space_id_list', { required: true });
 
 const modelValue = ref<z.infer<typeof SpaceRouterSchema.listInput>>({
   where: {
@@ -35,12 +38,10 @@ const handleSubmit = validateSubmit(async () => {
 onMounted(async () => {
   await handleSubmit();
 
-  if (data.value && data.value.space_list.length > 0) {
-    router.replace({
-      name: '/todo/list/[space_id]',
-      params: { space_id: data.value.space_list[0].space_id },
-    });
-  }
+  space_id_list.value = R.take(
+    data.value?.space_list.map((x) => x.space_id) ?? [],
+    props.type === 'radio' ? 1 : (data.value?.space_list.length ?? 0),
+  );
 });
 
 const debounce = R.debounce(handleSubmit, { waitMs: 500 });
@@ -87,15 +88,17 @@ watchDeep(modelValue, () => debounce.call());
     >
       <template v-if="data">
         <ul class="text-sm">
-          <li v-for="space of data.space_list" :key="space.space_id">
-            <RouterLink
-              class="group relative flex w-full items-center rounded-e-full p-2 transition duration-75 hover:bg-gray-200"
-              exact-active-class="bg-gray-300"
-              :to="{
-                name: '/todo/list/[space_id]',
-                params: { space_id: space.space_id },
-              }"
+          <li v-for="space of data.space_list" :key="space.space_id" class="py-px">
+            <label
+              class="group relative flex w-full cursor-pointer items-center rounded-e-full p-2 transition duration-75 hover:bg-gray-200"
+              :class="{ 'bg-gray-300': ~space_id_list.findIndex((x) => x === space.space_id) }"
             >
+              <input
+                :type="type"
+                v-model="space_id_list"
+                :value="type === 'checkbox' ? space.space_id : [space.space_id]"
+                class="sr-only"
+              />
               <img
                 v-if="space.space_image"
                 :src="space.space_image"
@@ -106,7 +109,7 @@ watchDeep(modelValue, () => debounce.call());
               />
               <span v-else class="icon-[ri--image-circle-fill] h-4 w-4"></span>
               <span class="ms-1">{{ space.space_name }}</span>
-            </RouterLink>
+            </label>
           </li>
           <li>
             <button

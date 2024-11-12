@@ -109,12 +109,12 @@ fetchTagList();
     <div
       class="flex min-h-screen grow flex-col bg-gradient-to-b from-white to-gray-200 text-gray-900"
     >
-      <header class="flex flex-row flex-nowrap items-center justify-between p-4">
+      <header class="flex h-16 flex-row flex-nowrap items-center justify-between p-4">
         <nav class="flex items-center">
           <button
             type="button"
             :class="[
-              'flex w-48 items-center gap-2 rounded-lg border border-gray-300 bg-gray-100 p-2 text-sm text-gray-900 transition-colors hover:border-blue-500 hover:bg-white hover:ring-blue-500',
+              'flex w-48 items-center gap-2 rounded-lg border border-gray-300 bg-gray-100 px-2 py-1 text-sm text-gray-900 transition-colors hover:border-blue-500 hover:bg-white hover:ring-blue-500',
             ]"
           >
             <span class="icon-[bx--search] h-4 w-4"> </span>

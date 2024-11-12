@@ -3,6 +3,10 @@ const showMenu = ref(false);
 function toggle() {
   showMenu.value = !showMenu.value;
 }
+
+withDefaults(defineProps<{ innerClass?: string }>(), {
+  innerClass: '',
+});
 </script>
 
 <template>
@@ -21,7 +25,8 @@ function toggle() {
     >
       <div
         v-show="showMenu"
-        class="absolute right-0 z-10 w-full"
+        class="absolute right-0 z-10"
+        :class="innerClass"
         role="menu"
         aria-orientation="vertical"
         tabindex="-1"

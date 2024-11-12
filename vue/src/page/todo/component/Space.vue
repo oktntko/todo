@@ -4,15 +4,15 @@ import Sortable from 'sortablejs';
 import { useValidate } from '~/composable/useValidate';
 import { trpc, type RouterOutput } from '~/lib/trpc';
 import type { z } from '~/lib/zod';
-import TodoForm from '~/page/todo/list/component/TodoForm.vue';
-import ModalEditSpace from '~/page/todo/list/modal/ModalEditSpace.vue';
+import TodoForm from '~/page/todo/component/TodoForm.vue';
+import ModalEditSpace from '~/page/todo/modal/ModalEditSpace.vue';
 import { TodoRouterSchema } from '~/schema/TodoRouterSchema';
 
 const router = useRouter();
-const route = useRoute('/todo/list/[space_id]');
 
+const props = defineProps<{ space_id: number }>();
 const modelValue = ref<z.infer<typeof TodoRouterSchema.listInput>>({
-  space_id: 0,
+  space_id: props.space_id,
   todo_status: 'active',
 });
 
@@ -69,23 +69,18 @@ function createNewEmptyTodo(params: {
 }
 
 const sortable = ref<Sortable>();
-// unplugin-vue-router/data-loaders だと modelValue(検索条件)を引き回すことができない(できるかもしれないけど分からない)
-// vue-router onBeforeRouteUpdate だと route の型が不明で params が取得できない
-// 地道にwatchで実装する https://router.vuejs.org/guide/essentials/dynamic-matching#Reacting-to-Params-Changes
-async function load(params: { space_id: string }) {
+onMounted(async () => {
   sortable.value?.destroy();
 
   space.value = undefined;
   todo_list.value = [];
 
-  const space_id = Number(params.space_id);
-  space.value = await trpc.space.get.query({ space_id });
+  space.value = await trpc.space.get.query({ space_id: props.space_id });
 
-  modelValue.value.space_id = space_id;
   await handleSubmit();
 
   await nextTick();
-  const el = document.getElementById('sortable-container')!;
+  const el = document.getElementById(`${props.space_id}-sortable-container`)!;
 
   sortable.value = Sortable.create(el, {
     animation: 150,
@@ -104,32 +99,18 @@ async function load(params: { space_id: string }) {
       todo_list.value.splice(e.newIndex, 0, todo);
     },
   });
-}
-
-onMounted(async () => {
-  load(route.params);
 });
-
-watch(
-  () => route.params.space_id,
-  async () => {
-    load(route.params);
-  },
-);
 </script>
 
 <template>
-  <div class="mb-8 flex flex-row gap-2 px-4">
-    <Transition
-      mode="out-in"
-      enter-from-class="transform opacity-0"
-      enter-active-class="transition ease-out duration-200"
-      enter-to-class="transform opacity-100"
-    >
-      <div
-        v-if="space"
-        class="container flex max-w-2xl flex-col gap-2 self-start rounded border border-gray-300 bg-white py-4 pb-4 text-sm shadow"
-      >
+  <Transition
+    mode="out-in"
+    enter-from-class="transform opacity-0"
+    enter-active-class="transition ease-out duration-200"
+    enter-to-class="transform opacity-100"
+  >
+    <div v-if="space" class="rounded border border-gray-300 bg-white pb-4 text-sm shadow">
+      <div class="sticky top-0 z-10 bg-white pb-2 pt-4">
         <div class="flex justify-between px-4">
           <div>
             <div class="flex items-center text-lg font-bold">
@@ -206,7 +187,7 @@ watch(
                             updated_at: space.updated_at,
                           });
 
-                          router.replace({ name: '/todo/list' });
+                          // TODO 削除後の処理 画面にデータが残る
 
                           $toast.success('Data has been deleted.');
                         } finally {
@@ -242,11 +223,11 @@ watch(
 
           <form class="flex flex-row items-center gap-2 text-sm" @submit.prevent="handleSubmit">
             <label
-              for="status-active"
+              :for="`${props.space_id}-status-active`"
               class="flex items-center font-medium capitalize text-gray-900"
             >
               <input
-                id="status-active"
+                :id="`${props.space_id}-status-active`"
                 v-model="modelValue.todo_status"
                 type="radio"
                 value="active"
@@ -255,9 +236,12 @@ watch(
               />
               active
             </label>
-            <label for="status-done" class="flex items-center font-medium capitalize text-gray-900">
+            <label
+              :for="`${props.space_id}-status-done`"
+              class="flex items-center font-medium capitalize text-gray-900"
+            >
               <input
-                id="status-done"
+                :id="`${props.space_id}-status-done`"
                 v-model="modelValue.todo_status"
                 type="radio"
                 value="done"
@@ -273,31 +257,35 @@ watch(
             />
           </form>
         </div>
-
-        <ul id="sortable-container">
-          <li
-            v-for="(todo, i) of todo_list"
-            :key="todo.todo_id"
-            class="hover:bg-gray-100"
-            :class="{ 'bg-gray-100': todo.editing }"
-          >
-            <TodoForm
-              v-model="todo_list[i]"
-              class="px-6 py-2"
-              :file_list="todo_list[i].file_list"
-              :order="i"
-              @change="
-                () => {
-                  todo_list = todo_list.filter((_, index) => index !== i);
-                }
-              "
-            ></TodoForm>
-          </li>
-        </ul>
       </div>
-      <MyLoading v-else class="flex grow flex-col gap-8" />
-    </Transition>
-  </div>
+
+      <ul :id="`${props.space_id}-sortable-container`">
+        <li
+          v-for="(todo, i) of todo_list"
+          :key="todo.todo_id"
+          class="hover:bg-gray-100"
+          :class="{ 'bg-gray-100': todo.editing }"
+        >
+          <TodoForm
+            v-model="todo_list[i]"
+            class="px-6 py-2"
+            :file_list="todo_list[i].file_list"
+            :order="i"
+            @change="
+              () => {
+                todo_list = todo_list.filter((_, index) => index !== i);
+              }
+            "
+          ></TodoForm>
+        </li>
+        <div v-if="!loading && todo_list.length === 0" class="my-6 w-full text-center">
+          <div class="icon-[game-icons--night-sleep] h-12 w-12 bg-green-600 rtl:rotate-180"></div>
+          <div class="text-green-600">Nothing ToDo!</div>
+        </div>
+      </ul>
+    </div>
+    <MyLoading v-else class="flex grow flex-col gap-8" />
+  </Transition>
 </template>
 
 <style lang="postcss" scoped>
