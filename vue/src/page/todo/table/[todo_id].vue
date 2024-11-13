@@ -3,6 +3,7 @@ import type { z } from 'zod';
 import type { DownloadFile } from '~/component/MyDownloadFileList.vue';
 import { trpc } from '~/lib/trpc';
 import { useLoading } from '~/plugin/LoadingPlugin';
+import { useToast } from '~/plugin/ToastPlugin';
 import type SpaceSchema from '~/schema/zod/modelSchema/SpaceSchema';
 import TodoForm, { type ModelValue } from './component/TodoForm.vue';
 
@@ -28,11 +29,15 @@ onMounted(async () => {
   updated_at = todo.updated_at;
 });
 
+const $toast = useToast();
 const $loading = useLoading();
+
 async function handleSubmit(value: ModelValue) {
   const loading = $loading.open();
   try {
     await trpc.todo.update.mutate({ ...value, todo_id, updated_at });
+
+    $toast.success('Todo has been saved.');
 
     router.push({ name: '/todo/table/' });
   } finally {
@@ -105,6 +110,8 @@ async function handleSubmit(value: ModelValue) {
                 const loading = $loading.open();
                 try {
                   await trpc.todo.delete.mutate({ todo_id });
+
+                  $toast.success('Todo have been deleted.');
 
                   router.replace({ name: '/todo/table/' });
                 } finally {

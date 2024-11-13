@@ -134,7 +134,7 @@ export function createHandler<T extends z.ZodRawShape>(
   resolver: (opts: {
     ctx: { req: Request; res: Response; prisma: PrismaClient; next: NextFunction };
     input: z.infer<typeof schema>;
-  }) => Promise<unknown> | unknown,
+  }) => Promise<void> | void,
 ): RequestHandler {
   const handler: RequestHandler = async (req, res, next) => {
     try {
@@ -162,7 +162,7 @@ export function createHandler<T extends z.ZodRawShape>(
   return handler;
 }
 
-export function createProtecteHandler<T extends z.ZodRawShape>(
+export function createProtectHandler<T extends z.ZodRawShape>(
   schema: z.ZodEffects<z.ZodObject<T>> | z.ZodObject<T>,
   resolver: (opts: {
     ctx: {
@@ -173,7 +173,7 @@ export function createProtecteHandler<T extends z.ZodRawShape>(
       operator_id: number;
     };
     input: z.infer<typeof schema>;
-  }) => Promise<unknown> | unknown,
+  }) => Promise<void> | void,
 ): RequestHandler {
   const handler: RequestHandler = async (req, res, next) => {
     try {
