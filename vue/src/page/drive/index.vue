@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import dayjs from 'dayjs';
 import { MimetypeIcon, MimetypePreview } from '~/component/Mimetype';
 import MyInputFile from '~/component/MyInputFile.vue';
 import { useFile } from '~/composable/useFile';
 import { useValidate } from '~/composable/useValidate';
+import { dayjs } from '~/lib/dayjs';
 import { trpc, type RouterOutput } from '~/lib/trpc';
 import type { z } from '~/lib/zod';
 import { FileRouterSchema } from '~/schema/FileRouterSchema';

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import dayjs from 'dayjs';
 import { useFile } from '~/composable/useFile';
 import { useValidate } from '~/composable/useValidate';
+import { dayjs } from '~/lib/dayjs';
 import { trpc, type RouterOutput } from '~/lib/trpc';
 import type { z } from '~/lib/zod';
 import MyTag from '~/page/component/MyTag.vue';
