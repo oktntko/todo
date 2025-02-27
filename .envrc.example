@@ -1,1 +1,2 @@
 export DB_PORT=1234
+export EXPRESS_PORT=8081

@@ -85,7 +85,7 @@ server.on('error', (err) => {
 });
 
 export function listen() {
-  server.listen(env.PORT, () => {
-    log.info(`App is running at http://localhost:${env.PORT} in ${env.NODE_ENV} mode`);
+  server.listen(env.EXPRESS_PORT, () => {
+    log.info(`App is running at http://localhost:${env.EXPRESS_PORT} in ${env.NODE_ENV} mode`);
   });
 }
