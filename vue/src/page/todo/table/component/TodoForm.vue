@@ -64,7 +64,7 @@ onMounted(async () => {
                   width="16"
                   height="16"
                   decoding="async"
-                  class="h-4 w-4 rounded object-cover object-center"
+                  class="h-4 w-4 rounded-sm object-cover object-center"
                 />
                 <span v-else class="icon-[ri--image-circle-fill] h-4 w-4"></span>
                 <span class="ms-1">{{ modelValueSpace.space_name }}</span>
@@ -73,7 +73,7 @@ onMounted(async () => {
             </label>
           </template>
           <template #default>
-            <ul class="w-full rounded border border-gray-300 bg-white shadow-md">
+            <ul class="w-full rounded-sm border border-gray-300 bg-white shadow-md">
               <li
                 v-for="space of space_list"
                 :key="space.space_id"
@@ -91,7 +91,7 @@ onMounted(async () => {
                   width="16"
                   height="16"
                   decoding="async"
-                  class="h-4 w-4 rounded object-cover object-center"
+                  class="h-4 w-4 rounded-sm object-cover object-center"
                 />
                 <span v-else class="icon-[ri--image-circle-fill] h-4 w-4"></span>
                 <span class="ms-1">{{ space.space_name }}</span>
@@ -191,7 +191,12 @@ onMounted(async () => {
           files
           <button
             type="button"
-            :class="['button button-icon button-white secondary']"
+            :class="[
+              'inline-flex items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
+              'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
+              'rounded-3xl border p-1',
+              'button-white secondary',
+            ]"
             :disabled="!todo_id"
             @click="
               async () => {
@@ -222,7 +227,13 @@ onMounted(async () => {
     <section class="flex gap-2">
       <button
         type="submit"
-        :class="['button button-text button-green', 'capitalize']"
+        :class="[
+          'inline-flex items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
+          'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
+          'min-w-[120px] rounded-md border px-4 py-2 text-sm font-medium',
+          'border-green-700 bg-green-600 text-white hover:bg-green-800',
+          'capitalize',
+        ]"
         :disabled="!isDirty"
       >
         save

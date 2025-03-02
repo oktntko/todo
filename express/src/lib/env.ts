@@ -10,7 +10,7 @@ export const env = {
   get PROD() {
     return process.env.NODE_ENV === 'production';
   },
-  PORT: Number(process.env.PORT || 8080),
+  EXPRESS_PORT: Number(process.env.EXPRESS_PORT || 8080),
   session: {
     SESSION_SECRET: process.env.SESSION_SECRET || 'SESSION_SECRET',
     SESSION_NAME: process.env.SESSION_NAME || 'SESSION_NAME',

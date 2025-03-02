@@ -1,20 +1,14 @@
 // @ts-check
 
-import js from '@eslint/js';
+import eslint from '@eslint/js';
 import prettier from 'eslint-config-prettier';
 import vue from 'eslint-plugin-vue';
-import ts from 'typescript-eslint';
+import tseslint from 'typescript-eslint';
 
-export default ts.config(
-  {
-    files: ['**/*.{.vue,js,ts,mjs,mts,cjs,cts,jsx,tsx}'],
-  },
-  js.configs.recommended,
-  ...ts.configs.recommended,
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
+export default tseslint.config(
+  eslint.configs.recommended,
+  ...tseslint.configs.recommended,
   ...vue.configs['flat/recommended'],
-  prettier,
   {
     files: ['*.vue', '**/*.vue'],
     languageOptions: {
@@ -22,13 +16,6 @@ export default ts.config(
         parser: '@typescript-eslint/parser',
       },
     },
-  },
-  {
-    globals: {
-      definePage: 'readonly',
-    },
-  },
-  {
     rules: {
       'no-undef': 'off', // When using TypeScript, we recommend to disable no-undef rule directly as TypeScript already check for them and you don't need to worry about this.
       '@typescript-eslint/ban-ts-ignore': 'off',
@@ -48,4 +35,6 @@ export default ts.config(
       'vue/prop-name-casing': ['warn', 'snake_case'],
     },
   },
+  { extends: [prettier] },
+  { ignores: ['dist/*'] },
 );

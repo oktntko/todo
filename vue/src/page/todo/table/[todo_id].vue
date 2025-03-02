@@ -100,7 +100,13 @@ async function handleSubmit(value: ModelValue) {
         <template #buttons>
           <button
             type="button"
-            :class="['button button-text button-yellow secondary', 'capitalize']"
+            :class="[
+              'inline-flex items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
+              'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
+              'min-w-[120px] rounded-md border px-4 py-2 text-sm font-medium',
+              'border-yellow-500 bg-white text-yellow-800 hover:bg-yellow-500 hover:text-gray-800',
+              'capitalize',
+            ]"
             @click="
               async () => {
                 const yes = await $dialog.confirm(`Do you really want to delete this data?`);

@@ -60,12 +60,12 @@ async function handleFileInput(files?: FileList | null) {
               width="64"
               height="64"
               decoding="async"
-              class="h-16 w-16 rounded object-cover object-center"
+              class="h-16 w-16 rounded-sm object-cover object-center"
               alt="space image"
             />
             <button
               type="button"
-              class="absolute right-[-8px] top-[-8px] flex h-4 w-4 items-center justify-center rounded-full border border-gray-300 bg-white text-gray-900 transition-colors hover:bg-gray-200"
+              class="absolute top-[-8px] right-[-8px] flex h-4 w-4 cursor-pointer items-center justify-center rounded-full border border-gray-300 bg-white text-gray-900 transition-colors hover:bg-gray-200"
               aria-label="Close"
               @click="modelValue.space_image = ''"
             >
@@ -77,7 +77,7 @@ async function handleFileInput(files?: FileList | null) {
           <label
             v-else
             :class="[
-              'flex h-16 w-16 cursor-pointer flex-col items-center justify-center gap-0.5 rounded border-2 border-dashed border-gray-300 bg-gray-100 px-1 text-center text-gray-400 transition-colors hover:bg-gray-200',
+              'relative flex h-16 w-16 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-sm border-2 border-dashed border-gray-300 bg-gray-100 px-1 text-center text-gray-400 transition-colors hover:bg-gray-200',
               dragging ? 'border-gray-500 bg-gray-200' : '',
             ]"
             @dragenter="dragging = true"
@@ -147,7 +147,13 @@ async function handleFileInput(files?: FileList | null) {
     <section class="flex gap-2">
       <button
         type="submit"
-        :class="['button button-text button-green', 'capitalize']"
+        :class="[
+          'inline-flex items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
+          'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
+          'min-w-[120px] rounded-md border px-4 py-2 text-sm font-medium',
+          'border-green-700 bg-green-600 text-white hover:bg-green-800',
+          'capitalize',
+        ]"
         :disabled="!isDirty"
       >
         save

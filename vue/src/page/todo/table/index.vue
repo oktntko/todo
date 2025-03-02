@@ -123,7 +123,7 @@ const headerCheckbox = computed(() => {
               v-for="todo_status of TodoStatusList"
               :key="todo_status"
               :for="`status-${todo_status}`"
-              class="flex items-center font-medium capitalize text-gray-900"
+              class="flex items-center font-medium text-gray-900 capitalize"
             >
               <input
                 :id="`status-${todo_status}`"
@@ -143,7 +143,13 @@ const headerCheckbox = computed(() => {
       <section class="flex gap-2">
         <button
           type="submit"
-          :class="['button button-text button-green', 'capitalize']"
+          :class="[
+            'inline-flex items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
+            'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
+            'min-w-[120px] rounded-md border px-4 py-2 text-sm font-medium',
+            'border-green-700 bg-green-600 text-white hover:bg-green-800',
+            'capitalize',
+          ]"
           :disabled="loading"
         >
           <span class="icon-[bx--search] h-4 w-4"></span>
@@ -157,7 +163,13 @@ const headerCheckbox = computed(() => {
         class="z-10 flex flex-row items-center gap-2 rounded-t border border-gray-300 bg-gray-50 p-2 px-4 py-2 text-sm"
       >
         <RouterLink
-          :class="['button button-text button-blue secondary', 'capitalize']"
+          :class="[
+            'inline-flex items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
+            'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
+            'min-w-[120px] rounded-md border px-4 py-2 text-sm font-medium',
+            'border-blue-700 bg-white text-blue-700 hover:bg-blue-800 hover:text-white',
+            'capitalize',
+          ]"
           :to="{ name: '/todo/table/add' }"
         >
           <span class="icon-[icon-park-solid--add-one] h-4 w-4"></span>
@@ -165,7 +177,13 @@ const headerCheckbox = computed(() => {
         </RouterLink>
         <button
           type="button"
-          :class="['button button-text button-green secondary', 'capitalize']"
+          :class="[
+            'inline-flex items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
+            'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
+            'min-w-[120px] rounded-md border px-4 py-2 text-sm font-medium',
+            'border-green-700 bg-white text-green-700 hover:bg-green-800 hover:text-white',
+            'capitalize',
+          ]"
           :disabled="loading || checkedList.length === 0"
           @click="
             async () => {
@@ -194,7 +212,13 @@ const headerCheckbox = computed(() => {
         </button>
         <button
           type="button"
-          :class="['button button-text button-white secondary', 'capitalize']"
+          :class="[
+            'inline-flex items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
+            'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
+            'min-w-[120px] rounded-md border px-4 py-2 text-sm font-medium',
+            'border-gray-300 bg-white text-gray-800 hover:bg-gray-200',
+            'capitalize',
+          ]"
           :disabled="loading || checkedList.length === 0"
           @click="
             async () => {
@@ -218,7 +242,13 @@ const headerCheckbox = computed(() => {
         </button>
         <button
           type="button"
-          :class="['button button-text button-white secondary', 'capitalize']"
+          :class="[
+            'inline-flex items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
+            'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
+            'min-w-[120px] rounded-md border px-4 py-2 text-sm font-medium',
+            'border-gray-300 bg-white text-gray-800 hover:bg-gray-200',
+            'capitalize',
+          ]"
           :disabled="loading || checkedList.length === 0"
           @click="
             async () => {
@@ -245,12 +275,24 @@ const headerCheckbox = computed(() => {
       </header>
 
       <table
-        class="h-full w-full overflow-x-auto rounded border border-gray-300 bg-gray-50 text-sm"
+        class="h-full w-full overflow-x-auto rounded-sm border border-gray-300 bg-gray-50 text-sm"
       >
         <thead class="text-gray-900">
           <tr class="divide-x divide-gray-200">
-            <th scope="col" class="column">No</th>
-            <th scope="col" class="column">
+            <th
+              scope="col"
+              :class="[
+                'sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize',
+              ]"
+            >
+              No
+            </th>
+            <th
+              scope="col"
+              :class="[
+                'sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize',
+              ]"
+            >
               <label class="flex h-full justify-center hover:cursor-pointer">
                 <input
                   type="checkbox"
@@ -266,7 +308,12 @@ const headerCheckbox = computed(() => {
                 />
               </label>
             </th>
-            <th scope="col" class="column">
+            <th
+              scope="col"
+              :class="[
+                'sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize',
+              ]"
+            >
               <div class="flex items-center justify-center">
                 space
                 <MySortButton
@@ -276,7 +323,12 @@ const headerCheckbox = computed(() => {
                 ></MySortButton>
               </div>
             </th>
-            <th scope="col" class="column">
+            <th
+              scope="col"
+              :class="[
+                'sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize',
+              ]"
+            >
               <div class="flex items-center justify-center">
                 title
                 <MySortButton
@@ -286,7 +338,12 @@ const headerCheckbox = computed(() => {
                 ></MySortButton>
               </div>
             </th>
-            <th scope="col" class="column">
+            <th
+              scope="col"
+              :class="[
+                'sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize',
+              ]"
+            >
               <div class="flex items-center justify-center">
                 begin
                 <MySortButton
@@ -296,7 +353,12 @@ const headerCheckbox = computed(() => {
                 ></MySortButton>
               </div>
             </th>
-            <th scope="col" class="column">
+            <th
+              scope="col"
+              :class="[
+                'sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize',
+              ]"
+            >
               <div class="flex items-center justify-center">
                 limit
                 <MySortButton
@@ -306,7 +368,12 @@ const headerCheckbox = computed(() => {
                 ></MySortButton>
               </div>
             </th>
-            <th scope="col" class="column">
+            <th
+              scope="col"
+              :class="[
+                'sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize',
+              ]"
+            >
               <div class="flex items-center justify-center">
                 description
                 <MySortButton
@@ -316,9 +383,28 @@ const headerCheckbox = computed(() => {
                 ></MySortButton>
               </div>
             </th>
-            <th scope="col" class="column">tags</th>
-            <th scope="col" class="column">files</th>
-            <th scope="col" class="column">
+            <th
+              scope="col"
+              :class="[
+                'sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize',
+              ]"
+            >
+              tags
+            </th>
+            <th
+              scope="col"
+              :class="[
+                'sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize',
+              ]"
+            >
+              files
+            </th>
+            <th
+              scope="col"
+              :class="[
+                'sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize',
+              ]"
+            >
               <div class="flex items-center justify-center">
                 done
                 <MySortButton
@@ -328,7 +414,12 @@ const headerCheckbox = computed(() => {
                 ></MySortButton>
               </div>
             </th>
-            <th scope="col" class="column">
+            <th
+              scope="col"
+              :class="[
+                'sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize',
+              ]"
+            >
               <div class="flex items-center justify-center">
                 created
                 <MySortButton
@@ -338,7 +429,12 @@ const headerCheckbox = computed(() => {
                 ></MySortButton>
               </div>
             </th>
-            <th scope="col" class="column">
+            <th
+              scope="col"
+              :class="[
+                'sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize',
+              ]"
+            >
               <div class="flex items-center justify-center">
                 updated
                 <MySortButton
@@ -383,7 +479,7 @@ const headerCheckbox = computed(() => {
                   width="16"
                   height="16"
                   decoding="async"
-                  class="h-4 w-4 rounded object-cover object-center"
+                  class="h-4 w-4 rounded-sm object-cover object-center"
                 />
                 <span v-else class="icon-[ri--image-circle-fill] h-4 w-4"></span>
                 <span> {{ todo.space.space_name }} </span>
@@ -406,7 +502,7 @@ const headerCheckbox = computed(() => {
             </td>
             <td class="max-w-48">
               <div
-                class="line-clamp-4 min-w-28 whitespace-pre-wrap break-words px-2 py-1"
+                class="line-clamp-4 min-w-28 px-2 py-1 break-words whitespace-pre-wrap"
                 :title="todo.description"
               >
                 {{ todo.description }}
@@ -422,7 +518,7 @@ const headerCheckbox = computed(() => {
             </td>
             <td class="max-w-48">
               <div
-                class="line-clamp-4 min-w-28 break-all px-2 py-1"
+                class="line-clamp-4 min-w-28 px-2 py-1 break-all"
                 :title="todo.file_list.map((x) => x.filename).join(',')"
               >
                 <span v-for="file of todo.file_list" :key="file.file_id" class="mr-1 text-xs">
@@ -461,7 +557,7 @@ const headerCheckbox = computed(() => {
           <span class="capitalize">items per page</span>
           <select
             v-model.number="modelValue.limit"
-            class="inline-block rounded border border-gray-300 bg-white px-2 py-1 text-sm text-gray-900"
+            class="inline-block rounded-sm border border-gray-300 bg-white px-2 py-1 text-sm text-gray-900"
             :disabled="loading"
             @change="
               () => {
@@ -502,8 +598,8 @@ const headerCheckbox = computed(() => {
               :disabled="loading"
               @change="handleSubmit"
             />
-            <span class="absolute -top-3 end-0 text-xs text-gray-500"> max </span>
-            <span class="absolute -bottom-3 end-0 text-xs text-gray-500">
+            <span class="absolute end-0 -top-3 text-xs text-gray-500"> max </span>
+            <span class="absolute end-0 -bottom-3 text-xs text-gray-500">
               {{ Math.ceil(data.total / modelValue.limit) }}
             </span>
           </div>
@@ -513,7 +609,7 @@ const headerCheckbox = computed(() => {
             min="1"
             :max="Math.ceil(data.total / modelValue.limit)"
             step="1"
-            class="inline-block rounded border border-gray-300 bg-white px-2 py-1 text-gray-900"
+            class="inline-block rounded-sm border border-gray-300 bg-white px-2 py-1 text-gray-900"
             :disabled="loading"
             @change="handleSubmit"
           />
@@ -522,9 +618,3 @@ const headerCheckbox = computed(() => {
     </div>
   </div>
 </template>
-
-<style lang="postcss">
-.column {
-  @apply sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize;
-}
-</style>

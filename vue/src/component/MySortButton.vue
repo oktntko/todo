@@ -16,7 +16,7 @@ defineProps<Props>();
   <button
     v-bind="$props"
     :title="field === sort.field ? sort.order : ''"
-    class="inline-flex items-center justify-center rounded-full p-1 transition-colors hover:bg-gray-200"
+    class="inline-flex cursor-pointer items-center justify-center rounded-full p-1 transition-colors hover:bg-gray-200"
     :class="{ 'text-blue-500': field === sort.field }"
   >
     <span

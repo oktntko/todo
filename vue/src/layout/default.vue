@@ -107,25 +107,25 @@ fetchTagList();
     </aside>
 
     <div
-      class="flex min-h-screen grow flex-col bg-gradient-to-b from-white to-gray-200 text-gray-900"
+      class="flex min-h-screen grow flex-col bg-linear-to-b from-white to-gray-200 text-gray-900"
     >
       <header class="flex h-16 flex-row flex-nowrap items-center justify-between p-4">
         <nav class="flex items-center">
           <button
             type="button"
             :class="[
-              'flex w-48 items-center gap-2 rounded-lg border border-gray-300 bg-gray-100 px-2 py-1 text-sm text-gray-900 transition-colors hover:border-blue-500 hover:bg-white hover:ring-blue-500',
+              'flex w-48 cursor-pointer items-center gap-2 rounded-lg border border-gray-300 bg-gray-100 px-2 py-1 text-sm text-gray-900 transition-colors hover:border-blue-500 hover:bg-white hover:ring-blue-500',
             ]"
           >
             <span class="icon-[bx--search] h-4 w-4"> </span>
-            <span class="capitalize text-gray-500">search</span>
+            <span class="text-gray-500 capitalize">search</span>
           </button>
         </nav>
 
         <nav class="flex items-center gap-2">
           <button
             type="button"
-            class="flex items-center justify-center rounded-full p-1.5 transition-colors hover:bg-gray-200"
+            class="relative flex cursor-pointer items-center justify-center rounded-full p-1.5 transition-colors hover:bg-gray-200"
             title="bookmark"
           >
             <span class="icon-[bxs--bookmark] h-5 w-5"></span>
@@ -133,7 +133,7 @@ fetchTagList();
           </button>
           <button
             type="button"
-            class="flex items-center justify-center rounded-full p-1.5 transition-colors hover:bg-gray-200"
+            class="relative flex cursor-pointer items-center justify-center rounded-full p-1.5 transition-colors hover:bg-gray-200"
             title="notification"
           >
             <span class="icon-[bx--notification] h-5 w-5"></span>
@@ -141,7 +141,7 @@ fetchTagList();
           </button>
           <button
             type="button"
-            class="flex items-center justify-center rounded-full p-1.5 transition-colors hover:bg-gray-200"
+            class="relative flex cursor-pointer items-center justify-center rounded-full p-1.5 transition-colors hover:bg-gray-200"
             title="avatar"
           >
             <span class="icon-[radix-icons--avatar] h-5 w-5"></span>

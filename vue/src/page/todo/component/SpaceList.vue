@@ -60,12 +60,12 @@ watchDeep(modelValue, () => debounce.call());
       </div>
       <input
         v-model="modelValue.where.space_keyword"
-        class="inline-block w-full rounded-s-lg border border-gray-300 bg-white py-1 pe-2 ps-6 text-gray-900"
+        class="inline-block w-full rounded-s-lg border border-gray-300 bg-white py-1 ps-6 pe-2 text-gray-900"
         maxlength="255"
       />
       <button
         type="button"
-        class="inline-flex items-center rounded-e-lg border-y border-e border-gray-300 bg-white p-1.5"
+        class="inline-flex cursor-pointer items-center rounded-e-lg border-y border-e border-gray-300 bg-white p-1.5"
         @click="
           () => {
             modelValue.sort.order = modelValue.sort.order === 'desc' ? 'asc' : 'desc';
@@ -105,7 +105,7 @@ watchDeep(modelValue, () => debounce.call());
                 width="16"
                 height="16"
                 decoding="async"
-                class="h-4 w-4 rounded object-cover object-center"
+                class="h-4 w-4 rounded-sm object-cover object-center"
               />
               <span v-else class="icon-[ri--image-circle-fill] h-4 w-4"></span>
               <span class="ms-1">{{ space.space_name }}</span>
@@ -114,7 +114,7 @@ watchDeep(modelValue, () => debounce.call());
           <li>
             <button
               type="button"
-              class="group flex w-full items-center rounded-e-full p-2 text-blue-600 transition duration-75 hover:bg-gray-200"
+              class="group flex w-full cursor-pointer items-center rounded-e-full p-2 text-blue-600 transition duration-75 hover:bg-gray-200"
               @click="
                 async () => {
                   if (data == null) return;

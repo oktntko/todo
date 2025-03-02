@@ -48,7 +48,7 @@ const displayTagList = computed(() =>
         aria-orientation="vertical"
         tabindex="-1"
       >
-        <ul class="rounded border border-gray-300 bg-white shadow-md">
+        <ul class="rounded-sm border border-gray-300 bg-white shadow-md">
           <li
             v-for="tag of tagStoreData.tag_list"
             :key="tag.tag_id"

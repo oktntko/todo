@@ -18,7 +18,7 @@ const { validateSubmit, ErrorMessage } = useValidate(AuthRouterSchema.signinInpu
 </script>
 
 <template>
-  <div class="bg-gradient-to-b from-white to-gray-200">
+  <div class="bg-linear-to-b from-white to-gray-200">
     <div class="mx-auto flex h-screen flex-col items-center justify-center px-6 py-8 lg:py-0">
       <!-- タイトル -->
       <h1 class="mx-auto mb-6 flex items-center gap-1 text-2xl font-semibold">
@@ -87,7 +87,7 @@ const { validateSubmit, ErrorMessage } = useValidate(AuthRouterSchema.signinInpu
           <section>
             <button
               :class="[
-                'inline-flex items-center justify-center shadow-sm transition-all focus:outline-none focus:ring',
+                'inline-flex cursor-pointer items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
                 'min-w-[120px] rounded-md border px-4 py-2 text-sm font-medium',
                 'border-green-700 bg-green-600 text-white hover:bg-green-800',
                 'w-full',

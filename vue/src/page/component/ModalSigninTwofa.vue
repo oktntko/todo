@@ -57,7 +57,7 @@ defineEmits<{
       <button
         type="submit"
         :class="[
-          'inline-flex items-center justify-center shadow-sm transition-all focus:outline-none focus:ring',
+          'inline-flex cursor-pointer items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
           'min-w-[120px] rounded-md border px-4 py-2 text-sm font-medium',
           'border-green-700 bg-green-600 text-white hover:bg-green-800',
         ]"

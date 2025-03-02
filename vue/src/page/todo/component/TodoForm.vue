@@ -91,7 +91,7 @@ watch(
     >
       <button
         type="button"
-        class="my-handle flex cursor-move items-center justify-center"
+        class="my-handle relative flex cursor-move items-center justify-center"
         title="handle"
       >
         <span class="icon-[radix-icons--drag-handle-dots-2] h-5 w-5"></span>
@@ -104,7 +104,7 @@ watch(
         <button
           v-if="status.save === '' && modelValue.done_at == null"
           type="button"
-          class="group flex items-center justify-center rounded-full text-gray-900 transition-colors hover:bg-gray-200 hover:text-green-500"
+          class="group relative flex cursor-pointer items-center justify-center rounded-full text-gray-900 transition-colors hover:bg-gray-200 hover:text-green-500"
           title="done"
           @click.prevent="
             async () => {
@@ -115,14 +115,14 @@ watch(
           "
         >
           <span
-            class="icon-[material-symbols--circle-outline] h-5 w-5 group-hover:icon-[material-symbols--check-circle-outline-rounded] group-hover:h-5 group-hover:w-5"
+            class="icon-[material-symbols--circle-outline] group-hover:icon-[material-symbols--check-circle-outline-rounded] h-5 w-5 group-hover:h-5 group-hover:w-5"
           ></span>
           <span class="sr-only capitalize">done</span>
         </button>
         <button
           v-if="status.save === '' && modelValue.done_at != null"
           type="button"
-          class="group flex items-center justify-center rounded-full text-green-500 transition-colors hover:bg-gray-200 hover:text-gray-900"
+          class="group relative flex cursor-pointer items-center justify-center rounded-full text-green-500 transition-colors hover:bg-gray-200 hover:text-gray-900"
           title="active"
           @click.prevent="
             async () => {
@@ -133,13 +133,13 @@ watch(
           "
         >
           <span
-            class="icon-[material-symbols--check-circle-outline-rounded] h-5 w-5 group-hover:icon-[material-symbols--circle-outline] group-hover:h-5 group-hover:w-5"
+            class="icon-[material-symbols--check-circle-outline-rounded] group-hover:icon-[material-symbols--circle-outline] h-5 w-5 group-hover:h-5 group-hover:w-5"
           ></span>
           <span class="sr-only capitalize">done</span>
         </button>
         <div
           v-if="status.save === 'saving...'"
-          class="flex items-center justify-center rounded-full transition-colors"
+          class="relative flex items-center justify-center rounded-full transition-colors"
           title="status"
         >
           <span class="icon-[eos-icons--bubble-loading] h-5 w-5 text-gray-500"></span>
@@ -147,7 +147,7 @@ watch(
         </div>
         <div
           v-if="status.save === 'saved!'"
-          class="flex items-center justify-center rounded-full transition-colors"
+          class="relative flex items-center justify-center rounded-full transition-colors"
           title="status"
         >
           <span class="icon-[bi--brightness-high-fill] h-5 w-5 text-pink-500"></span>
@@ -160,7 +160,7 @@ watch(
           <input
             v-model.trim="modelValue.title"
             type="text"
-            class="block w-full border-b border-b-gray-400 bg-inherit pb-0.5 outline-none sm:text-sm"
+            class="block w-full border-b border-b-gray-400 bg-inherit pb-0.5 outline-hidden sm:text-sm"
             placeholder="Title"
             maxlength="100"
             @input="handleInput"
@@ -170,7 +170,7 @@ watch(
             <template #button="{ toggle }">
               <button
                 type="button"
-                class="flex items-center justify-center rounded-full p-0.5 transition-colors hover:bg-gray-200"
+                class="relative flex cursor-pointer items-center justify-center rounded-full p-0.5 transition-colors hover:bg-gray-200"
                 @click="toggle"
               >
                 <span class="icon-[bx--menu] h-4 w-4"></span>
@@ -178,11 +178,11 @@ watch(
               </button>
             </template>
             <template #default>
-              <ul class="w-48 rounded border border-gray-300 bg-white shadow-md">
+              <ul class="w-48 rounded-sm border border-gray-300 bg-white shadow-md">
                 <li>
                   <button
                     type="button"
-                    class="group flex w-full items-center p-2 transition duration-75 hover:bg-gray-200 disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100"
+                    class="group flex w-full cursor-pointer items-center p-2 transition duration-75 hover:bg-gray-200 disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100"
                     :disabled="modelValue.is_new"
                     @click="
                       async () => {
@@ -215,7 +215,7 @@ watch(
                 <li>
                   <button
                     type="button"
-                    class="group flex w-full items-center p-2 text-yellow-600 transition duration-75 hover:bg-gray-200"
+                    class="group flex w-full cursor-pointer items-center p-2 text-yellow-600 transition duration-75 hover:bg-gray-200"
                     @click="
                       async () => {
                         if (!modelValue.is_new) {
@@ -257,7 +257,7 @@ watch(
                 :id="`${modelValue.todo_id}-begin_date`"
                 v-model="modelValue.begin_date"
                 type="date"
-                class="block border-b border-b-gray-400 bg-inherit pb-0.5 outline-none sm:text-sm"
+                class="block border-b border-b-gray-400 bg-inherit pb-0.5 outline-hidden sm:text-sm"
                 @input="handleInput"
               />
             </div>
@@ -266,7 +266,7 @@ watch(
                 :id="`${modelValue.todo_id}-begin_time`"
                 v-model="modelValue.begin_time"
                 type="time"
-                class="block border-b border-b-gray-400 bg-inherit pb-0.5 outline-none sm:text-sm"
+                class="block border-b border-b-gray-400 bg-inherit pb-0.5 outline-hidden sm:text-sm"
                 @input="handleInput"
               />
             </div>
@@ -278,7 +278,7 @@ watch(
                 :id="`${modelValue.todo_id}-limit_date`"
                 v-model="modelValue.limit_date"
                 type="date"
-                class="block border-b border-b-gray-400 bg-inherit pb-0.5 outline-none sm:text-sm"
+                class="block border-b border-b-gray-400 bg-inherit pb-0.5 outline-hidden sm:text-sm"
                 @input="handleInput"
               />
             </div>
@@ -287,7 +287,7 @@ watch(
                 :id="`${modelValue.todo_id}-limit_time`"
                 v-model="modelValue.limit_time"
                 type="time"
-                class="block border-b border-b-gray-400 bg-inherit pb-0.5 outline-none sm:text-sm"
+                class="block border-b border-b-gray-400 bg-inherit pb-0.5 outline-hidden sm:text-sm"
                 @input="handleInput"
               />
             </div>
@@ -299,7 +299,7 @@ watch(
             v-show="modelValue.editing"
             :id="`${modelValue.todo_id}-description`"
             v-model.trim="modelValue.description"
-            class="block w-full border-b border-b-gray-400 bg-inherit pb-0.5 outline-none"
+            class="block w-full border-b border-b-gray-400 bg-inherit pb-0.5 outline-hidden"
             rows="4"
             maxlength="400"
             placeholder="Description"
@@ -308,7 +308,7 @@ watch(
           <label
             v-show="!modelValue.editing && modelValue.description"
             :for="`${modelValue.todo_id}-description`"
-            class="inline-block max-w-full whitespace-pre-wrap break-words text-gray-500"
+            class="inline-block max-w-full break-words whitespace-pre-wrap text-gray-500"
           >
             {{ modelValue.description }}
           </label>

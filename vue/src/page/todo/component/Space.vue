@@ -85,8 +85,8 @@ onMounted(async () => {
   sortable.value = Sortable.create(el, {
     animation: 150,
     handle: '.my-handle',
-    chosenClass: 'chosenClass',
-    dragClass: 'dragClass',
+    chosenClass: 'bg-blue-100',
+    dragClass: 'bg-blue-100',
 
     onEnd(e) {
       if (e.oldIndex == null || e.newIndex == null || e.oldIndex === e.newIndex) return;
@@ -109,8 +109,8 @@ onMounted(async () => {
     enter-active-class="transition ease-out duration-200"
     enter-to-class="transform opacity-100"
   >
-    <div v-if="space" class="rounded border border-gray-300 bg-white pb-4 text-sm shadow">
-      <div class="sticky top-0 z-10 bg-white pb-2 pt-4">
+    <div v-if="space" class="rounded-sm border border-gray-300 bg-white pb-4 text-sm shadow-sm">
+      <div class="sticky top-0 z-10 bg-white pt-4 pb-2">
         <div class="flex justify-between px-4">
           <div>
             <div class="flex items-center text-lg font-bold">
@@ -120,14 +120,14 @@ onMounted(async () => {
                 width="24"
                 height="24"
                 decoding="async"
-                class="h-6 w-6 rounded object-cover object-center"
+                class="h-6 w-6 rounded-sm object-cover object-center"
               />
               <span v-else class="icon-[ri--image-circle-fill] h-6 w-6"></span>
               <span class="ms-1">{{ space.space_name }}</span>
             </div>
             <div
               v-if="space.space_description"
-              class="ml-4 inline-block max-w-full whitespace-pre-wrap break-words text-xs text-gray-500"
+              class="ml-4 inline-block max-w-full text-xs break-words whitespace-pre-wrap text-gray-500"
             >
               {{ space.space_description }}
             </div>
@@ -137,7 +137,7 @@ onMounted(async () => {
             <template #button="{ toggle }">
               <button
                 type="button"
-                class="flex items-center justify-center rounded-full p-1.5 transition-colors hover:bg-gray-200"
+                class="relative flex cursor-pointer items-center justify-center rounded-full p-1.5 transition-colors hover:bg-gray-200"
                 @click="toggle"
               >
                 <span class="icon-[bx--menu] h-4 w-4"></span>
@@ -145,11 +145,11 @@ onMounted(async () => {
               </button>
             </template>
             <template #default>
-              <ul class="w-48 rounded border border-gray-300 bg-white shadow-md">
+              <ul class="w-48 rounded-sm border border-gray-300 bg-white shadow-md">
                 <li>
                   <button
                     type="button"
-                    class="group flex w-full items-center p-2 text-blue-600 transition duration-75 hover:bg-gray-200"
+                    class="group flex w-full cursor-pointer items-center p-2 text-blue-600 transition duration-75 hover:bg-gray-200"
                     @click="
                       async () => {
                         if (space == null) return;
@@ -172,7 +172,7 @@ onMounted(async () => {
                 <li>
                   <button
                     type="button"
-                    class="group flex w-full items-center p-2 text-yellow-600 transition duration-75 hover:bg-gray-200"
+                    class="group flex w-full cursor-pointer items-center p-2 text-yellow-600 transition duration-75 hover:bg-gray-200"
                     @click="
                       async () => {
                         if (space == null) return;
@@ -205,10 +205,10 @@ onMounted(async () => {
           </MyDropdown>
         </div>
 
-        <div class="flex flex-row items-center gap-2 pe-4 ps-2 text-sm">
+        <div class="flex flex-row items-center gap-2 ps-2 pe-4 text-sm">
           <button
             type="button"
-            class="group flex items-center rounded-full px-4 py-2 text-blue-600 transition duration-75 hover:bg-gray-200"
+            class="group flex cursor-pointer items-center rounded-full px-4 py-2 text-blue-600 transition duration-75 hover:bg-gray-200"
             @click="
               () => {
                 if (space == null) return;
@@ -224,7 +224,7 @@ onMounted(async () => {
           <form class="flex flex-row items-center gap-2 text-sm" @submit.prevent="handleSubmit">
             <label
               :for="`${props.space_id}-status-active`"
-              class="flex items-center font-medium capitalize text-gray-900"
+              class="flex items-center font-medium text-gray-900 capitalize"
             >
               <input
                 :id="`${props.space_id}-status-active`"
@@ -238,7 +238,7 @@ onMounted(async () => {
             </label>
             <label
               :for="`${props.space_id}-status-done`"
-              class="flex items-center font-medium capitalize text-gray-900"
+              class="flex items-center font-medium text-gray-900 capitalize"
             >
               <input
                 :id="`${props.space_id}-status-done`"
@@ -253,7 +253,7 @@ onMounted(async () => {
 
             <span
               v-show="loading"
-              class="icon-[svg-spinners--3-dots-fade] h-4 w-4 animate-pulse text-gray-600 text-opacity-60"
+              class="icon-[svg-spinners--3-dots-fade] text-opacity-60 h-4 w-4 animate-pulse text-gray-600"
             />
           </form>
         </div>
@@ -287,12 +287,3 @@ onMounted(async () => {
     <MyLoading v-else class="flex grow flex-col gap-8" />
   </Transition>
 </template>
-
-<style lang="postcss" scoped>
-.chosenClass {
-  @apply bg-blue-100;
-}
-.dragClass {
-  @apply bg-blue-100;
-}
-</style>

@@ -1,6 +1,7 @@
 import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vite';
 
+import tailwindcss from '@tailwindcss/vite';
 import Vue from '@vitejs/plugin-vue';
 import VueJsx from '@vitejs/plugin-vue-jsx';
 import AutoImport from 'unplugin-auto-import/vite';
@@ -45,6 +46,7 @@ export default defineConfig({
       resolvers: [VueUseComponentsResolver()],
       dts: 'src/vue-components.d.ts',
     }),
+    tailwindcss(),
   ],
   resolve: {
     alias: {
@@ -54,7 +56,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8080',
+        target: `http://localhost:${process.env.EXPRESS_PORT || 8080}`,
         changeOrigin: true,
       },
     },

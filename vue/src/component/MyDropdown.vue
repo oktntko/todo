@@ -4,9 +4,7 @@ function toggle() {
   showMenu.value = !showMenu.value;
 }
 
-withDefaults(defineProps<{ innerClass?: string }>(), {
-  innerClass: '',
-});
+const { innerClass = '' } = defineProps<{ innerClass?: string }>();
 </script>
 
 <template>
