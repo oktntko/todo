@@ -198,7 +198,7 @@ async function searchFile(
   };
   log.debug(reqid, 'where', where);
 
-  const orderBy: Prisma.TodoOrderByWithRelationInput = { [input.sort.field]: input.sort.order };
+  const orderBy: Prisma.FileOrderByWithRelationInput = { [input.sort.field]: input.sort.order };
   log.debug(reqid, 'orderBy', orderBy);
 
   const total = await FileRepository.countFile(prisma, {
