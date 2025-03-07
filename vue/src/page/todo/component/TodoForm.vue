@@ -164,7 +164,7 @@ watch(
           <input
             v-model.trim="modelValue.title"
             type="text"
-            class="block w-full border-b border-b-gray-400 bg-inherit pb-0.5 outline-hidden sm:text-sm"
+            class="block w-full border-b border-b-gray-400 bg-inherit pb-0.5 text-sm font-bold outline-hidden"
             placeholder="Title"
             maxlength="100"
             @input="handleInput"
@@ -245,18 +245,9 @@ watch(
           </MyDropdown>
         </div>
 
-        <div
-          v-if="
-            modelValue.editing ||
-            modelValue.limit_date ||
-            modelValue.limit_time ||
-            modelValue.begin_date ||
-            modelValue.begin_time
-          "
-          class="flex flex-row items-center justify-start gap-2"
-        >
+        <div class="flex flex-row items-center justify-start gap-2">
           <div class="flex flex-row gap-2">
-            <div v-show="modelValue.editing || modelValue.begin_date">
+            <div>
               <input
                 :id="`${modelValue.todo_id}-begin_date`"
                 v-model="modelValue.begin_date"
@@ -265,7 +256,7 @@ watch(
                 @input="handleInput"
               />
             </div>
-            <div v-show="modelValue.editing || modelValue.begin_time">
+            <div>
               <input
                 :id="`${modelValue.todo_id}-begin_time`"
                 v-model="modelValue.begin_time"
@@ -277,7 +268,7 @@ watch(
           </div>
           <div>～</div>
           <div class="flex flex-row gap-2">
-            <div v-show="modelValue.editing || modelValue.limit_date">
+            <div>
               <input
                 :id="`${modelValue.todo_id}-limit_date`"
                 v-model="modelValue.limit_date"
@@ -286,7 +277,7 @@ watch(
                 @input="handleInput"
               />
             </div>
-            <div v-show="modelValue.editing || modelValue.limit_time">
+            <div>
               <input
                 :id="`${modelValue.todo_id}-limit_time`"
                 v-model="modelValue.limit_time"
@@ -298,9 +289,8 @@ watch(
           </div>
         </div>
 
-        <div v-if="modelValue.editing || modelValue.description" class="text-xs">
+        <div class="text-xs">
           <textarea
-            v-show="modelValue.editing"
             :id="`${modelValue.todo_id}-description`"
             v-model.trim="modelValue.description"
             class="block field-sizing-content w-full border-b border-b-gray-400 bg-inherit pb-0.5 outline-hidden"
@@ -308,31 +298,14 @@ watch(
             placeholder="Description"
             @input="handleInput"
           ></textarea>
-          <label
-            v-show="!modelValue.editing && modelValue.description"
-            :for="`${modelValue.todo_id}-description`"
-            class="inline-block max-w-full break-words whitespace-pre-wrap text-gray-500"
-          >
-            {{ modelValue.description }}
-          </label>
         </div>
 
-        <div v-if="modelValue.editing || modelValue.tag_list.length > 0">
+        <div>
           <MyTagInput v-model="modelValue.tag_list" @change="handleInput">
             <template #input="{ toggle, displayTagList }">
               <label
                 class="relative flex cursor-pointer flex-row flex-wrap gap-1.5 border-b border-b-gray-400 px-px pb-px transition-colors hover:bg-gray-200 sm:text-sm"
-                :class="{
-                  'border-b-gray-400': modelValue.editing,
-                  'border-b-transparent': !modelValue.editing,
-                }"
-                @click="
-                  () => {
-                    if (modelValue.editing) {
-                      toggle();
-                    }
-                  }
-                "
+                @click="() => toggle()"
               >
                 <MyTag v-for="tag of displayTagList" :key="tag.tag_id" :tag="tag"> </MyTag>
                 <div v-if="modelValue.tag_list.length === 0" class="py-px text-xs text-gray-400">
@@ -342,16 +315,6 @@ watch(
             </template>
           </MyTagInput>
         </div>
-
-        <MyDownloadFileList
-          v-if="modelValue.editing || modelValueFileList.length > 0"
-          :file_list="modelValueFileList"
-          @deleted="
-            (deletedIndex) => {
-              modelValueFileList = modelValueFileList.filter((_, i) => i !== deletedIndex);
-            }
-          "
-        ></MyDownloadFileList>
       </div>
     </div>
   </form>

@@ -292,12 +292,12 @@ onMounted(async () => {
       <li
         v-for="(todo, i) of todo_list"
         :key="todo.todo_id"
-        class="hover:bg-gray-100"
-        :class="{ 'bg-gray-100': todo.editing }"
+        class="transition-colors"
+        :class="[todo.editing ? 'bg-blue-100' : 'hover:bg-gray-100']"
       >
         <TodoForm
           v-model="todo_list[i]"
-          class="px-6 py-2"
+          class="px-4 pt-2 pb-4"
           :file_list="todo_list[i].file_list"
           :space_id="props.space.space_id"
           :order="i"
