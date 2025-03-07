@@ -25,6 +25,7 @@ defineEmits<{
 }>();
 
 const props = defineProps<{
+  space_id: number;
   order: number;
 }>();
 
@@ -44,7 +45,7 @@ const debounceResetStatus = R.debounce(() => (status.value.save = ''), { waitMs:
 const handleSubmit = validateSubmit(async (value) => {
   try {
     status.value.save = 'saving...';
-    await trpc.todo.upsert.mutate({ ...value, order: props.order });
+    await trpc.todo.upsert.mutate({ ...value, space_id: props.space_id, order: props.order });
 
     modelValue.value.is_new = false;
 
@@ -64,7 +65,10 @@ async function handleInput() {
 }
 
 watch(
-  () => props.order,
+  () => [
+    props.order, // 順番が変わったとき
+    modelValue.value.space_id, // ほかのスペースに移動したとき
+  ],
   () => {
     debounceHandleSubmit.call();
   },
@@ -299,8 +303,7 @@ watch(
             v-show="modelValue.editing"
             :id="`${modelValue.todo_id}-description`"
             v-model.trim="modelValue.description"
-            class="block w-full border-b border-b-gray-400 bg-inherit pb-0.5 outline-hidden"
-            rows="4"
+            class="block field-sizing-content w-full border-b border-b-gray-400 bg-inherit pb-0.5 outline-hidden"
             maxlength="400"
             placeholder="Description"
             @input="handleInput"

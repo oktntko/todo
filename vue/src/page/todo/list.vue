@@ -1,14 +1,14 @@
 <script setup lang="ts">
+import type { RouterOutput } from '~/lib/trpc';
 import Space from '~/page/todo/component/Space.vue';
 import SpaceList from '~/page/todo/component/SpaceList.vue';
 
-const space_id_list = ref([]);
+const space_list = ref<RouterOutput['space']['list']['space_list']>([]);
 </script>
 
 <template>
   <div class="flex flex-row">
-    <SpaceList class="w-56 shrink-0" type="radio" v-model:space_id_list="space_id_list">
-    </SpaceList>
+    <SpaceList class="w-56 shrink-0" type="radio" v-model:space_list="space_list"> </SpaceList>
 
     <!-- 
       w-[calc(100vw-224px-224px-10px)]
@@ -22,12 +22,12 @@ const space_id_list = ref([]);
     >
       <div class="flex h-full w-full flex-row gap-2">
         <div
-          v-for="space_id of space_id_list"
-          :key="space_id"
+          v-for="space of space_list"
+          :key="space.space_id"
           class="shrink-0 break-inside-avoid"
           :class="['mx-auto w-2xl']"
         >
-          <Space :space_id="space_id" class="max-h-full overflow-y-auto"></Space>
+          <Space :space="space" class="max-h-full overflow-y-auto"></Space>
         </div>
       </div>
     </div>

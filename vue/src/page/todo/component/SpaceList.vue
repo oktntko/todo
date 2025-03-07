@@ -9,7 +9,9 @@ import { SpaceRouterSchema } from '~/schema/SpaceRouterSchema';
 const props = defineProps<{
   type: 'checkbox' | 'radio';
 }>();
-const space_id_list = defineModel<number[]>('space_id_list', { required: true });
+const space_list = defineModel<RouterOutput['space']['list']['space_list']>('space_list', {
+  required: true,
+});
 
 const modelValue = ref<z.infer<typeof SpaceRouterSchema.listInput>>({
   where: {
@@ -38,8 +40,8 @@ const handleSubmit = validateSubmit(async () => {
 onMounted(async () => {
   await handleSubmit();
 
-  space_id_list.value = R.take(
-    data.value?.space_list.map((x) => x.space_id) ?? [],
+  space_list.value = R.take(
+    data.value?.space_list ?? [],
     props.type === 'radio' ? 1 : (data.value?.space_list.length ?? 0),
   );
 });
@@ -91,12 +93,14 @@ watchDeep(modelValue, () => debounce.call());
           <li v-for="space of data.space_list" :key="space.space_id" class="py-px">
             <label
               class="group relative flex w-full cursor-pointer items-center rounded-e-full p-2 transition duration-75 hover:bg-gray-200"
-              :class="{ 'bg-gray-300': ~space_id_list.findIndex((x) => x === space.space_id) }"
+              :class="{
+                'bg-gray-300': ~space_list.findIndex((x) => x.space_id === space.space_id),
+              }"
             >
               <input
                 :type="type"
-                v-model="space_id_list"
-                :value="type === 'checkbox' ? space.space_id : [space.space_id]"
+                v-model="space_list"
+                :value="type === 'checkbox' ? space : [space]"
                 class="sr-only"
               />
               <img
