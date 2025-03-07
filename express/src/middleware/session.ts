@@ -136,7 +136,7 @@ async function setSession(session_key: string, session: SessionData) {
 async function destorySession(session_key: string) {
   log.debug('destorySession', session_key);
 
-  return prisma.session.delete({
+  return prisma.session.deleteMany({
     where: { session_key },
   });
 }
