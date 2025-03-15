@@ -128,6 +128,28 @@ async function handleFileInput(files?: FileList | null) {
           />
           <ErrorMessage class="text-xs text-red-600" for="space_name" />
         </div>
+
+        <div class="focus-container flex flex-col gap-1">
+          <label for="space_color" class="text-sm capitalize"> color </label>
+          <input
+            id="space_color"
+            list="color-picker"
+            v-model.lazy="modelValue.space_color"
+            type="color"
+            class="block h-full w-16 rounded-lg border border-gray-300 bg-white p-1.5 pr-0 text-gray-900 sm:text-sm"
+          />
+          <datalist id="color-picker">
+            <option value="#FF0000" title="red"></option>
+            <option value="#00FF00" title="green"></option>
+            <option value="#0000FF" title="blue"></option>
+            <option value="#FFFF00" title="yellow"></option>
+            <option value="#FF00FF" title="purple"></option>
+            <option value="#00FFFF" title="aqua"></option>
+            <option value="#FFFFFF" title="white"></option>
+            <option value="#000000" title="black"></option>
+          </datalist>
+          <ErrorMessage class="text-xs text-red-600" for="space_color" />
+        </div>
       </div>
 
       <div class="focus-container flex flex-col gap-1">

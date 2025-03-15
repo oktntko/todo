@@ -85,6 +85,7 @@ async function createSpace(
       space_description: input.space_description,
       space_order: count,
       space_image: input.space_image,
+      space_color: input.space_color,
     },
     operator_id,
   });
@@ -114,6 +115,7 @@ async function updateSpace(
       space_description: input.space_description,
       space_order: previous.space_order,
       space_image: input.space_image,
+      space_color: input.space_color,
     },
     operator_id,
   });

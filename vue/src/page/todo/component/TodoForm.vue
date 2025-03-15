@@ -7,8 +7,6 @@ import { useFile } from '~/composable/useFile';
 import { useValidate } from '~/composable/useValidate';
 import { trpc } from '~/lib/trpc';
 import type { z } from '~/lib/zod';
-import MyTag from '~/page/component/MyTag.vue';
-import MyTagInput from '~/page/component/MyTagInput.vue';
 import { TodoRouterSchema } from '~/schema/TodoRouterSchema';
 
 export type ModelValue = z.infer<typeof TodoRouterSchema.upsertInput> & {
@@ -298,22 +296,6 @@ watch(
             placeholder="Description"
             @input="handleInput"
           ></textarea>
-        </div>
-
-        <div>
-          <MyTagInput v-model="modelValue.tag_list" @change="handleInput">
-            <template #input="{ toggle, displayTagList }">
-              <label
-                class="relative flex cursor-pointer flex-row flex-wrap gap-1.5 border-b border-b-gray-400 px-px pb-px transition-colors hover:bg-gray-200 sm:text-sm"
-                @click="() => toggle()"
-              >
-                <MyTag v-for="tag of displayTagList" :key="tag.tag_id" :tag="tag"> </MyTag>
-                <div v-if="modelValue.tag_list.length === 0" class="py-px text-xs text-gray-400">
-                  Tags
-                </div>
-              </label>
-            </template>
-          </MyTagInput>
         </div>
       </div>
     </div>

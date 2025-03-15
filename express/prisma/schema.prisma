@@ -32,6 +32,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+/// @zod.import(["import { ColorSchema } from '../../_schema';"])
 model Space {
   space_id Int @id @default(autoincrement())
 
@@ -42,9 +43,9 @@ model Space {
   space_description String @default("") @db.VarChar(400) /// @zod.string.trim().max(400)
   space_order       Int    @default(0) /// @zod.number.int()
   space_image       String @db.Text /// @zod.string.trim().max(15000)
+  space_color       String @default("") @db.VarChar(100) /// @zod.custom.use(ColorSchema.or(z.literal('')))
 
   todo_list Todo[]
-  tag_list  Tag[]
 
   created_at DateTime @default(now()) @db.DateTime(3)
   created_by Int
@@ -71,7 +72,6 @@ model Todo {
   order       Int       @default(0) /// @zod.number.int()
   done_at     DateTime? @db.DateTime(3)
 
-  tag_list  Tag[]
   file_list File[]
 
   created_at DateTime @default(now()) @db.DateTime(3)
@@ -83,30 +83,6 @@ model Todo {
   @@index([begin_date])
   @@index([limit_date])
   @@map("todo")
-}
-
-/// @zod.import(["import { ColorSchema } from '../../_schema';"])
-model Tag {
-  tag_id Int @id @default(autoincrement())
-
-  owner_id Int
-  owner    User @relation(fields: [owner_id], references: [user_id], onDelete: Cascade)
-
-  tag_name        String @db.VarChar(100) /// @zod.string.trim().min(1).max(100)
-  tag_description String @default("") @db.VarChar(400) /// @zod.string.trim().max(400)
-  tag_color       String @default("") @db.VarChar(100) /// @zod.custom.use(ColorSchema.or(z.literal('')))
-  tag_order       Int    @default(0) /// @zod.number.int()
-
-  todo_list  Todo[]
-  space_list Space[]
-
-  created_at DateTime @default(now()) @db.DateTime(3)
-  created_by Int
-  updated_at DateTime @updatedAt @db.DateTime(3)
-  updated_by Int
-
-  @@index([tag_name])
-  @@map("tag")
 }
 
 ////////////////////////////////
@@ -131,7 +107,6 @@ model User {
   session_list Session[]
   file_list    File[]
   space_list   Space[]
-  tag_list     Tag[]
 
   @@index([username], name: "index_username")
   @@map("user")

@@ -5,8 +5,6 @@ import { useFile } from '~/composable/useFile';
 import { useValidate } from '~/composable/useValidate';
 import { trpc, type RouterOutput } from '~/lib/trpc';
 import type { z } from '~/lib/zod';
-import MyTag from '~/page/component/MyTag.vue';
-import MyTagInput from '~/page/component/MyTagInput.vue';
 import { TodoRouterSchema } from '~/schema/TodoRouterSchema';
 import type SpaceSchema from '~/schema/zod/modelSchema/SpaceSchema';
 
@@ -168,24 +166,6 @@ onMounted(async () => {
         <ErrorMessage class="text-xs text-red-600" for="description" />
       </div>
 
-      <div class="focus-container flex flex-col gap-1">
-        <label for="tag_list" class="optional text-sm capitalize"> tags </label>
-        <MyTagInput v-model="modelValue.tag_list">
-          <template #input="{ toggle, displayTagList }">
-            <label
-              type="button"
-              class="flex w-full flex-row items-center rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
-              @click="() => toggle()"
-            >
-              <MyTag v-for="tag of displayTagList" :key="tag.tag_id" :tag="tag"> </MyTag>
-              <span class="invisible capitalize">tags</span>
-            </label>
-          </template>
-        </MyTagInput>
-
-        <ErrorMessage class="text-xs text-red-600" for="description" />
-      </div>
-
       <div class="flex flex-col gap-1">
         <label for="file" class="flex items-center gap-2 text-sm capitalize">
           files
@@ -220,7 +200,7 @@ onMounted(async () => {
             <span class="icon-[heroicons-outline--paper-clip] h-4 w-4"></span>
           </button>
         </label>
-        <MyDownloadFileList :file_list="modelValueFileList"> </MyDownloadFileList>
+        <MyDownloadFileList v-model:file_list="modelValueFileList"> </MyDownloadFileList>
       </div>
     </section>
 

@@ -26,59 +26,6 @@ async function main() {
       updated_by: example.user_id,
     },
   });
-
-  await prisma.tag.createMany({
-    data: [
-      {
-        owner_id: example.user_id,
-        tag_name: 'Urgent',
-        tag_color: '#FF0000',
-        tag_order: 1,
-        created_by: example.user_id,
-        updated_by: example.user_id,
-      },
-      {
-        owner_id: example.user_id,
-        tag_name: 'Important',
-        tag_color: '#FFA500',
-        tag_order: 2,
-        created_by: example.user_id,
-        updated_by: example.user_id,
-      },
-      {
-        owner_id: example.user_id,
-        tag_name: 'Reminder',
-        tag_color: '#0000FF',
-        tag_order: 3,
-        created_by: example.user_id,
-        updated_by: example.user_id,
-      },
-      {
-        owner_id: example.user_id,
-        tag_name: 'Optional',
-        tag_color: '#808080',
-        tag_order: 4,
-        created_by: example.user_id,
-        updated_by: example.user_id,
-      },
-      {
-        owner_id: example.user_id,
-        tag_name: 'In Progress',
-        tag_color: '#FFFF00',
-        tag_order: 5,
-        created_by: example.user_id,
-        updated_by: example.user_id,
-      },
-      {
-        owner_id: example.user_id,
-        tag_name: 'Completed',
-        tag_color: '#008000',
-        tag_order: 6,
-        created_by: example.user_id,
-        updated_by: example.user_id,
-      },
-    ],
-  });
 }
 
 main()

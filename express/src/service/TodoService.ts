@@ -178,8 +178,6 @@ async function upsertTodo(
       limit_time: input.limit_time,
       order: input.order,
       done_at: input.done_at,
-
-      tag_list: input.tag_list,
     },
     operator_id,
   });
@@ -211,8 +209,6 @@ async function createTodo(
       limit_time: input.limit_time,
       order: input.order,
       done_at: input.done_at,
-
-      tag_list: input.tag_list,
     },
     operator_id,
   });
@@ -257,8 +253,6 @@ async function updateTodo(
       limit_time: input.limit_time,
       order: input.order,
       done_at: input.done_at,
-
-      tag_list: input.tag_list,
     },
     where: {
       todo_id: input.todo_id,

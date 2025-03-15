@@ -7,6 +7,7 @@ export const SpaceScalarFieldEnumSchema = z.enum([
   'space_description',
   'space_order',
   'space_image',
+  'space_color',
   'created_at',
   'created_by',
   'updated_at',

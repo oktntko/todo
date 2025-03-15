@@ -4,8 +4,6 @@ import type { FileWithRelations } from './FileSchema.js';
 import { FileWithRelationsSchema } from './FileSchema.js';
 import type { SpaceWithRelations } from './SpaceSchema.js';
 import { SpaceWithRelationsSchema } from './SpaceSchema.js';
-import type { TagWithRelations } from './TagSchema.js';
-import { TagWithRelationsSchema } from './TagSchema.js';
 
 /////////////////////////////////////////
 // TODO SCHEMA
@@ -44,7 +42,6 @@ export type TodoCustomValidators = z.infer<typeof TodoCustomValidatorsSchema>;
 
 export type TodoRelations = {
   space: SpaceWithRelations;
-  tag_list: TagWithRelations[];
   file_list: FileWithRelations[];
 };
 
@@ -53,7 +50,6 @@ export type TodoWithRelations = z.infer<typeof TodoSchema> & TodoRelations;
 export const TodoWithRelationsSchema: z.ZodType<TodoWithRelations> = TodoSchema.merge(
   z.object({
     space: z.lazy(() => SpaceWithRelationsSchema),
-    tag_list: z.lazy(() => TagWithRelationsSchema).array(),
     file_list: z.lazy(() => FileWithRelationsSchema).array(),
   }),
 );

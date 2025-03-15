@@ -4,7 +4,7 @@ const {
   componentClass = '',
   dialogClass = '',
   componentProps = {},
-  componentEvents = () => ({}),
+  componentEvents = {},
 } = defineProps<{
   component: unknown;
   componentProps?: object;
@@ -67,8 +67,10 @@ function closeDelay(returnValue?: unknown | undefined) {
     @cancel="
       (e: Event) => {
         // ESCキーでキャンセルするとき閉じる
-        e.preventDefault();
-        closeDelay();
+        if (e.target === refDialog) {
+          e.preventDefault();
+          closeDelay();
+        }
       }
     "
   >

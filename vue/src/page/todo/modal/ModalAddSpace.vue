@@ -13,6 +13,7 @@ const modelValue = ref<ModelValue>({
   space_name: '',
   space_description: '',
   space_image: '',
+  space_color: '#FFFFFF',
 });
 
 const $toast = useToast();
@@ -33,7 +34,7 @@ async function handleSubmit(input: ModelValue) {
 </script>
 
 <template>
-  <div class="p-4 sm:w-96">
+  <div class="p-4 sm:w-lg">
     <header class="mb-4 text-lg font-bold capitalize">create new space</header>
     <SpaceForm v-model="modelValue" @submit="handleSubmit"> </SpaceForm>
   </div>

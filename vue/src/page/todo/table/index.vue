@@ -4,7 +4,6 @@ import { useValidate } from '~/composable/useValidate';
 import { dayjs } from '~/lib/dayjs';
 import { trpc, type RouterOutput } from '~/lib/trpc';
 import type { z } from '~/lib/zod';
-import MyTag from '~/page/component/MyTag.vue';
 import { TodoStatusList } from '~/schema/option/OptionTodoStatus';
 import { TodoRouterSchema } from '~/schema/TodoRouterSchema';
 
@@ -389,14 +388,6 @@ const headerCheckbox = computed(() => {
                 'sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize',
               ]"
             >
-              tags
-            </th>
-            <th
-              scope="col"
-              :class="[
-                'sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize',
-              ]"
-            >
               files
             </th>
             <th
@@ -506,14 +497,6 @@ const headerCheckbox = computed(() => {
                 :title="todo.description"
               >
                 {{ todo.description }}
-              </div>
-            </td>
-            <td class="max-w-48">
-              <div
-                class="line-clamp-4 min-w-28 px-2 py-1"
-                :title="todo.tag_list.map((x) => x.tag_name).join(',')"
-              >
-                <MyTag v-for="tag of todo.tag_list" :key="tag.tag_id" :tag="tag"> </MyTag>
               </div>
             </td>
             <td class="max-w-48">

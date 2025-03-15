@@ -89,8 +89,10 @@ function closeDelay(returnValue?: typeof CONFIRMED_VALUE | undefined) {
     @cancel="
       (e: Event) => {
         // ESCキーでキャンセルするとき閉じる
-        e.preventDefault();
-        closeDelay();
+        if (e.target === refDialog) {
+          e.preventDefault();
+          closeDelay();
+        }
       }
     "
   >

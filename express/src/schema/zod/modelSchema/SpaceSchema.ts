@@ -1,6 +1,5 @@
 import { z } from '~/lib/zod.js';
-import type { TagWithRelations } from './TagSchema.js';
-import { TagWithRelationsSchema } from './TagSchema.js';
+import { ColorSchema } from '../../_schema.js';
 import type { TodoWithRelations } from './TodoSchema.js';
 import { TodoWithRelationsSchema } from './TodoSchema.js';
 import type { UserWithRelations } from './UserSchema.js';
@@ -17,6 +16,7 @@ export const SpaceSchema = z.object({
   space_description: z.string().trim().max(400),
   space_order: z.number().int(),
   space_image: z.string().trim().max(15000),
+  space_color: ColorSchema.or(z.literal('')),
   created_at: z.coerce.date(),
   created_by: z.number().int(),
   updated_at: z.coerce.date(),
@@ -26,13 +26,20 @@ export const SpaceSchema = z.object({
 export type Space = z.infer<typeof SpaceSchema>;
 
 /////////////////////////////////////////
+// SPACE CUSTOM VALIDATORS SCHEMA
+/////////////////////////////////////////
+
+export const SpaceCustomValidatorsSchema = SpaceSchema;
+
+export type SpaceCustomValidators = z.infer<typeof SpaceCustomValidatorsSchema>;
+
+/////////////////////////////////////////
 // SPACE RELATION SCHEMA
 /////////////////////////////////////////
 
 export type SpaceRelations = {
   owner: UserWithRelations;
   todo_list: TodoWithRelations[];
-  tag_list: TagWithRelations[];
 };
 
 export type SpaceWithRelations = z.infer<typeof SpaceSchema> & SpaceRelations;
@@ -41,7 +48,6 @@ export const SpaceWithRelationsSchema: z.ZodType<SpaceWithRelations> = SpaceSche
   z.object({
     owner: z.lazy(() => UserWithRelationsSchema),
     todo_list: z.lazy(() => TodoWithRelationsSchema).array(),
-    tag_list: z.lazy(() => TagWithRelationsSchema).array(),
   }),
 );
 

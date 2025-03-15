@@ -12,9 +12,10 @@ defineEmits<{
   deleted: [number];
 }>();
 
-defineProps<{
-  file_list: DownloadFile[];
-}>();
+const file_list = defineModel<DownloadFile[]>('file_list', {
+  required: false,
+  default: () => [],
+});
 
 const { downloadSingleFile } = useFile();
 </script>
@@ -49,6 +50,8 @@ const { downloadSingleFile } = useFile();
             const loading = $loading.open();
             try {
               await trpc.file.delete.mutate(file);
+
+              file_list = file_list.filter((x) => x.file_id !== file.file_id);
 
               $emit('deleted', i);
               $toast.success('Data has been deleted.');

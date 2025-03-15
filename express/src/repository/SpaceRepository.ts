@@ -64,6 +64,7 @@ async function createSpace(
       space_description: params.data.space_description,
       space_order: params.data.space_order,
       space_image: params.data.space_image,
+      space_color: params.data.space_color,
 
       created_by: params.operator_id,
       updated_by: params.operator_id,
@@ -85,6 +86,7 @@ async function updateSpace(
       space_description: params.data.space_description,
       space_order: params.data.space_order,
       space_image: params.data.space_image,
+      space_color: params.data.space_color,
 
       updated_by: params.operator_id,
     },

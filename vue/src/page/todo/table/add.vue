@@ -20,7 +20,6 @@ const modelValue = ref<ModelValue>({
   limit_time: '',
   order: 0,
   done_at: null,
-  tag_list: [],
 });
 const modelValueFileList = ref<DownloadFile[]>([]);
 

@@ -1,10 +1,4 @@
-<script setup lang="ts">
-import { useTagStore } from '~/store/TagStore';
-
-const { fetchTagList } = useTagStore();
-
-fetchTagList();
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <div class="flex min-h-screen">

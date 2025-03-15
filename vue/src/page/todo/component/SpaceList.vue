@@ -92,7 +92,7 @@ watchDeep(modelValue, () => debounce.call());
         <ul class="text-sm">
           <li v-for="space of data.space_list" :key="space.space_id" class="py-px">
             <label
-              class="group relative flex w-full cursor-pointer items-center rounded-e-full p-2 transition duration-75 hover:bg-gray-200"
+              class="group relative flex w-full cursor-pointer items-center justify-between rounded-e-full p-2 transition duration-75 hover:bg-gray-200"
               :class="{
                 'bg-gray-300': ~space_list.findIndex((x) => x.space_id === space.space_id),
               }"
@@ -109,10 +109,18 @@ watchDeep(modelValue, () => debounce.call());
                 width="16"
                 height="16"
                 decoding="async"
-                class="h-4 w-4 rounded-sm object-cover object-center"
+                class="h-4 w-4 shrink-0 rounded-sm object-cover object-center"
               />
-              <span v-else class="icon-[ri--image-circle-fill] h-4 w-4"></span>
-              <span class="ms-1">{{ space.space_name }}</span>
+              <span v-else class="icon-[ri--image-circle-fill] h-4 w-4 shrink-0"></span>
+              <span class="ms-1 shrink truncate">{{ space.space_name }}</span>
+              <span class="grow text-right" :class="[type !== 'checkbox' ? 'invisible' : '']">
+                {{
+                  (function () {
+                    const index = space_list.findIndex((x) => x.space_id === space.space_id);
+                    return index >= 0 ? index + 1 : '';
+                  })()
+                }}
+              </span>
             </label>
           </li>
           <li>

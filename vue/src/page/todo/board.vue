@@ -41,7 +41,7 @@ const { handleAdd, handleRemove } = (function () {
           v-for="space of space_list"
           :key="space.space_id"
           class="shrink-0 break-inside-avoid"
-          :class="['mx-auto w-2xl']"
+          :class="['w-2xl']"
         >
           <Space
             :space="space"
