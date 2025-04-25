@@ -40,7 +40,7 @@ function close() {
   >
     <div
       v-if="open"
-      class="relative mt-4 flex max-w-xs justify-between rounded-lg p-2 text-gray-500 shadow-md"
+      class="relative mt-4 flex max-w-xs justify-between rounded-lg p-2 text-gray-500 shadow-md ease-out"
       :class="{
         'bg-green-100 dark:bg-green-800' /*   */: colorset === 'green',
         'bg-yellow-100 dark:bg-yellow-800' /* */: colorset === 'yellow',

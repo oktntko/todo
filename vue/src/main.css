@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 
-@plugin '../iconify.mjs';
+@plugin "@iconify/tailwind4";
 
 @theme {
   --font-sans: 'Noto Sans JP', sans-serif;

@@ -98,8 +98,8 @@ watchDeep(modelValue, () => debounce.call());
               }"
             >
               <input
-                :type="type"
                 v-model="space_list"
+                :type="type"
                 :value="type === 'checkbox' ? space : [space]"
                 class="sr-only"
               />

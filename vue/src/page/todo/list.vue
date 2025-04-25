@@ -8,7 +8,7 @@ const space_list = ref<RouterOutput['space']['list']['space_list']>([]);
 
 <template>
   <div class="flex flex-row">
-    <SpaceList class="w-56 shrink-0" type="radio" v-model:space_list="space_list"> </SpaceList>
+    <SpaceList v-model:space_list="space_list" class="w-56 shrink-0" type="radio"> </SpaceList>
 
     <!-- 
       w-[calc(100vw-224px-224px-10px)]

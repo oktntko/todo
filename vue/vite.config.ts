@@ -39,7 +39,7 @@ export default defineConfig({
     AutoImport({
       imports: ['vue', VueRouterAutoImports, 'pinia', '@vueuse/core'],
       vueTemplate: true,
-      dts: 'src/auto-import.d.ts',
+      dts: 'src/vue-auto-import.d.ts',
     }),
     VueComponents({
       dirs: ['src/component'],

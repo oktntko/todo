@@ -49,7 +49,7 @@ onMounted(async () => {
       <div class="focus-container flex grow flex-col gap-1">
         <label for="space" class="required text-sm capitalize"> space </label>
 
-        <MyDropdown innerClass="w-full">
+        <MyDropdown inner-class="w-full">
           <template #button="{ toggle }">
             <label
               class="flex w-full flex-row items-center rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"

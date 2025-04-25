@@ -86,7 +86,7 @@ const events: Ref<EventSourceInput> = computed(() => {
       events,
     }"
   >
-    <template v-slot:eventContent="arg">
+    <template #eventContent="arg">
       <b>{{ arg.event.title }}</b>
     </template>
   </FullCalendar>

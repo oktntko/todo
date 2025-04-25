@@ -133,8 +133,8 @@ async function handleFileInput(files?: FileList | null) {
           <label for="space_color" class="text-sm capitalize"> color </label>
           <input
             id="space_color"
-            list="color-picker"
             v-model.lazy="modelValue.space_color"
+            list="color-picker"
             type="color"
             class="block h-full w-16 rounded-lg border border-gray-300 bg-white p-1.5 pr-0 text-gray-900 sm:text-sm"
           />
