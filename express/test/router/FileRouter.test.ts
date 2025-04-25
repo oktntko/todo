@@ -36,7 +36,7 @@ describe(`FileRouter`, () => {
               file_id: input.file_id,
               filename: `${input.file_id}.txt`,
               mimetype: 'text/plain',
-              size: 1024,
+              filesize: 1024,
               created_at: new Date(2001, 2, 3),
               updated_at: new Date(2001, 2, 3),
               created_by: 0,
@@ -75,7 +75,7 @@ describe(`FileRouter`, () => {
               file_id: input.file_id,
               filename: `${input.file_id}.txt`,
               mimetype: 'text/plain',
-              size: 1024,
+              filesize: 1024,
               created_at: new Date(2001, 2, 3),
               updated_at: new Date(2001, 2, 3),
               created_by: 0,
@@ -167,36 +167,36 @@ describe(`FileRouter`, () => {
         mockCreateContext(prisma);
 
         const input: z.infer<typeof FileRouterSchema.getManyInput> = {
-          file_id: [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()],
+          file_id_list: [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()],
         };
 
         await prisma.file.createMany({
           data: [
             {
-              file_id: input.file_id[0],
-              filename: `${input.file_id[0]}.txt`,
+              file_id: input.file_id_list[0],
+              filename: `${input.file_id_list[0]}.txt`,
               mimetype: 'text/plain',
-              size: 1024,
+              filesize: 1024,
               created_at: new Date(2001, 2, 3),
               updated_at: new Date(2001, 2, 3),
               created_by: 0,
               updated_by: 0,
             },
             {
-              file_id: input.file_id[1],
-              filename: `${input.file_id[1]}.txt`,
+              file_id: input.file_id_list[1],
+              filename: `${input.file_id_list[1]}.txt`,
               mimetype: 'text/plain',
-              size: 1024,
+              filesize: 1024,
               created_at: new Date(2001, 2, 3),
               updated_at: new Date(2001, 2, 3),
               created_by: 0,
               updated_by: 0,
             },
             {
-              file_id: input.file_id[2],
-              filename: `${input.file_id[2]}.txt`,
+              file_id: input.file_id_list[2],
+              filename: `${input.file_id_list[2]}.txt`,
               mimetype: 'text/plain',
-              size: 1024,
+              filesize: 1024,
               created_at: new Date(2001, 2, 3),
               updated_at: new Date(2001, 2, 3),
               created_by: 0,
@@ -228,36 +228,36 @@ describe(`FileRouter`, () => {
         mockCreateContext(prisma);
 
         const input: z.infer<typeof FileRouterSchema.getManyInput> = {
-          file_id: [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()],
+          file_id_list: [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()],
         };
 
         await prisma.file.createMany({
           data: [
             {
-              file_id: input.file_id[0],
-              filename: `${input.file_id[0]}.txt`,
+              file_id: input.file_id_list[0],
+              filename: `${input.file_id_list[0]}.txt`,
               mimetype: 'text/plain',
-              size: 1024,
+              filesize: 1024,
               created_at: new Date(2001, 2, 3),
               updated_at: new Date(2001, 2, 3),
               created_by: 0,
               updated_by: 0,
             },
             {
-              file_id: input.file_id[1],
-              filename: `${input.file_id[1]}.txt`,
+              file_id: input.file_id_list[1],
+              filename: `${input.file_id_list[1]}.txt`,
               mimetype: 'text/plain',
-              size: 1024,
+              filesize: 1024,
               created_at: new Date(2001, 2, 3),
               updated_at: new Date(2001, 2, 3),
               created_by: 0,
               updated_by: 0,
             },
             {
-              file_id: input.file_id[2],
-              filename: `${input.file_id[2]}.txt`,
+              file_id: input.file_id_list[2],
+              filename: `${input.file_id_list[2]}.txt`,
               mimetype: 'text/plain',
-              size: 1024,
+              filesize: 1024,
               created_at: new Date(2001, 2, 3),
               updated_at: new Date(2001, 2, 3),
               created_by: 0,
@@ -283,7 +283,7 @@ describe(`FileRouter`, () => {
         mockCreateContext(prisma);
 
         const input: z.infer<typeof FileRouterSchema.getManyInput> = {
-          file_id: [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()],
+          file_id_list: [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()],
         };
 
         // act
@@ -303,7 +303,7 @@ describe(`FileRouter`, () => {
         mockCreateContext(prisma);
 
         const input: z.infer<typeof FileRouterSchema.getManyInput> = {
-          file_id: ['crypto.randomUUID()', crypto.randomUUID(), crypto.randomUUID()],
+          file_id_list: ['crypto.randomUUID()', crypto.randomUUID(), crypto.randomUUID()],
         };
 
         // act
@@ -323,7 +323,7 @@ describe(`FileRouter`, () => {
         mockCreateContext(prisma);
 
         const input: z.infer<typeof FileRouterSchema.getManyInput> = {
-          file_id: [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()],
+          file_id_list: [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()],
         };
 
         const mockFindUniqueFile = vi.spyOn(FileRepository, 'findUniqueFile');
@@ -362,7 +362,7 @@ describe(`FileRouter`, () => {
         expect(res.statusCode).toBe(200);
         expect(res.body).toEqual({
           file_id: expect.anything(),
-          size: 4,
+          filesize: 4,
           filename: 'test.txt',
           mimetype: 'text/plain',
           created_by: 1,
@@ -441,7 +441,7 @@ describe(`FileRouter`, () => {
         expect(res.body).toEqual([
           {
             file_id: expect.anything(),
-            size: 5,
+            filesize: 5,
             filename: 'test1.txt',
             mimetype: 'text/plain',
             created_by: 1,
@@ -451,7 +451,7 @@ describe(`FileRouter`, () => {
           },
           {
             file_id: expect.anything(),
-            size: 5,
+            filesize: 5,
             filename: 'test2.txt',
             mimetype: 'text/plain',
             created_by: 1,
@@ -461,7 +461,7 @@ describe(`FileRouter`, () => {
           },
           {
             file_id: expect.anything(),
-            size: 5,
+            filesize: 5,
             filename: 'test3.txt',
             mimetype: 'text/plain',
             created_by: 1,
@@ -524,7 +524,7 @@ describe(`FileRouter`, () => {
         file_id: 'c30e3b6c-aaa5-438d-902a-2f816111ab40',
         filename: `test.txt`,
         mimetype: 'text/plain',
-        size: 1024,
+        filesize: 1024,
         created_at: new Date(2001, 2, 3),
         updated_at: new Date(2001, 2, 3),
         created_by: 0,
