@@ -9,6 +9,8 @@ beforeAll(() => {
       password: '',
       username: '',
       description: '',
+      twofa_enable: false,
+      twofa_secret: '',
       created_at: new Date(),
       updated_at: new Date(),
     };

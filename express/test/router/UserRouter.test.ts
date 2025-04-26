@@ -24,13 +24,14 @@ describe(`UserRouter`, () => {
           const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
+          await prisma.user.deleteMany();
+
           await prisma.user.createMany({
             data: [
               {
                 user_id: 1,
                 username: 'user_keyword',
                 email: '1@example.com',
-                description: '',
                 password: '1',
                 created_at: new Date(2001, 2, 3),
                 updated_at: new Date(2001, 2, 3),
@@ -39,7 +40,6 @@ describe(`UserRouter`, () => {
                 user_id: 2,
                 username: '2',
                 email: 'user_keyword@example.com',
-                description: '',
                 password: '2',
                 created_at: new Date(2001, 2, 3),
                 updated_at: new Date(2001, 2, 3),
@@ -48,7 +48,6 @@ describe(`UserRouter`, () => {
                 user_id: 3,
                 username: '3',
                 email: '3@example.com',
-                description: 'user_keyword',
                 password: '3',
                 created_at: new Date(2001, 2, 3),
                 updated_at: new Date(2001, 2, 3),
@@ -57,7 +56,6 @@ describe(`UserRouter`, () => {
                 user_id: 4,
                 username: 'useword',
                 email: '4@example.com',
-                description: '',
                 password: '4',
                 created_at: new Date(2001, 2, 3),
                 updated_at: new Date(2001, 2, 3),
@@ -66,7 +64,6 @@ describe(`UserRouter`, () => {
                 user_id: 5,
                 username: '5',
                 email: 'useword@example.com',
-                description: '',
                 password: '5',
                 created_at: new Date(2001, 2, 3),
                 updated_at: new Date(2001, 2, 3),
@@ -75,7 +72,6 @@ describe(`UserRouter`, () => {
                 user_id: 6,
                 username: '6',
                 email: '6@example.com',
-                description: 'useword',
                 password: '6',
                 created_at: new Date(2001, 2, 3),
                 updated_at: new Date(2001, 2, 3),
@@ -97,14 +93,15 @@ describe(`UserRouter`, () => {
 
           //
           expect(output).toEqual({
-            total: 3,
+            total: 2,
             user_list: [
               {
                 user_id: 1,
                 username: 'user_keyword',
                 email: '1@example.com',
-                description: '',
                 password: '1',
+                twofa_enable: false,
+                twofa_secret: '',
                 created_at: new Date(2001, 2, 3),
                 updated_at: new Date(2001, 2, 3),
               },
@@ -112,17 +109,9 @@ describe(`UserRouter`, () => {
                 user_id: 2,
                 username: '2',
                 email: 'user_keyword@example.com',
-                description: '',
                 password: '2',
-                created_at: new Date(2001, 2, 3),
-                updated_at: new Date(2001, 2, 3),
-              },
-              {
-                user_id: 3,
-                username: '3',
-                email: '3@example.com',
-                description: 'user_keyword',
-                password: '3',
+                twofa_enable: false,
+                twofa_secret: '',
                 created_at: new Date(2001, 2, 3),
                 updated_at: new Date(2001, 2, 3),
               },
@@ -135,13 +124,14 @@ describe(`UserRouter`, () => {
           const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
+          await prisma.user.deleteMany();
+
           await prisma.user.createMany({
             data: [
               {
                 user_id: 1,
                 username: 'user_keyword',
                 email: '1@example.com',
-                description: '',
                 password: '1',
                 created_at: new Date(2001, 2, 3),
                 updated_at: new Date(2001, 2, 3),
@@ -150,7 +140,6 @@ describe(`UserRouter`, () => {
                 user_id: 2,
                 username: '2',
                 email: 'user_keyword@example.com',
-                description: '',
                 password: '2',
                 created_at: new Date(2001, 2, 3),
                 updated_at: new Date(2001, 2, 3),
@@ -159,7 +148,6 @@ describe(`UserRouter`, () => {
                 user_id: 3,
                 username: '3',
                 email: '3@example.com',
-                description: 'user_keyword',
                 password: '3',
                 created_at: new Date(2001, 2, 3),
                 updated_at: new Date(2001, 2, 3),
@@ -168,7 +156,6 @@ describe(`UserRouter`, () => {
                 user_id: 4,
                 username: 'useword',
                 email: '4@example.com',
-                description: '',
                 password: '4',
                 created_at: new Date(2001, 2, 3),
                 updated_at: new Date(2001, 2, 3),
@@ -177,7 +164,6 @@ describe(`UserRouter`, () => {
                 user_id: 5,
                 username: '5',
                 email: 'useword@example.com',
-                description: '',
                 password: '5',
                 created_at: new Date(2001, 2, 3),
                 updated_at: new Date(2001, 2, 3),
@@ -186,7 +172,6 @@ describe(`UserRouter`, () => {
                 user_id: 6,
                 username: '6',
                 email: '6@example.com',
-                description: 'useword',
                 password: '6',
                 created_at: new Date(2001, 2, 3),
                 updated_at: new Date(2001, 2, 3),
@@ -214,8 +199,9 @@ describe(`UserRouter`, () => {
                 user_id: 3,
                 username: '3',
                 email: '3@example.com',
-                description: 'user_keyword',
                 password: '3',
+                twofa_enable: false,
+                twofa_secret: '',
                 created_at: new Date(2001, 2, 3),
                 updated_at: new Date(2001, 2, 3),
               },
@@ -230,13 +216,14 @@ describe(`UserRouter`, () => {
           const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
+          await prisma.user.deleteMany();
+
           await prisma.user.createMany({
             data: [
               {
                 user_id: 1,
                 username: 'username',
                 email: 'email@example.com',
-                description: 'description',
                 password: 'password',
                 created_at: new Date(2001, 2, 3),
                 updated_at: new Date(2001, 2, 3),
@@ -264,8 +251,9 @@ describe(`UserRouter`, () => {
                 user_id: 1,
                 username: 'username',
                 email: 'email@example.com',
-                description: 'description',
                 password: 'password',
+                twofa_enable: false,
+                twofa_secret: '',
                 created_at: new Date(2001, 2, 3),
                 updated_at: new Date(2001, 2, 3),
               },
@@ -278,13 +266,14 @@ describe(`UserRouter`, () => {
           const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
+          await prisma.user.deleteMany();
+
           await prisma.user.createMany({
             data: [
               {
                 user_id: 1,
                 username: 'u',
                 email: 'e@example.com',
-                description: '',
                 password: 'p',
                 created_at: new Date(2001, 2, 3),
                 updated_at: new Date(2001, 2, 3),
@@ -312,8 +301,9 @@ describe(`UserRouter`, () => {
                 user_id: 1,
                 username: 'u',
                 email: 'e@example.com',
-                description: '',
                 password: 'p',
+                twofa_enable: false,
+                twofa_secret: '',
                 created_at: new Date(2001, 2, 3),
                 updated_at: new Date(2001, 2, 3),
               },
@@ -331,12 +321,13 @@ describe(`UserRouter`, () => {
           const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
+          await prisma.user.deleteMany();
+
           await prisma.user.create({
             data: {
               user_id: 1,
               username: 'username',
               email: 'email@example.com',
-              description: 'description',
               password: 'password',
               created_at: new Date(2001, 2, 3),
               updated_at: new Date(2001, 2, 3),
@@ -355,8 +346,9 @@ describe(`UserRouter`, () => {
             user_id: 1,
             username: 'username',
             email: 'email@example.com',
-            description: 'description',
             password: 'password',
+            twofa_enable: false,
+            twofa_secret: '',
             created_at: new Date(2001, 2, 3),
             updated_at: new Date(2001, 2, 3),
           } satisfies z.infer<typeof UserSchema>);
@@ -367,6 +359,7 @@ describe(`UserRouter`, () => {
           const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
+          await prisma.user.deleteMany();
 
           const input: z.infer<typeof UserRouterSchema.getInput> = {
             user_id: 1,
@@ -396,22 +389,19 @@ describe(`UserRouter`, () => {
 
           //
           await expect(caller.user.get(input)).rejects.toThrow(
-            //
-            new TRPCError({
-              code: 'BAD_REQUEST',
-              message: JSON.stringify(
-                [
-                  {
-                    code: 'invalid_type',
-                    expected: 'number',
-                    received: 'null',
-                    path: ['user_id'],
-                  },
-                ],
-                null,
-                '  ',
-              ),
-            }),
+            // TRPCError BAD_REQUEST message
+            JSON.stringify(
+              [
+                {
+                  code: 'invalid_type',
+                  expected: 'number',
+                  received: 'null',
+                  path: ['user_id'],
+                },
+              ],
+              null,
+              '  ',
+            ),
           );
         });
       });
@@ -422,12 +412,13 @@ describe(`UserRouter`, () => {
           const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
+          await prisma.user.deleteMany();
+
           await prisma.user.create({
             data: {
               user_id: 1,
               username: 'username',
               email: 'email@example.com',
-              description: 'description',
               password: 'password',
               created_at: new Date(2001, 2, 3),
               updated_at: new Date(2001, 2, 3),
@@ -446,8 +437,9 @@ describe(`UserRouter`, () => {
             user_id: 1,
             username: 'username',
             email: 'email@example.com',
-            description: 'description',
             password: 'password',
+            twofa_enable: false,
+            twofa_secret: '',
             created_at: new Date(2001, 2, 3),
             updated_at: new Date(2001, 2, 3),
           } satisfies z.infer<typeof UserSchema>);
@@ -458,12 +450,13 @@ describe(`UserRouter`, () => {
           const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
+          await prisma.user.deleteMany();
+
           await prisma.user.create({
             data: {
               user_id: 1,
               username: 'u',
               email: 'e@example.com',
-              description: '',
               password: 'p',
               created_at: new Date(2001, 2, 3),
               updated_at: new Date(2001, 2, 3),
@@ -482,8 +475,9 @@ describe(`UserRouter`, () => {
             user_id: 1,
             username: 'u',
             email: 'e@example.com',
-            description: '',
             password: 'p',
+            twofa_enable: false,
+            twofa_secret: '',
             created_at: new Date(2001, 2, 3),
             updated_at: new Date(2001, 2, 3),
           } satisfies z.infer<typeof UserSchema>);
@@ -499,12 +493,14 @@ describe(`UserRouter`, () => {
           const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
+          await prisma.user.deleteMany();
 
           const input: z.infer<typeof UserRouterSchema.createInput> = {
             username: 'username',
             email: 'email@example.com',
-            description: 'description',
             password: 'password',
+            twofa_enable: false,
+            twofa_secret: '',
           };
 
           //
@@ -515,8 +511,9 @@ describe(`UserRouter`, () => {
             user_id: expect.anything(),
             username: 'username',
             email: 'email@example.com',
-            description: 'description',
             password: 'password',
+            twofa_enable: false,
+            twofa_secret: '',
             created_at: expect.anything(),
             updated_at: expect.anything(),
           } satisfies z.infer<typeof UserSchema>);
@@ -527,12 +524,13 @@ describe(`UserRouter`, () => {
           const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
+          await prisma.user.deleteMany();
+
           await prisma.user.create({
             data: {
               user_id: 1,
               username: 'username',
               email: 'email@example.com',
-              description: 'description',
               password: 'password',
               created_at: new Date(2001, 2, 3),
               updated_at: new Date(2001, 2, 3),
@@ -542,8 +540,9 @@ describe(`UserRouter`, () => {
           const input: z.infer<typeof UserRouterSchema.createInput> = {
             username: 'createInput username',
             email: 'email@example.com',
-            description: 'createInput description',
             password: 'createInput password',
+            twofa_enable: false,
+            twofa_secret: '',
           };
 
           //
@@ -618,17 +617,15 @@ describe(`UserRouter`, () => {
             const input: z.infer<typeof UserRouterSchema.createInput> = {
               username,
               email,
-              description: '',
               password,
+              twofa_enable: false,
+              twofa_secret: '',
             };
 
             //
             await expect(caller.user.create(input)).rejects.toThrow(
-              //
-              new TRPCError({
-                code: 'BAD_REQUEST',
-                message: JSON.stringify(message, null, '  '),
-              }),
+              // TRPCError BAD_REQUEST message
+              JSON.stringify(message, null, '  '),
             );
           });
         },
@@ -644,8 +641,9 @@ describe(`UserRouter`, () => {
           const input: z.infer<typeof UserRouterSchema.createInput> = {
             username: 'username',
             email: 'email@example.com',
-            description: 'description',
             password: 'password',
+            twofa_enable: false,
+            twofa_secret: '',
           };
 
           //
@@ -656,8 +654,9 @@ describe(`UserRouter`, () => {
             user_id: expect.anything(),
             username: 'username',
             email: 'email@example.com',
-            description: 'description',
             password: 'password',
+            twofa_enable: false,
+            twofa_secret: '',
             created_at: expect.anything(),
             updated_at: expect.anything(),
           } satisfies z.infer<typeof UserSchema>);
@@ -672,8 +671,9 @@ describe(`UserRouter`, () => {
           const input: z.infer<typeof UserRouterSchema.createInput> = {
             username: 'u',
             email: 'e@example.com',
-            description: '',
             password: 'p',
+            twofa_enable: false,
+            twofa_secret: '',
           };
 
           //
@@ -684,8 +684,9 @@ describe(`UserRouter`, () => {
             user_id: expect.anything(),
             username: 'u',
             email: 'e@example.com',
-            description: '',
             password: 'p',
+            twofa_enable: false,
+            twofa_secret: '',
             created_at: expect.anything(),
             updated_at: expect.anything(),
           } satisfies z.infer<typeof UserSchema>);
@@ -702,8 +703,9 @@ describe(`UserRouter`, () => {
           const input: z.infer<typeof UserRouterSchema.createInput> = {
             username: 'username',
             email: 'email@example.com',
-            description: 'description',
             password: 'password',
+            twofa_enable: false,
+            twofa_secret: '',
           };
 
           //
@@ -730,7 +732,6 @@ describe(`UserRouter`, () => {
         user_id: 1,
         username: 'username',
         email: 'email@example.com',
-        description: 'description',
         password: 'password',
         created_at: new Date(2001, 2, 3),
         updated_at: new Date(2001, 2, 3),
@@ -745,6 +746,8 @@ describe(`UserRouter`, () => {
           const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
+          await prisma.user.deleteMany();
+
           const { user_id, updated_at } = await createUser(prisma);
 
           const input: z.infer<typeof UserRouterSchema.updateInput> = {
@@ -752,8 +755,9 @@ describe(`UserRouter`, () => {
             updated_at,
             username: 'USERNAME',
             email: 'EMAIL@EXAMPLE.COM',
-            description: 'DESCRIPTION',
             password: 'PASSWORD',
+            twofa_enable: false,
+            twofa_secret: '',
           };
 
           //
@@ -764,8 +768,9 @@ describe(`UserRouter`, () => {
             user_id: expect.anything(),
             username: 'USERNAME',
             email: 'EMAIL@EXAMPLE.COM',
-            description: 'DESCRIPTION',
             password: 'PASSWORD',
+            twofa_enable: false,
+            twofa_secret: '',
             created_at: expect.anything(),
             updated_at: expect.anything(),
           } satisfies z.infer<typeof UserSchema>);
@@ -776,13 +781,16 @@ describe(`UserRouter`, () => {
           const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
+          await prisma.user.deleteMany();
+
           await prisma.user.create({
             data: {
               user_id: 2,
               username: 'duplicate',
               email: 'duplicate@example.com', // duplicate
-              description: 'description',
               password: 'password',
+              twofa_enable: false,
+              twofa_secret: '',
               created_at: new Date(2001, 2, 3),
               updated_at: new Date(2001, 2, 3),
             },
@@ -795,8 +803,9 @@ describe(`UserRouter`, () => {
             updated_at,
             username: 'USERNAME',
             email: 'duplicate@example.com', // duplicate
-            description: 'DESCRIPTION',
             password: 'PASSWORD',
+            twofa_enable: false,
+            twofa_secret: '',
           };
 
           //
@@ -813,6 +822,8 @@ describe(`UserRouter`, () => {
           const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
+          await prisma.user.deleteMany();
+
           const { user_id } = await createUser(prisma);
 
           const input: z.infer<typeof UserRouterSchema.updateInput> = {
@@ -820,8 +831,9 @@ describe(`UserRouter`, () => {
             updated_at: new Date(2001, 2, 4), // updated
             username: 'USERNAME',
             email: 'duplicate@example.com',
-            description: 'DESCRIPTION',
             password: 'PASSWORD',
+            twofa_enable: false,
+            twofa_secret: '',
           };
 
           //
@@ -893,6 +905,8 @@ describe(`UserRouter`, () => {
             const ctx = createContext(mockopts(), prisma);
             const caller = createCaller(ctx);
             //
+            await prisma.user.deleteMany();
+
             const { user_id, updated_at } = await createUser(prisma);
 
             const input: z.infer<typeof UserRouterSchema.updateInput> = {
@@ -900,17 +914,15 @@ describe(`UserRouter`, () => {
               updated_at,
               username,
               email,
-              description: '',
               password,
+              twofa_enable: false,
+              twofa_secret: '',
             };
 
             //
             await expect(caller.user.update(input)).rejects.toThrow(
-              //
-              new TRPCError({
-                code: 'BAD_REQUEST',
-                message: JSON.stringify(message, null, '  '),
-              }),
+              // TRPCError BAD_REQUEST message
+              JSON.stringify(message, null, '  '),
             );
           });
         },
@@ -922,6 +934,7 @@ describe(`UserRouter`, () => {
           const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
+          await prisma.user.deleteMany();
 
           const { user_id, updated_at } = await createUser(prisma);
 
@@ -930,8 +943,9 @@ describe(`UserRouter`, () => {
             updated_at,
             username: 'USERNAME',
             email: 'EMAIL@EXAMPLE.COM',
-            description: 'DESCRIPTION',
             password: 'PASSWORD',
+            twofa_enable: false,
+            twofa_secret: '',
           };
 
           //
@@ -942,8 +956,9 @@ describe(`UserRouter`, () => {
             user_id: expect.anything(),
             username: 'USERNAME',
             email: 'EMAIL@EXAMPLE.COM',
-            description: 'DESCRIPTION',
             password: 'PASSWORD',
+            twofa_enable: false,
+            twofa_secret: '',
             created_at: expect.anything(),
             updated_at: expect.anything(),
           } satisfies z.infer<typeof UserSchema>);
@@ -954,6 +969,7 @@ describe(`UserRouter`, () => {
           const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
+          await prisma.user.deleteMany();
 
           const { user_id, updated_at } = await createUser(prisma);
 
@@ -962,8 +978,9 @@ describe(`UserRouter`, () => {
             updated_at,
             username: 'U',
             email: 'E@EXAMPLE.COM',
-            description: '',
             password: 'P',
+            twofa_enable: false,
+            twofa_secret: '',
           };
 
           //
@@ -974,8 +991,9 @@ describe(`UserRouter`, () => {
             user_id: expect.anything(),
             username: 'U',
             email: 'E@EXAMPLE.COM',
-            description: '',
             password: 'P',
+            twofa_enable: false,
+            twofa_secret: '',
             created_at: expect.anything(),
             updated_at: expect.anything(),
           } satisfies z.infer<typeof UserSchema>);
@@ -988,6 +1006,7 @@ describe(`UserRouter`, () => {
           const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
+          await prisma.user.deleteMany();
 
           const { user_id, updated_at } = await createUser(prisma);
 
@@ -996,8 +1015,9 @@ describe(`UserRouter`, () => {
             updated_at,
             username: 'USERNAME',
             email: 'EMAIL@EXAMPLE.COM',
-            description: 'DESCRIPTION',
             password: 'PASSWORD',
+            twofa_enable: false,
+            twofa_secret: '',
           };
 
           //
@@ -1024,6 +1044,8 @@ describe(`UserRouter`, () => {
           const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
+          await prisma.user.deleteMany();
+
           const user = await createUser(prisma);
 
           const input: z.infer<typeof UserRouterSchema.deleteInput> = {
@@ -1042,6 +1064,8 @@ describe(`UserRouter`, () => {
           const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
+          await prisma.user.deleteMany();
+
           const { user_id } = await createUser(prisma);
 
           const input: z.infer<typeof UserRouterSchema.deleteInput> = {
@@ -1085,6 +1109,8 @@ describe(`UserRouter`, () => {
           const ctx = createContext(mockopts(), prisma);
           const caller = createCaller(ctx);
           //
+          await prisma.user.deleteMany();
+
           const user = await createUser(prisma);
 
           const input: z.infer<typeof UserRouterSchema.deleteInput> = {
