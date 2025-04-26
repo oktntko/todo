@@ -160,7 +160,7 @@ watch(
       <div class="relative flex min-w-0 grow flex-col gap-1.5">
         <div class="relative flex flex-row gap-1">
           <input
-            v-model.trim="modelValue.title"
+            v-model="modelValue.title"
             type="text"
             class="block w-full border-b border-b-gray-400 bg-inherit pb-0.5 text-sm font-bold outline-hidden"
             placeholder="Title"
@@ -290,7 +290,7 @@ watch(
         <div class="text-xs">
           <textarea
             :id="`${modelValue.todo_id}-description`"
-            v-model.trim="modelValue.description"
+            v-model="modelValue.description"
             class="block field-sizing-content w-full border-b border-b-gray-400 bg-inherit pb-0.5 outline-hidden"
             maxlength="400"
             placeholder="Description"

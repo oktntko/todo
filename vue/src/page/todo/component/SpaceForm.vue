@@ -153,9 +153,9 @@ async function handleFileInput(files?: FileList | null) {
       </div>
 
       <div class="focus-container flex flex-col gap-1">
-        <label for="description" class="optional text-sm capitalize"> description </label>
+        <label for="space_description" class="optional text-sm capitalize"> description </label>
         <textarea
-          id="description"
+          id="space_description"
           v-model.lazy="modelValue.space_description"
           class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
           rows="4"

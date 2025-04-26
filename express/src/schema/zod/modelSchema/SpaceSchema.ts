@@ -13,7 +13,7 @@ export const SpaceSchema = z.object({
   space_id: z.number().int(),
   owner_id: z.number().int(),
   space_name: z.string().trim().min(1).max(100),
-  space_description: z.string().trim().max(400),
+  space_description: z.string().max(400),
   space_order: z.number().int(),
   space_image: z.string().trim().max(15000),
   space_color: ColorSchema.or(z.literal('')),

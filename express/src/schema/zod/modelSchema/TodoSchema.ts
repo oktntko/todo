@@ -13,7 +13,7 @@ export const TodoSchema = z.object({
   todo_id: z.string().uuid(),
   space_id: z.number().int(),
   title: z.string().trim().max(100),
-  description: z.string().trim().max(400),
+  description: z.string().max(400),
   begin_date: DateSchema.or(z.literal('')),
   begin_time: TimeSchema.or(z.literal('')),
   limit_date: DateSchema.or(z.literal('')),

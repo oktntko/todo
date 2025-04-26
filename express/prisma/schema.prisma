@@ -40,7 +40,7 @@ model Space {
   owner    User @relation(fields: [owner_id], references: [user_id], onDelete: Cascade)
 
   space_name        String @db.VarChar(100) /// @zod.string.trim().min(1).max(100)
-  space_description String @default("") @db.VarChar(400) /// @zod.string.trim().max(400)
+  space_description String @default("") @db.VarChar(400) /// @zod.string.max(400)
   space_order       Int    @default(0) /// @zod.number.int()
   space_image       String @db.Text /// @zod.string.trim().max(15000)
   space_color       String @default("") @db.VarChar(100) /// @zod.custom.use(ColorSchema.or(z.literal('')))
@@ -64,7 +64,7 @@ model Todo {
   space    Space @relation(fields: [space_id], references: [space_id], onDelete: Cascade)
 
   title       String    @default("") @db.VarChar(100) /// @zod.string.trim().max(100)
-  description String    @default("") @db.VarChar(400) /// @zod.string.trim().max(400)
+  description String    @default("") @db.VarChar(400) /// @zod.string.max(400)
   begin_date  String    @default("") @db.VarChar(10) /// @zod.custom.use(DateSchema.or(z.literal('')))
   begin_time  String    @default("") @db.VarChar(10) /// @zod.custom.use(TimeSchema.or(z.literal('')))
   limit_date  String    @default("") @db.VarChar(10) /// @zod.custom.use(DateSchema.or(z.literal('')))
