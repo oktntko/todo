@@ -12,6 +12,7 @@ export const SpaceService = {
   createSpace,
   updateSpace,
   deleteSpace,
+  reorderSpace,
 };
 
 // space.list
@@ -140,4 +141,26 @@ async function deleteSpace(
   return SpaceRepository.deleteSpace(prisma, {
     where: { space_id: input.space_id },
   });
+}
+
+// space.reorder
+async function reorderSpace(
+  reqid: string,
+  prisma: PrismaClient,
+  operator_id: number,
+  input: z.infer<typeof SpaceRouterSchema.reorderInputList>,
+) {
+  log.trace(reqid, 'reorderSpace', operator_id, input);
+
+  return Promise.all(
+    input.map((x) =>
+      SpaceRepository.updateSpace(prisma, {
+        where: { space_id: x.space_id },
+        data: {
+          space_order: x.space_order,
+        },
+        operator_id,
+      }),
+    ),
+  );
 }

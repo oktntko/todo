@@ -23,7 +23,7 @@ const emit = defineEmits<{
   close: [ok: boolean];
 }>();
 
-const refDialog = ref<HTMLDialogElement>();
+const refDialog = useTemplateRef<HTMLDialogElement>('refDialog');
 const open = ref(false);
 
 onMounted(() => {

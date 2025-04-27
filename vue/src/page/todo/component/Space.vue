@@ -74,12 +74,12 @@ onMounted(async () => {
 
   await handleSubmit();
 
-  const el = document.getElementById(`${props.space.space_id}-sortable-container`)!;
+  const el = document.getElementById(`space-${props.space.space_id}-sortable-container`)!;
 
   sortable.value = Sortable.create(el, {
     animation: 150,
-    group: 'space',
-    handle: '.my-handle',
+    group: 'todo',
+    handle: '.todo-handle',
     chosenClass: 'bg-blue-100',
     dragClass: 'bg-blue-100',
 
@@ -287,7 +287,7 @@ onMounted(async () => {
       </div>
     </div>
 
-    <ul :id="`${props.space.space_id}-sortable-container`">
+    <ul :id="`space-${props.space.space_id}-sortable-container`">
       <li
         v-for="(todo, i) of todo_list"
         :key="todo.todo_id"

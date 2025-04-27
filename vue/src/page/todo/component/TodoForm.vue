@@ -38,7 +38,7 @@ const status = ref<{
   fixedEditing: false,
   save: '',
 });
-const debounceResetStatus = R.debounce(() => (status.value.save = ''), { waitMs: 1000 });
+const debounceResetStatus = R.funnel(() => (status.value.save = ''), { minQuietPeriodMs: 1000 });
 
 const handleSubmit = validateSubmit(async (value) => {
   try {
@@ -54,7 +54,7 @@ const handleSubmit = validateSubmit(async (value) => {
   }
 });
 
-const debounceHandleSubmit = R.debounce(handleSubmit, { waitMs: 500 });
+const debounceHandleSubmit = R.funnel(handleSubmit, { minQuietPeriodMs: 500 });
 async function handleInput() {
   // watch だと検索条件を変更したときにwatchが発火してしまう
   // {deep:true} を付けても newとoldの値が一致するので値の変化を取得できない
@@ -93,7 +93,7 @@ watch(
     >
       <button
         type="button"
-        class="my-handle relative flex cursor-move items-center justify-center"
+        class="todo-handle relative flex cursor-move items-center justify-center"
         title="handle"
       >
         <span class="icon-[radix-icons--drag-handle-dots-2] h-5 w-5"></span>

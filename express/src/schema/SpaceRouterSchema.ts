@@ -41,6 +41,12 @@ const listOutput = z.object({
   space_list: z.array(SpaceSchema),
 });
 
+const reorderInput = SpaceSchema.pick({
+  space_id: true,
+  space_order: true,
+});
+const reorderInputList = reorderInput.array();
+
 export const SpaceRouterSchema = {
   createInput,
   deleteInput,
@@ -48,4 +54,6 @@ export const SpaceRouterSchema = {
   getInput,
   listInput,
   listOutput,
+  reorderInput,
+  reorderInputList,
 };

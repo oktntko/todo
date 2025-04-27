@@ -54,4 +54,14 @@ export const space = router({
         return SpaceService.deleteSpace(ctx.req.reqid, prisma, ctx.operator_id, input);
       });
     }),
+
+  // space.reorder
+  reorder: protectedProcedure
+    .input(SpaceRouterSchema.reorderInputList)
+    .output(SpaceSchema.array())
+    .mutation(async ({ ctx, input }) => {
+      return $transaction(ctx.prisma, async (prisma) => {
+        return SpaceService.reorderSpace(ctx.req.reqid, prisma, ctx.operator_id, input);
+      });
+    }),
 });
