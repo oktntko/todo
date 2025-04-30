@@ -13,7 +13,7 @@ const {
   title?: string;
   icon?: string;
   colorset?: 'blue' | 'green' | 'yellow' | 'red';
-  message: string;
+  message?: string;
   confirmText?: string;
   cancelText?: string;
   autofocus?: 'confirm' | 'cancel';

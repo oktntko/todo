@@ -1,40 +1,59 @@
 // @ts-check
 
-import eslint from '@eslint/js';
-import prettier from 'eslint-config-prettier';
-import vue from 'eslint-plugin-vue';
-import tseslint from 'typescript-eslint';
+// import pluginVitest from '@vitest/eslint-plugin';
+import skipFormatting from '@vue/eslint-config-prettier/skip-formatting';
+import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript';
+import pluginOxlint from 'eslint-plugin-oxlint';
+// import pluginPlaywright from 'eslint-plugin-playwright';
+import pluginVue from 'eslint-plugin-vue';
+import { globalIgnores } from 'eslint/config';
 
-export default tseslint.config(
-  eslint.configs.recommended,
-  ...tseslint.configs.recommended,
-  ...vue.configs['flat/recommended'],
+// To allow more languages other than `ts` in `.vue` files, uncomment the following lines:
+// import { configureVueProject } from '@vue/eslint-config-typescript'
+// configureVueProject({ scriptLangs: ['ts', 'tsx'] })
+// More info at https://github.com/vuejs/eslint-config-typescript/#advanced-setup
+
+export default defineConfigWithVueTs(
   {
-    files: ['*.vue', '**/*.vue'],
-    languageOptions: {
-      parserOptions: {
-        parser: '@typescript-eslint/parser',
-      },
-    },
+    name: 'app/files-to-lint',
+    files: ['**/*.{ts,mts,tsx,vue}'],
+  },
+
+  globalIgnores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**']),
+
+  pluginVue.configs['flat/recommended'],
+  vueTsConfigs.recommended,
+  {
     rules: {
-      'no-undef': 'off', // When using TypeScript, we recommend to disable no-undef rule directly as TypeScript already check for them and you don't need to worry about this.
-      '@typescript-eslint/ban-ts-ignore': 'off',
       'vue/multi-word-component-names': 'off',
-      '@typescript-eslint/no-unused-vars': [
+      'vue/prop-name-casing': 'off',
+      'vue/block-lang': [
         'error',
         {
-          args: 'all',
-          argsIgnorePattern: '^_',
-          caughtErrors: 'all',
-          caughtErrorsIgnorePattern: '^_',
-          destructuredArrayIgnorePattern: '^_',
-          varsIgnorePattern: '^_',
-          ignoreRestSiblings: true,
+          script: {
+            lang: ['ts', 'tsx'],
+          },
         },
       ],
-      'vue/prop-name-casing': ['warn', 'snake_case'],
+    },
+    languageOptions: {
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
     },
   },
-  { extends: [prettier] },
-  { ignores: ['dist/*'] },
+
+  // {
+  //   ...pluginVitest.configs.recommended,
+  //   files: ['src/**/__tests__/*'],
+  // },
+
+  // {
+  //   ...pluginPlaywright.configs['flat/recommended'],
+  //   files: ['e2e/**/*.{test,spec}.{js,ts,jsx,tsx}'],
+  // },
+  ...pluginOxlint.configs['flat/recommended'],
+  skipFormatting,
 );
