@@ -1,4 +1,4 @@
-import { diff as difference } from 'deep-object-diff';
+import microdiff from 'microdiff';
 import * as R from 'remeda';
 import type { FunctionalComponent, HTMLAttributes } from 'vue';
 import { type Ref } from 'vue';
@@ -14,58 +14,71 @@ export function useValidate<T extends z.ZodRawShape>(
   modelValue: Ref<z.infer<typeof schema>>,
 ) {
   // initial value
-  const initialValue = ref(R.clone(modelValue.value)) as Ref<z.infer<typeof schema>>;
+  const initialValue = ref(R.clone(modelValue.value));
 
-  const diff = computed(() => difference(initialValue.value, modelValue.value));
-
-  const isDirty = computed(() => !R.isEmpty(diff.value as ReadonlyArray<unknown>));
-
-  // error object
-  type SafeParseReturnType = AwaitedReturnType<typeof schema.safeParseAsync>;
-  const error = ref<z.ZodFormattedError<SafeParseReturnType>>();
-
-  // watch model & run validate
-  watch(
-    () => R.clone(modelValue.value),
-    async (currentValue) => {
-      const validateResult = await schema.safeParseAsync(currentValue);
-      if (validateResult.success) {
-        error.value = undefined;
-      } else {
-        error.value = validateResult.error.format();
-      }
-    },
+  const diff = computed(() =>
+    microdiff(initialValue.value, modelValue.value, { cyclesFix: false }).map((x) =>
+      x.path.join('.'),
+    ),
   );
 
-  const isInvalid = computed(() => !!error.value);
+  const isDirty = computed(() => diff.value.length > 0);
+
+  // error object
+  const error = ref<Map<string, string[]>>(new Map());
+
+  // watch model & run validate
+  watch(modelValue.value, validate);
+
+  async function validate(value: z.infer<typeof schema>) {
+    const validateResult = await schema.safeParseAsync(value);
+
+    if (validateResult.success) {
+      error.value.clear();
+    } else {
+      error.value = validateResult.error.issues.reduce((map, issue) => {
+        const key = issue.path.join('.');
+        const messages = map.get(key);
+        if (messages) {
+          messages.push(issue.message);
+        } else {
+          map.set(key, [issue.message]);
+        }
+
+        return map;
+      }, new Map<string, string[]>());
+    }
+
+    return validateResult;
+  }
+
+  const isInvalid = computed(() => error.value.size !== 0);
 
   const submitCount = ref(0);
 
   // バリデーションする
   function validateSubmit(
     callback: (value: z.infer<typeof schema>) => void,
-    onInvalidSubmit: (
-      eroor: z.ZodFormattedError<SafeParseReturnType>,
-    ) => void = handleInvalidSubmit,
+    onInvalidSubmit: (eroor: Map<string, string[]>) => void = handleInvalidSubmit,
   ) {
-    return async (_?: Event) => {
+    return async () => {
       submitCount.value++;
 
       // 値が変更されていないこともあるのでバリデーションする
-      const validateResult = await schema.safeParseAsync(modelValue.value);
+      const validateResult = await validate(modelValue.value);
 
       if (validateResult.success) {
         submitCount.value = 0;
         return callback(validateResult.data);
       } else {
-        error.value = validateResult.error.format();
+        if (import.meta.env.DEV) console.error(validateResult.error);
         return onInvalidSubmit ? onInvalidSubmit(error.value) : undefined;
       }
     };
   }
 
   function revert() {
-    modelValue.value = R.clone(initialValue.value) as z.infer<typeof schema>;
+    modelValue.value = R.clone(initialValue.value);
   }
 
   function reset(resetlValue: z.infer<typeof schema>) {
@@ -74,33 +87,22 @@ export function useValidate<T extends z.ZodRawShape>(
   }
 
   const dialog = useDialog();
-  async function handleInvalidSubmit(error: z.ZodFormattedError<unknown>) {
-    if (import.meta.env.DEV) console.log(error);
-
+  async function handleInvalidSubmit() {
     return dialog.alert('入力値に誤りがあります。');
   }
 
   const ErrorMessage: FunctionalComponent<Props<z.infer<typeof schema>>> = (props) => {
-    const keys: string[] = props.for.split('.').filter((key: string) => key);
-
     const message = computed<string | undefined>(() => {
-      const diffValue = R.pathOr(diff.value, keys, undefined); // 自分のキーの差分を取り出す
       // サブミット済みならエラーメッセージを表示する
       // 差分がなければエラーメッセージを表示しない
-      if (submitCount.value === 0 && diffValue === undefined) {
+      if (submitCount.value === 0 && !diff.value.includes(props.for)) {
         return;
       }
 
-      const errorValue: any = R.pathOr(error.value, keys, undefined); // 自分のキーのエラーを取り出す
-      if (
-        !errorValue ||
-        R.isEmpty(errorValue) ||
-        !Array.isArray(errorValue._errors) ||
-        !errorValue._errors.length
-      ) {
-        return;
+      const errorMessages = error.value.get(props.for);
+      if (errorMessages && errorMessages.length > 0) {
+        return errorMessages[0];
       }
-      return errorValue._errors[0];
     });
 
     if (message.value) {

@@ -24,6 +24,9 @@
       "DOM.Iterable"
 
       // No `ScriptHost` because Vue 3 dropped support for IE
-    ]
+    ],
+    // src/schema/FileRouterSchema.ts
+    // https://stackoverflow.com/questions/75688293/namespace-global-express-has-no-exported-member-multer
+    "types": ["multer"]
   }
 }
