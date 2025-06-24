@@ -52,6 +52,8 @@ export const ErrrorHandler: ErrorRequestHandler = (err, req, res, next) => {
           return 504;
         case 'UNAUTHORIZED':
           return 401;
+        case 'PAYMENT_REQUIRED':
+          return 402;
         case 'FORBIDDEN':
           return 403;
         case 'NOT_FOUND':
