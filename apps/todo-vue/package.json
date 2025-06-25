@@ -1,5 +1,5 @@
 {
-  "name": "vue",
+  "name": "todo-vue",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -8,8 +8,8 @@
     "build": "pnpm symlink && run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "symlink": "run-p symlink:*",
-    "symlink:@types": "ln --symbolic --force --relative --no-target-directory '../express/@types' './src/@types/express'",
-    "symlink:schema": "ln --symbolic --force --relative '../express/src/schema' --target-directory='./src'",
+    "symlink:@types": "ln --symbolic --force --relative --no-target-directory '../todo-express/@types' './src/@types/express'",
+    "symlink:schema": "ln --symbolic --force --relative '../todo-express/src/schema' --target-directory='./src'",
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",
     "lint": "run-s lint:*",
