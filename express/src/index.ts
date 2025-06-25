@@ -1,2 +1,2 @@
-import { listen } from '~/app.js';
+import { listen } from '~/app';
 listen();

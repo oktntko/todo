@@ -2,13 +2,13 @@ import { initTRPC, TRPCError } from '@trpc/server';
 import * as trpcExpress from '@trpc/server/adapters/express';
 import superjson from 'superjson';
 import { ZodError } from 'zod';
-import { generatePrisma, PrismaClient } from '~/middleware/prisma.js';
-import { SessionService } from '~/middleware/session.js';
+import { generatePrisma, PrismaClient } from '~/middleware/prisma';
+import { SessionService } from '~/middleware/session';
 import {
   MESSAGE_INPUT_INVALID,
   MESSAGE_INTERNAL_SERVER_ERROR,
   MESSAGE_UNAUTHORIZED,
-} from '~/repository/_repository.js';
+} from '~/repository/_repository';
 
 // The app's context - is generated for each incoming request
 export function createContext(

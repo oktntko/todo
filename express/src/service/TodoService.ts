@@ -1,13 +1,13 @@
 import { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
-import { log } from '~/lib/log4js.js';
-import { z } from '~/lib/zod.js';
-import { PrismaClient } from '~/middleware/prisma.js';
-import { checkDataExist, checkPreviousVersion } from '~/repository/_repository.js';
-import { SpaceRepository } from '~/repository/SpaceRepository.js';
-import { TodoRepository } from '~/repository/TodoRepository.js';
-import { TodoStatusSchema } from '~/schema/option/OptionTodoStatus.js';
-import { TodoRouterSchema } from '~/schema/TodoRouterSchema.js';
+import { log } from '~/lib/log4js';
+import { z } from '~/lib/zod';
+import { PrismaClient } from '~/middleware/prisma';
+import { checkDataExist, checkPreviousVersion } from '~/repository/_repository';
+import { SpaceRepository } from '~/repository/SpaceRepository';
+import { TodoRepository } from '~/repository/TodoRepository';
+import { TodoStatusSchema } from '~/schema/option/OptionTodoStatus';
+import { TodoRouterSchema } from '~/schema/TodoRouterSchema';
 
 export const TodoService = {
   listTodo,

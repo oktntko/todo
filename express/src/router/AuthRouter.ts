@@ -1,7 +1,7 @@
 import type { Session, SessionData } from 'express-session';
-import { dayjs } from '~/lib/dayjs.js';
+import { dayjs } from '~/lib/dayjs';
 import { z } from '~/lib/zod';
-import { $transaction } from '~/middleware/prisma.js';
+import { $transaction } from '~/middleware/prisma';
 import { SessionService } from '~/middleware/session';
 import { publicProcedure, router } from '~/middleware/trpc';
 import { AuthRouterSchema, AuthSchema } from '~/schema/AuthRouterSchema';

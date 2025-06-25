@@ -1,8 +1,8 @@
-import { $transaction } from '~/middleware/prisma.js';
-import { protectedProcedure, router } from '~/middleware/trpc.js';
-import { UserRouterSchema } from '~/schema/UserRouterSchema.js';
-import { UserSchema } from '~/schema/zod/modelSchema/UserSchema.js';
-import { UserService } from '~/service/UserService.js';
+import { $transaction } from '~/middleware/prisma';
+import { protectedProcedure, router } from '~/middleware/trpc';
+import { UserRouterSchema } from '~/schema/UserRouterSchema';
+import { UserSchema } from '~/schema/zod/modelSchema/UserSchema';
+import { UserService } from '~/service/UserService';
 
 export const user = router({
   // user.list

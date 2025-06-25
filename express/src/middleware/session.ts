@@ -1,8 +1,8 @@
 import { SessionData, Store } from 'express-session';
 import superjson from 'superjson';
-import { dayjs } from '~/lib/dayjs.js';
-import { log } from '~/lib/log4js.js';
-import { prisma } from '~/lib/prisma.js';
+import { dayjs } from '~/lib/dayjs';
+import { log } from '~/lib/log4js';
+import { prisma } from '~/lib/prisma';
 
 /**
  * https://github.com/microsoft/TypeScript-Node-Starter/blob/master/src/types/express-session-types.d.ts

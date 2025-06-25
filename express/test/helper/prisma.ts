@@ -3,7 +3,7 @@ import {
   ExtendsPrismaClient,
   PrismaClient,
   TransactionExtendsPrismaClient,
-} from '~/middleware/prisma.js';
+} from '~/middleware/prisma';
 
 export async function transactionRollback<R>(
   prisma: ExtendsPrismaClient,

@@ -1,4 +1,4 @@
-import { z } from '~/lib/zod.js';
+import { z } from '~/lib/zod';
 
 export const TodoScalarFieldEnumSchema = z.enum([
   'todo_id',

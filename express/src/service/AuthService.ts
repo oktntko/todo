@@ -1,13 +1,13 @@
 import { TRPCError } from '@trpc/server';
 import type { z } from 'zod';
-import { dayjs } from '~/lib/dayjs.js';
-import { log } from '~/lib/log4js.js';
-import { HashPassword, OnetimePassword, SecretPassword } from '~/lib/secret.js';
-import type { PrismaClient } from '~/middleware/prisma.js';
-import { SpaceRepository } from '~/repository/SpaceRepository.js';
-import { UserRepository } from '~/repository/UserRepository.js';
-import { checkDataExist, checkDuplicate } from '~/repository/_repository.js';
-import { AuthRouterSchema } from '~/schema/AuthRouterSchema.js';
+import { dayjs } from '~/lib/dayjs';
+import { log } from '~/lib/log4js';
+import { HashPassword, OnetimePassword, SecretPassword } from '~/lib/secret';
+import type { PrismaClient } from '~/middleware/prisma';
+import { SpaceRepository } from '~/repository/SpaceRepository';
+import { UserRepository } from '~/repository/UserRepository';
+import { checkDataExist, checkDuplicate } from '~/repository/_repository';
+import { AuthRouterSchema } from '~/schema/AuthRouterSchema';
 
 export const AuthService = {
   signup,

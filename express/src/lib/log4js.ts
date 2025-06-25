@@ -1,5 +1,5 @@
 import log4js from 'log4js';
-import { env } from '~/lib/env.js';
+import { env } from '~/lib/env';
 
 log4js.configure({
   appenders: {

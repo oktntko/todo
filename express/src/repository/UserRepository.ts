@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { PrismaClient } from '~/middleware/prisma.js';
+import { PrismaClient } from '~/middleware/prisma';
 
 export const UserRepository = {
   countUser,

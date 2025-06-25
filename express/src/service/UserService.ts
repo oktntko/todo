@@ -1,10 +1,10 @@
 import { Prisma } from '@prisma/client';
-import { log } from '~/lib/log4js.js';
-import { z } from '~/lib/zod.js';
-import { PrismaClient } from '~/middleware/prisma.js';
-import { checkDataExist, checkDuplicate, checkPreviousVersion } from '~/repository/_repository.js';
-import { UserRepository } from '~/repository/UserRepository.js';
-import { UserRouterSchema } from '~/schema/UserRouterSchema.js';
+import { log } from '~/lib/log4js';
+import { z } from '~/lib/zod';
+import { PrismaClient } from '~/middleware/prisma';
+import { checkDataExist, checkDuplicate, checkPreviousVersion } from '~/repository/_repository';
+import { UserRepository } from '~/repository/UserRepository';
+import { UserRouterSchema } from '~/schema/UserRouterSchema';
 
 export const UserService = {
   listUser,

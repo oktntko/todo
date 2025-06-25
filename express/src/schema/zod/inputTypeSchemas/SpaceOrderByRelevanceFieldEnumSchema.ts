@@ -1,4 +1,4 @@
-import { z } from '~/lib/zod.js';
+import { z } from '~/lib/zod';
 
 export const SpaceOrderByRelevanceFieldEnumSchema = z.enum([
   'space_name',

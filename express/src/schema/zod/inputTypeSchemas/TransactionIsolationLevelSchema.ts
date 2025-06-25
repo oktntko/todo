@@ -1,4 +1,4 @@
-import { z } from '~/lib/zod.js';
+import { z } from '~/lib/zod';
 
 export const TransactionIsolationLevelSchema = z.enum([
   'ReadUncommitted',

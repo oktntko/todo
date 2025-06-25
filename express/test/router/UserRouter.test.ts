@@ -1,18 +1,18 @@
 import { TRPCError } from '@trpc/server';
-import { mockopts } from 't/helper/express.js';
-import { transactionRollback } from 't/helper/prisma.js';
-import 't/helper/session.js';
+import { mockopts } from 't/helper/express';
+import { transactionRollback } from 't/helper/prisma';
+import 't/helper/session';
 import { z } from 'zod';
-import { generatePrisma, PrismaClient } from '~/middleware/prisma.js';
-import { createContext } from '~/middleware/trpc.js';
+import { generatePrisma, PrismaClient } from '~/middleware/prisma';
+import { createContext } from '~/middleware/trpc';
 import {
   MESSAGE_DATA_IS_NOT_EXIST,
   MESSAGE_DUPLICATE_IS_EXISTING,
   MESSAGE_PREVIOUS_IS_UPDATED,
-} from '~/repository/_repository.js';
-import { createCaller } from '~/router/_router.js';
-import { UserRouterSchema } from '~/schema/UserRouterSchema.js';
-import UserSchema from '~/schema/zod/modelSchema/UserSchema.js';
+} from '~/repository/_repository';
+import { createCaller } from '~/router/_router';
+import { UserRouterSchema } from '~/schema/UserRouterSchema';
+import UserSchema from '~/schema/zod/modelSchema/UserSchema';
 
 const prisma = generatePrisma('test');
 

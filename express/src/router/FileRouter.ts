@@ -1,11 +1,11 @@
 import express from 'express';
 import multer from 'multer';
-import { z } from '~/lib/zod.js';
-import { createProtectHandler } from '~/middleware/express.js';
-import { $transaction } from '~/middleware/prisma.js';
-import { protectedProcedure, router } from '~/middleware/trpc.js';
-import { FileRouterSchema } from '~/schema/FileRouterSchema.js';
-import { FileService } from '~/service/FileService.js';
+import { z } from '~/lib/zod';
+import { createProtectHandler } from '~/middleware/express';
+import { $transaction } from '~/middleware/prisma';
+import { protectedProcedure, router } from '~/middleware/trpc';
+import { FileRouterSchema } from '~/schema/FileRouterSchema';
+import { FileService } from '~/service/FileService';
 
 ////////////////////////////////////////////////
 // express

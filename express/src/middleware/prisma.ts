@@ -1,8 +1,8 @@
 import { PrismaClient as OriginPrismaClient, Prisma } from '@prisma/client';
-import type { ITXClientDenyList } from '@prisma/client/runtime/library.js';
+import type { ITXClientDenyList } from '@prisma/client/runtime/library';
 import log4js from 'log4js';
 import util from 'node:util';
-import { env } from '~/lib/env.js';
+import { env } from '~/lib/env';
 
 const log = log4js.getLogger('database');
 

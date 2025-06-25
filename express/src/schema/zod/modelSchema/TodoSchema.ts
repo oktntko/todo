@@ -1,9 +1,9 @@
-import { z } from '~/lib/zod.js';
-import { DateSchema, TimeSchema } from '../../_schema.js';
-import type { FileWithRelations } from './FileSchema.js';
-import { FileWithRelationsSchema } from './FileSchema.js';
-import type { SpaceWithRelations } from './SpaceSchema.js';
-import { SpaceWithRelationsSchema } from './SpaceSchema.js';
+import { z } from '~/lib/zod';
+import { DateSchema, TimeSchema } from '../../_schema';
+import type { FileWithRelations } from './FileSchema';
+import { FileWithRelationsSchema } from './FileSchema';
+import type { SpaceWithRelations } from './SpaceSchema';
+import { SpaceWithRelationsSchema } from './SpaceSchema';
 
 /////////////////////////////////////////
 // TODO SCHEMA

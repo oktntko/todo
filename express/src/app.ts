@@ -2,18 +2,18 @@ import express from 'express';
 import session from 'express-session';
 import helmet from 'helmet';
 import { createServer } from 'node:http';
-import { env } from '~/lib/env.js';
-import { log } from '~/lib/log4js.js';
+import { env } from '~/lib/env';
+import { log } from '~/lib/log4js';
 import {
   ErrrorHandler,
   InjectRequestIdHandler,
   LogHandler,
   NotFoundHandler,
   UnexpectedErrorHandler,
-} from '~/middleware/express.js';
-import { SessionStore } from '~/middleware/session.js';
-import { createExpressMiddleware } from '~/middleware/trpc.js';
-import { ExpressRouter, TrpcRouter } from '~/router/_router.js';
+} from '~/middleware/express';
+import { SessionStore } from '~/middleware/session';
+import { createExpressMiddleware } from '~/middleware/trpc';
+import { ExpressRouter, TrpcRouter } from '~/router/_router';
 
 export const app = express();
 const server = createServer(app);

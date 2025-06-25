@@ -1,4 +1,4 @@
-import { SessionService } from '~/middleware/session.js';
+import { SessionService } from '~/middleware/session';
 
 const mockFindUserBySession = vi.spyOn(SessionService, 'findUserBySession');
 beforeAll(() => {

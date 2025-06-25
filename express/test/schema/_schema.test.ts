@@ -1,4 +1,4 @@
-import { ColorSchema, DateSchema, TimeSchema } from '~/schema/_schema.js';
+import { ColorSchema, DateSchema, TimeSchema } from '~/schema/_schema';
 
 describe('/src/schema/_schema.ts', () => {
   describe('DateSchema', () => {

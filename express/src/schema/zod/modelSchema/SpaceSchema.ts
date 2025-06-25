@@ -1,9 +1,9 @@
-import { z } from '~/lib/zod.js';
-import { ColorSchema } from '../../_schema.js';
-import type { TodoWithRelations } from './TodoSchema.js';
-import { TodoWithRelationsSchema } from './TodoSchema.js';
-import type { UserWithRelations } from './UserSchema.js';
-import { UserWithRelationsSchema } from './UserSchema.js';
+import { z } from '~/lib/zod';
+import { ColorSchema } from '../../_schema';
+import type { TodoWithRelations } from './TodoSchema';
+import { TodoWithRelationsSchema } from './TodoSchema';
+import type { UserWithRelations } from './UserSchema';
+import { UserWithRelationsSchema } from './UserSchema';
 
 /////////////////////////////////////////
 // SPACE SCHEMA

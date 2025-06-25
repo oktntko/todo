@@ -2,16 +2,16 @@ import { TRPCError } from '@trpc/server';
 import type { ErrorRequestHandler, Request, RequestHandler, Response } from 'express';
 import { NextFunction } from 'express-serve-static-core';
 import crypto from 'node:crypto';
-import { log } from '~/lib/log4js.js';
-import { z } from '~/lib/zod.js';
-import { PrismaClient } from '~/middleware/prisma.js';
-import { SessionService } from '~/middleware/session.js';
-import { createContext } from '~/middleware/trpc.js';
+import { log } from '~/lib/log4js';
+import { z } from '~/lib/zod';
+import { PrismaClient } from '~/middleware/prisma';
+import { SessionService } from '~/middleware/session';
+import { createContext } from '~/middleware/trpc';
 import {
   MESSAGE_INPUT_INVALID,
   MESSAGE_INTERNAL_SERVER_ERROR,
   MESSAGE_UNAUTHORIZED,
-} from '~/repository/_repository.js';
+} from '~/repository/_repository';
 
 // # Custom Request
 // node_modules/@types/express-session/index.d.ts

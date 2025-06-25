@@ -1,4 +1,4 @@
-import { z } from '~/lib/zod.js';
+import { z } from '~/lib/zod';
 
 export const SessionOrderByRelevanceFieldEnumSchema = z.enum(['session_key', 'data']);
 

@@ -4,10 +4,21 @@
     "dev": {
       "cache": false,
       "persistent": true,
-      "env": ["DATABASE_URL"]
+      "env": [
+        "EXPRESS_PORT",
+        "DATABASE_URL",
+        "DB_PORT"
+      ]
     },
-    "build": {
-      "dependsOn": ["^build"]
+    "build": {},
+    "preview": {
+      "cache": false,
+      "persistent": true,
+      "env": [
+        "EXPRESS_PORT",
+        "DATABASE_URL",
+        "DB_PORT"
+      ]
     }
   }
 }

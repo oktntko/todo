@@ -1,5 +1,5 @@
-import { dayjs } from '~/lib/dayjs.js';
-import { z } from '~/lib/zod.js';
+import { dayjs } from '~/lib/dayjs';
+import { z } from '~/lib/zod';
 
 export const DateSchema = z
   .string()

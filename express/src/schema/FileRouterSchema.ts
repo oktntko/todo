@@ -1,8 +1,8 @@
-import { z } from '~/lib/zod.js';
-import FileScalarFieldEnumSchema from '~/schema/zod/inputTypeSchemas/FileScalarFieldEnumSchema.js';
-import SortOrderSchema from '~/schema/zod/inputTypeSchemas/SortOrderSchema.js';
-import { FileSchema } from '~/schema/zod/modelSchema/FileSchema.js';
-import { TodoSchema } from '~/schema/zod/modelSchema/TodoSchema.js';
+import { z } from '~/lib/zod';
+import FileScalarFieldEnumSchema from '~/schema/zod/inputTypeSchemas/FileScalarFieldEnumSchema';
+import SortOrderSchema from '~/schema/zod/inputTypeSchemas/SortOrderSchema';
+import { FileSchema } from '~/schema/zod/modelSchema/FileSchema';
+import { TodoSchema } from '~/schema/zod/modelSchema/TodoSchema';
 
 const getInput = FileSchema.pick({
   file_id: true,

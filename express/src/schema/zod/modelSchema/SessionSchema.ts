@@ -1,6 +1,6 @@
-import { z } from '~/lib/zod.js';
-import type { UserWithRelations } from './UserSchema.js';
-import { UserWithRelationsSchema } from './UserSchema.js';
+import { z } from '~/lib/zod';
+import type { UserWithRelations } from './UserSchema';
+import { UserWithRelationsSchema } from './UserSchema';
 
 /////////////////////////////////////////
 // SESSION SCHEMA

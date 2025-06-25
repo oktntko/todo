@@ -1,10 +1,10 @@
 import { Prisma } from '@prisma/client';
-import { log } from '~/lib/log4js.js';
-import { z } from '~/lib/zod.js';
-import { PrismaClient } from '~/middleware/prisma.js';
-import { checkDataExist, checkPreviousVersion } from '~/repository/_repository.js';
-import { SpaceRepository } from '~/repository/SpaceRepository.js';
-import { SpaceRouterSchema } from '~/schema/SpaceRouterSchema.js';
+import { log } from '~/lib/log4js';
+import { z } from '~/lib/zod';
+import { PrismaClient } from '~/middleware/prisma';
+import { checkDataExist, checkPreviousVersion } from '~/repository/_repository';
+import { SpaceRepository } from '~/repository/SpaceRepository';
+import { SpaceRouterSchema } from '~/schema/SpaceRouterSchema';
 
 export const SpaceService = {
   listSpace,

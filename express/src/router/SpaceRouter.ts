@@ -1,8 +1,8 @@
-import { $transaction } from '~/middleware/prisma.js';
-import { protectedProcedure, router } from '~/middleware/trpc.js';
-import { SpaceRouterSchema } from '~/schema/SpaceRouterSchema.js';
-import { SpaceSchema } from '~/schema/zod/modelSchema/SpaceSchema.js';
-import { SpaceService } from '~/service/SpaceService.js';
+import { $transaction } from '~/middleware/prisma';
+import { protectedProcedure, router } from '~/middleware/trpc';
+import { SpaceRouterSchema } from '~/schema/SpaceRouterSchema';
+import { SpaceSchema } from '~/schema/zod/modelSchema/SpaceSchema';
+import { SpaceService } from '~/service/SpaceService';
 
 export const space = router({
   // space.list

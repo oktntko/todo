@@ -1,9 +1,9 @@
-import { createCallerFactory, router } from '~/middleware/trpc.js';
-import { auth } from '~/router/AuthRouter.js';
-import { file, FileRouter } from '~/router/FileRouter.js';
-import { space } from '~/router/SpaceRouter.js';
-import { todo } from '~/router/TodoRouter.js';
-import { user } from '~/router/UserRouter.js';
+import { createCallerFactory, router } from '~/middleware/trpc';
+import { auth } from '~/router/AuthRouter';
+import { file, FileRouter } from '~/router/FileRouter';
+import { space } from '~/router/SpaceRouter';
+import { todo } from '~/router/TodoRouter';
+import { user } from '~/router/UserRouter';
 
 export const TrpcRouter = router({
   auth,

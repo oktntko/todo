@@ -2,15 +2,15 @@ import { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import AdmZip from 'adm-zip';
 import type { z } from 'zod';
-import { log } from '~/lib/log4js.js';
-import type { PrismaClient } from '~/middleware/prisma.js';
+import { log } from '~/lib/log4js';
+import type { PrismaClient } from '~/middleware/prisma';
 import {
   checkDataExist,
   checkPreviousVersion,
   MESSAGE_DATA_IS_NOT_EXIST,
-} from '~/repository/_repository.js';
-import { FileRepository } from '~/repository/FileRepository.js';
-import { FileRouterSchema } from '~/schema/FileRouterSchema.js';
+} from '~/repository/_repository';
+import { FileRepository } from '~/repository/FileRepository';
+import { FileRouterSchema } from '~/schema/FileRouterSchema';
 
 export const FileService = {
   readFile,

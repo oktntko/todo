@@ -1,5 +1,5 @@
 import { TRPCError } from '@trpc/server';
-import { R } from '~/lib/remeda.js';
+import { R } from '~/lib/remeda';
 
 export const MESSAGE_UNAUTHORIZED = 'ログインしていません。';
 export const MESSAGE_INTERNAL_SERVER_ERROR = 'システムエラーが発生しました。';

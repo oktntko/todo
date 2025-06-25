@@ -1,7 +1,7 @@
-import { z } from '~/lib/zod.js';
-import { SortOrderSchema } from '~/schema/zod/inputTypeSchemas/SortOrderSchema.js';
-import { UserScalarFieldEnumSchema } from '~/schema/zod/inputTypeSchemas/UserScalarFieldEnumSchema.js';
-import { UserSchema } from '~/schema/zod/modelSchema/UserSchema.js';
+import { z } from '~/lib/zod';
+import { SortOrderSchema } from '~/schema/zod/inputTypeSchemas/SortOrderSchema';
+import { UserScalarFieldEnumSchema } from '~/schema/zod/inputTypeSchemas/UserScalarFieldEnumSchema';
+import { UserSchema } from '~/schema/zod/modelSchema/UserSchema';
 
 const createInput = UserSchema.omit({
   user_id: true,

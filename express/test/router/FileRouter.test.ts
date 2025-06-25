@@ -1,21 +1,21 @@
 import { TRPCError } from '@trpc/server';
 import supertest from 'supertest';
-import { mockCreateContext, mockopts } from 't/helper/express.js';
-import { transactionRollback } from 't/helper/prisma.js';
-import 't/helper/session.js';
-import { app } from '~/app.js';
-import { z } from '~/lib/zod.js';
-import { generatePrisma, PrismaClient } from '~/middleware/prisma.js';
-import { createContext } from '~/middleware/trpc.js';
+import { mockCreateContext, mockopts } from 't/helper/express';
+import { transactionRollback } from 't/helper/prisma';
+import 't/helper/session';
+import { app } from '~/app';
+import { z } from '~/lib/zod';
+import { generatePrisma, PrismaClient } from '~/middleware/prisma';
+import { createContext } from '~/middleware/trpc';
 import {
   MESSAGE_DATA_IS_NOT_EXIST,
   MESSAGE_INPUT_INVALID,
   MESSAGE_INTERNAL_SERVER_ERROR,
   MESSAGE_PREVIOUS_IS_UPDATED,
-} from '~/repository/_repository.js';
-import { FileRepository } from '~/repository/FileRepository.js';
-import { createCaller } from '~/router/_router.js';
-import { FileRouterSchema } from '~/schema/FileRouterSchema.js';
+} from '~/repository/_repository';
+import { FileRepository } from '~/repository/FileRepository';
+import { createCaller } from '~/router/_router';
+import { FileRouterSchema } from '~/schema/FileRouterSchema';
 
 const prisma = generatePrisma('test');
 

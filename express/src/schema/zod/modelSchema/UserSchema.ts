@@ -1,10 +1,10 @@
-import { z } from '~/lib/zod.js';
-import type { FileWithRelations } from './FileSchema.js';
-import { FileWithRelationsSchema } from './FileSchema.js';
-import type { SessionWithRelations } from './SessionSchema.js';
-import { SessionWithRelationsSchema } from './SessionSchema.js';
-import type { SpaceWithRelations } from './SpaceSchema.js';
-import { SpaceWithRelationsSchema } from './SpaceSchema.js';
+import { z } from '~/lib/zod';
+import type { FileWithRelations } from './FileSchema';
+import { FileWithRelationsSchema } from './FileSchema';
+import type { SessionWithRelations } from './SessionSchema';
+import { SessionWithRelationsSchema } from './SessionSchema';
+import type { SpaceWithRelations } from './SpaceSchema';
+import { SpaceWithRelationsSchema } from './SpaceSchema';
 
 /////////////////////////////////////////
 // USER SCHEMA
