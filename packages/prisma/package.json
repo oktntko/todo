@@ -1,11 +1,10 @@
 {
-  "name": "~lib",
+  "name": "~prisma",
   "version": "1.0.0",
   "type": "module",
   "exports": {
-    "./dayjs": "./src/dayjs.ts",
-    "./remeda": "./src/remeda.ts",
-    "./zod": "./src/zod.ts"
+    ".": "./src/client.ts",
+    "./schema": "./src/schema/index.ts"
   },
   "scripts": {
     "dev": "tsup src/* --watch",
@@ -13,14 +12,17 @@
     "type-check": "tsc --project tsconfig.base.json --noEmit",
     "build-only": "tsup-node",
     "lint": "eslint src/ --max-warnings 0",
-    "format": "prettier src/ --write",
-    "test": "vitest run",
-    "test:preview": "vitest --ui"
+    "format": "prettier . --write",
+    "prisma:generate": "prisma generate && find src/schema -type f | xargs sed -i -e \"s#from 'zod';#from '@repo/lib/zod';#g\" && prettier src/schema --write",
+    "prisma:migrate:deploy": "prisma migrate deploy",
+    "prisma:migrate:dev": "prisma migrate dev",
+    "prisma:push": "prisma db push",
+    "prisma:seed": "tsx src/seed.ts",
+    "prisma:studio": "prisma studio"
   },
   "dependencies": {
-    "dayjs": "^1.11.13",
-    "remeda": "^2.23.1",
-    "zod": "^3.25.67"
+    "@prisma/client": "6.10.1",
+    "~lib": "workspace:*"
   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",
@@ -29,17 +31,16 @@
     "@types/node": "^24.0.4",
     "@typescript-eslint/eslint-plugin": "^8.35.0",
     "@typescript-eslint/parser": "^8.35.0",
-    "@vitest/coverage-v8": "^3.2.4",
-    "@vitest/ui": "^3.2.4",
     "eslint": "^9.29.0",
     "eslint-config-prettier": "^10.1.5",
     "npm-run-all2": "^8.0.4",
-    "prettier": "^3.6.2",
+    "prettier": "^3.6.1",
     "prettier-plugin-organize-imports": "^4.1.0",
+    "prisma": "^6.10.1",
     "tsup": "^8.5.0",
     "tsx": "4.20.3",
     "typescript": "5.8.3",
     "typescript-eslint": "^8.35.0",
-    "vitest": "^3.2.4"
+    "zod-prisma-types": "^3.2.4"
   }
 }

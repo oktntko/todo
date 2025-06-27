@@ -3,10 +3,7 @@
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "types": ["vitest/globals"],
-    "rootDir": ".",
-    "paths": {
-      "~/*": ["src/*"]
-    }
+    "rootDir": "."
   },
   "include": ["src/**/*", "test/**/*"]
 }

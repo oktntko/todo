@@ -1,3 +1,5 @@
 packages:
   - "apps/todo-vue"
   - "apps/todo-express"
+  - "packages/prisma"
+  - "packages/lib"
