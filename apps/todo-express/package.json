@@ -15,7 +15,7 @@
     "start": "node --enable-source-maps --disable-warning=ExperimentalWarning dist/index.js",
     "preview": "npm-run-all --sequential build type-check start",
     "prisma": "npm-run-all --sequential prisma:* format",
-    "prisma:generate": "prisma generate && prettier src/schema/zod/ --write && find src/schema/zod -type f | xargs sed -i -e \"s/from '\\([~.]\\)\\(.*\\)';$/from '\\1\\2\\.js';/\" -e \"s@from 'zod';@from '~/lib/zod.js';@g\" ",
+    "prisma:generate": "prisma generate && prettier src/schema/zod/ --write && find src/schema/zod -type f | xargs sed -i -e \"s@from 'zod';@from '~/lib/zod';@g\" ",
     "prisma:migrate-create-only": "prisma migrate dev --create-only",
     "prisma:deploy": "prisma migrate deploy",
     "prisma:seed": "tsx prisma/seed.ts",
@@ -49,6 +49,8 @@
   "devDependencies": {
     "@eslint/js": "^9.29.0",
     "@microsoft/api-extractor": "^7.52.8",
+    "@tsconfig/node24": "^24.0.1",
+    "@tsconfig/strictest": "^2.0.5",
     "@types/adm-zip": "^0.5.7",
     "@types/bcryptjs": "^3.0.0",
     "@types/express": "^5.0.3",

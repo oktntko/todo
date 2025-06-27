@@ -9,5 +9,5 @@ export default defineConfig({
   treeshake: true,
   tsconfig: './tsconfig.node.json',
   format: 'esm',
-  target: 'node22',
+  target: 'node24',
 });

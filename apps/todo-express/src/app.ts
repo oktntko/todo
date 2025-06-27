@@ -5,7 +5,7 @@ import { createServer } from 'node:http';
 import { env } from '~/lib/env';
 import { log } from '~/lib/log4js';
 import {
-  ErrrorHandler,
+  ErrorHandler,
   InjectRequestIdHandler,
   LogHandler,
   NotFoundHandler,
@@ -76,7 +76,7 @@ app.use(
 );
 app.use(...ExpressRouter);
 
-app.use(ErrrorHandler);
+app.use(ErrorHandler);
 app.use(NotFoundHandler);
 app.use(UnexpectedErrorHandler);
 

@@ -21,14 +21,14 @@ declare module 'http' {
   }
 }
 
-export const InjectRequestIdHandler: RequestHandler = (req, res, next) => {
+export const InjectRequestIdHandler: RequestHandler = (req, _, next) => {
   req.reqid = crypto.randomUUID();
 
   return next();
 };
 
 // # Error Handler
-export const ErrrorHandler: ErrorRequestHandler = (err, req, res, next) => {
+export const ErrorHandler: ErrorRequestHandler = (err, _, res, next) => {
   if (res.headersSent) {
     return next();
   }
@@ -88,7 +88,7 @@ export const ErrrorHandler: ErrorRequestHandler = (err, req, res, next) => {
 };
 
 // NOT FOUND ERROR
-export const NotFoundHandler: RequestHandler = (req, res, next) => {
+export const NotFoundHandler: RequestHandler = (_, res, next) => {
   if (res.headersSent) {
     return next();
   }
@@ -100,7 +100,7 @@ export const NotFoundHandler: RequestHandler = (req, res, next) => {
 };
 
 // UNEXPECTED ERROR
-export const UnexpectedErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
+export const UnexpectedErrorHandler: ErrorRequestHandler = (err, _, res, next) => {
   log.error(err);
   if (res.headersSent) {
     return next(err);

@@ -49,7 +49,7 @@ export class SessionStore extends Store {
 
   async destroy(session_key: string, callback?: (err?: unknown) => void) {
     try {
-      await destorySession(session_key);
+      await destroySession(session_key);
       callback?.();
     } catch (err) {
       callback?.(err);
@@ -60,7 +60,7 @@ export class SessionStore extends Store {
 export const SessionService = {
   getSession,
   setSession,
-  destorySession,
+  destroySession,
   findUserBySession,
 };
 
@@ -132,9 +132,9 @@ async function setSession(session_key: string, session: SessionData) {
   });
 }
 
-// # session.destory
-async function destorySession(session_key: string) {
-  log.debug('destorySession', session_key);
+// # session.destroy
+async function destroySession(session_key: string) {
+  log.debug('destroySession', session_key);
 
   return prisma.session.deleteMany({
     where: { session_key },
