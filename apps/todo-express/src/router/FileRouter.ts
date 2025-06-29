@@ -1,5 +1,5 @@
-import { z } from '-lib/zod';
-import { $transaction } from '-prisma/client';
+import { z } from '@/lib/zod';
+import { $transaction } from '@/prisma/client';
 import express from 'express';
 import multer from 'multer';
 import { createProtectHandler } from '~/middleware/express';

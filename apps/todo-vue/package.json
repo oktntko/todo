@@ -4,12 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "pnpm symlink && vite",
-    "build": "pnpm symlink && run-p type-check \"build-only {@}\" --",
+    "dev": "vite",
+    "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
-    "symlink": "run-p symlink:*",
-    "symlink:@types": "ln --symbolic --force --relative --no-target-directory '../todo-express/@types' './src/@types/express'",
-    "symlink:schema": "ln --symbolic --force --relative '../todo-express/src/schema' --target-directory='./src'",
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",
     "lint": "run-s lint:*",
@@ -18,6 +15,8 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@/lib": "workspace:*",
+    "@/prisma": "workspace:*",
     "@fullcalendar/core": "^6.1.17",
     "@fullcalendar/daygrid": "^6.1.17",
     "@fullcalendar/interaction": "^6.1.17",
@@ -33,13 +32,11 @@
     "i18next": "^25.2.1",
     "microdiff": "^1.5.0",
     "pinia": "^3.0.3",
-    "remeda": "^2.23.1",
     "sortablejs": "^1.15.6",
     "superjson": "^2.2.2",
+    "todo-express": "workspace:*",
     "vue": "^3.5.17",
-    "vue-router": "^4.5.1",
-    "zod": "^3.25.67",
-    "zod-i18n-map": "^2.27.0"
+    "vue-router": "^4.5.1"
   },
   "devDependencies": {
     "@iconify/json": "^2.2.352",

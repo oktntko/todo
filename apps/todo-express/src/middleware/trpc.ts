@@ -1,5 +1,5 @@
-import { ZodError } from '-lib/zod';
-import { generatePrisma, PrismaClient } from '-prisma/client';
+import { ZodError } from '@/lib/zod';
+import { generatePrisma, PrismaClient } from '@/prisma/client';
 import { initTRPC, TRPCError } from '@trpc/server';
 import * as trpcExpress from '@trpc/server/adapters/express';
 import superjson from 'superjson';

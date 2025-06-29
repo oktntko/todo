@@ -1,5 +1,5 @@
-import { $transaction } from '-prisma/client';
-import { UserSchema } from '-prisma/schema';
+import { $transaction } from '@/prisma/client';
+import { UserSchema } from '@/prisma/schema';
 import { protectedProcedure, router } from '~/middleware/trpc';
 import { UserRouterSchema } from '~/schema/UserRouterSchema';
 import { UserService } from '~/service/UserService';

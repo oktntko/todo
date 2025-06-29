@@ -14,10 +14,10 @@ importers:
 
   apps/todo-express:
     dependencies:
-      '-lib':
+      '@/lib':
         specifier: workspace:*
         version: link:../../packages/lib
-      '-prisma':
+      '@/prisma':
         specifier: workspace:*
         version: link:../../packages/prisma
       '@trpc/server':
@@ -159,6 +159,12 @@ importers:
 
   apps/todo-vue:
     dependencies:
+      '@/lib':
+        specifier: workspace:*
+        version: link:../../packages/lib
+      '@/prisma':
+        specifier: workspace:*
+        version: link:../../packages/prisma
       '@fullcalendar/core':
         specifier: ^6.1.17
         version: 6.1.17
@@ -204,27 +210,21 @@ importers:
       pinia:
         specifier: ^3.0.3
         version: 3.0.3(typescript@5.8.3)(vue@3.5.17(typescript@5.8.3))
-      remeda:
-        specifier: ^2.23.1
-        version: 2.23.1
       sortablejs:
         specifier: ^1.15.6
         version: 1.15.6
       superjson:
         specifier: ^2.2.2
         version: 2.2.2
+      todo-express:
+        specifier: workspace:*
+        version: link:../todo-express
       vue:
         specifier: ^3.5.17
         version: 3.5.17(typescript@5.8.3)
       vue-router:
         specifier: ^4.5.1
         version: 4.5.1(vue@3.5.17(typescript@5.8.3))
-      zod:
-        specifier: ^3.25.67
-        version: 3.25.67
-      zod-i18n-map:
-        specifier: ^2.27.0
-        version: 2.27.0(i18next@25.2.1(typescript@5.8.3))(zod@3.25.67)
     devDependencies:
       '@iconify/json':
         specifier: ^2.2.352
@@ -395,7 +395,7 @@ importers:
 
   packages/prisma:
     dependencies:
-      '-lib':
+      '@/lib':
         specifier: workspace:*
         version: link:../lib
       '@prisma/client':
@@ -3845,12 +3845,6 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
 
-  zod-i18n-map@2.27.0:
-    resolution: {integrity: sha512-ORu9XpiVh3WDiEUs5Cr9siGgnpeODoBsTIgSD8sQCH9B//f9KowlzqHUEdPYb3vFonaSH8yPvPCOFM4niwp3Sg==}
-    peerDependencies:
-      i18next: '>=21.3.0'
-      zod: '>=3.17.0'
-
   zod-prisma-types@3.2.4:
     resolution: {integrity: sha512-S4spVBMJAmecLv+aLyRhXK26qW9nWwcsOf1H1fRcEmiI8DPbftZ99u0fhqHlymuTpmMcUpuKxcNNOIqNY0ScSQ==}
     hasBin: true
@@ -7276,11 +7270,6 @@ snapshots:
       yargs-parser: 18.1.3
 
   yocto-queue@0.1.0: {}
-
-  zod-i18n-map@2.27.0(i18next@25.2.1(typescript@5.8.3))(zod@3.25.67):
-    dependencies:
-      i18next: 25.2.1(typescript@5.8.3)
-      zod: 3.25.67
 
   zod-prisma-types@3.2.4(@prisma/client@6.10.1(prisma@6.10.1(typescript@5.8.3))(typescript@5.8.3))(prisma@6.10.1(typescript@5.8.3)):
     dependencies:

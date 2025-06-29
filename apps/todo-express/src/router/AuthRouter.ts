@@ -1,6 +1,6 @@
-import { dayjs } from '-lib/dayjs';
-import { z } from '-lib/zod';
-import { $transaction } from '-prisma/client';
+import { dayjs } from '@/lib/dayjs';
+import { z } from '@/lib/zod';
+import { $transaction } from '@/prisma/client';
 import type { Session, SessionData } from 'express-session';
 import { SessionService } from '~/middleware/session';
 import { publicProcedure, router } from '~/middleware/trpc';

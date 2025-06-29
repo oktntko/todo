@@ -9,6 +9,10 @@
     ".": {
       "types": "./types/router/_router.d.ts",
       "import": "./dist/index.js"
+    },
+    "./schema": {
+      "types": "./types/schema/index.d.ts",
+      "import": "./dist/schema/index.js"
     }
   },
   "scripts": {
@@ -28,8 +32,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "-prisma": "workspace:*",
-    "-lib": "workspace:*",
+    "@/prisma": "workspace:*",
+    "@/lib": "workspace:*",
     "@trpc/server": "11.4.2",
     "adm-zip": "^0.5.16",
     "axios": "^1.10.0",

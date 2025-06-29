@@ -1,9 +1,7 @@
 import { isAxiosError } from 'axios';
 import App from '~/App.vue';
-import '~/lib/dayjs';
 import router from '~/lib/router';
 import { isRouterError } from '~/lib/trpc';
-import '~/lib/zod';
 import '~/main.css';
 import DialogPlugin from '~/plugin/DialogPlugin';
 import LoadingPlugin from '~/plugin/LoadingPlugin';

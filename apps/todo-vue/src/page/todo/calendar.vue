@@ -1,4 +1,6 @@
 <script setup lang="ts">
+// import { dayjs } from '@/lib/dayjs';
+import type { z } from '@/lib/zod';
 import type { EventSourceInput } from '@fullcalendar/core/index.js';
 import daygrid from '@fullcalendar/daygrid';
 import interaction from '@fullcalendar/interaction';
@@ -6,10 +8,9 @@ import list from '@fullcalendar/list';
 import multimonth from '@fullcalendar/multimonth';
 import timegrid from '@fullcalendar/timegrid';
 import FullCalendar from '@fullcalendar/vue3';
-import { dayjs } from '~/lib/dayjs';
+import dayjs from 'dayjs';
+import type { TodoRouterSchema } from 'todo-express/schema';
 import { trpc, type RouterOutput } from '~/lib/trpc';
-import type { z } from '~/lib/zod';
-import type { TodoRouterSchema } from '~/schema/TodoRouterSchema';
 
 const modelValue = ref<z.infer<typeof TodoRouterSchema.searchInput>>({
   where: {
