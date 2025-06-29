@@ -1,7 +1,7 @@
-import { $transaction } from '~/middleware/prisma';
+import { $transaction } from '-prisma/client';
+import { TodoSchema } from '-prisma/schema';
 import { protectedProcedure, router } from '~/middleware/trpc';
 import { TodoOutputSchema, TodoRouterSchema } from '~/schema/TodoRouterSchema';
-import { TodoSchema } from '~/schema/zod/modelSchema/TodoSchema';
 import { TodoService } from '~/service/TodoService';
 
 export const todo = router({

@@ -1,10 +1,12 @@
-import { z } from '~/lib/zod';
-import { TodoStatusSchema } from '~/schema/option/OptionTodoStatus';
-import { SortOrderSchema } from '~/schema/zod/inputTypeSchemas/SortOrderSchema';
-import { TodoScalarFieldEnumSchema } from '~/schema/zod/inputTypeSchemas/TodoScalarFieldEnumSchema';
-import { FileSchema } from '~/schema/zod/modelSchema/FileSchema';
-import { SpaceSchema } from '~/schema/zod/modelSchema/SpaceSchema';
-import { TodoSchema } from '~/schema/zod/modelSchema/TodoSchema';
+import { z } from '-lib/zod';
+import {
+  FileSchema,
+  SortOrderSchema,
+  SpaceSchema,
+  TodoScalarFieldEnumSchema,
+  TodoSchema,
+  TodoStatusSchema,
+} from '-prisma/schema';
 
 export const TodoOutputSchema = TodoSchema.merge(
   z.object({

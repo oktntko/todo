@@ -1,5 +1,5 @@
-import { z } from '~/lib/zod';
-import { UserSchema } from '~/schema/zod/modelSchema/UserSchema';
+import { z } from '-lib/zod';
+import { UserSchema } from '-prisma/schema';
 
 const signupInput = UserSchema.pick({
   email: true,

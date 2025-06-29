@@ -1,8 +1,5 @@
-import { z } from '~/lib/zod';
-import FileScalarFieldEnumSchema from '~/schema/zod/inputTypeSchemas/FileScalarFieldEnumSchema';
-import SortOrderSchema from '~/schema/zod/inputTypeSchemas/SortOrderSchema';
-import { FileSchema } from '~/schema/zod/modelSchema/FileSchema';
-import { TodoSchema } from '~/schema/zod/modelSchema/TodoSchema';
+import { z } from '-lib/zod';
+import { FileScalarFieldEnumSchema, FileSchema, SortOrderSchema, TodoSchema } from '-prisma/schema';
 
 const getInput = FileSchema.pick({
   file_id: true,

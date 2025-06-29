@@ -1,7 +1,5 @@
-import { z } from '~/lib/zod';
-import { SortOrderSchema } from '~/schema/zod/inputTypeSchemas/SortOrderSchema';
-import { UserScalarFieldEnumSchema } from '~/schema/zod/inputTypeSchemas/UserScalarFieldEnumSchema';
-import { UserSchema } from '~/schema/zod/modelSchema/UserSchema';
+import { z } from '-lib/zod';
+import { SortOrderSchema, UserScalarFieldEnumSchema, UserSchema } from '-prisma/schema';
 
 const createInput = UserSchema.omit({
   user_id: true,

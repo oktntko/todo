@@ -7,7 +7,7 @@ export default defineConfig({
   clean: true,
   minify: true,
   treeshake: true,
-  tsconfig: './tsconfig.node.json',
+  tsconfig: './tsconfig.base.json',
   format: 'esm',
   target: 'node24',
 });

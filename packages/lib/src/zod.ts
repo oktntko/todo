@@ -17,4 +17,5 @@ export const ColorSchema = z
   .regex(/^#(([0-9a-fA-F]{2}){3}|([0-9a-fA-F]){3})$/, { message: '無効な色です。' })
   .transform((arg) => arg.toUpperCase());
 
+export * from 'zod';
 export { z };

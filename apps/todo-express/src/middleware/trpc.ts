@@ -1,8 +1,9 @@
+import { ZodError } from '-lib/zod';
+import { generatePrisma, PrismaClient } from '-prisma/client';
 import { initTRPC, TRPCError } from '@trpc/server';
 import * as trpcExpress from '@trpc/server/adapters/express';
 import superjson from 'superjson';
-import { ZodError } from 'zod';
-import { generatePrisma, PrismaClient } from '~/middleware/prisma';
+import { log } from '~/lib/log4js';
 import { SessionService } from '~/middleware/session';
 import {
   MESSAGE_INPUT_INVALID,
@@ -13,8 +14,12 @@ import {
 // The app's context - is generated for each incoming request
 export function createContext(
   opts: Pick<trpcExpress.CreateExpressContextOptions, 'req' | 'res'>,
-  prisma: PrismaClient = generatePrisma(opts.req.reqid),
-) {
+  prisma: PrismaClient = generatePrisma(opts.req.reqid, { logFunc: log.mark }),
+): {
+  req: trpcExpress.CreateExpressContextOptions['req'];
+  res: trpcExpress.CreateExpressContextOptions['res'];
+  prisma: PrismaClient;
+} {
   return {
     req: opts.req,
     res: opts.res,
@@ -22,7 +27,7 @@ export function createContext(
   };
 }
 
-type Context = Awaited<ReturnType<typeof createContext>>;
+type Context = ReturnType<typeof createContext>;
 
 // You can use any variable name you like.
 // We use t to keep things simple.

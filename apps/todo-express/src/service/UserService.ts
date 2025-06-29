@@ -1,7 +1,6 @@
-import { Prisma } from '@prisma/client';
+import type { z } from '-lib/zod';
+import type { Prisma, PrismaClient } from '-prisma/client';
 import { log } from '~/lib/log4js';
-import { z } from '~/lib/zod';
-import { PrismaClient } from '~/middleware/prisma';
 import { checkDataExist, checkDuplicate, checkPreviousVersion } from '~/repository/_repository';
 import { UserRepository } from '~/repository/UserRepository';
 import { UserRouterSchema } from '~/schema/UserRouterSchema';

@@ -1,8 +1,8 @@
+import { dayjs } from '-lib/dayjs';
+import { OriginPrismaClient } from '-prisma/client';
 import { SessionData, Store } from 'express-session';
 import superjson from 'superjson';
-import { dayjs } from '~/lib/dayjs';
 import { log } from '~/lib/log4js';
-import { prisma } from '~/lib/prisma';
 
 /**
  * https://github.com/microsoft/TypeScript-Node-Starter/blob/master/src/types/express-session-types.d.ts
@@ -63,6 +63,8 @@ export const SessionService = {
   destroySession,
   findUserBySession,
 };
+
+const prisma = new OriginPrismaClient({});
 
 async function findUserBySession(params: {
   expires?: Date | null | undefined;

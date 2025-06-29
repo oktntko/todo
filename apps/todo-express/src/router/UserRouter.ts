@@ -1,7 +1,7 @@
-import { $transaction } from '~/middleware/prisma';
+import { $transaction } from '-prisma/client';
+import { UserSchema } from '-prisma/schema';
 import { protectedProcedure, router } from '~/middleware/trpc';
 import { UserRouterSchema } from '~/schema/UserRouterSchema';
-import { UserSchema } from '~/schema/zod/modelSchema/UserSchema';
 import { UserService } from '~/service/UserService';
 
 export const user = router({

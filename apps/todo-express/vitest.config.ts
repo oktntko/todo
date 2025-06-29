@@ -9,11 +9,15 @@ export default defineConfig({
       t: fileURLToPath(new URL('./test', import.meta.url)),
     },
     reporters: ['default', 'html'],
+    outputFile: {
+      html: '.report/html/index.html',
+    },
     coverage: {
       provider: 'v8',
       enabled: true,
       include: ['src/**'],
       exclude: ['src/schema/zod/**', '**/*.d.ts'],
+      reportsDirectory: '.report/coverage',
     },
   },
 });

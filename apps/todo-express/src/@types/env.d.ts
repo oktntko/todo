@@ -1,4 +1,4 @@
-namespace NodeJS {
+declare namespace NodeJS {
   interface ProcessEnv {
     readonly APP_NAME?: string;
     readonly NODE_ENV?: string;

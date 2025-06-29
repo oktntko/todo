@@ -5,6 +5,9 @@
     "baseUrl": ".",
     "module": "esnext",
     "moduleResolution": "bundler",
+    "declaration": true,
+    "declarationDir": "./@types",
+    "emitDeclarationOnly": true,
     // override strictest
     "exactOptionalPropertyTypes": false
   },
