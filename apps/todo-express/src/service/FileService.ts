@@ -1,8 +1,9 @@
 import type { z } from '@todo/lib/zod';
-import type { Prisma, PrismaClient } from '@todo/prisma/client';
+import { type Prisma } from '@todo/prisma/client';
 import { TRPCError } from '@trpc/server';
 import AdmZip from 'adm-zip';
 import { log } from '~/lib/log4js';
+import { type PrismaClient } from '~/middleware/prisma';
 import {
   checkDataExist,
   checkPreviousVersion,

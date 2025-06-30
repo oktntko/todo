@@ -1,9 +1,10 @@
-import { type Prisma, PrismaClient } from '@todo/prisma/client';
+import { type Prisma } from '@todo/prisma/client';
 import fs from 'fs';
 import fsPromises from 'fs/promises';
 import path from 'path';
 import { cwd } from 'process';
 import { log } from '~/lib/log4js';
+import { type PrismaClient } from '~/middleware/prisma';
 
 export const FileRepository = {
   // database

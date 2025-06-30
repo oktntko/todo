@@ -1,4 +1,5 @@
-import { type Prisma, PrismaClient } from '@todo/prisma/client';
+import { type Prisma } from '@todo/prisma/client';
+import { type PrismaClient } from '~/middleware/prisma';
 
 export const SpaceRepository = {
   countSpace,

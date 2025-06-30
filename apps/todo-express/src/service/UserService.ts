@@ -1,6 +1,7 @@
 import type { z } from '@todo/lib/zod';
-import type { Prisma, PrismaClient } from '@todo/prisma/client';
+import { type Prisma } from '@todo/prisma/client';
 import { log } from '~/lib/log4js';
+import { type PrismaClient } from '~/middleware/prisma';
 import { checkDataExist, checkDuplicate, checkPreviousVersion } from '~/repository/_repository';
 import { UserRepository } from '~/repository/UserRepository';
 import { UserRouterSchema } from '~/schema/UserRouterSchema';

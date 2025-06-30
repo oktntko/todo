@@ -1,9 +1,8 @@
 import { ZodError } from '@todo/lib/zod';
-import { generatePrisma, PrismaClient } from '@todo/prisma/client';
 import { initTRPC, TRPCError } from '@trpc/server';
 import * as trpcExpress from '@trpc/server/adapters/express';
 import superjson from 'superjson';
-import { log } from '~/lib/log4js';
+import { generatePrisma, PrismaClient } from '~/middleware/prisma';
 import { SessionService } from '~/middleware/session';
 import {
   MESSAGE_INPUT_INVALID,
@@ -14,7 +13,7 @@ import {
 // The app's context - is generated for each incoming request
 export function createContext(
   opts: Pick<trpcExpress.CreateExpressContextOptions, 'req' | 'res'>,
-  prisma: PrismaClient = generatePrisma(opts.req.reqid, { logFunc: log.mark }),
+  prisma: PrismaClient = generatePrisma(opts.req.reqid),
 ): {
   req: trpcExpress.CreateExpressContextOptions['req'];
   res: trpcExpress.CreateExpressContextOptions['res'];

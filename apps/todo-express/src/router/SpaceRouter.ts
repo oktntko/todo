@@ -1,5 +1,5 @@
-import { $transaction } from '@todo/prisma/client';
 import { SpaceSchema } from '@todo/prisma/schema';
+import { $transaction } from '~/middleware/prisma';
 import { protectedProcedure, router } from '~/middleware/trpc';
 import { SpaceRouterSchema } from '~/schema/SpaceRouterSchema';
 import { SpaceService } from '~/service/SpaceService';

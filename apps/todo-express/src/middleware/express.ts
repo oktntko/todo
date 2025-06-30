@@ -1,10 +1,10 @@
 import { z } from '@todo/lib/zod';
-import { PrismaClient } from '@todo/prisma/client';
 import { TRPCError } from '@trpc/server';
 import type { ErrorRequestHandler, Request, RequestHandler, Response } from 'express';
 import { NextFunction } from 'express-serve-static-core';
 import crypto from 'node:crypto';
 import { log } from '~/lib/log4js';
+import { type PrismaClient } from '~/middleware/prisma';
 import { SessionService } from '~/middleware/session';
 import { createContext } from '~/middleware/trpc';
 import {

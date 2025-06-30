@@ -1,9 +1,9 @@
 import { dayjs } from '@todo/lib/dayjs';
 import type { z } from '@todo/lib/zod';
-import type { PrismaClient } from '@todo/prisma/client';
 import { TRPCError } from '@trpc/server';
 import { log } from '~/lib/log4js';
 import { HashPassword, OnetimePassword, SecretPassword } from '~/lib/secret';
+import { type PrismaClient } from '~/middleware/prisma';
 import { SpaceRepository } from '~/repository/SpaceRepository';
 import { UserRepository } from '~/repository/UserRepository';
 import { checkDataExist, checkDuplicate } from '~/repository/_repository';
