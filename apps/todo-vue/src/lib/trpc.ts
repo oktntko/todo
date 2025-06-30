@@ -1,7 +1,7 @@
 import { createTRPCClient, httpLink, TRPCClientError } from '@trpc/client';
 import type { inferRouterError, inferRouterInputs, inferRouterOutputs } from '@trpc/server';
 import superjson from 'superjson';
-import type { TrpcRouter } from '~/@types/express/router/_router';
+import type { TrpcRouter } from 'todo-express';
 
 export type RouterInput = inferRouterInputs<typeof TrpcRouter>;
 export type RouterOutput = inferRouterOutputs<typeof TrpcRouter>;

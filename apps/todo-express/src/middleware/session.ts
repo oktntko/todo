@@ -1,5 +1,5 @@
-import { dayjs } from '-lib/dayjs';
-import { OriginPrismaClient } from '-prisma/client';
+import { dayjs } from '@todo/lib/dayjs';
+import { OriginPrismaClient } from '@todo/prisma/client';
 import { SessionData, Store } from 'express-session';
 import superjson from 'superjson';
 import { log } from '~/lib/log4js';

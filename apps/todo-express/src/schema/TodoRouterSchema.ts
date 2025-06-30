@@ -1,4 +1,4 @@
-import { z } from '-lib/zod';
+import { z } from '@todo/lib/zod';
 import {
   FileSchema,
   SortOrderSchema,
@@ -6,7 +6,7 @@ import {
   TodoScalarFieldEnumSchema,
   TodoSchema,
   TodoStatusSchema,
-} from '-prisma/schema';
+} from '@todo/prisma/schema';
 
 export const TodoOutputSchema = TodoSchema.merge(
   z.object({

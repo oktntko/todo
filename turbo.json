@@ -10,7 +10,11 @@
         "DB_PORT"
       ]
     },
-    "build": {},
+    "build": {
+      "dependsOn": [
+        "^build"
+      ]
+    },
     "preview": {
       "cache": false,
       "persistent": true,

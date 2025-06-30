@@ -33,7 +33,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/// @zod.import(["import { ColorSchema } from '-lib/zod'"])
+/// @zod.import(["import { ColorSchema } from '@todo/lib/zod'"])
 model Space {
   space_id Int @id @default(autoincrement())
 
@@ -57,7 +57,7 @@ model Space {
   @@map("space")
 }
 
-/// @zod.import(["import { DateSchema, TimeSchema } from '-lib/zod'"])
+/// @zod.import(["import { DateSchema, TimeSchema } from '@todo/lib/zod'"])
 model Todo {
   todo_id String @id @default(uuid()) @db.VarChar(191) /// @zod.string.uuid()
 

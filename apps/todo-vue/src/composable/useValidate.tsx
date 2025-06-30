@@ -1,8 +1,8 @@
+import { R } from '@todo/lib/remeda';
+import type { z } from '@todo/lib/zod';
 import microdiff from 'microdiff';
-import * as R from 'remeda';
 import type { FunctionalComponent, HTMLAttributes } from 'vue';
 import { type Ref } from 'vue';
-import { z } from 'zod';
 import { useDialog } from '~/plugin/DialogPlugin';
 
 interface Props<T> extends /* @vue-ignore */ HTMLAttributes {

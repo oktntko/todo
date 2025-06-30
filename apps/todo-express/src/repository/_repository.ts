@@ -1,4 +1,4 @@
-import { R } from '-lib/remeda';
+import { R } from '@todo/lib/remeda';
 import { TRPCError } from '@trpc/server';
 
 export const MESSAGE_UNAUTHORIZED = 'ログインしていません。';

@@ -1,5 +1,5 @@
-import type { z } from '-lib/zod';
-import type { Prisma, PrismaClient } from '-prisma/client';
+import type { z } from '@todo/lib/zod';
+import type { Prisma, PrismaClient } from '@todo/prisma/client';
 import { TRPCError } from '@trpc/server';
 import AdmZip from 'adm-zip';
 import { log } from '~/lib/log4js';

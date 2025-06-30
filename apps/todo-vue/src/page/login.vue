@@ -1,11 +1,11 @@
 <script setup lang="ts">
 useTitle('ログイン | MyTodo');
 
-import type { z } from 'zod';
+import type { z } from '@todo/lib/zod';
+import { AuthRouterSchema } from 'todo-express/schema';
 import { useValidate } from '~/composable/useValidate';
 import { trpc, type RouterOutput } from '~/lib/trpc';
 import ModalSigninTwofa from '~/page/component/ModalSigninTwofa.vue';
-import { AuthRouterSchema } from '~/schema/AuthRouterSchema';
 
 const router = useRouter();
 

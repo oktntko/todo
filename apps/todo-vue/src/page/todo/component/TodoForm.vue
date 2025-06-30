@@ -1,13 +1,13 @@
 <script setup lang="ts">
+import { R } from '@todo/lib/remeda';
+import type { z } from '@todo/lib/zod';
 import { vOnClickOutside } from '@vueuse/components';
-import * as R from 'remeda';
+import { TodoRouterSchema } from 'todo-express/schema';
 import type { DownloadFile } from '~/component/MyDownloadFileList.vue';
 import MyInputFile from '~/component/MyInputFile.vue';
 import { useFile } from '~/composable/useFile';
 import { useValidate } from '~/composable/useValidate';
 import { trpc } from '~/lib/trpc';
-import type { z } from '~/lib/zod';
-import { TodoRouterSchema } from '~/schema/TodoRouterSchema';
 
 export type ModelValue = z.infer<typeof TodoRouterSchema.upsertInput> & {
   is_new?: boolean;

@@ -1,6 +1,6 @@
-import type { z } from '-lib/zod';
-import type { Prisma, PrismaClient } from '-prisma/client';
-import { TodoStatusSchema } from '-prisma/schema';
+import type { z } from '@todo/lib/zod';
+import type { Prisma, PrismaClient } from '@todo/prisma/client';
+import { TodoStatusSchema } from '@todo/prisma/schema';
 import { TRPCError } from '@trpc/server';
 import { log } from '~/lib/log4js';
 import { checkDataExist, checkPreviousVersion } from '~/repository/_repository';

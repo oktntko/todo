@@ -1,12 +1,12 @@
 <script setup lang="ts">
+import type { z } from '@todo/lib/zod';
+import type { SpaceSchema } from '@todo/prisma/schema';
+import { TodoRouterSchema } from 'todo-express/schema';
 import type { DownloadFile } from '~/component/MyDownloadFileList.vue';
 import MyInputFile from '~/component/MyInputFile.vue';
 import { useFile } from '~/composable/useFile';
 import { useValidate } from '~/composable/useValidate';
 import { trpc, type RouterOutput } from '~/lib/trpc';
-import type { z } from '~/lib/zod';
-import { TodoRouterSchema } from '~/schema/TodoRouterSchema';
-import type SpaceSchema from '~/schema/zod/modelSchema/SpaceSchema';
 
 export type ModelValue = z.infer<typeof TodoRouterSchema.createInput>;
 export type Reset = (modelValue: ModelValue) => void;

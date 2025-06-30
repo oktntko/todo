@@ -1,5 +1,5 @@
-import { z } from '-lib/zod';
-import { PrismaClient } from '-prisma/client';
+import { z } from '@todo/lib/zod';
+import { PrismaClient } from '@todo/prisma/client';
 import { TRPCError } from '@trpc/server';
 import type { ErrorRequestHandler, Request, RequestHandler, Response } from 'express';
 import { NextFunction } from 'express-serve-static-core';

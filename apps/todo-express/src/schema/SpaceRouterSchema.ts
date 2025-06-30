@@ -1,5 +1,5 @@
-import { z } from '-lib/zod';
-import { SortOrderSchema, SpaceScalarFieldEnumSchema, SpaceSchema } from '-prisma/schema';
+import { z } from '@todo/lib/zod';
+import { SortOrderSchema, SpaceScalarFieldEnumSchema, SpaceSchema } from '@todo/prisma/schema';
 
 const createInput = SpaceSchema.omit({
   space_id: true,

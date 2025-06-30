@@ -1,10 +1,10 @@
 <script setup lang="ts">
 useTitle('アカウントを作る | MyTodo');
 
-import type { z } from 'zod';
+import type { z } from '@todo/lib/zod';
+import { AuthRouterSchema } from 'todo-express/schema';
 import { useValidate } from '~/composable/useValidate';
 import { trpc } from '~/lib/trpc';
-import { AuthRouterSchema } from '~/schema/AuthRouterSchema';
 
 const router = useRouter();
 

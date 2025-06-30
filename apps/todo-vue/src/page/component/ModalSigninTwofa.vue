@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { z } from 'zod';
+import type { z } from '@todo/lib/zod';
+import { AuthRouterSchema } from 'todo-express/schema';
 import { useValidate } from '~/composable/useValidate';
 import type { RouterOutput } from '~/lib/trpc';
 import { trpc } from '~/lib/trpc';
-import { AuthRouterSchema } from '~/schema/AuthRouterSchema';
 
 const modelValue = ref<z.infer<typeof AuthRouterSchema.signinTwofaInput>>({
   token: '',

@@ -1,5 +1,5 @@
-import { z } from '-lib/zod';
-import { SortOrderSchema, UserScalarFieldEnumSchema, UserSchema } from '-prisma/schema';
+import { z } from '@todo/lib/zod';
+import { SortOrderSchema, UserScalarFieldEnumSchema, UserSchema } from '@todo/prisma/schema';
 
 const createInput = UserSchema.omit({
   user_id: true,

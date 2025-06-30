@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import * as R from 'remeda';
+import { R } from '@todo/lib/remeda';
+import type { z } from '@todo/lib/zod';
 import Sortable from 'sortablejs';
+import { SpaceRouterSchema } from 'todo-express/schema';
 import { useValidate } from '~/composable/useValidate';
 import { trpc, type RouterOutput } from '~/lib/trpc';
-import type { z } from '~/lib/zod';
 import ModalAddSpace from '~/page/todo/modal/ModalAddSpace.vue';
-import { SpaceRouterSchema } from '~/schema/SpaceRouterSchema';
 
 const props = defineProps<{
   type: 'checkbox' | 'radio';

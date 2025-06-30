@@ -1,5 +1,5 @@
 {
-  "name": "-prisma",
+  "name": "@todo/prisma",
   "version": "1.0.0",
   "type": "module",
   "packageManager": "pnpm@10.12.2",
@@ -14,7 +14,7 @@
     "build-only": "tsup-node",
     "lint": "eslint src/ --max-warnings 0",
     "format": "prettier . --write",
-    "prisma:generate": "prisma generate && find src/schema -type f | xargs sed -i -e \"s#from 'zod';#from '-lib/zod';#g\" && prettier src/schema --write",
+    "prisma:generate": "prisma generate && find src/schema -type f | xargs sed -i -e \"s#from 'zod';#from '@todo/lib/zod';#g\" && prettier src/schema --write",
     "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:migrate:dev": "prisma migrate dev",
     "prisma:push": "prisma db push",
@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@prisma/client": "6.10.1",
-    "-lib": "workspace:*"
+    "@todo/lib": "workspace:*"
   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",

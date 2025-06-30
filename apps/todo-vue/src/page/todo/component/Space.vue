@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import * as R from 'remeda';
+import { R } from '@todo/lib/remeda';
+import type { z } from '@todo/lib/zod';
 import Sortable from 'sortablejs';
+import { TodoRouterSchema } from 'todo-express/schema';
 import { useValidate } from '~/composable/useValidate';
 import { trpc, type RouterOutput } from '~/lib/trpc';
-import type { z } from '~/lib/zod';
 import TodoForm from '~/page/todo/component/TodoForm.vue';
 import ModalEditSpace from '~/page/todo/modal/ModalEditSpace.vue';
-import { TodoRouterSchema } from '~/schema/TodoRouterSchema';
 
 const props = defineProps<{ space: RouterOutput['space']['list']['space_list'][number] }>();
 const modelValue = ref<z.infer<typeof TodoRouterSchema.listInput>>({

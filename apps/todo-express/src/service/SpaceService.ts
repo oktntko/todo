@@ -1,5 +1,5 @@
-import type { z } from '-lib/zod';
-import type { Prisma, PrismaClient } from '-prisma/client';
+import type { z } from '@todo/lib/zod';
+import type { Prisma, PrismaClient } from '@todo/prisma/client';
 import { log } from '~/lib/log4js';
 import { checkDataExist, checkPreviousVersion } from '~/repository/_repository';
 import { SpaceRepository } from '~/repository/SpaceRepository';

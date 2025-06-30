@@ -1,11 +1,12 @@
 <script setup lang="ts">
+// import { dayjs } from '@todo/lib/dayjs';
+import type { z } from '@todo/lib/zod';
+import { TodoStatusList } from '@todo/prisma/schema';
+import dayjs from 'dayjs';
+import { TodoRouterSchema } from 'todo-express/schema';
 import { useFile } from '~/composable/useFile';
 import { useValidate } from '~/composable/useValidate';
-import { dayjs } from '~/lib/dayjs';
 import { trpc, type RouterOutput } from '~/lib/trpc';
-import type { z } from '~/lib/zod';
-import { TodoStatusList } from '~/schema/option/OptionTodoStatus';
-import { TodoRouterSchema } from '~/schema/TodoRouterSchema';
 
 definePage({
   alias: ['/todo/'],

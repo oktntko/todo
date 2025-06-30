@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import type { z } from '@todo/lib/zod';
+import { SpaceRouterSchema } from 'todo-express/schema';
 import { useValidate } from '~/composable/useValidate';
 import { bytesToBase64 } from '~/lib/file';
-import type { z } from '~/lib/zod';
 import { useDialog } from '~/plugin/DialogPlugin';
-import { SpaceRouterSchema } from '~/schema/SpaceRouterSchema';
 
 export type ModelValue = z.infer<typeof SpaceRouterSchema.createInput>;
 export type Reset = (modelValue: ModelValue) => void;

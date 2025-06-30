@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { z } from 'zod';
+import type { z } from '@todo/lib/zod';
+import type { SpaceSchema } from '@todo/prisma/schema';
 import type { DownloadFile } from '~/component/MyDownloadFileList.vue';
 import { trpc } from '~/lib/trpc';
 import { useLoading } from '~/plugin/LoadingPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
-import type SpaceSchema from '~/schema/zod/modelSchema/SpaceSchema';
 import TodoForm, { type ModelValue } from './component/TodoForm.vue';
 
 definePage({

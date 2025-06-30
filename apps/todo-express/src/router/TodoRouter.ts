@@ -1,5 +1,5 @@
-import { $transaction } from '-prisma/client';
-import { TodoSchema } from '-prisma/schema';
+import { $transaction } from '@todo/prisma/client';
+import { TodoSchema } from '@todo/prisma/schema';
 import { protectedProcedure, router } from '~/middleware/trpc';
 import { TodoOutputSchema, TodoRouterSchema } from '~/schema/TodoRouterSchema';
 import { TodoService } from '~/service/TodoService';
