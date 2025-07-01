@@ -18,9 +18,8 @@
     }
   },
   "scripts": {
-    "build": "run-p type-check \"build-only {@}\" --",
+    "build": "tsup-node",
     "type-check": "tsc --project tsconfig.base.json --noEmit",
-    "build-only": "tsup-node",
     "lint": "eslint src/ --max-warnings 0",
     "format": "prettier src/ --write",
     "test": "vitest run",

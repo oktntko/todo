@@ -4,10 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "turbo dev --ui=tui",
+    "dev": "turbo dev --ui=tui || true",
     "build": "turbo build",
-    "preview": "turbo preview --ui=tui",
+    "type-check": "turbo type-check",
+    "preview": "turbo preview --ui=tui || true",
     "generate": "turbo run @todo/prisma#generate",
+    "lint": "turbo lint",
+    "format": "turbo format",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

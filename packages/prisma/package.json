@@ -14,9 +14,8 @@
     }
   },
   "scripts": {
-    "build": "run-p type-check \"build-only {@}\" --",
+    "build": "tsup-node",
     "type-check": "tsc --project tsconfig.base.json --noEmit",
-    "build-only": "tsup-node",
     "lint": "eslint src/ --max-warnings 0",
     "format": "prettier . --write",
     "generate": "prisma generate && find src/schema -type f | xargs sed -i -e \"s#from 'zod';#from '@todo/lib/zod';#g\" && prettier src/schema --write",

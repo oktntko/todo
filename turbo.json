@@ -8,16 +8,23 @@
         "EXPRESS_PORT",
         "DATABASE_URL",
         "DB_PORT"
+      ],
+      "dependsOn": [
+        "@todo/lib#build",
+        "@todo/prisma#generate",
+        "@todo/prisma#build"
       ]
     },
     "build": {
       "dependsOn": [
+        "type-check",
         "^build"
       ]
     },
-    "@todo/prisma#build": {
+    "type-check": {
       "dependsOn": [
-        "@todo/prisma#generate"
+        "@todo/prisma#generate",
+        "^type-check"
       ]
     },
     "preview": {
@@ -32,6 +39,8 @@
         "DB_PORT"
       ]
     },
-    "generate": {}
+    "generate": {},
+    "lint": {},
+    "format": {}
   }
 }
