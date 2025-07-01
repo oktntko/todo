@@ -4,12 +4,20 @@
   "type": "module",
   "packageManager": "pnpm@10.12.2",
   "exports": {
-    "./dayjs": "./src/dayjs.ts",
-    "./remeda": "./src/remeda.ts",
-    "./zod": "./src/zod.ts"
+    "./dayjs": {
+      "types": "./src/dayjs.ts",
+      "default": "./dist/dayjs.js"
+    },
+    "./remeda": {
+      "types": "./src/remeda.ts",
+      "default": "./dist/remeda.js"
+    },
+    "./zod": {
+      "types": "./src/zod.ts",
+      "default": "./dist/zod.js"
+    }
   },
   "scripts": {
-    "dev": "tsup src/* --watch",
     "build": "run-p type-check \"build-only {@}\" --",
     "type-check": "tsc --project tsconfig.base.json --noEmit",
     "build-only": "tsup-node",

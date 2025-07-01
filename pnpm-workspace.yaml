@@ -1,5 +1,12 @@
 packages:
-  - "apps/todo-vue"
-  - "apps/todo-express"
-  - "packages/prisma"
-  - "packages/lib"
+  - apps/todo-vue
+  - apps/todo-express
+  - packages/prisma
+  - packages/lib
+
+onlyBuiltDependencies:
+  - "@prisma/client"
+  - "@prisma/engines"
+  - "@tailwindcss/oxide"
+  - esbuild
+  - prisma

@@ -4,17 +4,22 @@
   "type": "module",
   "packageManager": "pnpm@10.12.2",
   "exports": {
-    "./client": "./src/client.ts",
-    "./schema": "./src/schema/index.ts"
+    "./client": {
+      "types": "./src/client/index.ts",
+      "default": "./dist/client/index.js"
+    },
+    "./schema": {
+      "types": "./src/schema/index.ts",
+      "default": "./dist/schema/index.js"
+    }
   },
   "scripts": {
-    "dev": "tsup src/* --watch",
     "build": "run-p type-check \"build-only {@}\" --",
     "type-check": "tsc --project tsconfig.base.json --noEmit",
     "build-only": "tsup-node",
     "lint": "eslint src/ --max-warnings 0",
     "format": "prettier . --write",
-    "prisma:generate": "prisma generate && find src/schema -type f | xargs sed -i -e \"s#from 'zod';#from '@todo/lib/zod';#g\" && prettier src/schema --write",
+    "generate": "prisma generate && find src/schema -type f | xargs sed -i -e \"s#from 'zod';#from '@todo/lib/zod';#g\" && prettier src/schema --write",
     "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:migrate:dev": "prisma migrate dev",
     "prisma:push": "prisma db push",

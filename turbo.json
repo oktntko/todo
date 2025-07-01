@@ -15,14 +15,23 @@
         "^build"
       ]
     },
+    "@todo/prisma#build": {
+      "dependsOn": [
+        "@todo/prisma#generate"
+      ]
+    },
     "preview": {
       "cache": false,
       "persistent": true,
+      "dependsOn": [
+        "build"
+      ],
       "env": [
         "EXPRESS_PORT",
         "DATABASE_URL",
         "DB_PORT"
       ]
-    }
+    },
+    "generate": {}
   }
 }
