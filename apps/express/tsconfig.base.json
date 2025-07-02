@@ -10,7 +10,11 @@
     "declarationDir": "./types",
     "emitDeclarationOnly": true,
     // override strictest
-    "exactOptionalPropertyTypes": false
+    "exactOptionalPropertyTypes": false,
+    // app settings
+    "paths": {
+      "~/*": ["src/*"]
+    },
   },
   "include": ["src"]
 }

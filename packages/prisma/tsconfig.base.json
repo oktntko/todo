@@ -3,8 +3,12 @@
   "extends": ["@tsconfig/node24/tsconfig.json", "@tsconfig/strictest/tsconfig.json"],
   "compilerOptions": {
     "baseUrl": ".",
+    "outDir": "./dist",
     "module": "esnext",
     "moduleResolution": "bundler",
+    "declaration": true,
+    "declarationDir": "./types",
+    "emitDeclarationOnly": true,
     // override strictest
     "exactOptionalPropertyTypes": false
   },

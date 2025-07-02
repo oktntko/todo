@@ -1,0 +1,23 @@
+{
+  "name": "@todo/hono",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "rm -rf dist && tsc --project tsconfig.node.json && tsc-alias -p tsconfig.node.json",
+    "type-check": "rm -rf @types && tsc --project tsconfig.type.json && tsc-alias -p tsconfig.type.json"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.13.0",
+    "@hono/zod-validator": "^0.2.2",
+    "hono": "^4.6.2",
+    "i18next": "^23.15.1",
+    "zod": "^3.23.8",
+    "zod-i18n-map": "^2.27.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.17",
+    "tsc-alias": "^1.8.10",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.2"
+  }
+}
