@@ -1,7 +1,7 @@
-import { CreateExpressContextOptions } from '@trpc/server/adapters/express';
+import type { CreateExpressContextOptions } from '@trpc/server/adapters/express';
 import type { Request, Response } from 'express';
-import { SessionData } from 'express-session';
-import { PrismaClient } from '~/middleware/prisma';
+import type { SessionData } from 'express-session';
+import type { PrismaClient } from '~/middleware/prisma';
 import * as LibTrpc from '~/middleware/trpc';
 
 export function mockopts(

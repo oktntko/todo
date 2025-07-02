@@ -1,5 +1,5 @@
-import { Prisma } from '@prisma/client';
-import {
+import type { Prisma } from '@todo/prisma/client';
+import type {
   ExtendsPrismaClient,
   PrismaClient,
   TransactionExtendsPrismaClient,

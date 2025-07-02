@@ -1,8 +1,9 @@
+import { z } from '@todo/lib/zod';
+import { UserSchema } from '@todo/prisma/schema';
 import { TRPCError } from '@trpc/server';
 import { mockopts } from 't/helper/express';
 import { transactionRollback } from 't/helper/prisma';
 import 't/helper/session';
-import { z } from 'zod';
 import { generatePrisma, PrismaClient } from '~/middleware/prisma';
 import { createContext } from '~/middleware/trpc';
 import {
@@ -12,7 +13,6 @@ import {
 } from '~/repository/_repository';
 import { createCaller } from '~/router/_router';
 import { UserRouterSchema } from '~/schema/UserRouterSchema';
-import UserSchema from '~/schema/zod/modelSchema/UserSchema';
 
 const prisma = generatePrisma('test');
 
@@ -398,6 +398,7 @@ describe(`UserRouter`, () => {
                   expected: 'number',
                   received: 'null',
                   path: ['user_id'],
+                  message: 'Expected number, received null',
                 },
               ],
               null,
@@ -569,6 +570,7 @@ describe(`UserRouter`, () => {
               type: 'string',
               inclusive: true,
               exact: false,
+              message: 'String must contain at least 1 character(s)',
               path: ['username'],
             },
           ],
@@ -584,11 +586,13 @@ describe(`UserRouter`, () => {
               type: 'string',
               inclusive: true,
               exact: false,
+              message: 'String must contain at least 1 character(s)',
               path: ['email'],
             },
             {
               validation: 'email',
               code: 'invalid_string',
+              message: 'Invalid email',
               path: ['email'],
             },
           ],
@@ -604,6 +608,7 @@ describe(`UserRouter`, () => {
               type: 'string',
               inclusive: true,
               exact: false,
+              message: 'String must contain at least 1 character(s)',
               path: ['password'],
             },
           ],
@@ -860,6 +865,7 @@ describe(`UserRouter`, () => {
               type: 'string',
               inclusive: true,
               exact: false,
+              message: 'String must contain at least 1 character(s)',
               path: ['username'],
             },
           ],
@@ -875,11 +881,13 @@ describe(`UserRouter`, () => {
               type: 'string',
               inclusive: true,
               exact: false,
+              message: 'String must contain at least 1 character(s)',
               path: ['email'],
             },
             {
               validation: 'email',
               code: 'invalid_string',
+              message: 'Invalid email',
               path: ['email'],
             },
           ],
@@ -895,6 +903,7 @@ describe(`UserRouter`, () => {
               type: 'string',
               inclusive: true,
               exact: false,
+              message: 'String must contain at least 1 character(s)',
               path: ['password'],
             },
           ],

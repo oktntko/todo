@@ -1,10 +1,10 @@
+import { z } from '@todo/lib/zod';
 import { TRPCError } from '@trpc/server';
 import supertest from 'supertest';
 import { mockCreateContext, mockopts } from 't/helper/express';
 import { transactionRollback } from 't/helper/prisma';
 import 't/helper/session';
 import { app } from '~/app';
-import { z } from '~/lib/zod';
 import { generatePrisma, PrismaClient } from '~/middleware/prisma';
 import { createContext } from '~/middleware/trpc';
 import {
@@ -698,7 +698,7 @@ describe(`FileRouter`, () => {
           //
           expect(output).toEqual([file]);
           expect(
-            await prisma.file.findUnique({ where: { file_id: output[0].file_id } }),
+            await prisma.file.findUnique({ where: { file_id: output[0]?.file_id } }),
           ).toBeNull();
         });
       });

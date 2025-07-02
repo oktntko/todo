@@ -41,6 +41,18 @@
     },
     "generate": {},
     "lint": {},
-    "format": {}
+    "format": {},
+    "test": {
+      "env": [
+        "EXPRESS_PORT",
+        "DATABASE_URL",
+        "DB_PORT"
+      ],
+      "dependsOn": [
+        "@todo/lib#build",
+        "@todo/prisma#generate",
+        "@todo/prisma#build"
+      ]
+    }
   }
 }
