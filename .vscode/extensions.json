@@ -1,13 +1,14 @@
 {
   "recommendations": [
+    "Prisma.prisma",
     "Vue.volar",
-    "dbaeumer.vscode-eslint",
-    "esbenp.prettier-vscode",
     "antfu.iconify",
     "bradlc.vscode-tailwindcss",
     "dbaeumer.vscode-eslint",
+    "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
-    "vitest.explorer",
-    "Prisma.prisma"
+    "esbenp.prettier-vscode",
+    "streetsidesoftware.code-spell-checker",
+    "vitest.explorer"
   ]
 }

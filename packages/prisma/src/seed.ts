@@ -11,6 +11,7 @@ async function main() {
     create: {
       email: 'example@example.com',
       username: 'example',
+      // cSpell:ignore vsQDysmORCJm4R0iI5og9Sce6lvrq
       password: '$2a$10$iFYoa/8.jROwy/vsQDysmORCJm4R0iI5og9Sce6lvrq.F1ba5eOSi', // example@example.com
     },
   });

@@ -59,6 +59,7 @@ describe('/src/schema/_schema.ts', () => {
 
       { arg: '123456' /*   */, success: false, data: undefined, error },
       { arg: '#123abce' /* */, success: false, data: undefined, error },
+      // cSpell:ignore afafah
       { arg: '#afafah' /*  */, success: false, data: undefined, error },
     ])(`parse($arg) => $success: 'data=$data' 'error=$error'`, ({ arg, success, data, error }) => {
       const result = ColorSchema.safeParse(arg);

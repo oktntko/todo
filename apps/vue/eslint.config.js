@@ -1,6 +1,7 @@
 // @ts-check
 
 // import pluginVitest from '@vitest/eslint-plugin';
+import cspellPlugin from '@cspell/eslint-plugin';
 import skipFormatting from '@vue/eslint-config-prettier/skip-formatting';
 import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript';
 import pluginOxlint from 'eslint-plugin-oxlint';
@@ -42,6 +43,12 @@ export default defineConfigWithVueTs(
           jsx: true,
         },
       },
+    },
+  },
+  {
+    plugins: { '@cspell': cspellPlugin },
+    rules: {
+      '@cspell/spellchecker': ['warn', {}],
     },
   },
 

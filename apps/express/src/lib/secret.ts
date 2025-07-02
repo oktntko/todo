@@ -66,6 +66,7 @@ function generateSecret(params: { name: string; issuer?: string }) {
 }
 
 async function generateQrcodeUrl(params: { secret: string; name: string; issuer?: string }) {
+  // cSpell:ignore otpauth
   const url = speakeasy.otpauthURL({
     secret: params.secret,
     label: encodeURIComponent(params.name),
@@ -76,6 +77,7 @@ async function generateQrcodeUrl(params: { secret: string; name: string; issuer?
 }
 
 function verifyToken(params: { secret: string; token: string; encoding?: Encoding }) {
+  // cSpell:ignore totp
   return speakeasy.totp.verify({
     secret: params.secret,
     token: params.token,

@@ -54,6 +54,7 @@ describe(`UserRouter`, () => {
               },
               {
                 user_id: 4,
+                // cSpell:ignore useword
                 username: 'useword',
                 email: '4@example.com',
                 password: '4',

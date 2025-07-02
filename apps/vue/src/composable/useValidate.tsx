@@ -59,7 +59,7 @@ export function useValidate<T extends z.ZodRawShape>(
   // バリデーションする
   function validateSubmit(
     callback: (value: z.infer<typeof schema>) => void,
-    onInvalidSubmit: (eroor: Map<string, string[]>) => void = handleInvalidSubmit,
+    onInvalidSubmit: (error: Map<string, string[]>) => void = handleInvalidSubmit,
   ) {
     return async () => {
       submitCount.value++;
@@ -81,9 +81,9 @@ export function useValidate<T extends z.ZodRawShape>(
     modelValue.value = R.clone(initialValue.value);
   }
 
-  function reset(resetlValue: z.infer<typeof schema>) {
-    modelValue.value = R.clone(resetlValue);
-    initialValue.value = resetlValue;
+  function reset(resetValue: z.infer<typeof schema>) {
+    modelValue.value = R.clone(resetValue);
+    initialValue.value = resetValue;
   }
 
   const dialog = useDialog();

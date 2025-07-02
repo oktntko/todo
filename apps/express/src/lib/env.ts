@@ -18,6 +18,7 @@ export const env = {
     SESSION_PATH: process.env.SESSION_PATH || '/',
   },
   secret: {
+    // cSpell:ignore Xryb
     SECRET_KEY: process.env.SECRET_KEY || '6vTCQwmAwCs4XrybYIeRKCu5gh581AE=',
   },
 } as const;

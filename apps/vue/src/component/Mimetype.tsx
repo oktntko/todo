@@ -2,6 +2,7 @@ export function MimetypeIcon({ mimetype }: { mimetype: string }) {
   // https://www.iana.org/assignments/media-types/media-types.xhtml
   if (mimetype.startsWith('application')) {
     switch (mimetype) {
+      // cSpell:ignore msword openxmlformats officedocument wordprocessingml spreadsheetml presentationml
       case 'application/msword':
       case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
         return 'icon-[vscode-icons--file-type-word]';

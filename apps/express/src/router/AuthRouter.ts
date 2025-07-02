@@ -91,11 +91,11 @@ async function regenerate(
   session: Session & Partial<SessionData>,
 ): Promise<(Session & Partial<SessionData>) | void> {
   return new Promise((resolve, reject) => {
-    const oldsession = session.regenerate((err) => {
+    const oldSession = session.regenerate((err) => {
       if (err) {
         reject(err);
       } else {
-        resolve(oldsession);
+        resolve(oldSession);
       }
     });
   });
