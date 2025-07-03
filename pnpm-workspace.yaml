@@ -1,6 +1,7 @@
 packages:
   - apps/vue
   - apps/express
+  - docker
   - packages/lib
   - packages/prisma
 

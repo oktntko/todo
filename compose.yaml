@@ -7,7 +7,7 @@ services:
       MYSQL_DATABASE: todo
       MYSQL_USER: todo
       MYSQL_PASSWORD: todo
-      TZ: "Asia/Tokyo"
+      TZ: 'Asia/Tokyo'
     ports:
       - ${DB_PORT}:3306
     volumes:
