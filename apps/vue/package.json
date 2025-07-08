@@ -12,8 +12,9 @@
     "lint:oxlint": "oxlint src/ --fix -D correctness --ignore-path .gitignore",
     "lint:eslint": "eslint src/ --fix",
     "format": "prettier --write src/",
-    "test": "vitest run",
-    "test:preview": "vitest --ui"
+    "test:unit": "vitest run",
+    "test:preview": "vitest --ui",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@fullcalendar/core": "^6.1.18",
@@ -41,6 +42,7 @@
     "@cspell/eslint-plugin": "^9.1.2",
     "@iconify/json": "^2.2.354",
     "@iconify/tailwind4": "^1.0.6",
+    "@playwright/test": "^1.53.2",
     "@rushstack/eslint-patch": "^1.12.0",
     "@tailwindcss/vite": "^4.1.11",
     "@trpc/server": "11.4.3",
