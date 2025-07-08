@@ -38,6 +38,7 @@ const { downloadSingleFile } = useFile();
 
       <button
         type="button"
+        aria-label="close"
         class="inline-flex items-end rounded-full p-0.5 transition-colors hover:bg-gray-300 hover:text-yellow-600"
         @click="
           async () => {

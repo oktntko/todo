@@ -29,6 +29,7 @@
     "rgba",
     "timegrid",
     "triggerable",
+    "trpc",
     "twofa",
     "unfonts",
     "unplugin",
@@ -39,7 +40,6 @@
   // This is useful for offensive words and common spelling errors.
   // For example "hte" should be "the"
   "flagWords": [],
-
   // Specify paths/files to ignore.
   "ignorePaths": [
     "node_modules", // this will ignore anything the node_modules directory

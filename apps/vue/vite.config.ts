@@ -1,5 +1,5 @@
 import { fileURLToPath, URL } from 'node:url';
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 
 import tailwindcss from '@tailwindcss/vite';
 import Vue from '@vitejs/plugin-vue';
@@ -60,6 +60,25 @@ export default defineConfig({
         target: `http://localhost:${process.env['EXPRESS_PORT'] || 8080}`,
         changeOrigin: true,
       },
+    },
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    include: ['test/**'],
+    alias: {
+      '~': fileURLToPath(new URL('./src', import.meta.url)),
+    },
+    reporters: ['default', 'html'],
+    outputFile: {
+      html: '.report/html/index.html',
+    },
+    coverage: {
+      provider: 'v8',
+      enabled: true,
+      include: ['src/**'],
+      exclude: ['**/*.d.ts'],
+      reportsDirectory: '.report/coverage',
     },
   },
 });
