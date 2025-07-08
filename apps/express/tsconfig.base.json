@@ -14,7 +14,7 @@
     // app settings
     "paths": {
       "~/*": ["src/*"]
-    },
+    }
   },
   "include": ["src"]
 }
