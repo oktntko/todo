@@ -47,11 +47,13 @@ onMounted(async () => {
   <form class="flex flex-col gap-6" autocomplete="off" @submit.prevent="handleSubmit">
     <section class="flex flex-col gap-2">
       <div class="focus-container flex grow flex-col gap-1">
-        <label for="space" class="required text-sm capitalize"> space </label>
+        <label for="space_id" class="required text-sm capitalize"> space </label>
 
         <MyDropdown inner-class="w-full">
           <template #button="{ toggle }">
-            <label
+            <button
+              id="space_id"
+              type="button"
               class="flex w-full flex-row items-center rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
               @click="toggle"
             >
@@ -68,7 +70,7 @@ onMounted(async () => {
                 <span class="ms-1">{{ modelValueSpace.space_name }}</span>
               </template>
               <span class="invisible capitalize">space</span>
-            </label>
+            </button>
           </template>
           <template #default>
             <ul class="w-full rounded-sm border border-gray-300 bg-white shadow-md">
