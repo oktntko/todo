@@ -1,3 +1,4 @@
+export * from './AichatRouterSchema';
 export * from './AuthRouterSchema';
 export * from './FileRouterSchema';
 export * from './SpaceRouterSchema';

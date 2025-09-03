@@ -1,3 +1,4 @@
+import { z } from '@todo/lib/zod';
 import {
   PrismaClient as OriginPrismaClient,
   Prisma,
@@ -5,7 +6,9 @@ import {
 } from '@todo/prisma/client';
 import log4js from 'log4js';
 import util from 'node:util';
+import superjson from 'superjson';
 import { env } from '~/lib/env';
+import { MessageSchema } from '~/schema/AichatRouterSchema';
 
 const log = log4js.getLogger('database');
 
@@ -40,6 +43,18 @@ export function generatePrisma(reqid: string) {
           );
         }
         return result;
+      },
+    },
+    result: {
+      aichat: {
+        message: {
+          needs: {
+            message: true,
+          },
+          compute({ message }) {
+            return superjson.parse<z.infer<typeof MessageSchema>>(message);
+          },
+        },
       },
     },
   });

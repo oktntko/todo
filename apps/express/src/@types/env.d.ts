@@ -8,5 +8,6 @@ declare namespace NodeJS {
     readonly SESSION_DOMAIN?: string;
     readonly SESSION_PATH?: string;
     readonly SECRET_KEY?: string;
+    readonly OPENAI_API_KEY?: string;
   }
 }

@@ -1,12 +1,12 @@
 import type { TestInfo } from '@playwright/test';
 import path from 'path';
-import SuperJSON from 'superjson';
+import superjson from 'superjson';
 
 export function jsonStringifyTrpcSuccessResponse<T>(obj: T) {
   return JSON.stringify({
     result: {
       data: {
-        json: SuperJSON.serialize(obj).json,
+        json: superjson.serialize(obj).json,
       },
     },
   });
@@ -35,7 +35,7 @@ export function jsonStringifyTrpcErrorResponse(
 ) {
   return JSON.stringify({
     error: {
-      json: SuperJSON.serialize(obj).json,
+      json: superjson.serialize(obj).json,
     },
   });
 }

@@ -2,3 +2,4 @@
 DB_PORT = 1234
 EXPRESS_PORT = 8081
 DATABASE_URL = "mysql://todo:todo@localhost:{{env.DB_PORT}}/todo"
+OPENAI_API_KEY = "xx-xxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
