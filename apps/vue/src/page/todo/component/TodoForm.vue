@@ -3,10 +3,10 @@ import { TodoRouterSchema } from '@todo/express/schema';
 import { R } from '@todo/lib/remeda';
 import type { z } from '@todo/lib/zod';
 import { vOnClickOutside } from '@vueuse/components';
+import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import type { DownloadFile } from '~/component/MyDownloadFileList.vue';
 import MyInputFile from '~/component/MyInputFile.vue';
 import { useFile } from '~/composable/useFile';
-import { useValidate } from '~/composable/useValidate';
 import { trpc } from '~/lib/trpc';
 
 export type ModelValue = z.infer<typeof TodoRouterSchema.upsertInput> & {
@@ -29,7 +29,7 @@ const props = defineProps<{
 
 const { uploadManyFiles } = useFile();
 
-const { validateSubmit } = useValidate(TodoRouterSchema.upsertInput, modelValue);
+const { validateSubmit } = useVueValidateZod(TodoRouterSchema.upsertInput, modelValue);
 
 const status = ref<{
   fixedEditing: boolean;

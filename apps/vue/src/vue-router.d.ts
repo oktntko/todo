@@ -23,6 +23,11 @@ declare module 'vue-router/auto-routes' {
     '/chat': RouteRecordInfo<'/chat', '/chat', Record<never, never>, Record<never, never>>,
     '/drive/': RouteRecordInfo<'/drive/', '/drive', Record<never, never>, Record<never, never>>,
     '/login': RouteRecordInfo<'/login', '/login', Record<never, never>, Record<never, never>>,
+    '/mypage': RouteRecordInfo<'/mypage', '/mypage', Record<never, never>, Record<never, never>, '/mypage/' | '/mypage/account' | '/mypage/change-password' | '/mypage/security'>,
+    '/mypage/': RouteRecordInfo<'/mypage/', '/mypage', Record<never, never>, Record<never, never>>,
+    '/mypage/account': RouteRecordInfo<'/mypage/account', '/mypage/account', Record<never, never>, Record<never, never>>,
+    '/mypage/change-password': RouteRecordInfo<'/mypage/change-password', '/mypage/change-password', Record<never, never>, Record<never, never>>,
+    '/mypage/security': RouteRecordInfo<'/mypage/security', '/mypage/security', Record<never, never>, Record<never, never>>,
     '/signup': RouteRecordInfo<'/signup', '/signup', Record<never, never>, Record<never, never>>,
     '/todo/board': RouteRecordInfo<'/todo/board', '/todo/board', Record<never, never>, Record<never, never>>,
     '/todo/calendar': RouteRecordInfo<'/todo/calendar', '/todo/calendar', Record<never, never>, Record<never, never>>,
@@ -31,4 +36,96 @@ declare module 'vue-router/auto-routes' {
     '/todo/table/[todo_id]': RouteRecordInfo<'/todo/table/[todo_id]', '/todo/table/:todo_id', { todo_id: ParamValue<true> }, { todo_id: ParamValue<false> }>,
     '/todo/table/add': RouteRecordInfo<'/todo/table/add', '/todo/table/add', Record<never, never>, Record<never, never>>,
   }
+
+  /**
+   * Route file to route info map by unplugin-vue-router.
+   * Used by the volar plugin to automatically type useRoute()
+   *
+   * Each key is a file path relative to the project root with 2 properties:
+   * - routes: union of route names of the possible routes when in this page (passed to useRoute<...>())
+   * - views: names of nested views (can be passed to <RouterView name="...">)
+   *
+   * @internal
+   */
+  export interface _RouteFileInfoMap {
+    'src/page/index.vue': {
+      routes: '/'
+      views: never
+    }
+    'src/page/[...404].vue': {
+      routes: '/[...404]'
+      views: never
+    }
+    'src/page/chat.vue': {
+      routes: '/chat'
+      views: never
+    }
+    'src/page/drive/index.vue': {
+      routes: '/drive/'
+      views: never
+    }
+    'src/page/login.vue': {
+      routes: '/login'
+      views: never
+    }
+    'src/page/mypage.vue': {
+      routes: '/mypage' | '/mypage/' | '/mypage/account' | '/mypage/change-password' | '/mypage/security'
+      views: 'default'
+    }
+    'src/page/mypage/index.vue': {
+      routes: '/mypage/'
+      views: never
+    }
+    'src/page/mypage/account.vue': {
+      routes: '/mypage/account'
+      views: never
+    }
+    'src/page/mypage/change-password.vue': {
+      routes: '/mypage/change-password'
+      views: never
+    }
+    'src/page/mypage/security.vue': {
+      routes: '/mypage/security'
+      views: never
+    }
+    'src/page/signup.vue': {
+      routes: '/signup'
+      views: never
+    }
+    'src/page/todo/board.vue': {
+      routes: '/todo/board'
+      views: never
+    }
+    'src/page/todo/calendar.vue': {
+      routes: '/todo/calendar'
+      views: never
+    }
+    'src/page/todo/list.vue': {
+      routes: '/todo/list'
+      views: never
+    }
+    'src/page/todo/table/index.vue': {
+      routes: '/todo/table/'
+      views: never
+    }
+    'src/page/todo/table/[todo_id].vue': {
+      routes: '/todo/table/[todo_id]'
+      views: never
+    }
+    'src/page/todo/table/add.vue': {
+      routes: '/todo/table/add'
+      views: never
+    }
+  }
+
+  /**
+   * Get a union of possible route names in a certain route component file.
+   * Used by the volar plugin to automatically type useRoute()
+   *
+   * @internal
+   */
+  export type _RouteNamesForFilePath<FilePath extends string> =
+    _RouteFileInfoMap extends Record<FilePath, infer Info>
+      ? Info['routes']
+      : keyof RouteNamedMap
 }

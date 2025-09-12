@@ -3,7 +3,7 @@ useTitle('アカウントを作る | MyTodo');
 
 import { AuthRouterSchema } from '@todo/express/schema';
 import type { z } from '@todo/lib/zod';
-import { useValidate } from '~/composable/useValidate';
+import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import { trpc } from '~/lib/trpc';
 
 const router = useRouter();
@@ -14,7 +14,10 @@ const modelValue = ref<z.infer<typeof AuthRouterSchema.signupInput>>({
   confirm: '',
 });
 
-const { validateSubmit, ErrorMessage } = useValidate(AuthRouterSchema.signupInput, modelValue);
+const { validateSubmit, ErrorMessage } = useVueValidateZod(
+  AuthRouterSchema.signupInput,
+  modelValue,
+);
 </script>
 
 <template>
@@ -56,7 +59,7 @@ const { validateSubmit, ErrorMessage } = useValidate(AuthRouterSchema.signupInpu
                 class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
                 autocomplete="username"
               />
-              <ErrorMessage class="text-xs text-red-600" for="email"></ErrorMessage>
+              <ErrorMessage class="text-xs text-red-600" field="email"></ErrorMessage>
             </div>
             <div class="flex flex-col gap-1">
               <label for="new_password" class="text-sm font-medium text-gray-900">
@@ -69,7 +72,7 @@ const { validateSubmit, ErrorMessage } = useValidate(AuthRouterSchema.signupInpu
                 class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
                 autocomplete="new-password"
               />
-              <ErrorMessage class="text-xs text-red-600" for="new_password"></ErrorMessage>
+              <ErrorMessage class="text-xs text-red-600" field="new_password"></ErrorMessage>
             </div>
             <div class="flex flex-col gap-1">
               <label for="confirm" class="text-sm font-medium text-gray-900">
@@ -82,7 +85,7 @@ const { validateSubmit, ErrorMessage } = useValidate(AuthRouterSchema.signupInpu
                 required
                 class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
               />
-              <ErrorMessage class="text-xs text-red-600" for="confirm"></ErrorMessage>
+              <ErrorMessage class="text-xs text-red-600" field="confirm"></ErrorMessage>
             </div>
           </section>
 

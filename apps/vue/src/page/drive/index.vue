@@ -2,10 +2,10 @@
 import { FileRouterSchema } from '@todo/express/schema';
 import { dayjs } from '@todo/lib/dayjs';
 import type { z } from '@todo/lib/zod';
+import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import { MimetypeIcon, MimetypePreview } from '~/component/Mimetype';
 import MyInputFile from '~/component/MyInputFile.vue';
 import { useFile } from '~/composable/useFile';
-import { useValidate } from '~/composable/useValidate';
 import { trpc, type RouterOutput } from '~/lib/trpc';
 
 const { downloadManyFiles, downloadSingleFile, uploadManyFiles } = useFile();
@@ -32,7 +32,10 @@ const data = ref<{
 
 const loading = ref(true);
 
-const { validateSubmit, ErrorMessage } = useValidate(FileRouterSchema.searchInput, modelValue);
+const { validateSubmit, ErrorMessage } = useVueValidateZod(
+  FileRouterSchema.searchInput,
+  modelValue,
+);
 const handleSubmit = validateSubmit(async () => {
   loading.value = true;
   try {
@@ -93,7 +96,7 @@ const headerCheckbox = computed(() => {
             maxlength="100"
           />
 
-          <ErrorMessage class="text-xs text-red-600" for="where.file_keyword" />
+          <ErrorMessage class="text-xs text-red-600" field="where.file_keyword" />
         </div>
       </section>
 

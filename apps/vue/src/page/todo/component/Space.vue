@@ -3,7 +3,7 @@ import { TodoRouterSchema } from '@todo/express/schema';
 import { R } from '@todo/lib/remeda';
 import type { z } from '@todo/lib/zod';
 import Sortable from 'sortablejs';
-import { useValidate } from '~/composable/useValidate';
+import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import { trpc, type RouterOutput } from '~/lib/trpc';
 import TodoForm from '~/page/todo/component/TodoForm.vue';
 import ModalEditSpace from '~/page/todo/modal/ModalEditSpace.vue';
@@ -24,7 +24,7 @@ const todo_list = ref<TodoWithStatus[]>([]);
 
 const loading = ref(true);
 
-const { validateSubmit } = useValidate(TodoRouterSchema.listInput, modelValue);
+const { validateSubmit } = useVueValidateZod(TodoRouterSchema.listInput, modelValue);
 const handleSubmit = validateSubmit(async (value) => {
   loading.value = true;
   try {
@@ -107,7 +107,7 @@ onMounted(async () => {
     onRemove(e) {
       if (e.oldIndex == null) return;
 
-      emit('remove', todo_list.value[e.oldIndex]);
+      emit('remove', todo_list.value[e.oldIndex]!);
       todo_list.value.splice(e.oldIndex, 1);
     },
 
@@ -127,7 +127,7 @@ onMounted(async () => {
        * oldIndex: 1;
        * newIndex: 2;
        */
-      const todo = todo_list.value[e.oldIndex]; // todo => 'リンゴ'
+      const todo = todo_list.value[e.oldIndex]!; // todo => 'リンゴ'
       const tail = todo_list.value.slice(e.oldIndex + 1); // tail => ['イチゴ', 'バナナ']
 
       todo_list.value.splice(e.oldIndex); // todo_list => ['メロン']
@@ -295,9 +295,9 @@ onMounted(async () => {
         :class="[todo.editing ? 'bg-blue-100' : 'hover:bg-gray-100']"
       >
         <TodoForm
-          v-model="todo_list[i]"
+          v-model="todo_list[i]!"
           class="px-4 pt-2 pb-4"
-          :file_list="todo_list[i].file_list"
+          :file_list="todo_list[i]!.file_list"
           :space_id="props.space.space_id"
           :order="i"
           @change="

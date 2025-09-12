@@ -78,6 +78,13 @@ async function updateUser(
       email: params.data.email,
       password: params.data.password,
       username: params.data.username,
+      avatar_image: params.data.avatar_image,
+      description: params.data.description,
+      twofa_enable: params.data.twofa_enable,
+      twofa_secret: params.data.twofa_secret,
+      aichat_enable: params.data.aichat_enable,
+      aichat_model: params.data.aichat_model,
+      aichat_api_key: params.data.aichat_api_key,
     },
     where: params.where,
   });

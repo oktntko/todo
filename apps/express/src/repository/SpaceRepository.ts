@@ -31,6 +31,13 @@ async function findManySpace(
   },
 ) {
   return prisma.space.findMany({
+    include: {
+      _count: {
+        select: {
+          todo_list: true,
+        },
+      },
+    },
     where: params.where,
     orderBy: params.orderBy,
     take: params.take,

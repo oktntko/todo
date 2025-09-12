@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { AuthRouterSchema } from '@todo/express/schema';
 import type { z } from '@todo/lib/zod';
-import { useValidate } from '~/composable/useValidate';
+import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import type { RouterOutput } from '~/lib/trpc';
 import { trpc } from '~/lib/trpc';
 
@@ -9,7 +9,10 @@ const modelValue = ref<z.infer<typeof AuthRouterSchema.signinTwofaInput>>({
   token: '',
 });
 
-const { validateSubmit, ErrorMessage } = useValidate(AuthRouterSchema.signinTwofaInput, modelValue);
+const { validateSubmit, ErrorMessage } = useVueValidateZod(
+  AuthRouterSchema.signinTwofaInput,
+  modelValue,
+);
 
 defineEmits<{
   close: [result?: RouterOutput['auth']['signinTwofa']];
@@ -49,7 +52,7 @@ defineEmits<{
           required
           maxlength="6"
         />
-        <ErrorMessage class="text-xs text-red-600" for="token"></ErrorMessage>
+        <ErrorMessage class="text-xs text-red-600" field="token"></ErrorMessage>
       </div>
     </section>
 

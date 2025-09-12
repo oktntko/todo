@@ -44,7 +44,7 @@ model Space {
   space_name        String @db.VarChar(100) /// @zod.string.trim().min(1).max(100)
   space_description String @default("") @db.VarChar(400) /// @zod.string.max(400)
   space_order       Int    @default(0) /// @zod.number.int()
-  space_image       String @db.Text /// @zod.string.trim().max(15000)
+  space_image       String @default(dbgenerated("('')")) @db.Text /// @zod.string.trim().max(15000)
   space_color       String @default("") @db.VarChar(100) /// @zod.custom.use(ColorSchema.or(z.literal('')))
 
   todo_list Todo[]
@@ -102,16 +102,27 @@ model Aichat {
 ////////////////////////////////
 
 /// ユーザ
+/// @zod.import(["import { AichatModelSchema } from '../../option'"])
 model User {
   user_id Int @id @default(autoincrement())
 
-  email        String  @unique @db.VarChar(255) /// @zod.string.trim().min(1).max(255).email()
-  password     String  @db.VarChar(255) /// @zod.string.trim().min(1).max(255)
-  username     String  @db.VarChar(100) /// @zod.string.trim().min(1).max(100)
+  email          String  @unique @db.VarChar(255) /// @zod.string.trim().min(1).max(255).email()
+  password       String  @db.VarChar(255) /// @zod.string.trim().min(1).max(255)
+  username       String  @db.VarChar(100) /// @zod.string.trim().min(1).max(100)
+  /// アバターイメージ
+  avatar_image   String  @default(dbgenerated("('')")) @db.Text
+  /// 自己紹介
+  description    String  @default("") @db.VarChar(400) /// @zod.string.trim().max(400)
   /// 二要素認証の有効化 `true`: 有効 / `false`: 無効
-  twofa_enable Boolean @default(false)
+  twofa_enable   Boolean @default(false)
   /// 二要素認証の秘密鍵
-  twofa_secret String  @default("") @db.VarChar(255) /// @zod.string.trim().max(255)
+  twofa_secret   String  @default("") @db.VarChar(255) /// @zod.string.trim().max(255)
+  /// AIチャットの有効化 `true`: 有効 / `false`: 無効
+  aichat_enable  Boolean @default(false)
+  /// AIチャットのモデル
+  aichat_model   String  @default("") @db.VarChar(100) /// @zod.custom.use(AichatModelSchema.or(z.literal('')))
+  /// AIチャットのAPIキー
+  aichat_api_key String  @default("") @db.VarChar(255) /// @zod.string.trim().max(255)
 
   created_at DateTime @default(now()) @db.DateTime(3)
   updated_at DateTime @updatedAt @db.DateTime(3)
@@ -133,7 +144,7 @@ model Session {
   expires        DateTime? @default(now()) @db.DateTime(3)
   /// custom
   user_id        Int?
-  data           String    @default("{}")
+  data           String    @default(dbgenerated("('{}')")) @db.Text
 
   user User? @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
 

@@ -132,7 +132,7 @@ function formatAccessInfo(prefix: string, req: Request, res?: Response) {
 
 // # createHandler
 export function createHandler<T extends z.ZodRawShape>(
-  schema: z.ZodEffects<z.ZodObject<T>> | z.ZodObject<T>,
+  schema: z.ZodObject<T>,
   resolver: (opts: {
     ctx: { req: Request; res: Response; prisma: PrismaClient; next: NextFunction };
     input: z.infer<typeof schema>;
@@ -165,7 +165,7 @@ export function createHandler<T extends z.ZodRawShape>(
 }
 
 export function createProtectHandler<T extends z.ZodRawShape>(
-  schema: z.ZodEffects<z.ZodObject<T>> | z.ZodObject<T>,
+  schema: z.ZodObject<T>,
   resolver: (opts: {
     ctx: {
       req: Request;

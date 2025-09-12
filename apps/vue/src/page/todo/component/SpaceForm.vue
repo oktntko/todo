@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { SpaceRouterSchema } from '@todo/express/schema';
 import type { z } from '@todo/lib/zod';
-import { useValidate } from '~/composable/useValidate';
+import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import { bytesToBase64 } from '~/lib/file';
 import { useDialog } from '~/plugin/DialogPlugin';
 
@@ -16,7 +16,7 @@ const emit = defineEmits<{
 
 const modelValue = defineModel<ModelValue>({ required: true });
 
-const { validateSubmit, ErrorMessage, reset, isDirty } = useValidate(
+const { validateSubmit, ErrorMessage, reset, isDirty } = useVueValidateZod(
   SpaceRouterSchema.createInput,
   modelValue,
 );
@@ -32,7 +32,7 @@ async function handleFileInput(files?: FileList | null) {
     return;
   }
 
-  const file = files[0];
+  const file = files[0]!;
 
   if (!file.type.startsWith('image/')) {
     $dialog.alert('Choose a IMAGE file.');
@@ -126,7 +126,7 @@ async function handleFileInput(files?: FileList | null) {
             maxlength="100"
             required
           />
-          <ErrorMessage class="text-xs text-red-600" for="space_name" />
+          <ErrorMessage class="text-xs text-red-600" field="space_name" />
         </div>
 
         <div class="focus-container flex flex-col gap-1">
@@ -148,7 +148,7 @@ async function handleFileInput(files?: FileList | null) {
             <option value="#FFFFFF" title="white"></option>
             <option value="#000000" title="black"></option>
           </datalist>
-          <ErrorMessage class="text-xs text-red-600" for="space_color" />
+          <ErrorMessage class="text-xs text-red-600" field="space_color" />
         </div>
       </div>
 
@@ -162,7 +162,7 @@ async function handleFileInput(files?: FileList | null) {
           maxlength="400"
         ></textarea>
 
-        <ErrorMessage class="text-xs text-red-600" for="space_description" />
+        <ErrorMessage class="text-xs text-red-600" field="space_description" />
       </div>
     </section>
 

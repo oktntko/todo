@@ -36,7 +36,17 @@ const listInput = z.object({
 
 const listOutput = z.object({
   total: z.number(),
-  space_list: z.array(SpaceSchema),
+  space_list: z.array(
+    SpaceSchema.and(
+      z.object({
+        _count: z
+          .object({
+            todo_list: z.number(),
+          })
+          .optional(),
+      }),
+    ),
+  ),
 });
 
 const reorderInput = SpaceSchema.pick({

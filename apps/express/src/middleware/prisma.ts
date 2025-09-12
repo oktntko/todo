@@ -4,6 +4,7 @@ import {
   Prisma,
   type ITXClientDenyList,
 } from '@todo/prisma/client';
+import { AichatModelSchema } from '@todo/prisma/schema';
 import log4js from 'log4js';
 import util from 'node:util';
 import superjson from 'superjson';
@@ -46,6 +47,16 @@ export function generatePrisma(reqid: string) {
       },
     },
     result: {
+      user: {
+        aichat_model: {
+          needs: {
+            aichat_model: true,
+          },
+          compute({ aichat_model }) {
+            return AichatModelSchema.or(z.literal('')).parse(aichat_model);
+          },
+        },
+      },
       aichat: {
         message: {
           needs: {

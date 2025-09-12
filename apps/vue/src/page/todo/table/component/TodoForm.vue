@@ -2,10 +2,10 @@
 import { TodoRouterSchema } from '@todo/express/schema';
 import type { z } from '@todo/lib/zod';
 import type { SpaceSchema } from '@todo/prisma/schema';
+import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import type { DownloadFile } from '~/component/MyDownloadFileList.vue';
 import MyInputFile from '~/component/MyInputFile.vue';
 import { useFile } from '~/composable/useFile';
-import { useValidate } from '~/composable/useValidate';
 import { trpc, type RouterOutput } from '~/lib/trpc';
 
 export type ModelValue = z.infer<typeof TodoRouterSchema.createInput>;
@@ -23,7 +23,7 @@ const emit = defineEmits<{
 
 const { uploadManyFiles } = useFile();
 
-const { validateSubmit, ErrorMessage, reset, isDirty } = useValidate(
+const { validateSubmit, ErrorMessage, reset, isDirty } = useVueValidateZod(
   TodoRouterSchema.createInput,
   modelValue,
 );
@@ -99,7 +99,7 @@ onMounted(async () => {
             </ul>
           </template>
         </MyDropdown>
-        <ErrorMessage class="text-xs text-red-600" for="title" />
+        <ErrorMessage class="text-xs text-red-600" field="title" />
       </div>
 
       <div class="focus-container flex grow flex-col gap-1">
@@ -111,7 +111,7 @@ onMounted(async () => {
           class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
           maxlength="100"
         />
-        <ErrorMessage class="text-xs text-red-600" for="title" />
+        <ErrorMessage class="text-xs text-red-600" field="title" />
       </div>
 
       <div class="flex flex-row gap-4">
@@ -165,7 +165,7 @@ onMounted(async () => {
           maxlength="400"
         ></textarea>
 
-        <ErrorMessage class="text-xs text-red-600" for="description" />
+        <ErrorMessage class="text-xs text-red-600" field="description" />
       </div>
 
       <div class="flex flex-col gap-1">

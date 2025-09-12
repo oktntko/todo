@@ -3,8 +3,8 @@ import { TodoRouterSchema } from '@todo/express/schema';
 import { dayjs } from '@todo/lib/dayjs';
 import type { z } from '@todo/lib/zod';
 import { TodoStatusList } from '@todo/prisma/schema';
+import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import { useFile } from '~/composable/useFile';
-import { useValidate } from '~/composable/useValidate';
 import { trpc, type RouterOutput } from '~/lib/trpc';
 
 definePage({
@@ -37,7 +37,10 @@ const data = ref<{
 
 const loading = ref(true);
 
-const { validateSubmit, ErrorMessage } = useValidate(TodoRouterSchema.searchInput, modelValue);
+const { validateSubmit, ErrorMessage } = useVueValidateZod(
+  TodoRouterSchema.searchInput,
+  modelValue,
+);
 const handleSubmit = validateSubmit(async () => {
   loading.value = true;
   try {
@@ -112,7 +115,7 @@ const headerCheckbox = computed(() => {
             maxlength="100"
           />
 
-          <ErrorMessage class="text-xs text-red-600" for="where.todo_keyword" />
+          <ErrorMessage class="text-xs text-red-600" field="where.todo_keyword" />
         </div>
 
         <div class="flex flex-col gap-1">
@@ -134,7 +137,7 @@ const headerCheckbox = computed(() => {
               {{ todo_status }}
             </label>
 
-            <ErrorMessage class="text-xs text-red-600" for="where.todo_status" />
+            <ErrorMessage class="text-xs text-red-600" field="where.todo_status" />
           </div>
         </div>
       </section>

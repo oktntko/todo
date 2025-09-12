@@ -96,6 +96,19 @@
               <span class="ms-2 capitalize">chat</span>
             </RouterLink>
           </li>
+          <li>
+            <RouterLink
+              :to="{ name: '/mypage/' }"
+              class="group flex w-full items-center rounded-e-full p-2 pl-3 text-base text-gray-200 transition duration-75 hover:bg-gray-800 hover:text-white"
+              active-class="bg-gray-700"
+            >
+              <span
+                class="icon-[radix-icons--avatar] h-5 w-5 text-gray-200 transition duration-75 group-hover:text-white"
+              >
+              </span>
+              <span class="ms-2 capitalize">my page</span>
+            </RouterLink>
+          </li>
         </ul>
       </div>
     </aside>

@@ -10,6 +10,7 @@
     "appenders",
     "autoincrement",
     "colorset",
+    "dataurl",
     "daygrid",
     "debouncer",
     "esbuild",

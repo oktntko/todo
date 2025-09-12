@@ -97,7 +97,7 @@ async function chatAichat(
 
   if (choice.finish_reason === 'tool_calls') {
     for (const tool of choice.message.tool_calls!) {
-      log.info(tool.id, tool.function);
+      log.info(tool.id, tool);
     }
   }
 

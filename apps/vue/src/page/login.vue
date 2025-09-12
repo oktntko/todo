@@ -3,7 +3,7 @@ useTitle('ログイン | MyTodo');
 
 import { AuthRouterSchema } from '@todo/express/schema';
 import type { z } from '@todo/lib/zod';
-import { useValidate } from '~/composable/useValidate';
+import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import { trpc, type RouterOutput } from '~/lib/trpc';
 import ModalSigninTwofa from '~/page/component/ModalSigninTwofa.vue';
 
@@ -14,7 +14,10 @@ const modelValue = ref<z.infer<typeof AuthRouterSchema.signinInput>>({
   password: '',
 });
 
-const { validateSubmit, ErrorMessage } = useValidate(AuthRouterSchema.signinInput, modelValue);
+const { validateSubmit, ErrorMessage } = useVueValidateZod(
+  AuthRouterSchema.signinInput,
+  modelValue,
+);
 </script>
 
 <template>
@@ -69,7 +72,7 @@ const { validateSubmit, ErrorMessage } = useValidate(AuthRouterSchema.signinInpu
                 class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
                 autocomplete="username"
               />
-              <ErrorMessage class="text-xs text-red-600" for="email"></ErrorMessage>
+              <ErrorMessage class="text-xs text-red-600" field="email"></ErrorMessage>
             </div>
             <div class="flex flex-col gap-1">
               <label for="password" class="text-sm font-medium text-gray-900"> パスワード </label>
@@ -80,7 +83,7 @@ const { validateSubmit, ErrorMessage } = useValidate(AuthRouterSchema.signinInpu
                 autocomplete="current-password"
                 class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
               />
-              <ErrorMessage class="text-xs text-red-600" for="email"></ErrorMessage>
+              <ErrorMessage class="text-xs text-red-600" field="email"></ErrorMessage>
             </div>
           </section>
 

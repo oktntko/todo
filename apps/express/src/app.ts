@@ -26,7 +26,7 @@ app.use(LogHandler);
 
 app.set('trust proxy', 1); // trust first proxy
 
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 const SessionMiddleware = session({

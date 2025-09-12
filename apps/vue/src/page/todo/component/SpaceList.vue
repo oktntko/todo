@@ -3,7 +3,7 @@ import { SpaceRouterSchema } from '@todo/express/schema';
 import { R } from '@todo/lib/remeda';
 import type { z } from '@todo/lib/zod';
 import Sortable from 'sortablejs';
-import { useValidate } from '~/composable/useValidate';
+import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import { trpc, type RouterOutput } from '~/lib/trpc';
 import ModalAddSpace from '~/page/todo/modal/ModalAddSpace.vue';
 
@@ -24,7 +24,7 @@ const modelValue = ref<z.infer<typeof SpaceRouterSchema.listInput>>({
   },
 });
 
-const { validateSubmit } = useValidate(SpaceRouterSchema.listInput, modelValue);
+const { validateSubmit } = useVueValidateZod(SpaceRouterSchema.listInput, modelValue);
 
 const data = ref<RouterOutput['space']['list']>({
   space_list: [],
@@ -68,7 +68,7 @@ onMounted(async () => {
         return;
       }
 
-      const space = data.value.space_list[e.oldIndex];
+      const space = data.value.space_list[e.oldIndex]!;
       const tail = data.value.space_list.slice(e.oldIndex + 1);
 
       data.value.space_list.splice(e.oldIndex);

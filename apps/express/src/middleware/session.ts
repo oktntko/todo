@@ -18,12 +18,12 @@ declare module 'express-session' {
       setting_twofa?: {
         expires: Date;
         twofa_secret: string;
-      };
+      } | null;
       // 二要素認証 ログイン
       auth_twofa?: {
         expires: Date;
         user_id: number;
-      };
+      } | null;
     };
   }
 }
