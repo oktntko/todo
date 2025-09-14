@@ -23,10 +23,11 @@ declare module 'vue-router/auto-routes' {
     '/chat': RouteRecordInfo<'/chat', '/chat', Record<never, never>, Record<never, never>>,
     '/drive/': RouteRecordInfo<'/drive/', '/drive', Record<never, never>, Record<never, never>>,
     '/login': RouteRecordInfo<'/login', '/login', Record<never, never>, Record<never, never>>,
-    '/mypage': RouteRecordInfo<'/mypage', '/mypage', Record<never, never>, Record<never, never>, '/mypage/' | '/mypage/account' | '/mypage/change-password' | '/mypage/security'>,
+    '/mypage': RouteRecordInfo<'/mypage', '/mypage', Record<never, never>, Record<never, never>, '/mypage/' | '/mypage/account' | '/mypage/change-password' | '/mypage/chat' | '/mypage/security'>,
     '/mypage/': RouteRecordInfo<'/mypage/', '/mypage', Record<never, never>, Record<never, never>>,
     '/mypage/account': RouteRecordInfo<'/mypage/account', '/mypage/account', Record<never, never>, Record<never, never>>,
     '/mypage/change-password': RouteRecordInfo<'/mypage/change-password', '/mypage/change-password', Record<never, never>, Record<never, never>>,
+    '/mypage/chat': RouteRecordInfo<'/mypage/chat', '/mypage/chat', Record<never, never>, Record<never, never>>,
     '/mypage/security': RouteRecordInfo<'/mypage/security', '/mypage/security', Record<never, never>, Record<never, never>>,
     '/signup': RouteRecordInfo<'/signup', '/signup', Record<never, never>, Record<never, never>>,
     '/todo/board': RouteRecordInfo<'/todo/board', '/todo/board', Record<never, never>, Record<never, never>>,
@@ -69,7 +70,7 @@ declare module 'vue-router/auto-routes' {
       views: never
     }
     'src/page/mypage.vue': {
-      routes: '/mypage' | '/mypage/' | '/mypage/account' | '/mypage/change-password' | '/mypage/security'
+      routes: '/mypage' | '/mypage/' | '/mypage/account' | '/mypage/change-password' | '/mypage/chat' | '/mypage/security'
       views: 'default'
     }
     'src/page/mypage/index.vue': {
@@ -82,6 +83,10 @@ declare module 'vue-router/auto-routes' {
     }
     'src/page/mypage/change-password.vue': {
       routes: '/mypage/change-password'
+      views: never
+    }
+    'src/page/mypage/chat.vue': {
+      routes: '/mypage/chat'
       views: never
     }
     'src/page/mypage/security.vue': {

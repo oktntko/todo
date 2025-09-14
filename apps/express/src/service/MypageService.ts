@@ -1,6 +1,7 @@
 import { dayjs } from '@todo/lib/dayjs';
 import type { z } from '@todo/lib/zod';
 import { TRPCError } from '@trpc/server';
+import OpenAI from 'openai';
 import { log } from '~/lib/log4js';
 import { HashPassword, OnetimePassword, SecretPassword } from '~/lib/secret';
 import { type PrismaClient } from '~/middleware/prisma';
@@ -16,6 +17,7 @@ export const MypageService = {
   generateSecret,
   enableSecret,
   disableSecret,
+  patchAichat,
 };
 
 // mypage.get
@@ -150,6 +152,47 @@ async function disableSecret(reqid: string, prisma: PrismaClient, operator_id: n
 
   return UserRepository.updateUser(prisma, {
     data: { twofa_enable: false, twofa_secret: '' },
+    where: { user_id: operator_id },
+  });
+}
+
+// # profile.patchAichat
+async function patchAichat(
+  reqid: string,
+  prisma: PrismaClient,
+  operator_id: number,
+  input: z.infer<typeof MypageRouterSchema.patchAichatInput>,
+) {
+  log.trace(reqid, 'patchAichat', operator_id);
+
+  await MypageService.getMypage(reqid, prisma, operator_id); // checkDataExist
+
+  if (input.aichat_enable) {
+    const openai = new OpenAI({ apiKey: input.aichat_api_key });
+    const response = await openai.chat.completions.create({
+      model: input.aichat_model,
+      messages: [
+        {
+          role: 'user',
+          content: 'test',
+        },
+      ],
+    });
+
+    if (response.choices.length === 0) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: 'API失敗',
+      });
+    }
+  }
+
+  return UserRepository.updateUser(prisma, {
+    data: {
+      aichat_enable: input.aichat_enable,
+      aichat_api_key: input.aichat_enable ? SecretPassword.encrypt(input.aichat_api_key) : '',
+      aichat_model: input.aichat_enable ? input.aichat_model : '',
+    },
     where: { user_id: operator_id },
   });
 }

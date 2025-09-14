@@ -3,9 +3,10 @@
 import cspellPlugin from '@cspell/eslint-plugin';
 import eslint from '@eslint/js';
 import prettier from 'eslint-config-prettier';
+import { defineConfig } from 'eslint/config';
 import tseslint from 'typescript-eslint';
 
-export default tseslint.config(
+export default defineConfig(
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
   {
@@ -13,6 +14,7 @@ export default tseslint.config(
     languageOptions: {
       parserOptions: {
         parser: '@typescript-eslint/parser',
+        tsconfigRootDir: import.meta.dirname,
       },
     },
     rules: {

@@ -21,7 +21,4 @@ export const env = {
     // cSpell:ignore Xryb
     SECRET_KEY: process.env.SECRET_KEY || '6vTCQwmAwCs4XrybYIeRKCu5gh581AE=',
   },
-  openai: {
-    OPENAI_API_KEY: process.env.OPENAI_API_KEY || '',
-  },
 } as const;

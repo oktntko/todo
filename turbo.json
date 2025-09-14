@@ -7,8 +7,7 @@
       "env": [
         "EXPRESS_PORT",
         "DATABASE_URL",
-        "DB_PORT",
-        "OPENAI_API_KEY"
+        "DB_PORT"
       ],
       "dependsOn": [
         "@todo/lib#build",
@@ -36,8 +35,7 @@
       "env": [
         "EXPRESS_PORT",
         "DATABASE_URL",
-        "DB_PORT",
-        "OPENAI_API_KEY"
+        "DB_PORT"
       ]
     },
     "generate": {},
@@ -47,8 +45,7 @@
       "env": [
         "EXPRESS_PORT",
         "DATABASE_URL",
-        "DB_PORT",
-        "OPENAI_API_KEY"
+        "DB_PORT"
       ],
       "dependsOn": [
         "@todo/lib#build",

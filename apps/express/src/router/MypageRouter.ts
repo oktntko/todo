@@ -96,4 +96,14 @@ export const mypage = router({
         ctx.req.session.data.setting_twofa = null;
       });
     }),
+
+  // profile.patchAichat
+  patchAichat: protectedProcedure
+    .input(MypageRouterSchema.patchAichatInput)
+    .output(ProfileSchema)
+    .mutation(async ({ ctx, input }) => {
+      return $transaction(ctx.prisma, async (prisma) => {
+        return MypageService.patchAichat(ctx.req.reqid, prisma, ctx.operator_id, input);
+      });
+    }),
 });

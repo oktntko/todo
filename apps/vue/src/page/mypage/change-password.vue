@@ -18,7 +18,7 @@ const { validateSubmit, ErrorMessage, isDirty, reset } = useVueValidateZod(
 
 <template>
   <form
-    class="flex flex-col gap-8 lg:max-w-3xl xl:max-w-4xl"
+    class="flex flex-col gap-6"
     autocomplete="off"
     @submit.prevent="
       validateSubmit(async () => {

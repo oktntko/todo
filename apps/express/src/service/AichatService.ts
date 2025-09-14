@@ -2,13 +2,10 @@ import { z } from '@todo/lib/zod';
 import { TRPCError } from '@trpc/server';
 import OpenAI from 'openai';
 import superjson from 'superjson';
-import { env } from '~/lib/env';
 import { log } from '~/lib/log4js';
 import { PrismaClient } from '~/middleware/prisma';
 import { AichatRouterSchema } from '~/schema/AichatRouterSchema';
-
-log.debug(env.openai.OPENAI_API_KEY);
-const openai = new OpenAI({ apiKey: env.openai.OPENAI_API_KEY });
+import { MypageService } from './MypageService';
 
 export const AichatService = {
   listAichat,
@@ -37,6 +34,8 @@ async function chatAichat(
   input: z.infer<typeof AichatRouterSchema.chatInput>,
 ) {
   log.trace(reqid, 'createAichat', operator_id, input);
+
+  const openai = await generateOpenai(reqid, prisma, operator_id);
 
   const prompt = {
     role: 'system',
@@ -118,4 +117,10 @@ async function chatAichat(
       },
     },
   ];
+}
+
+async function generateOpenai(reqid: string, prisma: PrismaClient, operator_id: number) {
+  const user = await MypageService.getMypage(reqid, prisma, operator_id);
+
+  return new OpenAI({ apiKey: user.aichat_api_key });
 }
