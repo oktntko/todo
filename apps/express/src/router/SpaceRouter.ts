@@ -11,7 +11,7 @@ export const space = router({
     .output(SpaceRouterSchema.listOutput)
     .query(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return SpaceService.listSpace(ctx.req.reqid, prisma, ctx.operator_id, input);
+        return SpaceService.listSpace({ ...ctx, prisma }, input);
       });
     }),
 
@@ -21,7 +21,7 @@ export const space = router({
     .output(SpaceSchema)
     .query(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return SpaceService.getSpace(ctx.req.reqid, prisma, ctx.operator_id, input);
+        return SpaceService.getSpace({ ...ctx, prisma }, input);
       });
     }),
 
@@ -31,7 +31,7 @@ export const space = router({
     .output(SpaceSchema)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return SpaceService.createSpace(ctx.req.reqid, prisma, ctx.operator_id, input);
+        return SpaceService.createSpace({ ...ctx, prisma }, input);
       });
     }),
 
@@ -41,7 +41,7 @@ export const space = router({
     .output(SpaceSchema)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return SpaceService.updateSpace(ctx.req.reqid, prisma, ctx.operator_id, input);
+        return SpaceService.updateSpace({ ...ctx, prisma }, input);
       });
     }),
 
@@ -51,7 +51,7 @@ export const space = router({
     .output(SpaceSchema)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return SpaceService.deleteSpace(ctx.req.reqid, prisma, ctx.operator_id, input);
+        return SpaceService.deleteSpace({ ...ctx, prisma }, input);
       });
     }),
 
@@ -61,7 +61,7 @@ export const space = router({
     .output(SpaceSchema.array())
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return SpaceService.reorderSpace(ctx.req.reqid, prisma, ctx.operator_id, input);
+        return SpaceService.reorderSpace({ ...ctx, prisma }, input);
       });
     }),
 });

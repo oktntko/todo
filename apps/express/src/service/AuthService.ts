@@ -3,7 +3,7 @@ import type { z } from '@todo/lib/zod';
 import { TRPCError } from '@trpc/server';
 import { log } from '~/lib/log4js';
 import { HashPassword, OnetimePassword, SecretPassword } from '~/lib/secret';
-import { type PrismaClient } from '~/middleware/prisma';
+import { PublicContext } from '~/middleware/trpc';
 import { SpaceRepository } from '~/repository/SpaceRepository';
 import { UserRepository } from '~/repository/UserRepository';
 import { checkDataExist, checkDuplicate } from '~/repository/_repository';
@@ -15,15 +15,11 @@ export const AuthService = {
   signinTwofa,
 };
 
-async function signup(
-  reqid: string,
-  prisma: PrismaClient,
-  input: z.infer<typeof AuthRouterSchema.signupInput>,
-) {
-  log.trace(reqid, 'signup', input);
+async function signup(ctx: PublicContext, input: z.infer<typeof AuthRouterSchema.signupInput>) {
+  log.trace(ctx.reqid, 'signup', input);
 
   await checkDuplicate({
-    duplicate: UserRepository.findUniqueUser(prisma, {
+    duplicate: UserRepository.findUniqueUser(ctx.prisma, {
       where: { email: input.email },
     }),
     duplicateIsExistingMessage: 'メールアドレスは既に登録されています。',
@@ -31,7 +27,7 @@ async function signup(
 
   const hashedPassword = HashPassword.hash(input.new_password);
 
-  const user = await UserRepository.createUser(prisma, {
+  const user = await UserRepository.createUser(ctx.prisma, {
     data: {
       username: input.email,
       email: input.email,
@@ -39,7 +35,7 @@ async function signup(
     },
   });
 
-  await SpaceRepository.createSpace(prisma, {
+  await SpaceRepository.createSpace(ctx.prisma, {
     data: {
       owner_id: user.user_id,
       space_name: 'MyTodo',
@@ -53,14 +49,10 @@ async function signup(
   return user;
 }
 
-async function signin(
-  reqid: string,
-  prisma: PrismaClient,
-  input: z.infer<typeof AuthRouterSchema.signinInput>,
-) {
-  log.trace(reqid, 'signup', input);
+async function signin(ctx: PublicContext, input: z.infer<typeof AuthRouterSchema.signinInput>) {
+  log.trace(ctx.reqid, 'signup', input);
 
-  const user = await UserRepository.findUniqueUser(prisma, {
+  const user = await UserRepository.findUniqueUser(ctx.prisma, {
     where: { email: input.email },
   });
 
@@ -76,8 +68,7 @@ async function signin(
 }
 
 async function signinTwofa(
-  reqid: string,
-  prisma: PrismaClient,
+  ctx: PublicContext,
   input: z.infer<typeof AuthRouterSchema.signinTwofaInput> & {
     auth_twofa: {
       expires: Date;
@@ -85,7 +76,7 @@ async function signinTwofa(
     } | null;
   },
 ) {
-  log.trace(reqid, 'signinTwofa', input);
+  log.trace(ctx.reqid, 'signinTwofa', input);
 
   if (!input.auth_twofa || dayjs(input.auth_twofa.expires).isBefore(dayjs())) {
     throw new TRPCError({
@@ -95,7 +86,7 @@ async function signinTwofa(
   }
 
   const user = await checkDataExist({
-    data: UserRepository.findUniqueUser(prisma, {
+    data: UserRepository.findUniqueUser(ctx.prisma, {
       where: { user_id: input.auth_twofa.user_id },
     }),
     dataIsNotExistMessage: 'ログインの有効期限が切れています。最初から操作をやり直してください。',

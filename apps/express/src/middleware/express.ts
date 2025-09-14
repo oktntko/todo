@@ -1,4 +1,5 @@
 import { z } from '@todo/lib/zod';
+import { User } from '@todo/prisma/client';
 import { TRPCError } from '@trpc/server';
 import type { ErrorRequestHandler, Request, RequestHandler, Response } from 'express';
 import { NextFunction } from 'express-serve-static-core';
@@ -8,6 +9,7 @@ import { type PrismaClient } from '~/middleware/prisma';
 import { SessionService } from '~/middleware/session';
 import { createContext } from '~/middleware/trpc';
 import {
+  checkDataExist,
   MESSAGE_INPUT_INVALID,
   MESSAGE_INTERNAL_SERVER_ERROR,
   MESSAGE_UNAUTHORIZED,
@@ -134,7 +136,13 @@ function formatAccessInfo(prefix: string, req: Request, res?: Response) {
 export function createHandler<T extends z.ZodRawShape>(
   schema: z.ZodObject<T>,
   resolver: (opts: {
-    ctx: { req: Request; res: Response; prisma: PrismaClient; next: NextFunction };
+    ctx: {
+      req: Request;
+      reqid: string;
+      res: Response;
+      prisma: PrismaClient;
+      next: NextFunction;
+    };
     input: z.infer<typeof schema>;
   }) => Promise<void> | void,
 ): RequestHandler {
@@ -153,7 +161,7 @@ export function createHandler<T extends z.ZodRawShape>(
       }
 
       return await resolver({
-        ctx: { ...ctx, next },
+        ctx: { ...ctx, reqid: req.reqid, next },
         input: result.data,
       });
     } catch (e) {
@@ -169,10 +177,11 @@ export function createProtectHandler<T extends z.ZodRawShape>(
   resolver: (opts: {
     ctx: {
       req: Request;
+      reqid: string;
       res: Response;
       prisma: PrismaClient;
       next: NextFunction;
-      operator_id: number;
+      operator: User;
     };
     input: z.infer<typeof schema>;
   }) => Promise<void> | void,
@@ -181,18 +190,13 @@ export function createProtectHandler<T extends z.ZodRawShape>(
     try {
       const ctx = createContext({ req, res });
 
-      const user = await SessionService.findUserBySession({
-        expires: req.session.cookie.expires,
-        user_id: req.session.user_id,
+      const user = await checkDataExist({
+        data: SessionService.findUserBySession({
+          expires: ctx.req.session.cookie.expires,
+          user_id: ctx.req.session.user_id,
+        }),
+        dataIsNotExistMessage: MESSAGE_UNAUTHORIZED,
       });
-      if (!user) {
-        return next(
-          new TRPCError({
-            code: 'UNAUTHORIZED',
-            message: MESSAGE_UNAUTHORIZED,
-          }),
-        );
-      }
 
       const result = schema.safeParse(req);
       if (result.error) {
@@ -205,7 +209,7 @@ export function createProtectHandler<T extends z.ZodRawShape>(
       }
 
       return resolver({
-        ctx: { ...ctx, next, operator_id: user.user_id },
+        ctx: { ...ctx, reqid: req.reqid, operator: user, next },
         input: result.data,
       });
     } catch (e) {

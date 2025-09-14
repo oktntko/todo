@@ -16,7 +16,7 @@ export const auth = router({
         // セッションの再生成
         await regenerate(ctx.req.session);
 
-        const user = await AuthService.signup(ctx.req.reqid, prisma, input);
+        const user = await AuthService.signup({ ...ctx, prisma }, input);
 
         // session のプロパティに代入することで、 SessionStore#set が呼ばれる. (非同期)
         ctx.req.session.user_id = user.user_id;
@@ -31,7 +31,7 @@ export const auth = router({
         // セッションの再生成
         await regenerate(ctx.req.session);
 
-        const user = await AuthService.signin(ctx.req.reqid, prisma, input);
+        const user = await AuthService.signin({ ...ctx, prisma }, input);
 
         if (user.twofa_enable) {
           // 二要素認証が有効 => ID/パスワード認証が成功したことをセッションに保存 => 二要素認証へ
@@ -60,7 +60,7 @@ export const auth = router({
       return $transaction(ctx.prisma, async (prisma) => {
         const auth_twofa = ctx.req.session.data?.auth_twofa ?? null;
 
-        const user = await AuthService.signinTwofa(ctx.req.reqid, prisma, { ...input, auth_twofa });
+        const user = await AuthService.signinTwofa({ ...ctx, prisma }, { ...input, auth_twofa });
 
         // セッションの再生成
         await regenerate(ctx.req.session);

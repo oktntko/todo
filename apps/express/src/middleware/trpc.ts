@@ -1,10 +1,12 @@
 import { ZodError } from '@todo/lib/zod';
-import { initTRPC, TRPCError } from '@trpc/server';
+import { User } from '@todo/prisma/client';
+import { initTRPC } from '@trpc/server';
 import * as trpcExpress from '@trpc/server/adapters/express';
 import superjson from 'superjson';
 import { generatePrisma, PrismaClient } from '~/middleware/prisma';
 import { SessionService } from '~/middleware/session';
 import {
+  checkDataExist,
   MESSAGE_INPUT_INVALID,
   MESSAGE_INTERNAL_SERVER_ERROR,
   MESSAGE_UNAUTHORIZED,
@@ -16,17 +18,23 @@ export function createContext(
   prisma: PrismaClient = generatePrisma(opts.req.reqid),
 ): {
   req: trpcExpress.CreateExpressContextOptions['req'];
+  reqid: string;
   res: trpcExpress.CreateExpressContextOptions['res'];
   prisma: PrismaClient;
 } {
   return {
     req: opts.req,
+    reqid: opts.req.reqid,
     res: opts.res,
     prisma,
   };
 }
 
 type Context = ReturnType<typeof createContext>;
+export type PublicContext = {
+  reqid: string;
+  prisma: PrismaClient;
+};
 
 // You can use any variable name you like.
 // We use t to keep things simple.
@@ -65,26 +73,26 @@ export const publicProcedure = procedure;
  * Reusable middleware that checks if users are authenticated.
  **/
 const isAuthed = middleware(async ({ next, ctx }) => {
-  const user = await SessionService.findUserBySession({
-    expires: ctx.req.session.cookie.expires,
-    user_id: ctx.req.session.user_id,
+  const user = await checkDataExist({
+    data: SessionService.findUserBySession({
+      expires: ctx.req.session.cookie.expires,
+      user_id: ctx.req.session.user_id,
+    }),
+    dataIsNotExistMessage: MESSAGE_UNAUTHORIZED,
   });
-  if (!user) {
-    throw new TRPCError({
-      code: 'UNAUTHORIZED',
-      message: MESSAGE_UNAUTHORIZED,
-    });
-  }
 
   return next({
     ctx: {
       ...ctx,
-      operator_id: user.user_id,
+      operator: user,
     },
   });
 });
 
 export const protectedProcedure = publicProcedure.use(isAuthed);
+export type ProtectedContext = PublicContext & {
+  operator: User;
+};
 
 export function createExpressMiddleware(
   opts: Omit<Parameters<typeof trpcExpress.createExpressMiddleware>[0], 'createContext'>,

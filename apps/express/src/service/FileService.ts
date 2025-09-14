@@ -3,7 +3,7 @@ import { type Prisma } from '@todo/prisma/client';
 import { TRPCError } from '@trpc/server';
 import AdmZip from 'adm-zip';
 import { log } from '~/lib/log4js';
-import { type PrismaClient } from '~/middleware/prisma';
+import { ProtectedContext } from '~/middleware/trpc';
 import {
   checkDataExist,
   checkPreviousVersion,
@@ -23,17 +23,12 @@ export const FileService = {
 };
 
 // # /api/file/download/single
-async function readFile(
-  reqid: string,
-  prisma: PrismaClient,
-  operator_id: number,
-  input: z.infer<typeof FileRouterSchema.getInput>,
-) {
-  log.trace(reqid, 'readFile', operator_id, input);
+async function readFile(ctx: ProtectedContext, input: z.infer<typeof FileRouterSchema.getInput>) {
+  log.trace(ctx.reqid, 'readFile', ctx.operator.user_id, input);
 
   // テーブルからデータを取得
   const filedata = await checkDataExist({
-    data: FileRepository.findUniqueFile(prisma, {
+    data: FileRepository.findUniqueFile(ctx.prisma, {
       where: { file_id: input.file_id },
     }),
   });
@@ -52,17 +47,13 @@ async function readFile(
 
 // # /api/file/download/many
 async function readManyFile(
-  reqid: string,
-  prisma: PrismaClient,
-  operator_id: number,
+  ctx: ProtectedContext,
   input: z.infer<typeof FileRouterSchema.getManyInput>,
 ) {
-  log.trace(reqid, 'readManyFile', operator_id, input);
+  log.trace(ctx.reqid, 'readManyFile', ctx.operator.user_id, input);
 
   const dataList = await Promise.all(
-    input.file_id_list.map((file_id) =>
-      FileService.readFile(reqid, prisma, operator_id, { file_id }),
-    ),
+    input.file_id_list.map((file_id) => FileService.readFile(ctx, { file_id })),
   );
 
   const zip = new AdmZip();
@@ -78,17 +69,15 @@ async function readManyFile(
 
 // # /api/file/upload/single
 async function createFile(
-  reqid: string,
-  prisma: PrismaClient,
-  operator_id: number,
+  ctx: ProtectedContext,
   input: z.infer<typeof FileRouterSchema.createInput>,
 ) {
-  log.trace(reqid, 'createFile', operator_id, input);
+  log.trace(ctx.reqid, 'createFile', ctx.operator.user_id, input);
 
   const filename = decodeURIComponent(input.file.originalname);
 
   // テーブルを更新
-  const filedata = await FileRepository.createFile(prisma, operator_id, {
+  const filedata = await FileRepository.createFile(ctx.prisma, ctx.operator.user_id, {
     data: {
       filename,
       mimetype: input.file.mimetype,
@@ -103,7 +92,7 @@ async function createFile(
         : undefined,
       user_list: {
         connect: {
-          user_id: operator_id,
+          user_id: ctx.operator.user_id,
         },
       },
     },
@@ -117,16 +106,14 @@ async function createFile(
 
 // # /api/file/upload/many
 async function createManyFile(
-  reqid: string,
-  prisma: PrismaClient,
-  operator_id: number,
+  ctx: ProtectedContext,
   input: z.infer<typeof FileRouterSchema.createManyInput>,
 ) {
-  log.trace(reqid, 'createManyFile', operator_id, input);
+  log.trace(ctx.reqid, 'createManyFile', ctx.operator.user_id, input);
 
   return Promise.all(
     input.files.map((file) =>
-      FileService.createFile(reqid, prisma, operator_id, {
+      FileService.createFile(ctx, {
         file,
         body: { todo_id: input.body.todo_id },
       }),
@@ -136,22 +123,20 @@ async function createManyFile(
 
 // # file.delete
 async function deleteFile(
-  reqid: string,
-  prisma: PrismaClient,
-  operator_id: number,
+  ctx: ProtectedContext,
   input: z.infer<typeof FileRouterSchema.deleteInput>,
 ) {
-  log.trace(reqid, 'deleteFile', operator_id, input);
+  log.trace(ctx.reqid, 'deleteFile', ctx.operator.user_id, input);
 
   // テーブルを更新
   await checkPreviousVersion({
-    previous: FileRepository.findUniqueFile(prisma, {
+    previous: FileRepository.findUniqueFile(ctx.prisma, {
       where: { file_id: input.file_id },
     }),
     updated_at: input.updated_at,
   });
 
-  const filedata = await FileRepository.deleteFile(prisma, {
+  const filedata = await FileRepository.deleteFile(ctx.prisma, {
     where: { file_id: input.file_id },
   });
 
@@ -162,24 +147,20 @@ async function deleteFile(
 }
 
 async function deleteManyFile(
-  reqid: string,
-  prisma: PrismaClient,
-  operator_id: number,
+  ctx: ProtectedContext,
   input: z.infer<typeof FileRouterSchema.deleteInput>[],
 ) {
-  log.trace(reqid, 'deleteManyFile', operator_id, input);
+  log.trace(ctx.reqid, 'deleteManyFile', ctx.operator.user_id, input);
 
-  return Promise.all(input.map((x) => FileService.deleteFile(reqid, prisma, operator_id, x)));
+  return Promise.all(input.map((x) => FileService.deleteFile(ctx, x)));
 }
 
 // file.search
 async function searchFile(
-  reqid: string,
-  prisma: PrismaClient,
-  operator_id: number,
+  ctx: ProtectedContext,
   input: z.infer<typeof FileRouterSchema.searchInput>,
 ) {
-  log.trace(reqid, 'searchFile', operator_id, input);
+  log.trace(ctx.reqid, 'searchFile', ctx.operator.user_id, input);
 
   const AND: Prisma.FileWhereInput[] = [];
 
@@ -193,18 +174,18 @@ async function searchFile(
   }
 
   const where: Prisma.FileWhereInput = {
-    user_list: { some: { user_id: operator_id } },
+    user_list: { some: { user_id: ctx.operator.user_id } },
     AND,
   };
-  log.debug(reqid, 'where', where);
+  log.debug(ctx.reqid, 'where', where);
 
   const orderBy: Prisma.FileOrderByWithRelationInput = { [input.sort.field]: input.sort.order };
-  log.debug(reqid, 'orderBy', orderBy);
+  log.debug(ctx.reqid, 'orderBy', orderBy);
 
-  const total = await FileRepository.countFile(prisma, {
+  const total = await FileRepository.countFile(ctx.prisma, {
     where,
   });
-  const file_list = await FileRepository.findManyFile(prisma, {
+  const file_list = await FileRepository.findManyFile(ctx.prisma, {
     where,
     orderBy,
     take: input.limit,

@@ -4,7 +4,7 @@ import { TRPCError } from '@trpc/server';
 import OpenAI from 'openai';
 import { log } from '~/lib/log4js';
 import { HashPassword, OnetimePassword, SecretPassword } from '~/lib/secret';
-import { type PrismaClient } from '~/middleware/prisma';
+import { ProtectedContext } from '~/middleware/trpc';
 import { checkDataExist, checkDuplicate } from '~/repository/_repository';
 import { UserRepository } from '~/repository/UserRepository';
 import { MypageRouterSchema } from '~/schema/MypageRouterSchema';
@@ -21,36 +21,32 @@ export const MypageService = {
 };
 
 // mypage.get
-async function getMypage(reqid: string, prisma: PrismaClient, operator_id: number) {
-  log.trace(reqid, 'getMypage', operator_id);
+async function getMypage(ctx: ProtectedContext) {
+  log.trace(ctx.reqid, 'getMypage', ctx.operator.user_id);
 
   return checkDataExist({
-    data: UserRepository.findUniqueUser(prisma, {
-      where: { user_id: operator_id },
+    data: UserRepository.findUniqueUser(ctx.prisma, {
+      where: { user_id: ctx.operator.user_id },
     }),
   });
 }
 
 // # mypage.deleteMypage
-async function deleteMypage(reqid: string, prisma: PrismaClient, operator_id: number) {
-  log.trace(reqid, 'deleteProfile', operator_id);
+async function deleteMypage(ctx: ProtectedContext) {
+  log.trace(ctx.reqid, 'deleteProfile', ctx.operator.user_id);
 
-  return UserRepository.deleteUser(prisma, { where: { user_id: operator_id } });
+  return UserRepository.deleteUser(ctx.prisma, { where: { user_id: ctx.operator.user_id } });
 }
 
 // mypage.patchPassword
 async function patchPassword(
-  reqid: string,
-  prisma: PrismaClient,
-  operator_id: number,
+  ctx: ProtectedContext,
   input: z.infer<typeof MypageRouterSchema.patchPasswordInput>,
 ) {
-  log.trace(reqid, 'patchPassword', operator_id, input);
-
-  const user = await MypageService.getMypage(reqid, prisma, operator_id);
+  log.trace(ctx.reqid, 'patchPassword', ctx.operator.user_id, input);
 
   // 現在のパスワードの確認
-  if (!HashPassword.compare(input.current_password, user.password)) {
+  if (!HashPassword.compare(input.current_password, ctx.operator.password)) {
     throw new TRPCError({
       code: 'BAD_REQUEST',
       message: 'パスワードが誤っています。',
@@ -59,42 +55,39 @@ async function patchPassword(
   // 新しいパスワードをハッシュ化
   const hashedPassword = HashPassword.hash(input.new_password);
 
-  return UserRepository.updateUser(prisma, {
+  return UserRepository.updateUser(ctx.prisma, {
     data: { password: hashedPassword },
-    where: { user_id: user.user_id },
+    where: { user_id: ctx.operator.user_id },
   });
 }
 
 // mypage.patchProfile
 async function patchProfile(
-  reqid: string,
-  prisma: PrismaClient,
-  operator_id: number,
+  ctx: ProtectedContext,
   input: z.infer<typeof MypageRouterSchema.patchProfileInput>,
 ) {
-  log.trace(reqid, 'updateProfile', operator_id, input);
-
-  const user = await MypageService.getMypage(reqid, prisma, operator_id);
+  log.trace(ctx.reqid, 'updateProfile', ctx.operator.user_id, input);
 
   await checkDuplicate({
-    duplicate: UserRepository.findUniqueUser(prisma, { where: { email: user.email } }),
-    current: { key: 'user_id', value: user.user_id },
+    duplicate: UserRepository.findUniqueUser(ctx.prisma, { where: { email: ctx.operator.email } }),
+    current: { key: 'user_id', value: ctx.operator.user_id },
   });
 
-  return UserRepository.updateUser(prisma, { data: input, where: { user_id: user.user_id } });
+  return UserRepository.updateUser(ctx.prisma, {
+    data: input,
+    where: { user_id: ctx.operator.user_id },
+  });
 }
 
 // # profile.generateSecret
-async function generateSecret(reqid: string, prisma: PrismaClient, operator_id: number) {
-  log.trace(reqid, 'generateSecret', operator_id);
+async function generateSecret(ctx: ProtectedContext) {
+  log.trace(ctx.reqid, 'generateSecret', ctx.operator.user_id);
 
-  const user = await MypageService.getMypage(reqid, prisma, operator_id);
-
-  const secret = OnetimePassword.generateSecret({ name: user.email });
+  const secret = OnetimePassword.generateSecret({ name: ctx.operator.email });
 
   const dataurl = await OnetimePassword.generateQrcodeUrl({
     secret: secret.ascii,
-    name: user.email,
+    name: ctx.operator.email,
   });
 
   // セッションに生成したシークレットを保存する
@@ -108,9 +101,7 @@ async function generateSecret(reqid: string, prisma: PrismaClient, operator_id: 
 
 // # profile.enableSecret
 async function enableSecret(
-  reqid: string,
-  prisma: PrismaClient,
-  operator_id: number,
+  ctx: ProtectedContext,
   input: z.infer<typeof MypageRouterSchema.enableSecretInput> & {
     setting_twofa: {
       expires: Date;
@@ -118,9 +109,7 @@ async function enableSecret(
     } | null;
   },
 ) {
-  log.trace(reqid, 'enableSecret', operator_id, input);
-
-  await MypageService.getMypage(reqid, prisma, operator_id); // checkDataExist
+  log.trace(ctx.reqid, 'enableSecret', ctx.operator.user_id, input);
 
   if (!input.setting_twofa || dayjs(input.setting_twofa.expires).isBefore(dayjs())) {
     throw new TRPCError({
@@ -138,34 +127,28 @@ async function enableSecret(
     throw new TRPCError({ code: 'BAD_REQUEST', message: 'コードが合致しません。' });
   }
 
-  return UserRepository.updateUser(prisma, {
+  return UserRepository.updateUser(ctx.prisma, {
     data: { twofa_enable: true, twofa_secret: input.setting_twofa.twofa_secret },
-    where: { user_id: operator_id },
+    where: { user_id: ctx.operator.user_id },
   });
 }
 
 // # profile.disableSecret
-async function disableSecret(reqid: string, prisma: PrismaClient, operator_id: number) {
-  log.trace(reqid, 'disableSecret', operator_id);
+async function disableSecret(ctx: ProtectedContext) {
+  log.trace(ctx.reqid, 'disableSecret', ctx.operator.user_id);
 
-  await MypageService.getMypage(reqid, prisma, operator_id); // checkDataExist
-
-  return UserRepository.updateUser(prisma, {
+  return UserRepository.updateUser(ctx.prisma, {
     data: { twofa_enable: false, twofa_secret: '' },
-    where: { user_id: operator_id },
+    where: { user_id: ctx.operator.user_id },
   });
 }
 
 // # profile.patchAichat
 async function patchAichat(
-  reqid: string,
-  prisma: PrismaClient,
-  operator_id: number,
+  ctx: ProtectedContext,
   input: z.infer<typeof MypageRouterSchema.patchAichatInput>,
 ) {
-  log.trace(reqid, 'patchAichat', operator_id);
-
-  await MypageService.getMypage(reqid, prisma, operator_id); // checkDataExist
+  log.trace(ctx.reqid, 'patchAichat', ctx.operator.user_id);
 
   if (input.aichat_enable) {
     const openai = new OpenAI({ apiKey: input.aichat_api_key });
@@ -187,12 +170,12 @@ async function patchAichat(
     }
   }
 
-  return UserRepository.updateUser(prisma, {
+  return UserRepository.updateUser(ctx.prisma, {
     data: {
       aichat_enable: input.aichat_enable,
       aichat_api_key: input.aichat_enable ? SecretPassword.encrypt(input.aichat_api_key) : '',
       aichat_model: input.aichat_enable ? input.aichat_model : '',
     },
-    where: { user_id: operator_id },
+    where: { user_id: ctx.operator.user_id },
   });
 }

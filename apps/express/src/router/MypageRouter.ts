@@ -12,14 +12,14 @@ export const mypage = router({
     .output(ProfileSchema)
     .query(async ({ ctx }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return MypageService.getMypage(ctx.req.reqid, prisma, ctx.operator_id);
+        return MypageService.deleteMypage({ ...ctx, prisma });
       });
     }),
 
   // mypage.delete
   delete: protectedProcedure.output(z.void()).mutation(async ({ ctx }) => {
     return $transaction(ctx.prisma, async (prisma) => {
-      await MypageService.deleteMypage(ctx.req.reqid, prisma, ctx.operator_id);
+      await MypageService.deleteMypage({ ...ctx, prisma });
 
       ctx.req.session.destroy(() => {
         /*Nothing To Do*/
@@ -33,7 +33,7 @@ export const mypage = router({
     .output(ProfileSchema)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return MypageService.patchPassword(ctx.req.reqid, prisma, ctx.operator_id, input);
+        return MypageService.patchPassword({ ...ctx, prisma }, input);
       });
     }),
 
@@ -43,7 +43,7 @@ export const mypage = router({
     .output(ProfileSchema)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return MypageService.patchProfile(ctx.req.reqid, prisma, ctx.operator_id, input);
+        return MypageService.patchProfile({ ...ctx, prisma }, input);
       });
     }),
 
@@ -51,7 +51,7 @@ export const mypage = router({
   // # profile.generateSecret
   generateSecret: protectedProcedure.input(z.void()).mutation(async ({ ctx }) => {
     return $transaction(ctx.prisma, async (prisma) => {
-      const data = await MypageService.generateSecret(ctx.req.reqid, prisma, ctx.operator_id);
+      const data = await MypageService.generateSecret({ ...ctx, prisma });
       log.debug('setting_twofa', data.setting_twofa);
 
       ctx.req.session.data = {
@@ -72,10 +72,7 @@ export const mypage = router({
         const setting_twofa = ctx.req.session.data?.setting_twofa ?? null;
         log.debug('setting_twofa', setting_twofa);
 
-        await MypageService.enableSecret(ctx.req.reqid, prisma, ctx.operator_id, {
-          ...input,
-          setting_twofa,
-        });
+        await MypageService.enableSecret({ ...ctx, prisma }, { ...input, setting_twofa });
 
         ctx.req.session.data = {
           ...ctx.req.session.data,
@@ -90,7 +87,7 @@ export const mypage = router({
     .output(z.void())
     .mutation(async ({ ctx }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        await MypageService.disableSecret(ctx.req.reqid, prisma, ctx.operator_id);
+        await MypageService.disableSecret({ ...ctx, prisma });
 
         ctx.req.session.data = ctx.req.session.data ?? {};
         ctx.req.session.data.setting_twofa = null;
@@ -103,7 +100,7 @@ export const mypage = router({
     .output(ProfileSchema)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return MypageService.patchAichat(ctx.req.reqid, prisma, ctx.operator_id, input);
+        return MypageService.patchAichat({ ...ctx, prisma }, input);
       });
     }),
 });

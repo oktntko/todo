@@ -24,12 +24,7 @@ FileRouter.get(
   '/api/file/download/single/:file_id',
   createProtectHandler(z.object({ params: FileRouterSchema.getInput }), async ({ ctx, input }) => {
     await $transaction(ctx.prisma, async (prisma) => {
-      const { filedata, buffer } = await FileService.readFile(
-        ctx.req.reqid,
-        prisma,
-        ctx.operator_id,
-        input.params,
-      );
+      const { filedata, buffer } = await FileService.readFile({ ...ctx, prisma }, input.params);
 
       ctx.res.set({
         'Content-Disposition': `attachment; filename=${encodeURIComponent(filedata.filename)}`,
@@ -46,9 +41,7 @@ FileRouter.get(
     async ({ ctx, input }) => {
       await $transaction(ctx.prisma, async (prisma) => {
         const { filedata, buffer } = await FileService.readManyFile(
-          ctx.req.reqid,
-          prisma,
-          ctx.operator_id,
+          { ...ctx, prisma },
           input.query,
         );
 
@@ -66,7 +59,7 @@ FileRouter.post(
   upload.single('file'),
   createProtectHandler(FileRouterSchema.createInput, async ({ ctx, input }) => {
     await $transaction(ctx.prisma, async (prisma) => {
-      const json = await FileService.createFile(ctx.req.reqid, prisma, ctx.operator_id, input);
+      const json = await FileService.createFile({ ...ctx, prisma }, input);
 
       return ctx.res.json(json);
     });
@@ -78,7 +71,7 @@ FileRouter.post(
   upload.array('files'),
   createProtectHandler(FileRouterSchema.createManyInput, async ({ ctx, input }) => {
     await $transaction(ctx.prisma, async (prisma) => {
-      const json = await FileService.createManyFile(ctx.req.reqid, prisma, ctx.operator_id, input);
+      const json = await FileService.createManyFile({ ...ctx, prisma }, input);
 
       return ctx.res.json(json);
     });
@@ -94,7 +87,7 @@ export const file = router({
     .output(FileRouterSchema.searchOutput)
     .query(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return FileService.searchFile(ctx.req.reqid, prisma, ctx.operator_id, input);
+        return FileService.searchFile({ ...ctx, prisma }, input);
       });
     }),
 
@@ -102,7 +95,7 @@ export const file = router({
     .input(FileRouterSchema.deleteInput)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return FileService.deleteFile(ctx.req.reqid, prisma, ctx.operator_id, input);
+        return FileService.deleteFile({ ...ctx, prisma }, input);
       });
     }),
 
@@ -110,7 +103,7 @@ export const file = router({
     .input(FileRouterSchema.deleteInput.array())
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return FileService.deleteManyFile(ctx.req.reqid, prisma, ctx.operator_id, input);
+        return FileService.deleteManyFile({ ...ctx, prisma }, input);
       });
     }),
 });

@@ -10,7 +10,7 @@ export const aichat = router({
     .output(MessagesSchema)
     .query(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return AichatService.listAichat(ctx.req.reqid, prisma, ctx.operator_id, input);
+        return AichatService.listAichat({ ...ctx, prisma }, input);
       });
     }),
 
@@ -22,7 +22,7 @@ export const aichat = router({
       return $transaction(
         ctx.prisma,
         async (prisma) => {
-          return AichatService.chatAichat(ctx.req.reqid, prisma, ctx.operator_id, input);
+          return AichatService.chatAichat({ ...ctx, prisma }, input);
         },
         { maxWait: 5000, timeout: 30000 },
       );

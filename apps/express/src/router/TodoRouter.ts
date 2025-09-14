@@ -11,7 +11,7 @@ export const todo = router({
     .output(TodoRouterSchema.listOutput)
     .query(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return TodoService.listTodo(ctx.req.reqid, prisma, ctx.operator_id, input);
+        return TodoService.listTodo({ ...ctx, prisma }, input);
       });
     }),
 
@@ -21,7 +21,7 @@ export const todo = router({
     .output(TodoRouterSchema.searchOutput)
     .query(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return TodoService.searchTodo(ctx.req.reqid, prisma, ctx.operator_id, input);
+        return TodoService.searchTodo({ ...ctx, prisma }, input);
       });
     }),
 
@@ -31,7 +31,7 @@ export const todo = router({
     .output(TodoOutputSchema)
     .query(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return TodoService.getTodo(ctx.req.reqid, prisma, ctx.operator_id, input);
+        return TodoService.getTodo({ ...ctx, prisma }, input);
       });
     }),
 
@@ -41,7 +41,7 @@ export const todo = router({
     .output(TodoOutputSchema)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return TodoService.upsertTodo(ctx.req.reqid, prisma, ctx.operator_id, input);
+        return TodoService.upsertTodo({ ...ctx, prisma }, input);
       });
     }),
 
@@ -51,7 +51,7 @@ export const todo = router({
     .output(TodoOutputSchema)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return TodoService.createTodo(ctx.req.reqid, prisma, ctx.operator_id, input);
+        return TodoService.createTodo({ ...ctx, prisma }, input);
       });
     }),
 
@@ -61,7 +61,7 @@ export const todo = router({
     .output(TodoOutputSchema)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return TodoService.updateTodo(ctx.req.reqid, prisma, ctx.operator_id, input);
+        return TodoService.updateTodo({ ...ctx, prisma }, input);
       });
     }),
 
@@ -70,7 +70,7 @@ export const todo = router({
     .input(TodoRouterSchema.updateManyInput)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return TodoService.updateManyTodo(ctx.req.reqid, prisma, ctx.operator_id, input);
+        return TodoService.updateManyTodo({ ...ctx, prisma }, input);
       });
     }),
 
@@ -80,7 +80,7 @@ export const todo = router({
     .output(TodoSchema)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return TodoService.deleteTodo(ctx.req.reqid, prisma, ctx.operator_id, input);
+        return TodoService.deleteTodo({ ...ctx, prisma }, input);
       });
     }),
 
@@ -89,7 +89,7 @@ export const todo = router({
     .input(TodoRouterSchema.deleteManyInput)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return TodoService.deleteManyTodo(ctx.req.reqid, prisma, ctx.operator_id, input);
+        return TodoService.deleteManyTodo({ ...ctx, prisma }, input);
       });
     }),
 });

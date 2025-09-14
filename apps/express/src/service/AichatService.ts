@@ -3,9 +3,9 @@ import { TRPCError } from '@trpc/server';
 import OpenAI from 'openai';
 import superjson from 'superjson';
 import { log } from '~/lib/log4js';
-import { PrismaClient } from '~/middleware/prisma';
+import { SecretPassword } from '~/lib/secret';
+import { ProtectedContext } from '~/middleware/trpc';
 import { AichatRouterSchema } from '~/schema/AichatRouterSchema';
-import { MypageService } from './MypageService';
 
 export const AichatService = {
   listAichat,
@@ -14,28 +14,25 @@ export const AichatService = {
 
 // aichat.list
 async function listAichat(
-  reqid: string,
-  prisma: PrismaClient,
-  operator_id: number,
+  ctx: ProtectedContext,
   input: z.infer<typeof AichatRouterSchema.listInput>,
 ) {
-  log.trace(reqid, 'listAichat', operator_id, input);
+  log.trace(ctx.reqid, 'listAichat', ctx.operator.user_id, input);
 
-  return prisma.aichat.findMany({
+  return ctx.prisma.aichat.findMany({
     orderBy: [{ created_at: 'asc' }],
   });
 }
 
 // aichat.chat
 async function chatAichat(
-  reqid: string,
-  prisma: PrismaClient,
-  operator_id: number,
+  ctx: ProtectedContext,
   input: z.infer<typeof AichatRouterSchema.chatInput>,
 ) {
-  log.trace(reqid, 'createAichat', operator_id, input);
+  log.trace(ctx.reqid, 'createAichat', ctx.operator.user_id, input);
 
-  const openai = await generateOpenai(reqid, prisma, operator_id);
+  const aichat_api_key = SecretPassword.decrypt(ctx.operator.aichat_api_key);
+  const openai = new OpenAI({ apiKey: aichat_api_key });
 
   const prompt = {
     role: 'system',
@@ -48,7 +45,7 @@ async function chatAichat(
   const messages = [prompt, ...input.messages.map((x) => x.message), input.message];
 
   const response = await openai.chat.completions.create({
-    model: 'gpt-4.1-nano',
+    model: ctx.operator.aichat_model,
     messages,
     tools: [
       {
@@ -91,7 +88,7 @@ async function chatAichat(
     });
   }
 
-  log.trace(reqid, 'chat', response.choices);
+  log.trace(ctx.reqid, 'chat', response.choices);
   const choice = response.choices[0]!;
 
   if (choice.finish_reason === 'tool_calls') {
@@ -100,7 +97,7 @@ async function chatAichat(
     }
   }
 
-  await prisma.aichat.createMany({
+  await ctx.prisma.aichat.createMany({
     data: [
       { message: superjson.stringify(input.message) },
       { message: superjson.stringify(choice.message) },
@@ -117,10 +114,4 @@ async function chatAichat(
       },
     },
   ];
-}
-
-async function generateOpenai(reqid: string, prisma: PrismaClient, operator_id: number) {
-  const user = await MypageService.getMypage(reqid, prisma, operator_id);
-
-  return new OpenAI({ apiKey: user.aichat_api_key });
 }

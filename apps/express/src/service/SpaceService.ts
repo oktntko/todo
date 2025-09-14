@@ -1,7 +1,7 @@
 import type { z } from '@todo/lib/zod';
 import { type Prisma } from '@todo/prisma/client';
 import { log } from '~/lib/log4js';
-import { type PrismaClient } from '~/middleware/prisma';
+import { ProtectedContext } from '~/middleware/trpc';
 import { checkDataExist, checkPreviousVersion } from '~/repository/_repository';
 import { SpaceRepository } from '~/repository/SpaceRepository';
 import { SpaceRouterSchema } from '~/schema/SpaceRouterSchema';
@@ -17,15 +17,13 @@ export const SpaceService = {
 
 // space.list
 async function listSpace(
-  reqid: string,
-  prisma: PrismaClient,
-  operator_id: number,
+  ctx: ProtectedContext,
   input: z.infer<typeof SpaceRouterSchema.listInput>,
 ) {
-  log.trace(reqid, 'listSpace', operator_id, input);
+  log.trace(ctx.reqid, 'listSpace', ctx.operator.user_id, input);
 
   const where: Prisma.SpaceWhereInput = {
-    owner_id: operator_id,
+    owner_id: ctx.operator.user_id,
   };
   if (input.where.space_keyword) {
     where.OR = [
@@ -34,12 +32,12 @@ async function listSpace(
       { todo_list: { some: { title: { contains: input.where.space_keyword } } } },
     ];
   }
-  log.debug(reqid, 'where', where);
+  log.debug(ctx.reqid, 'where', where);
 
-  const total = await SpaceRepository.countSpace(prisma, {
+  const total = await SpaceRepository.countSpace(ctx.prisma, {
     where,
   });
-  const space_list = await SpaceRepository.findManySpace(prisma, {
+  const space_list = await SpaceRepository.findManySpace(ctx.prisma, {
     where,
     orderBy: { [input.sort.field]: input.sort.order },
   });
@@ -51,16 +49,11 @@ async function listSpace(
 }
 
 // space.get
-async function getSpace(
-  reqid: string,
-  prisma: PrismaClient,
-  operator_id: number,
-  input: z.infer<typeof SpaceRouterSchema.getInput>,
-) {
-  log.trace(reqid, 'getSpace', operator_id, input);
+async function getSpace(ctx: ProtectedContext, input: z.infer<typeof SpaceRouterSchema.getInput>) {
+  log.trace(ctx.reqid, 'getSpace', ctx.operator.user_id, input);
 
   return checkDataExist({
-    data: SpaceRepository.findUniqueSpace(prisma, {
+    data: SpaceRepository.findUniqueSpace(ctx.prisma, {
       where: { space_id: input.space_id },
     }),
   });
@@ -68,98 +61,90 @@ async function getSpace(
 
 // space.create
 async function createSpace(
-  reqid: string,
-  prisma: PrismaClient,
-  operator_id: number,
+  ctx: ProtectedContext,
   input: z.infer<typeof SpaceRouterSchema.createInput>,
 ) {
-  log.trace(reqid, 'createSpace', operator_id, input);
+  log.trace(ctx.reqid, 'createSpace', ctx.operator.user_id, input);
 
-  const count = await SpaceRepository.countSpace(prisma, {
-    where: { owner_id: operator_id },
+  const count = await SpaceRepository.countSpace(ctx.prisma, {
+    where: { owner_id: ctx.operator.user_id },
   });
 
-  return SpaceRepository.createSpace(prisma, {
+  return SpaceRepository.createSpace(ctx.prisma, {
     data: {
-      owner_id: operator_id,
+      owner_id: ctx.operator.user_id,
       space_name: input.space_name,
       space_description: input.space_description,
       space_order: count,
       space_image: input.space_image,
       space_color: input.space_color,
     },
-    operator_id,
+    operator_id: ctx.operator.user_id,
   });
 }
 
 // space.update
 async function updateSpace(
-  reqid: string,
-  prisma: PrismaClient,
-  operator_id: number,
+  ctx: ProtectedContext,
   input: z.infer<typeof SpaceRouterSchema.updateInput>,
 ) {
-  log.trace(reqid, 'updateSpace', operator_id, input);
+  log.trace(ctx.reqid, 'updateSpace', ctx.operator.user_id, input);
 
   const previous = await checkPreviousVersion({
-    previous: SpaceRepository.findUniqueSpace(prisma, {
+    previous: SpaceRepository.findUniqueSpace(ctx.prisma, {
       where: { space_id: input.space_id },
     }),
     updated_at: input.updated_at,
   });
 
-  return SpaceRepository.updateSpace(prisma, {
+  return SpaceRepository.updateSpace(ctx.prisma, {
     where: { space_id: input.space_id },
     data: {
-      owner_id: operator_id,
+      owner_id: ctx.operator.user_id,
       space_name: input.space_name,
       space_description: input.space_description,
       space_order: previous.space_order,
       space_image: input.space_image,
       space_color: input.space_color,
     },
-    operator_id,
+    operator_id: ctx.operator.user_id,
   });
 }
 
 // space.delete
 async function deleteSpace(
-  reqid: string,
-  prisma: PrismaClient,
-  operator_id: number,
+  ctx: ProtectedContext,
   input: z.infer<typeof SpaceRouterSchema.deleteInput>,
 ) {
-  log.trace(reqid, 'deleteSpace', operator_id, input);
+  log.trace(ctx.reqid, 'deleteSpace', ctx.operator.user_id, input);
 
   await checkPreviousVersion({
-    previous: SpaceRepository.findUniqueSpace(prisma, {
+    previous: SpaceRepository.findUniqueSpace(ctx.prisma, {
       where: { space_id: input.space_id },
     }),
     updated_at: input.updated_at,
   });
 
-  return SpaceRepository.deleteSpace(prisma, {
+  return SpaceRepository.deleteSpace(ctx.prisma, {
     where: { space_id: input.space_id },
   });
 }
 
 // space.reorder
 async function reorderSpace(
-  reqid: string,
-  prisma: PrismaClient,
-  operator_id: number,
+  ctx: ProtectedContext,
   input: z.infer<typeof SpaceRouterSchema.reorderInputList>,
 ) {
-  log.trace(reqid, 'reorderSpace', operator_id, input);
+  log.trace(ctx.reqid, 'reorderSpace', ctx.operator.user_id, input);
 
   return Promise.all(
     input.map((x) =>
-      SpaceRepository.updateSpace(prisma, {
+      SpaceRepository.updateSpace(ctx.prisma, {
         where: { space_id: x.space_id },
         data: {
           space_order: x.space_order,
         },
-        operator_id,
+        operator_id: ctx.operator.user_id,
       }),
     ),
   );
