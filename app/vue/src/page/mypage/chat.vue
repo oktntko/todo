@@ -66,6 +66,7 @@ const { validateSubmit, ErrorMessage, isDirty, reset } = useVueValidateZod(
             for="aichat_api_key"
             class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
           >
+            <!-- 保存されているキーを入力する必要があるので、「編集」ボタンを置いて、有効な場合は入力必須、無効な場合は undefined にして更新を避ける  -->
             api key
           </label>
           <input

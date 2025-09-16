@@ -12,7 +12,7 @@ export const mypage = router({
     .output(ProfileSchema)
     .query(async ({ ctx }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return MypageService.deleteMypage({ ...ctx, prisma });
+        return MypageService.getMypage({ ...ctx, prisma });
       });
     }),
 
