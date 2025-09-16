@@ -1,9 +1,9 @@
 packages:
-  - apps/vue
-  - apps/express
+  - app/vue
+  - app/express
+  - common/lib
+  - common/prisma
   - docker
-  - packages/lib
-  - packages/prisma
 
 onlyBuiltDependencies:
   - '@prisma/client'

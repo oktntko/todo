@@ -6,9 +6,11 @@
   "language": "en",
   // words - list of words to be always considered correct
   "words": [
+    "aichat",
     "appenders",
     "autoincrement",
     "colorset",
+    "dataurl",
     "daygrid",
     "debouncer",
     "esbuild",
