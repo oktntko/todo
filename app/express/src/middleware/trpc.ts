@@ -1,12 +1,11 @@
 import { ZodError } from '@todo/lib/zod';
 import { User } from '@todo/prisma/client';
-import { initTRPC } from '@trpc/server';
+import { initTRPC, TRPCError } from '@trpc/server';
 import * as trpcExpress from '@trpc/server/adapters/express';
 import superjson from 'superjson';
 import { generatePrisma, PrismaClient } from '~/middleware/prisma';
 import { SessionService } from '~/middleware/session';
 import {
-  checkDataExist,
   MESSAGE_INPUT_INVALID,
   MESSAGE_INTERNAL_SERVER_ERROR,
   MESSAGE_UNAUTHORIZED,
@@ -73,13 +72,17 @@ export const publicProcedure = procedure;
  * Reusable middleware that checks if users are authenticated.
  **/
 const isAuthed = middleware(async ({ next, ctx }) => {
-  const user = await checkDataExist({
-    data: SessionService.findUserBySession({
-      expires: ctx.req.session.cookie.expires,
-      user_id: ctx.req.session.user_id,
-    }),
-    dataIsNotExistMessage: MESSAGE_UNAUTHORIZED,
+  const user = await SessionService.findUserBySession({
+    expires: ctx.req.session.cookie.expires,
+    user_id: ctx.req.session.user_id,
   });
+
+  if (user == null) {
+    throw new TRPCError({
+      code: 'UNAUTHORIZED',
+      message: MESSAGE_UNAUTHORIZED,
+    });
+  }
 
   return next({
     ctx: {

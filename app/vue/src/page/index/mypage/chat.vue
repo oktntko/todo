@@ -4,12 +4,13 @@ import type { z } from '@todo/lib/zod';
 import { AichatModelList } from '@todo/prisma/schema';
 import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import { trpc } from '~/lib/trpc';
+import { useMypageStore } from '~/store/MypageStore';
 
-const user = await trpc.mypage.get.query();
+const { mypage } = storeToRefs(useMypageStore());
 
 const modelValue = ref<z.infer<typeof MypageRouterSchema.patchAichatInput>>({
-  aichat_enable: user.aichat_enable,
-  aichat_model: user.aichat_model,
+  aichat_enable: mypage.value.aichat_enable,
+  aichat_model: mypage.value.aichat_model,
   aichat_api_key: '',
 });
 
@@ -27,11 +28,11 @@ const { validateSubmit, ErrorMessage, isDirty, reset } = useVueValidateZod(
       validateSubmit(async () => {
         const loading = $loading.open();
         try {
-          const user = await trpc.mypage.patchAichat.mutate(modelValue);
+          mypage = await trpc.mypage.patchAichat.mutate(modelValue);
 
           reset({
-            aichat_enable: user.aichat_enable,
-            aichat_model: user.aichat_model,
+            aichat_enable: mypage.aichat_enable,
+            aichat_model: mypage.aichat_model,
             aichat_api_key: '',
           });
 

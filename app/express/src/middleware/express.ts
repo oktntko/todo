@@ -9,7 +9,6 @@ import { type PrismaClient } from '~/middleware/prisma';
 import { SessionService } from '~/middleware/session';
 import { createContext } from '~/middleware/trpc';
 import {
-  checkDataExist,
   MESSAGE_INPUT_INVALID,
   MESSAGE_INTERNAL_SERVER_ERROR,
   MESSAGE_UNAUTHORIZED,
@@ -190,13 +189,17 @@ export function createProtectHandler<T extends z.ZodRawShape>(
     try {
       const ctx = createContext({ req, res });
 
-      const user = await checkDataExist({
-        data: SessionService.findUserBySession({
-          expires: ctx.req.session.cookie.expires,
-          user_id: ctx.req.session.user_id,
-        }),
-        dataIsNotExistMessage: MESSAGE_UNAUTHORIZED,
+      const user = await SessionService.findUserBySession({
+        expires: ctx.req.session.cookie.expires,
+        user_id: ctx.req.session.user_id,
       });
+
+      if (user == null) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: MESSAGE_UNAUTHORIZED,
+        });
+      }
 
       const result = schema.safeParse(req);
       if (result.error) {

@@ -5,11 +5,12 @@ import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import { bytesToBase64 } from '~/lib/file';
 import { trpc } from '~/lib/trpc';
 import { useDialog } from '~/plugin/DialogPlugin';
+import { useMypageStore } from '~/store/MypageStore';
 
 const $dialog = useDialog();
-const user = await trpc.mypage.get.query();
+const { mypage } = storeToRefs(useMypageStore());
 
-const modelValue = ref<z.infer<typeof MypageRouterSchema.patchProfileInput>>(user);
+const modelValue = ref<z.infer<typeof MypageRouterSchema.patchProfileInput>>({ ...mypage.value });
 
 const { validateSubmit, ErrorMessage, isDirty, reset } = useVueValidateZod(
   MypageRouterSchema.patchProfileInput,
@@ -50,9 +51,9 @@ async function handleFileInput(files?: FileList | null) {
       validateSubmit(async () => {
         const loading = $loading.open();
         try {
-          const user = await trpc.mypage.patchProfile.mutate(modelValue);
+          mypage = await trpc.mypage.patchProfile.mutate(modelValue);
 
-          reset(user);
+          reset(mypage);
 
           $toast.success('データを保存しました。');
         } finally {

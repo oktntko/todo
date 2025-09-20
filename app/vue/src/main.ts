@@ -8,18 +8,12 @@ import LoadingPlugin from '~/plugin/LoadingPlugin';
 import ModalPlugin from '~/plugin/ModalPlugin';
 import ToastPlugin from '~/plugin/ToastPlugin';
 import WindowPlugin from '~/plugin/WindowPlugin';
-import { useMypageStore } from './store/MypageStore';
 
 const app = createApp(App);
 
 app.use(createPinia());
 
-// pinia をインストールしてからでないと使えないため順番は大事
-const { fetchMypage } = useMypageStore();
-router.beforeEach(async (to) => {
-  if (to.meta.requiresAuth) {
-    await fetchMypage();
-  }
+router.beforeEach(async () => {
   // ...
   // explicitly return false to cancel the navigation
   return true;

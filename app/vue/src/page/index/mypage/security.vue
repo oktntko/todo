@@ -4,8 +4,9 @@ import type { z } from '@todo/lib/zod';
 import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import type { RouterOutput } from '~/lib/trpc';
 import { trpc } from '~/lib/trpc';
+import { useMypageStore } from '~/store/MypageStore';
 
-const user = ref(await trpc.mypage.get.query());
+const { mypage } = storeToRefs(useMypageStore());
 
 const modelValue = ref<z.infer<typeof MypageRouterSchema.enableSecretInput>>({
   token: '',
@@ -29,15 +30,15 @@ const refInputToken = ref<HTMLInputElement>();
       <div
         class="flex flex-col gap-4 border-t-2 p-4"
         :class="{
-          'border-blue-300 bg-blue-50': user.twofa_enable,
-          'border-yellow-300 bg-yellow-50': !user.twofa_enable,
+          'border-blue-300 bg-blue-50': mypage.twofa_enable,
+          'border-yellow-300 bg-yellow-50': !mypage.twofa_enable,
         }"
         role="alert"
       >
         <div class="flex items-center gap-4">
           <span class="sr-only">Info</span>
           <span
-            v-if="user.twofa_enable"
+            v-if="mypage.twofa_enable"
             class="icon-[wpf--security-checked] h-32 w-32 text-green-400"
           >
           </span>
@@ -47,16 +48,18 @@ const refInputToken = ref<HTMLInputElement>();
             <h3
               class="text-lg font-medium"
               :class="{
-                'text-blue-900': user.twofa_enable,
-                'text-yellow-900': !user.twofa_enable,
+                'text-blue-900': mypage.twofa_enable,
+                'text-yellow-900': !mypage.twofa_enable,
               }"
             >
               {{
-                user.twofa_enable ? '二要素認証が有効です。' : '二要素認証が有効になっていません。'
+                mypage.twofa_enable
+                  ? '二要素認証が有効です。'
+                  : '二要素認証が有効になっていません。'
               }}
             </h3>
             <button
-              v-if="user.twofa_enable"
+              v-if="mypage.twofa_enable"
               type="button"
               class="inline-flex items-center justify-center px-4 py-2 text-sm text-gray-700 transition-colors hover:text-blue-600"
               @click="
@@ -65,7 +68,7 @@ const refInputToken = ref<HTMLInputElement>();
                     const loading = $loading.open();
                     try {
                       await trpc.mypage.disableSecret.mutate();
-                      user.twofa_enable = false;
+                      mypage.twofa_enable = false;
 
                       $toast.success('二要素認証を無効化しました。');
                     } finally {
@@ -163,7 +166,7 @@ const refInputToken = ref<HTMLInputElement>();
 
                 revert();
                 qrcode.dataurl = '';
-                user.twofa_enable = true;
+                mypage.twofa_enable = true;
 
                 $toast.success('二要素認証を有効化しました。');
               } finally {

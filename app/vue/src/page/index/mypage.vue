@@ -1,4 +1,10 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useMypageStore } from '~/store/MypageStore';
+
+const { fetchMypage } = useMypageStore();
+
+await fetchMypage();
+</script>
 
 <template>
   <div class="flex flex-row">
