@@ -41,7 +41,7 @@ const { validateSubmit, ErrorMessage } = useVueValidateZod(
               try {
                 await trpc.auth.signup.mutate(modelValue);
 
-                router.push({ name: '/' });
+                router.push({ name: '//todo/list' });
               } finally {
                 loading.close();
               }
@@ -108,7 +108,7 @@ const { validateSubmit, ErrorMessage } = useVueValidateZod(
           <div class="text-sm font-light text-gray-500">
             アカウントを持っていますか？
             <RouterLink
-              :to="{ name: '/login' }"
+              :to="{ name: '/(auth)/login' }"
               class="text-primary-600 font-medium text-blue-600 hover:underline"
             >
               ログインする

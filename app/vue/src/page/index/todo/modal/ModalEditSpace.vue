@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { RouterOutput } from '~/lib/trpc';
 import { trpc } from '~/lib/trpc';
-import SpaceForm, { type ModelValue } from '~/page/todo/component/SpaceForm.vue';
+import SpaceForm, { type ModelValue } from '~/page/index/todo/component/SpaceForm.vue';
 import { useLoading } from '~/plugin/LoadingPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
 

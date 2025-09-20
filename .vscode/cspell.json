@@ -12,6 +12,7 @@
     "colorset",
     "dataurl",
     "daygrid",
+    "dbgenerated",
     "debouncer",
     "esbuild",
     "filesize",

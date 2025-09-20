@@ -30,7 +30,7 @@ const $router = useRouter();
                 await trpc.mypage.delete.mutate();
 
                 $toast.info('アカウントを削除しました。');
-                $router.push('/');
+                $router.push({ name: '/(auth)/login' });
               }
             }
           "

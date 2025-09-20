@@ -7,12 +7,8 @@ import { useLoading } from '~/plugin/LoadingPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
 import TodoForm, { type ModelValue } from './component/TodoForm.vue';
 
-definePage({
-  alias: ['/todo/:todo_id'],
-});
-
 const router = useRouter();
-const route = useRoute('/todo/table/[todo_id]');
+const route = useRoute('//todo/table/[todo_id]');
 const todo_id = route.params.todo_id;
 
 const modelValue = ref<ModelValue>();
@@ -39,7 +35,7 @@ async function handleSubmit(value: ModelValue) {
 
     $toast.success('Todo has been saved.');
 
-    router.push({ name: '/todo/table/' });
+    router.push({ name: '//todo/table/' });
   } finally {
     loading.close();
   }
@@ -54,7 +50,9 @@ async function handleSubmit(value: ModelValue) {
           <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
               <RouterLink
-                :to="{ name: '/todo/table/' }"
+                :to="{
+                  name: '//todo/table/',
+                }"
                 class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-blue-600"
               >
                 <span class="icon-[fontisto--table-2] h-3 w-3 transition duration-75"> </span>
@@ -66,7 +64,12 @@ async function handleSubmit(value: ModelValue) {
             </li>
             <li class="inline-flex items-center">
               <RouterLink
-                :to="{ name: '/todo/table/[todo_id]', params: { todo_id } }"
+                :to="{
+                  name: '//todo/table/[todo_id]',
+                  params: {
+                    todo_id,
+                  },
+                }"
                 class="inline-flex items-center text-sm font-medium text-gray-900 hover:text-blue-600"
               >
                 <span class="ms-1 capitalize">edit todo</span>
@@ -119,7 +122,9 @@ async function handleSubmit(value: ModelValue) {
 
                   $toast.success('Todo have been deleted.');
 
-                  router.replace({ name: '/todo/table/' });
+                  router.replace({
+                    name: '//todo/table/',
+                  });
                 } finally {
                   loading.close();
                 }

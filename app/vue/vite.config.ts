@@ -10,7 +10,6 @@ import { VueUseComponentsResolver } from 'unplugin-vue-components/resolvers';
 import VueComponents from 'unplugin-vue-components/vite';
 import { VueRouterAutoImports } from 'unplugin-vue-router';
 import VueRouter from 'unplugin-vue-router/vite';
-import VueLayouts from 'vite-plugin-vue-layouts';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -23,13 +22,6 @@ export default defineConfig({
     }),
     Vue(),
     VueJsx(),
-    VueLayouts({
-      layoutsDirs: 'src/layout',
-      pagesDirs: 'src/page',
-      extensions: ['vue'],
-      exclude: ['**/component', '**/modal'],
-      defaultLayout: 'default',
-    }),
     Unfonts({
       // https://fonts.google.com/
       google: {

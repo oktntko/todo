@@ -292,7 +292,6 @@ watch(
             :id="`${modelValue.todo_id}-description`"
             v-model="modelValue.description"
             class="block field-sizing-content w-full border-b border-b-gray-400 bg-inherit pb-0.5 outline-hidden"
-            maxlength="400"
             placeholder="Description"
             @input="handleInput"
           ></textarea>

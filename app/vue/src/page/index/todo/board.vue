@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { RouterOutput } from '~/lib/trpc';
-import Space, { type TodoWithStatus } from '~/page/todo/component/Space.vue';
-import SpaceList from '~/page/todo/component/SpaceList.vue';
+import Space, { type TodoWithStatus } from '~/page/index/todo/component/Space.vue';
+import SpaceList from '~/page/index/todo/component/SpaceList.vue';
 
 const space_list = ref<RouterOutput['space']['list']['space_list']>([]);
 

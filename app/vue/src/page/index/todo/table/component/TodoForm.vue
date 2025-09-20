@@ -162,7 +162,6 @@ onMounted(async () => {
           v-model.lazy="modelValue.description"
           class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
           rows="4"
-          maxlength="400"
         ></textarea>
 
         <ErrorMessage class="text-xs text-red-600" field="description" />

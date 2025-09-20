@@ -22,7 +22,7 @@
     },
     "type-check": {
       "dependsOn": [
-        "@todo/prisma#generate",
+        "@todo/prisma#prisma:generate",
         "^type-check"
       ]
     },
@@ -38,7 +38,7 @@
         "DB_PORT"
       ]
     },
-    "generate": {},
+    "prisma:generate": {},
     "lint": {},
     "format": {},
     "test": {
@@ -49,7 +49,7 @@
       ],
       "dependsOn": [
         "@todo/lib#build",
-        "@todo/prisma#generate",
+        "@todo/prisma#prisma:generate",
         "@todo/prisma#build"
       ]
     }

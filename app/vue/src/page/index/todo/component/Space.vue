@@ -5,8 +5,8 @@ import type { z } from '@todo/lib/zod';
 import Sortable from 'sortablejs';
 import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import { trpc, type RouterOutput } from '~/lib/trpc';
-import TodoForm from '~/page/todo/component/TodoForm.vue';
-import ModalEditSpace from '~/page/todo/modal/ModalEditSpace.vue';
+import TodoForm from '~/page/index/todo/component/TodoForm.vue';
+import ModalEditSpace from '~/page/index/todo/modal/ModalEditSpace.vue';
 
 const props = defineProps<{ space: RouterOutput['space']['list']['space_list'][number] }>();
 const modelValue = ref<z.infer<typeof TodoRouterSchema.listInput>>({

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { RouterOutput } from '~/lib/trpc';
-import Space from '~/page/todo/component/Space.vue';
-import SpaceList from '~/page/todo/component/SpaceList.vue';
+import Space from '~/page/index/todo/component/Space.vue';
+import SpaceList from '~/page/index/todo/component/SpaceList.vue';
 
 const space_list = ref<RouterOutput['space']['list']['space_list']>([]);
 </script>
@@ -10,7 +10,7 @@ const space_list = ref<RouterOutput['space']['list']['space_list']>([]);
   <div class="flex flex-row">
     <SpaceList v-model:space_list="space_list" class="w-56 shrink-0" type="radio"> </SpaceList>
 
-    <!-- 
+    <!--
       w-[calc(100vw-224px-224px-10px)]
       224px: グローバルメニュー
       224px: SpaceList

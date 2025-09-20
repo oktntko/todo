@@ -4,10 +4,6 @@ import { trpc } from '~/lib/trpc';
 import { useLoading } from '~/plugin/LoadingPlugin';
 import TodoForm, { type ModelValue } from './component/TodoForm.vue';
 
-definePage({
-  alias: ['/todo/add'],
-});
-
 const router = useRouter();
 
 const modelValue = ref<ModelValue>({
@@ -29,7 +25,9 @@ async function handleSubmit(value: ModelValue) {
   try {
     await trpc.todo.create.mutate(value);
 
-    router.push({ name: '/todo/table/' });
+    router.push({
+      name: '//todo/table/',
+    });
   } finally {
     loading.close();
   }
@@ -44,7 +42,9 @@ async function handleSubmit(value: ModelValue) {
           <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
               <RouterLink
-                :to="{ name: '/todo/table/' }"
+                :to="{
+                  name: '//todo/table/',
+                }"
                 class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-blue-600"
               >
                 <span class="icon-[fontisto--table-2] h-3 w-3 transition duration-75"> </span>
@@ -56,7 +56,9 @@ async function handleSubmit(value: ModelValue) {
             </li>
             <li class="inline-flex items-center">
               <RouterLink
-                :to="{ name: '/todo/table/add' }"
+                :to="{
+                  name: '//todo/table/add',
+                }"
                 class="inline-flex items-center text-sm font-medium text-gray-900 hover:text-blue-600"
               >
                 <span class="ms-1 capitalize">add todo</span>

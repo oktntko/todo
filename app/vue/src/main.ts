@@ -8,10 +8,23 @@ import LoadingPlugin from '~/plugin/LoadingPlugin';
 import ModalPlugin from '~/plugin/ModalPlugin';
 import ToastPlugin from '~/plugin/ToastPlugin';
 import WindowPlugin from '~/plugin/WindowPlugin';
+import { useMypageStore } from './store/MypageStore';
 
 const app = createApp(App);
 
 app.use(createPinia());
+
+// pinia をインストールしてからでないと使えないため順番は大事
+const { fetchMypage } = useMypageStore();
+router.beforeEach(async (to) => {
+  if (to.meta.requiresAuth) {
+    await fetchMypage();
+  }
+  // ...
+  // explicitly return false to cancel the navigation
+  return true;
+});
+
 app.use(router);
 
 app.use(WindowPlugin);
@@ -36,7 +49,7 @@ function handleError(error: unknown) {
       0 < status && status < 400 ? 'blue' : 400 <= status && status < 500 ? 'yellow' : 'red';
 
     if (status === 401 /*UNAUTHORIZED*/ || status === 403 /*FORBIDDEN*/) {
-      router.replace({ name: '/login' });
+      router.replace({ name: '/(auth)/login' });
     }
 
     return app.config.globalProperties.$dialog.open({

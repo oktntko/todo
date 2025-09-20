@@ -5,7 +5,7 @@ import type { z } from '@todo/lib/zod';
 import Sortable from 'sortablejs';
 import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import { trpc, type RouterOutput } from '~/lib/trpc';
-import ModalAddSpace from '~/page/todo/modal/ModalAddSpace.vue';
+import ModalAddSpace from '~/page/index/todo/modal/ModalAddSpace.vue';
 
 const props = defineProps<{
   type: 'checkbox' | 'radio';

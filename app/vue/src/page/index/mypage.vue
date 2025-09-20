@@ -7,7 +7,9 @@
         <ul class="text-sm">
           <li>
             <RouterLink
-              :to="{ name: '/mypage/' }"
+              :to="{
+                name: '//mypage/',
+              }"
               class="group flex items-center rounded-lg rounded-l-none border-l-4 border-l-transparent p-2 hover:bg-gray-100"
               exact-active-class="text-blue-600 border-l-blue-400!"
             >
@@ -20,7 +22,9 @@
           </li>
           <li>
             <RouterLink
-              :to="{ name: '/mypage/change-password' }"
+              :to="{
+                name: '//mypage/change-password',
+              }"
               class="group flex items-center rounded-lg rounded-l-none border-l-4 border-l-transparent p-2 hover:bg-gray-100"
               exact-active-class="text-blue-600 border-l-blue-400!"
             >
@@ -33,7 +37,9 @@
           </li>
           <li>
             <RouterLink
-              :to="{ name: '/mypage/security' }"
+              :to="{
+                name: '//mypage/security',
+              }"
               class="group flex items-center rounded-lg rounded-l-none border-l-4 border-l-transparent p-2 hover:bg-gray-100"
               exact-active-class="text-blue-600 border-l-blue-400!"
             >
@@ -46,7 +52,9 @@
           </li>
           <li>
             <RouterLink
-              :to="{ name: '/mypage/chat' }"
+              :to="{
+                name: '//mypage/chat',
+              }"
               class="group flex items-center rounded-lg rounded-l-none border-l-4 border-l-transparent p-2 hover:bg-gray-100"
               exact-active-class="text-blue-600 border-l-blue-400!"
             >
@@ -57,7 +65,9 @@
           </li>
           <li>
             <RouterLink
-              :to="{ name: '/mypage/account' }"
+              :to="{
+                name: '//mypage/account',
+              }"
               class="group flex items-center rounded-lg rounded-l-none border-l-4 border-l-transparent p-2 hover:bg-gray-100"
               exact-active-class="text-blue-600 border-l-blue-400!"
             >
