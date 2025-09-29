@@ -4,7 +4,7 @@ import SpaceList from '~/page/index/todo/component/SpaceList.vue';
 import { useSpaceStore } from '~/store/SpaceStore';
 
 const { storedSpaceList } = storeToRefs(useSpaceStore());
-const checkedSpaceList = ref(storedSpaceList.value);
+const checkedSpaceList = ref([storedSpaceList.value[0]!]);
 </script>
 
 <template>

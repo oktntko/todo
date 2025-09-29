@@ -19,7 +19,6 @@ const $toast = useToast();
 const $loading = useLoading();
 
 const { storedSpaceList } = storeToRefs(useSpaceStore());
-// TODO 要対応 checkedSpaceList と storedSpaceList は別ものなので、storedSpaceList の変更が checkedSpaceList に反映されない。
 const checkedSpaceList = ref(storedSpaceList.value);
 
 const resources = computed(() => {
@@ -197,7 +196,7 @@ onMounted(() => {
     startDate: DayPilot.Date.today(),
     columns: resources.value,
     heightSpec: 'Full',
-    headerDateFormat: 'yy-MM-dd(dddd)',
+    headerDateFormat: 'MM-dd(ddd)',
     events: events.value,
     initScrollPos: 1,
 
@@ -438,14 +437,17 @@ async function onEventChanged(args: EventChangedArgs) {
 }
 .calendar_default_main {
   --dp-calendar-font-family: var(--font-sans);
+  --dp-calendar-event-bar-bg-color: transparent;
 }
 .month_default_main {
   --dp-month-font-family: var(--font-sans);
   --dp-month-event-vertical-align: start;
+  --dp-month-event-bar-bg-color: transparent; /* 現状この変数はなかったが追加されそうなので宣言しておく */
 }
 .scheduler_default_main {
   --dp-scheduler-font-family: var(--font-sans);
   --dp-scheduler-event-vertical-align: start;
+  --dp-scheduler-event-bar-bg-color: transparent;
 }
 
 #calendar {

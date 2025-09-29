@@ -5,6 +5,7 @@ import { trpc, type RouterOutput } from '~/lib/trpc';
 import ModalAddSpace from '~/page/index/todo/modal/ModalAddSpace.vue';
 import { useToast } from '~/plugin/ToastPlugin';
 import { useSpaceStore } from '~/store/SpaceStore';
+import ModalEditSpace from '../modal/ModalEditSpace.vue';
 
 const { storedSpaceList } = storeToRefs(useSpaceStore());
 
@@ -69,9 +70,13 @@ onMounted(async () => {
       <ul id="space-sortable-container" class="text-sm">
         <li v-for="space of storedSpaceList" :key="space.space_id" class="rounded-e-full py-px">
           <label
-            class="group relative flex w-full cursor-pointer items-center justify-start rounded-e-full p-2 transition duration-75 hover:bg-gray-200"
-            :class="{
-              'bg-gray-300': ~checkedSpaceList.findIndex((x) => x.space_id === space.space_id),
+            class="group/item relative flex w-full cursor-pointer items-center justify-start rounded-e-full p-1 transition duration-75 hover:bg-gray-200"
+            :class="[
+              { 'bg-gray-300': ~checkedSpaceList.findIndex((x) => x.space_id === space.space_id) },
+              `border-l-[6px]`,
+            ]"
+            :style="{
+              'border-left-color': R.rgba(space.space_color, 0.6),
             }"
           >
             <input
@@ -96,7 +101,38 @@ onMounted(async () => {
               class="h-4 w-4 shrink-0 rounded-sm object-cover object-center"
             />
             <span v-else class="icon-[ri--image-circle-fill] h-4 w-4 shrink-0"></span>
-            <span class="ms-1 shrink truncate">{{ space.space_name }}</span>
+            <span class="mx-1 shrink grow truncate">{{ space.space_name }}</span>
+            <button
+              type="button"
+              class="group/edit inline-flex justify-center rounded-full p-1 transition-all"
+              :class="['invisible group-hover/item:visible', 'hover:bg-gray-300']"
+              @click.prevent="
+                async () => {
+                  const result = await $modal.open<{
+                    event: 'update' | 'delete';
+                    space: RouterOutput['space']['update'];
+                  }>({
+                    component: ModalEditSpace,
+                    componentProps: { space_id: space.space_id },
+                  });
+
+                  if (result == null) {
+                    return;
+                  }
+
+                  // space_list と同一インスタンスを参照することで v-model にバインドできているので、
+                  // checked_space_list も更新する
+                  checkedSpaceList = storedSpaceList.filter((x) =>
+                    checkedSpaceList.find((y) => y.space_id === x.space_id),
+                  );
+                }
+              "
+            >
+              <span
+                class="icon-[bx--menu] h-4 w-4 shrink-0 transition-all"
+                :class="['group-hover/edit:scale-125 group-hover/edit:text-gray-900']"
+              ></span>
+            </button>
           </label>
         </li>
       </ul>

@@ -6,10 +6,6 @@ import Sortable from 'sortablejs';
 import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import { trpc, type RouterOutput } from '~/lib/trpc';
 import DynamicTodoForm from '~/page/index/todo/component/DynamicTodoForm.vue';
-import ModalEditSpace from '~/page/index/todo/modal/ModalEditSpace.vue';
-import { useSpaceStore } from '~/store/SpaceStore';
-
-const { storedSpaceList } = storeToRefs(useSpaceStore());
 
 const props = defineProps<{ space: RouterOutput['space']['list'][number] }>();
 const modelValue = ref<z.infer<typeof TodoRouterSchema.listInput>>({
@@ -149,102 +145,25 @@ onMounted(async () => {
     }"
   >
     <div class="sticky top-0 z-10 bg-white pt-4 pb-2">
-      <div class="flex justify-between px-4">
-        <div>
-          <div class="flex items-center text-lg font-bold">
-            <img
-              v-if="space.space_image"
-              :src="space.space_image"
-              width="24"
-              height="24"
-              decoding="async"
-              class="h-6 w-6 rounded-sm object-cover object-center"
-            />
-            <span v-else class="icon-[ri--image-circle-fill] h-6 w-6"></span>
-            <span class="ms-1">{{ space.space_name }}</span>
-          </div>
-          <div
-            v-if="space.space_description"
-            class="ml-4 inline-block max-w-full text-xs break-words whitespace-pre-wrap text-gray-500"
-          >
-            {{ space.space_description }}
-          </div>
+      <div class="px-4">
+        <div class="flex items-center text-lg font-bold">
+          <img
+            v-if="space.space_image"
+            :src="space.space_image"
+            width="24"
+            height="24"
+            decoding="async"
+            class="h-6 w-6 rounded-sm object-cover object-center"
+          />
+          <span v-else class="icon-[ri--image-circle-fill] h-6 w-6"></span>
+          <span class="ms-1">{{ space.space_name }}</span>
         </div>
-
-        <MyDropdown>
-          <template #button="{ toggle }">
-            <button
-              type="button"
-              class="relative flex cursor-pointer items-center justify-center rounded-full p-1.5 transition-colors hover:bg-gray-200"
-              @click="toggle"
-            >
-              <span class="icon-[bx--menu] h-4 w-4"></span>
-              <span class="sr-only capitalize">menu</span>
-            </button>
-          </template>
-          <template #default>
-            <ul class="w-48 rounded-sm border border-gray-300 bg-white shadow-md">
-              <li>
-                <button
-                  type="button"
-                  class="group flex w-full cursor-pointer items-center p-2 text-blue-600 transition duration-75 hover:bg-gray-200"
-                  @click="
-                    async () => {
-                      if (space == null) return;
-
-                      const updatedSpace = await $modal.open<RouterOutput['space']['update']>({
-                        component: ModalEditSpace,
-                        componentProps: { space_id: space.space_id },
-                      });
-
-                      if (updatedSpace == null) return;
-
-                      // space = updatedSpace;
-                    }
-                  "
-                >
-                  <span class="icon-[icon-park-solid--edit] h-4 w-4"></span>
-                  <span class="ms-1 capitalize">edit space</span>
-                </button>
-              </li>
-              <li>
-                <button
-                  type="button"
-                  class="group flex w-full cursor-pointer items-center p-2 text-yellow-600 transition duration-75 hover:bg-gray-200"
-                  @click="
-                    async () => {
-                      if (space == null) return;
-
-                      if (!(await $dialog.confirm('This action cannot be undone. Are you sure?')))
-                        return;
-
-                      const loading = $loading.open();
-                      try {
-                        const deletedSpace = await trpc.space.delete.mutate({
-                          space_id: space.space_id,
-                          updated_at: space.updated_at,
-                        });
-
-                        storedSpaceList = storedSpaceList.filter(
-                          (x) => x.space_id !== deletedSpace.space_id,
-                        );
-
-                        // TODO 削除後の処理 画面にデータが残る
-
-                        $toast.success('Data has been deleted.');
-                      } finally {
-                        loading.close();
-                      }
-                    }
-                  "
-                >
-                  <span class="icon-[tabler--trash-filled] h-4 w-4"></span>
-                  <span class="ms-1 capitalize">delete space</span>
-                </button>
-              </li>
-            </ul>
-          </template>
-        </MyDropdown>
+        <div
+          v-if="space.space_description"
+          class="inline-block max-w-full text-xs break-words whitespace-pre-wrap text-gray-500"
+        >
+          {{ space.space_description }}
+        </div>
       </div>
 
       <div class="flex flex-row items-center gap-2 ps-2 pe-4 text-sm">

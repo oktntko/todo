@@ -182,6 +182,7 @@ async function handleFileInput(files?: FileList | null) {
       >
         save
       </button>
+      <slot name="buttons"></slot>
     </section>
   </form>
 </template>
