@@ -11,7 +11,7 @@ const { downloadManyFiles } = useFile();
 
 const modelValue = ref<z.infer<typeof TodoRouterSchema.searchInput>>({
   where: {
-    space_id: null,
+    space_id_list: [],
     todo_keyword: '',
     todo_status: ['active'],
   },

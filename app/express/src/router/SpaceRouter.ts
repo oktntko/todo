@@ -1,17 +1,18 @@
+import { z } from '@todo/lib/zod';
 import { SpaceSchema } from '@todo/prisma/schema';
 import { $transaction } from '~/middleware/prisma';
 import { protectedProcedure, router } from '~/middleware/trpc';
-import { SpaceRouterSchema } from '~/schema/SpaceRouterSchema';
+import { SpaceRouterSchema, SpaceSchemaAndCount } from '~/schema/SpaceRouterSchema';
 import { SpaceService } from '~/service/SpaceService';
 
 export const space = router({
   // space.list
   list: protectedProcedure
-    .input(SpaceRouterSchema.listInput)
-    .output(SpaceRouterSchema.listOutput)
-    .query(async ({ ctx, input }) => {
+    .input(z.void())
+    .output(SpaceSchemaAndCount.array())
+    .query(async ({ ctx }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return SpaceService.listSpace({ ...ctx, prisma }, input);
+        return SpaceService.listSpace({ ...ctx, prisma });
       });
     }),
 

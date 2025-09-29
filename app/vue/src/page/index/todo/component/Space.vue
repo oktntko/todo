@@ -5,12 +5,15 @@ import type { z } from '@todo/lib/zod';
 import Sortable from 'sortablejs';
 import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import { trpc, type RouterOutput } from '~/lib/trpc';
-import TodoForm from '~/page/index/todo/component/TodoForm.vue';
+import DynamicTodoForm from '~/page/index/todo/component/DynamicTodoForm.vue';
 import ModalEditSpace from '~/page/index/todo/modal/ModalEditSpace.vue';
+import { useSpaceStore } from '~/store/SpaceStore';
 
-const props = defineProps<{ space: RouterOutput['space']['list']['space_list'][number] }>();
+const { storedSpaceList } = storeToRefs(useSpaceStore());
+
+const props = defineProps<{ space: RouterOutput['space']['list'][number] }>();
 const modelValue = ref<z.infer<typeof TodoRouterSchema.listInput>>({
-  space_id: props.space.space_id,
+  space_id_list: [props.space.space_id],
   todo_status: 'active',
 });
 
@@ -97,7 +100,7 @@ onMounted(async () => {
         await nextTick(() => {
           // watch で submitを実行するために書き換え
           todo_list.value.forEach((x) => {
-            x.space_id = modelValue.value.space_id;
+            x.space_id = modelValue.value.space_id_list[0]!;
           });
         });
       });
@@ -139,7 +142,12 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="rounded-sm border border-gray-300 bg-white pb-4 text-sm shadow-sm">
+  <div
+    class="rounded-sm border border-l-[6px] border-gray-300 bg-white pb-4 text-sm shadow-sm"
+    :style="{
+      'border-left-color': R.rgba(space.space_color, 0.6),
+    }"
+  >
     <div class="sticky top-0 z-10 bg-white pt-4 pb-2">
       <div class="flex justify-between px-4">
         <div>
@@ -212,10 +220,14 @@ onMounted(async () => {
 
                       const loading = $loading.open();
                       try {
-                        await trpc.space.delete.mutate({
+                        const deletedSpace = await trpc.space.delete.mutate({
                           space_id: space.space_id,
                           updated_at: space.updated_at,
                         });
+
+                        storedSpaceList = storedSpaceList.filter(
+                          (x) => x.space_id !== deletedSpace.space_id,
+                        );
 
                         // TODO 削除後の処理 画面にデータが残る
 
@@ -294,7 +306,7 @@ onMounted(async () => {
         class="transition-colors"
         :class="[todo.editing ? 'bg-blue-100' : 'hover:bg-gray-100']"
       >
-        <TodoForm
+        <DynamicTodoForm
           v-model="todo_list[i]!"
           class="px-4 pt-2 pb-4"
           :file_list="todo_list[i]!.file_list"
@@ -305,7 +317,7 @@ onMounted(async () => {
               todo_list = todo_list.filter((_, index) => index !== i);
             }
           "
-        ></TodoForm>
+        ></DynamicTodoForm>
       </li>
       <div v-if="!loading && todo_list.length === 0" class="my-6 w-full text-center">
         <div class="icon-[game-icons--night-sleep] h-12 w-12 bg-green-600 rtl:rotate-180"></div>

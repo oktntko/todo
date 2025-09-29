@@ -1,4 +1,3 @@
-import { TodoSchema } from '@todo/prisma/schema';
 import { $transaction } from '~/middleware/prisma';
 import { protectedProcedure, router } from '~/middleware/trpc';
 import { TodoOutputSchema, TodoRouterSchema } from '~/schema/TodoRouterSchema';
@@ -8,7 +7,7 @@ export const todo = router({
   // todo.list
   list: protectedProcedure
     .input(TodoRouterSchema.listInput)
-    .output(TodoRouterSchema.listOutput)
+    .output(TodoOutputSchema.array())
     .query(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
         return TodoService.listTodo({ ...ctx, prisma }, input);
@@ -77,7 +76,7 @@ export const todo = router({
   // todo.delete
   delete: protectedProcedure
     .input(TodoRouterSchema.getInput)
-    .output(TodoSchema)
+    .output(TodoOutputSchema)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
         return TodoService.deleteTodo({ ...ctx, prisma }, input);

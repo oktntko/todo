@@ -250,6 +250,7 @@ watch(
                 :id="`${modelValue.todo_id}-begin_date`"
                 v-model="modelValue.begin_date"
                 type="date"
+                max="9999-12-31"
                 class="block border-b border-b-gray-400 bg-inherit pb-0.5 outline-hidden sm:text-sm"
                 @input="handleInput"
               />
@@ -271,6 +272,7 @@ watch(
                 :id="`${modelValue.todo_id}-limit_date`"
                 v-model="modelValue.limit_date"
                 type="date"
+                max="9999-12-31"
                 class="block border-b border-b-gray-400 bg-inherit pb-0.5 outline-hidden sm:text-sm"
                 @input="handleInput"
               />

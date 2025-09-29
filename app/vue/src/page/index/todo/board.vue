@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import type { RouterOutput } from '~/lib/trpc';
 import Space, { type TodoWithStatus } from '~/page/index/todo/component/Space.vue';
 import SpaceList from '~/page/index/todo/component/SpaceList.vue';
+import { useSpaceStore } from '~/store/SpaceStore';
 
-const space_list = ref<RouterOutput['space']['list']['space_list']>([]);
+const { storedSpaceList } = storeToRefs(useSpaceStore());
+const checkedSpaceList = ref(storedSpaceList.value);
 
 const { handleAdd, handleRemove } = (function () {
   const movingTodo = ref<(todo: TodoWithStatus) => void>();
@@ -25,7 +26,7 @@ const { handleAdd, handleRemove } = (function () {
 
 <template>
   <div class="flex flex-row">
-    <SpaceList v-model:space_list="space_list" class="w-56 shrink-0" type="checkbox"> </SpaceList>
+    <SpaceList v-model="checkedSpaceList" class="w-56 shrink-0 px-2" type="checkbox"> </SpaceList>
 
     <!--
       w-[calc(100vw-224px-224px-10px)]
@@ -38,7 +39,7 @@ const { handleAdd, handleRemove } = (function () {
     >
       <div class="flex h-full w-full flex-row gap-2">
         <div
-          v-for="space of space_list"
+          v-for="space of checkedSpaceList"
           :key="space.space_id"
           class="shrink-0 break-inside-avoid"
           :class="['w-2xl']"

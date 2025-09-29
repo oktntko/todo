@@ -26,7 +26,9 @@ async function listTodo(ctx: ProtectedContext, input: z.infer<typeof TodoRouterS
   log.trace(ctx.reqid, 'listTodo', ctx.operator.user_id, input);
 
   const AND: Prisma.TodoWhereInput[] = [];
-  AND.push({ space_id: input.space_id });
+  if (input.space_id_list.length > 0) {
+    AND.push({ space_id: { in: input.space_id_list } });
+  }
   AND.push({ done_at: input.todo_status === 'active' ? { equals: null } : { not: null } });
 
   const where: Prisma.TodoWhereInput = {
@@ -50,8 +52,8 @@ async function searchTodo(
 
   const AND: Prisma.TodoWhereInput[] = [];
 
-  if (input.where.space_id) {
-    AND.push({ space_id: input.where.space_id });
+  if (input.where.space_id_list.length > 0) {
+    AND.push({ space_id: { in: input.where.space_id_list } });
   }
   if (input.where.todo_keyword) {
     AND.push({

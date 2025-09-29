@@ -32,7 +32,6 @@ describe.only(`AiChatRouter`, () => {
           const output = await caller.aichat.chat(input);
 
           //
-          console.log(output);
           expect(output).toEqual({
             total: 2,
             user_list: [

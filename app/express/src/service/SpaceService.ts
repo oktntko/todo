@@ -16,36 +16,19 @@ export const SpaceService = {
 };
 
 // space.list
-async function listSpace(
-  ctx: ProtectedContext,
-  input: z.infer<typeof SpaceRouterSchema.listInput>,
-) {
-  log.trace(ctx.reqid, 'listSpace', ctx.operator.user_id, input);
+async function listSpace(ctx: ProtectedContext) {
+  log.trace(ctx.reqid, 'listSpace', ctx.operator.user_id);
 
   const where: Prisma.SpaceWhereInput = {
     owner_id: ctx.operator.user_id,
   };
-  if (input.where.space_keyword) {
-    where.OR = [
-      { space_name: { contains: input.where.space_keyword } },
-      { space_description: { contains: input.where.space_keyword } },
-      { todo_list: { some: { title: { contains: input.where.space_keyword } } } },
-    ];
-  }
+
   log.debug(ctx.reqid, 'where', where);
 
-  const total = await SpaceRepository.countSpace(ctx.prisma, {
+  return SpaceRepository.findManySpace(ctx.prisma, {
     where,
+    orderBy: { space_order: 'asc' },
   });
-  const space_list = await SpaceRepository.findManySpace(ctx.prisma, {
-    where,
-    orderBy: { [input.sort.field]: input.sort.order },
-  });
-
-  return {
-    total,
-    space_list,
-  } satisfies z.infer<typeof SpaceRouterSchema.listOutput>;
 }
 
 // space.get

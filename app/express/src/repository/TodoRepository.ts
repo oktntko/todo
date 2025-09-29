@@ -209,6 +209,10 @@ async function deleteTodo(
   },
 ) {
   return prisma.todo.delete({
+    include: {
+      space: true,
+      file_list: { orderBy: { created_at: 'asc' } },
+    },
     where: params.where,
   });
 }

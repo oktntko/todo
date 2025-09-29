@@ -4,10 +4,13 @@ import { trpc } from '~/lib/trpc';
 import SpaceForm, { type ModelValue } from '~/page/index/todo/component/SpaceForm.vue';
 import { useLoading } from '~/plugin/LoadingPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
+import { useSpaceStore } from '~/store/SpaceStore';
 
 const emit = defineEmits<{
   close: [RouterOutput['space']['update']];
 }>();
+
+const { storedSpaceList } = storeToRefs(useSpaceStore());
 
 const props = defineProps<{
   space_id: number;
@@ -34,6 +37,10 @@ async function handleSubmit(input: ModelValue) {
       updated_at: updated_at.value,
     });
 
+    storedSpaceList.value = storedSpaceList.value.map((origin) => {
+      return origin.space_id === space.space_id ? { ...origin, ...space } : origin;
+    });
+
     emit('close', space);
 
     $toast.success('Data has been saved.');
@@ -44,7 +51,7 @@ async function handleSubmit(input: ModelValue) {
 </script>
 
 <template>
-  <div class="p-4 sm:w-lg">
+  <div class="p-4">
     <header class="mb-4 text-lg font-bold capitalize">edit space</header>
     <Transition
       mode="out-in"
@@ -52,7 +59,8 @@ async function handleSubmit(input: ModelValue) {
       enter-active-class="transition ease-out duration-200"
       enter-to-class="transform opacity-100"
     >
-      <SpaceForm v-if="modelValue" v-model="modelValue" @submit="handleSubmit"> </SpaceForm>
+      <SpaceForm v-if="modelValue" v-model="modelValue" class="px-4" @submit="handleSubmit">
+      </SpaceForm>
       <MyLoading v-else class="flex grow flex-col gap-8"> </MyLoading>
     </Transition>
   </div>
