@@ -75,6 +75,10 @@ defineExpose({
       class="icon-[eos-icons--bubble-loading] text-opacity-60 dark:text-opacity-60 h-16 w-16 text-gray-600 dark:text-gray-800"
     ></span>
     <span class="sr-only">Loading...</span>
-    <input autofocus class="border-none bg-transparent caret-transparent outline-hidden" />
+    <input
+      autofocus
+      name="loading"
+      class="border-none bg-transparent caret-transparent outline-hidden"
+    />
   </dialog>
 </template>

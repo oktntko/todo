@@ -240,6 +240,7 @@ const headerCheckbox = computed(() => {
               <label class="flex h-full justify-center hover:cursor-pointer">
                 <input
                   type="checkbox"
+                  name="header-checkbox"
                   class="hover:cursor-pointer"
                   :checked="headerCheckbox.checked"
                   :indeterminate="headerCheckbox.indeterminate"
@@ -363,7 +364,12 @@ const headerCheckbox = computed(() => {
             </td>
             <td class="max-w-48">
               <label class="flex h-full justify-center hover:cursor-pointer">
-                <input v-model="file.checked" type="checkbox" class="hover:cursor-pointer" />
+                <input
+                  v-model="file.checked"
+                  name="row-checkbox"
+                  type="checkbox"
+                  class="hover:cursor-pointer"
+                />
               </label>
             </td>
             <td class="max-w-48">
@@ -436,6 +442,7 @@ const headerCheckbox = computed(() => {
           <span class="capitalize">items per page</span>
           <select
             v-model.number="modelValue.limit"
+            name="limit"
             class="inline-block rounded-sm border border-gray-300 bg-white px-2 py-1 text-sm text-gray-900"
             :disabled="loading"
             @change="
@@ -470,6 +477,7 @@ const headerCheckbox = computed(() => {
           <div class="relative inline-block">
             <input
               v-model.number="modelValue.page"
+              name="page"
               type="range"
               min="1"
               :max="Math.ceil(data.total / modelValue.limit)"
@@ -484,6 +492,7 @@ const headerCheckbox = computed(() => {
           </div>
           <input
             v-model.number="modelValue.page"
+            name="page"
             type="number"
             min="1"
             :max="Math.ceil(data.total / modelValue.limit)"

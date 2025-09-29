@@ -162,40 +162,42 @@ const handleSubmit = validateSubmit((value) => {
       </div>
 
       <div class="flex flex-col gap-1">
-        <label for="file" class="flex items-center gap-2 text-sm capitalize">
-          files
-          <button
-            id="file"
-            type="button"
-            :class="[
-              'inline-flex items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
-              'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
-              'rounded-3xl border p-1',
-              'button-white secondary',
-            ]"
-            :disabled="!todo_id"
-            @click="
-              async () => {
-                const files = await $modal.open<File[]>({
-                  component: MyInputFile,
-                  componentProps: {
-                    multiple: true,
-                  },
-                });
-
-                if (files && files.length > 0) {
-                  const { data } = await uploadManyFiles(files, {
-                    todo_id,
+        <div>
+          <label for="file" class="inline-flex items-center gap-2 text-sm capitalize">
+            files
+            <button
+              id="file"
+              type="button"
+              :class="[
+                'inline-flex items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
+                'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
+                'rounded-3xl border p-1',
+                'button-white secondary',
+              ]"
+              :disabled="!todo_id"
+              @click="
+                async () => {
+                  const files = await $modal.open<File[]>({
+                    component: MyInputFile,
+                    componentProps: {
+                      multiple: true,
+                    },
                   });
 
-                  modelValueFileList = [...modelValueFileList, ...data];
+                  if (files && files.length > 0) {
+                    const { data } = await uploadManyFiles(files, {
+                      todo_id,
+                    });
+
+                    modelValueFileList = [...modelValueFileList, ...data];
+                  }
                 }
-              }
-            "
-          >
-            <span class="icon-[heroicons-outline--paper-clip] h-4 w-4"></span>
-          </button>
-        </label>
+              "
+            >
+              <span class="icon-[heroicons-outline--paper-clip] h-4 w-4"></span>
+            </button>
+          </label>
+        </div>
         <MyDownloadFileList v-model:file_list="modelValueFileList"> </MyDownloadFileList>
       </div>
     </section>

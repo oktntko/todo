@@ -76,6 +76,7 @@ onMounted(async () => {
           >
             <input
               v-model="checkedSpaceList"
+              name="space"
               :type="type"
               :value="type === 'checkbox' ? space : [space]"
               class="sr-only"
