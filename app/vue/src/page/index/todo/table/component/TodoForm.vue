@@ -6,10 +6,12 @@ import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import type { DownloadFile } from '~/component/MyDownloadFileList.vue';
 import MyInputFile from '~/component/MyInputFile.vue';
 import { useFile } from '~/composable/useFile';
-import { trpc, type RouterOutput } from '~/lib/trpc';
+import { useSpaceStore } from '~/store/SpaceStore';
 
 export type ModelValue = z.infer<typeof TodoRouterSchema.createInput>;
 export type Reset = (modelValue: ModelValue) => void;
+
+const { storedSpaceList } = storeToRefs(useSpaceStore());
 
 const modelValue = defineModel<ModelValue>({ required: true });
 const modelValueSpace = defineModel<z.infer<typeof SpaceSchema>>('space', { required: false });
@@ -30,16 +32,6 @@ const { validateSubmit, ErrorMessage, reset, isDirty } = useVueValidateZod(
 
 const handleSubmit = validateSubmit((value) => {
   emit('submit', value, reset);
-});
-
-const space_list = ref<RouterOutput['space']['list']['space_list']>([]);
-onMounted(async () => {
-  const res = await trpc.space.list.query({
-    where: { space_keyword: '' },
-    sort: { field: 'space_order', order: 'asc' },
-  });
-
-  space_list.value = res.space_list;
 });
 </script>
 
@@ -75,7 +67,7 @@ onMounted(async () => {
           <template #default>
             <ul class="w-full rounded-sm border border-gray-300 bg-white shadow-md">
               <li
-                v-for="space of space_list"
+                v-for="space of storedSpaceList"
                 :key="space.space_id"
                 class="flex cursor-pointer items-center px-1.5 py-1 text-sm hover:bg-gray-100"
                 @click="
@@ -122,6 +114,7 @@ onMounted(async () => {
               id="begin_date"
               v-model="modelValue.begin_date"
               type="date"
+              max="9999-12-31"
               class="rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
             />
             <input
@@ -143,6 +136,7 @@ onMounted(async () => {
               id="limit_date"
               v-model="modelValue.limit_date"
               type="date"
+              max="9999-12-31"
               class="rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
             />
             <input
@@ -168,39 +162,42 @@ onMounted(async () => {
       </div>
 
       <div class="flex flex-col gap-1">
-        <label for="file" class="flex items-center gap-2 text-sm capitalize">
-          files
-          <button
-            type="button"
-            :class="[
-              'inline-flex items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
-              'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
-              'rounded-3xl border p-1',
-              'button-white secondary',
-            ]"
-            :disabled="!todo_id"
-            @click="
-              async () => {
-                const files = await $modal.open<File[]>({
-                  component: MyInputFile,
-                  componentProps: {
-                    multiple: true,
-                  },
-                });
-
-                if (files && files.length > 0) {
-                  const { data } = await uploadManyFiles(files, {
-                    todo_id,
+        <div>
+          <label for="file" class="inline-flex items-center gap-2 text-sm capitalize">
+            files
+            <button
+              id="file"
+              type="button"
+              :class="[
+                'inline-flex items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
+                'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
+                'rounded-3xl border p-1',
+                'button-white secondary',
+              ]"
+              :disabled="!todo_id"
+              @click="
+                async () => {
+                  const files = await $modal.open<File[]>({
+                    component: MyInputFile,
+                    componentProps: {
+                      multiple: true,
+                    },
                   });
 
-                  modelValueFileList = [...modelValueFileList, ...data];
+                  if (files && files.length > 0) {
+                    const { data } = await uploadManyFiles(files, {
+                      todo_id,
+                    });
+
+                    modelValueFileList = [...modelValueFileList, ...data];
+                  }
                 }
-              }
-            "
-          >
-            <span class="icon-[heroicons-outline--paper-clip] h-4 w-4"></span>
-          </button>
-        </label>
+              "
+            >
+              <span class="icon-[heroicons-outline--paper-clip] h-4 w-4"></span>
+            </button>
+          </label>
+        </div>
         <MyDownloadFileList v-model:file_list="modelValueFileList"> </MyDownloadFileList>
       </div>
     </section>

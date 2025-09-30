@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import type { RouterOutput } from '~/lib/trpc';
 import Space from '~/page/index/todo/component/Space.vue';
 import SpaceList from '~/page/index/todo/component/SpaceList.vue';
+import { useSpaceStore } from '~/store/SpaceStore';
 
-const space_list = ref<RouterOutput['space']['list']['space_list']>([]);
+const { storedSpaceList } = storeToRefs(useSpaceStore());
+const checkedSpaceList = ref([storedSpaceList.value[0]!]);
 </script>
 
 <template>
   <div class="flex flex-row">
-    <SpaceList v-model:space_list="space_list" class="w-56 shrink-0" type="radio"> </SpaceList>
+    <SpaceList v-model="checkedSpaceList" class="w-56 shrink-0 px-2" type="radio"> </SpaceList>
 
     <!--
       w-[calc(100vw-224px-224px-10px)]
@@ -22,7 +23,7 @@ const space_list = ref<RouterOutput['space']['list']['space_list']>([]);
     >
       <div class="flex h-full w-full flex-row gap-2">
         <div
-          v-for="space of space_list"
+          v-for="space of checkedSpaceList"
           :key="space.space_id"
           class="shrink-0 break-inside-avoid"
           :class="['mx-auto w-2xl']"

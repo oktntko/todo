@@ -39,8 +39,10 @@ async function handleFileInput(files?: FileList | null) {
     return;
   }
 
-  if (file.size > 1024 * 10 /* 10KB */) {
-    $dialog.alert('The upper limit is 10KB.');
+  if (file.size > 1024 * 15 /* 15kb */) {
+    // MySQL TEXT 最大 65,535 バイト BASE64エンコードで約3倍になる
+    // 65,535 / 4 = 16383.75 バイト ≒ 15.9kb => 15kb
+    $dialog.alert('The upper limit is 15kb.');
     return;
   }
 
@@ -106,7 +108,7 @@ async function handleFileInput(files?: FileList | null) {
           >
             <span class="sr-only capitalize">space image</span>
             <span class="icon-[ri--image-circle-fill] h-4 w-4"> </span>
-            <span class="text-xs capitalize">limit: 10KB</span>
+            <span class="text-xs capitalize">limit: 15kb</span>
             <input
               type="file"
               class="hidden"
@@ -136,7 +138,7 @@ async function handleFileInput(files?: FileList | null) {
             v-model.lazy="modelValue.space_color"
             list="color-picker"
             type="color"
-            class="block h-full w-16 rounded-lg border border-gray-300 bg-white p-1.5 pr-0 text-gray-900 sm:text-sm"
+            class="block h-full w-16 rounded-lg border border-gray-300 bg-white p-1 text-gray-900 sm:text-sm"
           />
           <datalist id="color-picker">
             <option value="#FF0000" title="red"></option>
@@ -180,6 +182,7 @@ async function handleFileInput(files?: FileList | null) {
       >
         save
       </button>
+      <slot name="buttons"></slot>
     </section>
   </form>
 </template>

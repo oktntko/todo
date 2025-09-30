@@ -31,7 +31,6 @@ async function handleFileInput(files?: FileList | null) {
     return;
   }
 
-  console.log('size', file.size);
   if (file.size > 1024 * 15 /* 15kb */) {
     // MySQL TEXT 最大 65,535 バイト BASE64エンコードで約3倍になる
     // 65,535 / 4 = 16383.75 バイト ≒ 15.9kb => 15kb
@@ -167,7 +166,7 @@ async function handleFileInput(files?: FileList | null) {
         >
           <span class="sr-only capitalize">space image</span>
           <span class="icon-[ri--image-circle-fill] h-32 w-32"> </span>
-          <span class="text-xs capitalize">limit: 1MB</span>
+          <span class="text-xs capitalize">limit: 15kb</span>
           <input
             type="file"
             class="hidden"

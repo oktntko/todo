@@ -5,12 +5,11 @@ import type { z } from '@todo/lib/zod';
 import Sortable from 'sortablejs';
 import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import { trpc, type RouterOutput } from '~/lib/trpc';
-import TodoForm from '~/page/index/todo/component/TodoForm.vue';
-import ModalEditSpace from '~/page/index/todo/modal/ModalEditSpace.vue';
+import DynamicTodoForm from '~/page/index/todo/component/DynamicTodoForm.vue';
 
-const props = defineProps<{ space: RouterOutput['space']['list']['space_list'][number] }>();
+const props = defineProps<{ space: RouterOutput['space']['list'][number] }>();
 const modelValue = ref<z.infer<typeof TodoRouterSchema.listInput>>({
-  space_id: props.space.space_id,
+  space_id_list: [props.space.space_id],
   todo_status: 'active',
 });
 
@@ -97,7 +96,7 @@ onMounted(async () => {
         await nextTick(() => {
           // watch で submitを実行するために書き換え
           todo_list.value.forEach((x) => {
-            x.space_id = modelValue.value.space_id;
+            x.space_id = modelValue.value.space_id_list[0]!;
           });
         });
       });
@@ -139,100 +138,32 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="rounded-sm border border-gray-300 bg-white pb-4 text-sm shadow-sm">
+  <div
+    class="rounded-sm border border-l-[6px] border-gray-300 bg-white pb-4 text-sm shadow-sm"
+    :style="{
+      'border-left-color': R.rgba(space.space_color, 0.6),
+    }"
+  >
     <div class="sticky top-0 z-10 bg-white pt-4 pb-2">
-      <div class="flex justify-between px-4">
-        <div>
-          <div class="flex items-center text-lg font-bold">
-            <img
-              v-if="space.space_image"
-              :src="space.space_image"
-              width="24"
-              height="24"
-              decoding="async"
-              class="h-6 w-6 rounded-sm object-cover object-center"
-            />
-            <span v-else class="icon-[ri--image-circle-fill] h-6 w-6"></span>
-            <span class="ms-1">{{ space.space_name }}</span>
-          </div>
-          <div
-            v-if="space.space_description"
-            class="ml-4 inline-block max-w-full text-xs break-words whitespace-pre-wrap text-gray-500"
-          >
-            {{ space.space_description }}
-          </div>
+      <div class="px-4">
+        <div class="flex items-center text-lg font-bold">
+          <img
+            v-if="space.space_image"
+            :src="space.space_image"
+            width="24"
+            height="24"
+            decoding="async"
+            class="h-6 w-6 rounded-sm object-cover object-center"
+          />
+          <span v-else class="icon-[ri--image-circle-fill] h-6 w-6"></span>
+          <span class="ms-1">{{ space.space_name }}</span>
         </div>
-
-        <MyDropdown>
-          <template #button="{ toggle }">
-            <button
-              type="button"
-              class="relative flex cursor-pointer items-center justify-center rounded-full p-1.5 transition-colors hover:bg-gray-200"
-              @click="toggle"
-            >
-              <span class="icon-[bx--menu] h-4 w-4"></span>
-              <span class="sr-only capitalize">menu</span>
-            </button>
-          </template>
-          <template #default>
-            <ul class="w-48 rounded-sm border border-gray-300 bg-white shadow-md">
-              <li>
-                <button
-                  type="button"
-                  class="group flex w-full cursor-pointer items-center p-2 text-blue-600 transition duration-75 hover:bg-gray-200"
-                  @click="
-                    async () => {
-                      if (space == null) return;
-
-                      const updatedSpace = await $modal.open<RouterOutput['space']['update']>({
-                        component: ModalEditSpace,
-                        componentProps: { space_id: space.space_id },
-                      });
-
-                      if (updatedSpace == null) return;
-
-                      // space = updatedSpace;
-                    }
-                  "
-                >
-                  <span class="icon-[icon-park-solid--edit] h-4 w-4"></span>
-                  <span class="ms-1 capitalize">edit space</span>
-                </button>
-              </li>
-              <li>
-                <button
-                  type="button"
-                  class="group flex w-full cursor-pointer items-center p-2 text-yellow-600 transition duration-75 hover:bg-gray-200"
-                  @click="
-                    async () => {
-                      if (space == null) return;
-
-                      if (!(await $dialog.confirm('This action cannot be undone. Are you sure?')))
-                        return;
-
-                      const loading = $loading.open();
-                      try {
-                        await trpc.space.delete.mutate({
-                          space_id: space.space_id,
-                          updated_at: space.updated_at,
-                        });
-
-                        // TODO 削除後の処理 画面にデータが残る
-
-                        $toast.success('Data has been deleted.');
-                      } finally {
-                        loading.close();
-                      }
-                    }
-                  "
-                >
-                  <span class="icon-[tabler--trash-filled] h-4 w-4"></span>
-                  <span class="ms-1 capitalize">delete space</span>
-                </button>
-              </li>
-            </ul>
-          </template>
-        </MyDropdown>
+        <div
+          v-if="space.space_description"
+          class="inline-block max-w-full text-xs break-words whitespace-pre-wrap text-gray-500"
+        >
+          {{ space.space_description }}
+        </div>
       </div>
 
       <div class="flex flex-row items-center gap-2 ps-2 pe-4 text-sm">
@@ -294,7 +225,7 @@ onMounted(async () => {
         class="transition-colors"
         :class="[todo.editing ? 'bg-blue-100' : 'hover:bg-gray-100']"
       >
-        <TodoForm
+        <DynamicTodoForm
           v-model="todo_list[i]!"
           class="px-4 pt-2 pb-4"
           :file_list="todo_list[i]!.file_list"
@@ -305,7 +236,7 @@ onMounted(async () => {
               todo_list = todo_list.filter((_, index) => index !== i);
             }
           "
-        ></TodoForm>
+        ></DynamicTodoForm>
       </li>
       <div v-if="!loading && todo_list.length === 0" class="my-6 w-full text-center">
         <div class="icon-[game-icons--night-sleep] h-12 w-12 bg-green-600 rtl:rotate-180"></div>

@@ -55,15 +55,13 @@ const getInput = TodoSchema.pick({
 const deleteManyInput = getInput.array().min(1);
 
 const listInput = z.object({
-  space_id: z.number(),
-  todo_status: TodoStatusSchema,
+  space_id_list: z.number().array().default([]),
+  todo_status: TodoStatusSchema.default('active'),
 });
-
-const listOutput = z.array(TodoOutputSchema);
 
 const searchInput = z.object({
   where: z.object({
-    space_id: z.number().nullable(),
+    space_id_list: z.number().array().default([]),
     todo_keyword: z.string().trim().max(255),
     todo_status: TodoStatusSchema.array(),
   }),
@@ -88,7 +86,6 @@ export const TodoRouterSchema = {
   getInput,
   deleteManyInput,
   listInput,
-  listOutput,
   searchInput,
   searchOutput,
 };

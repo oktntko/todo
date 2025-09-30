@@ -1,28 +1,33 @@
 <script setup lang="ts">
-import type { RouterOutput } from '~/lib/trpc';
+import type { TodoOutputSchema } from '@todo/express/schema';
+import type { z } from '@todo/lib/zod';
+import type { SpaceSchema } from '@todo/prisma/schema';
+import type { DownloadFile } from '~/component/MyDownloadFileList.vue';
 import { trpc } from '~/lib/trpc';
-import SpaceForm, { type ModelValue } from '~/page/index/todo/component/SpaceForm.vue';
+import TodoForm, { type ModelValue } from '~/page/index/todo/table/component/TodoForm.vue';
 import { useLoading } from '~/plugin/LoadingPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
-import { useSpaceStore } from '~/store/SpaceStore';
 
 const emit = defineEmits<{
-  close: [{ event: 'update' | 'delete'; space: RouterOutput['space']['update'] }];
+  close: [{ event: 'update' | 'delete'; todo: z.infer<typeof TodoOutputSchema> }];
 }>();
 
-const { storedSpaceList } = storeToRefs(useSpaceStore());
-
 const props = defineProps<{
-  space_id: number;
+  todo_id: string;
 }>();
 
 const modelValue = ref<ModelValue>();
+const modelValueFileList = ref<DownloadFile[]>([]);
+const modelValueSpace = ref<z.infer<typeof SpaceSchema>>();
 let updated_at = new Date();
 
 onMounted(async () => {
-  const space = await trpc.space.get.query({ space_id: props.space_id });
-  modelValue.value = space;
-  updated_at = space.updated_at;
+  const todo = await trpc.todo.get.query({ todo_id: props.todo_id });
+
+  modelValue.value = todo;
+  modelValueFileList.value = todo.file_list;
+  modelValueSpace.value = todo.space;
+  updated_at = todo.updated_at;
 });
 
 const $toast = useToast();
@@ -31,19 +36,15 @@ const $loading = useLoading();
 async function handleSubmit(input: ModelValue) {
   const loading = $loading.open();
   try {
-    const space = await trpc.space.update.mutate({
+    const todo = await trpc.todo.update.mutate({
       ...input,
-      space_id: props.space_id,
+      todo_id: props.todo_id,
       updated_at,
     });
 
-    storedSpaceList.value = storedSpaceList.value.map((origin) =>
-      origin.space_id === space.space_id ? { ...origin, ...space } : origin,
-    );
+    emit('close', { event: 'update', todo });
 
-    emit('close', { event: 'update', space });
-
-    $toast.success('Data has been saved.');
+    $toast.success('Todo has been saved.');
   } finally {
     loading.close();
   }
@@ -52,14 +53,22 @@ async function handleSubmit(input: ModelValue) {
 
 <template>
   <div class="p-4">
-    <header class="mb-4 text-lg font-bold capitalize">edit space</header>
+    <header class="mb-4 text-lg font-bold capitalize">edit todo</header>
     <Transition
       mode="out-in"
       enter-from-class="transform opacity-0"
       enter-active-class="transition ease-out duration-200"
       enter-to-class="transform opacity-100"
     >
-      <SpaceForm v-if="modelValue" v-model="modelValue" class="px-4" @submit="handleSubmit">
+      <TodoForm
+        v-if="modelValue"
+        v-model="modelValue"
+        v-model:file_list="modelValueFileList"
+        v-model:space="modelValueSpace"
+        :todo_id="todo_id"
+        class="px-4"
+        @submit="handleSubmit"
+      >
         <template #buttons>
           <button
             type="button"
@@ -78,15 +87,11 @@ async function handleSubmit(input: ModelValue) {
                 }
                 const loading = $loading.open();
                 try {
-                  const space = await trpc.space.delete.mutate({ space_id, updated_at });
+                  const todo = await trpc.todo.delete.mutate({ todo_id });
 
-                  storedSpaceList = storedSpaceList.filter((origin) => {
-                    return origin.space_id !== space.space_id;
-                  });
+                  $toast.success('Todo have been deleted.');
 
-                  $toast.success('Data has been deleted.');
-
-                  emit('close', { event: 'delete', space });
+                  emit('close', { event: 'delete', todo });
                 } finally {
                   loading.close();
                 }
@@ -96,7 +101,7 @@ async function handleSubmit(input: ModelValue) {
             delete
           </button>
         </template>
-      </SpaceForm>
+      </TodoForm>
       <MyLoading v-else class="flex grow flex-col gap-8"> </MyLoading>
     </Transition>
   </div>

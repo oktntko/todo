@@ -1,5 +1,5 @@
 import { z } from '@todo/lib/zod';
-import { SortOrderSchema, SpaceScalarFieldEnumSchema, SpaceSchema } from '@todo/prisma/schema';
+import { SpaceSchema } from '@todo/prisma/schema';
 
 const createInput = SpaceSchema.omit({
   space_id: true,
@@ -24,30 +24,15 @@ const getInput = SpaceSchema.pick({
   space_id: true,
 });
 
-const listInput = z.object({
-  where: z.object({
-    space_keyword: z.string().trim().max(255),
+export const SpaceSchemaAndCount = SpaceSchema.and(
+  z.object({
+    _count: z
+      .object({
+        todo_list: z.number(),
+      })
+      .optional(),
   }),
-  sort: z.object({
-    field: SpaceScalarFieldEnumSchema,
-    order: SortOrderSchema,
-  }),
-});
-
-const listOutput = z.object({
-  total: z.number(),
-  space_list: z.array(
-    SpaceSchema.and(
-      z.object({
-        _count: z
-          .object({
-            todo_list: z.number(),
-          })
-          .optional(),
-      }),
-    ),
-  ),
-});
+);
 
 const reorderInput = SpaceSchema.pick({
   space_id: true,
@@ -60,8 +45,6 @@ export const SpaceRouterSchema = {
   deleteInput,
   updateInput,
   getInput,
-  listInput,
-  listOutput,
   reorderInput,
   reorderInputList,
 };

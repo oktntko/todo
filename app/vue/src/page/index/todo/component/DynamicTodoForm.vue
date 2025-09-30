@@ -161,6 +161,7 @@ watch(
         <div class="relative flex flex-row gap-1">
           <input
             v-model="modelValue.title"
+            name="title"
             type="text"
             class="block w-full border-b border-b-gray-400 bg-inherit pb-0.5 text-sm font-bold outline-hidden"
             placeholder="Title"
@@ -249,7 +250,9 @@ watch(
               <input
                 :id="`${modelValue.todo_id}-begin_date`"
                 v-model="modelValue.begin_date"
+                name="begin_date"
                 type="date"
+                max="9999-12-31"
                 class="block border-b border-b-gray-400 bg-inherit pb-0.5 outline-hidden sm:text-sm"
                 @input="handleInput"
               />
@@ -258,6 +261,7 @@ watch(
               <input
                 :id="`${modelValue.todo_id}-begin_time`"
                 v-model="modelValue.begin_time"
+                name="begin_time"
                 type="time"
                 class="block border-b border-b-gray-400 bg-inherit pb-0.5 outline-hidden sm:text-sm"
                 @input="handleInput"
@@ -270,7 +274,9 @@ watch(
               <input
                 :id="`${modelValue.todo_id}-limit_date`"
                 v-model="modelValue.limit_date"
+                name="limit_date"
                 type="date"
+                max="9999-12-31"
                 class="block border-b border-b-gray-400 bg-inherit pb-0.5 outline-hidden sm:text-sm"
                 @input="handleInput"
               />
@@ -279,6 +285,7 @@ watch(
               <input
                 :id="`${modelValue.todo_id}-limit_time`"
                 v-model="modelValue.limit_time"
+                name="limit_time"
                 type="time"
                 class="block border-b border-b-gray-400 bg-inherit pb-0.5 outline-hidden sm:text-sm"
                 @input="handleInput"
