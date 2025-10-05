@@ -76,7 +76,7 @@ onMounted(async () => {
               `border-l-[6px]`,
             ]"
             :style="{
-              'border-left-color': R.rgba(space.space_color, 0.6),
+              'border-left-color': space.space_color,
             }"
           >
             <input
@@ -136,9 +136,10 @@ onMounted(async () => {
           </label>
         </li>
       </ul>
+
       <button
         type="button"
-        class="group flex w-full cursor-pointer items-center rounded-e-full p-2 text-blue-600 transition duration-75 hover:bg-gray-200"
+        class="group sticky bottom-0 flex w-full cursor-pointer items-center rounded-e-full bg-gray-200/10 p-2 text-blue-600 backdrop-blur transition duration-75 hover:bg-gray-200"
         @click="
           async () => {
             return $modal.open<RouterOutput['space']['create']>({

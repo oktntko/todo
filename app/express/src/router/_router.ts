@@ -5,6 +5,7 @@ import { file, FileRouter } from '~/router/FileRouter';
 import { mypage } from '~/router/MypageRouter';
 import { space } from '~/router/SpaceRouter';
 import { todo } from '~/router/TodoRouter';
+import { whiteboard } from '~/router/WhiteboardRouter';
 
 export const TrpcRouter = router({
   aichat,
@@ -13,6 +14,7 @@ export const TrpcRouter = router({
   mypage,
   space,
   todo,
+  whiteboard,
 });
 
 export const ExpressRouter = [FileRouter];

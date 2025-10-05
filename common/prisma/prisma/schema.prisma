@@ -87,6 +87,25 @@ model Todo {
   @@map("todo")
 }
 
+model Whiteboard {
+  whiteboard_id Int @id @default(autoincrement())
+
+  owner_id Int
+  owner    User @relation(fields: [owner_id], references: [user_id], onDelete: Cascade)
+
+  whiteboard_name        String @default("") @db.VarChar(100) /// @zod.string.trim().max(100)
+  whiteboard_description String @default("") @db.VarChar(400) /// @zod.string.max(400)
+  whiteboard_order       Int    @default(0) /// @zod.number.int()
+  whiteboard_content     String @default(dbgenerated("('')")) @db.LongText
+
+  created_at DateTime @default(now()) @db.DateTime(3)
+  created_by Int
+  updated_at DateTime @updatedAt @db.DateTime(3)
+  updated_by Int
+
+  @@map("whiteboard")
+}
+
 model Aichat {
   aichat_id String @id @default(uuid()) @db.VarChar(191) /// @zod.string.uuid()
 
@@ -127,9 +146,10 @@ model User {
   created_at DateTime @default(now()) @db.DateTime(3)
   updated_at DateTime @updatedAt @db.DateTime(3)
 
-  session_list Session[]
-  file_list    File[]
-  space_list   Space[]
+  session_list    Session[]
+  file_list       File[]
+  space_list      Space[]
+  whiteboard_list Whiteboard[]
 
   @@index([username], name: "index_username")
   @@map("user")

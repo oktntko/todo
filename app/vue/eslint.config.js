@@ -36,6 +36,7 @@ export default defineConfigWithVueTs(
           },
         },
       ],
+      '@typescript-eslint/switch-exhaustiveness-check': 'error',
     },
     languageOptions: {
       parserOptions: {
