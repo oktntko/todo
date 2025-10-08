@@ -13,6 +13,7 @@ import VueRouter from 'unplugin-vue-router/vite';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: `${process.env['MODE'] === 'msw' ? '/todo' : ''}/`, // for GitHub Pages
   plugins: [
     VueRouter({
       extensions: ['.vue'],

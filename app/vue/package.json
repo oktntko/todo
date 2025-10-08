@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:msw": "vite --mode msw",
     "build": "vite build",
+    "build:msw": "vite build --mode msw",
     "type-check": "vue-tsc --build --force tsconfig.app.json",
     "preview": "vite preview",
     "lint": "run-s lint:*",
@@ -62,6 +64,8 @@
     "eslint-plugin-oxlint": "^1.15.0",
     "eslint-plugin-vue": "^10.4.0",
     "jsdom": "^26.1.0",
+    "msw": "^2.11.3",
+    "msw-trpc": "^2.0.1",
     "npm-run-all2": "^8.0.4",
     "oxlint": "^1.15.0",
     "prettier": "^3.6.2",
@@ -76,5 +80,10 @@
     "vite": "^7.1.5",
     "vitest": "^3.2.4",
     "vue-tsc": "^3.0.7"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }

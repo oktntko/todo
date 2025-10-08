@@ -20,6 +20,14 @@
         "^build"
       ]
     },
+    "build:msw": {
+      "dependsOn": [
+        "build"
+      ],
+      "env": [
+        "MODE"
+      ]
+    },
     "type-check": {
       "dependsOn": [
         "@todo/prisma#prisma:generate",

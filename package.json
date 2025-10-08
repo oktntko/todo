@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "turbo dev --ui=tui || true",
+    "dev:msw": "MODE='msw' pnpm --filter='@todo/vue' dev:msw",
     "build": "turbo build",
+    "build:msw": "MODE='msw' turbo build:msw",
     "type-check": "turbo type-check",
     "preview": "turbo preview --ui=tui || true",
     "generate": "pnpm --filter='@todo/prisma' 'prisma:generate'",
