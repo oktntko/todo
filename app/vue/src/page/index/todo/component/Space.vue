@@ -141,7 +141,7 @@ onMounted(async () => {
   <div
     class="rounded-sm border border-l-[6px] border-gray-300 bg-white pb-4 text-sm shadow-sm"
     :style="{
-      'border-left-color': R.rgba(space.space_color, 0.6),
+      'border-left-color': space.space_color,
     }"
   >
     <div class="sticky top-0 z-10 bg-white pt-4 pb-2">

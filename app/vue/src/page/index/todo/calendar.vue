@@ -2,7 +2,6 @@
 import { DayPilot } from '@daypilot/daypilot-lite-javascript';
 import type { TodoOutputSchema } from '@todo/express/schema';
 import { dayjs } from '@todo/lib/dayjs';
-import { R } from '@todo/lib/remeda';
 import type { z } from '@todo/lib/zod';
 import DOMPurify from 'dompurify';
 import { trpc } from '~/lib/trpc';
@@ -49,7 +48,7 @@ const events = computed(() => {
         end: /*    */ `${endDate} ${endTime}`,
 
         // TODO borderColor: todo 自体に色を付ける？
-        barColor: R.rgba(todo.space.space_color, 0.6),
+        barColor: todo.space.space_color,
 
         html: `
       <div>
@@ -373,7 +372,7 @@ async function onEventChanged(args: EventChangedArgs) {
   <div>
     <div class="flex">
       <!-- left -->
-      <div class="flex w-56 shrink-0 flex-col gap-2 px-2">
+      <div class="flex h-[calc(100vh-64px)] w-56 shrink-0 flex-col gap-2 px-2">
         <header>
           <MyDropdown inner-class="w-full">
             <template #button="{ toggle }">
@@ -405,12 +404,13 @@ async function onEventChanged(args: EventChangedArgs) {
             </template>
           </MyDropdown>
         </header>
+
         <!-- nav -->
         <div class="flex justify-center">
           <nav id="navigator"></nav>
         </div>
         <!-- filter -->
-        <div>
+        <div class="overflow-y-auto">
           <SpaceList v-model="checkedSpaceList" type="checkbox"> </SpaceList>
         </div>
       </div>

@@ -26,7 +26,12 @@ const { handleAdd, handleRemove } = (function () {
 
 <template>
   <div class="flex flex-row">
-    <SpaceList v-model="checkedSpaceList" class="w-56 shrink-0 px-2" type="checkbox"> </SpaceList>
+    <SpaceList
+      v-model="checkedSpaceList"
+      class="h-[calc(100vh-64px)] w-56 shrink-0 overflow-y-auto px-2"
+      type="checkbox"
+    >
+    </SpaceList>
 
     <!--
       w-[calc(100vw-224px-224px-10px)]

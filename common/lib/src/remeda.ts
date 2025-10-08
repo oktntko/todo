@@ -4,6 +4,7 @@ const R = {
   ...r,
   rgb,
   rgba,
+  hex,
 };
 
 function calcRgb(hex: string) {
@@ -36,6 +37,19 @@ function rgb(hex: string) {
 function rgba(hex: string, alpha: number) {
   const { r, g, b } = calcRgb(hex);
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function hex(rgb: string): string {
+  // "rgb(255, 0, 0)" → ["255","0","0"]
+  // "rgba(255, 0, 0, 0.6)" → ["255","0","0","0","6"] ← 小数点で分かれても先頭3つだけ取る
+  const match = rgb.match(/\d+/g);
+  if (!match || match.length < 3) return '#000000';
+
+  const [r, g, b] = match.map(Number);
+
+  const toHex = (n: number) => n.toString(16).padStart(2, '0');
+
+  return `#${toHex(r!)}${toHex(g!)}${toHex(b!)}`;
 }
 
 export { R };
