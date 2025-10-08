@@ -9,6 +9,17 @@ import ModalPlugin from '~/plugin/ModalPlugin';
 import ToastPlugin from '~/plugin/ToastPlugin';
 import WindowPlugin from '~/plugin/WindowPlugin';
 
+if (import.meta.env.MODE === 'msw') {
+  const { worker } = await import('./mock/browser');
+  await worker.start({
+    serviceWorker: {
+      url: `${import.meta.env.BASE_URL}mockServiceWorker.js`,
+    },
+    onUnhandledRequest: 'bypass',
+  });
+}
+
+
 const app = createApp(App);
 
 app.use(createPinia());
