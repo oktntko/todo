@@ -15,6 +15,7 @@ export const AuthService = {
   signinTwofa,
 };
 
+// auth.signup
 async function signup(ctx: PublicContext, input: z.infer<typeof AuthRouterSchema.signupInput>) {
   log.trace(ctx.reqid, 'signup', input);
 
@@ -49,6 +50,7 @@ async function signup(ctx: PublicContext, input: z.infer<typeof AuthRouterSchema
   return user;
 }
 
+// auth.signin
 async function signin(ctx: PublicContext, input: z.infer<typeof AuthRouterSchema.signinInput>) {
   log.trace(ctx.reqid, 'signup', input);
 
@@ -67,6 +69,7 @@ async function signin(ctx: PublicContext, input: z.infer<typeof AuthRouterSchema
   return user;
 }
 
+// auth.signinTwofa
 async function signinTwofa(
   ctx: PublicContext,
   input: z.infer<typeof AuthRouterSchema.signinTwofaInput> & {

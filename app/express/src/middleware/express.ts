@@ -14,7 +14,7 @@ import {
   MESSAGE_UNAUTHORIZED,
 } from '~/repository/_repository';
 
-// # Custom Request
+// Custom Request
 // node_modules/@types/express-session/index.d.ts
 declare module 'http' {
   interface IncomingMessage {
@@ -28,7 +28,7 @@ export const InjectRequestIdHandler: RequestHandler = (req, _, next) => {
   return next();
 };
 
-// # Error Handler
+// Error Handler
 export const ErrorHandler: ErrorRequestHandler = (err, _, res, next) => {
   if (res.headersSent) {
     return next();
@@ -113,7 +113,7 @@ export const UnexpectedErrorHandler: ErrorRequestHandler = (err, _, res, next) =
   });
 };
 
-// # Logger
+// Logger
 // "GET /api/trpc/status.list HTTP/1.1" 200 - "http://localhost:5173/setting/status"
 export const LogHandler: RequestHandler = (req, res, next) => {
   log.info(formatAccessInfo('BEGIN', req));
@@ -131,7 +131,7 @@ function formatAccessInfo(prefix: string, req: Request, res?: Response) {
   } - ${req.headers['x-forwarded-for'] || req.ip}`;
 }
 
-// # createHandler
+// createHandler
 export function createHandler<T extends z.ZodRawShape>(
   schema: z.ZodObject<T>,
   resolver: (opts: {

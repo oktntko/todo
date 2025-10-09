@@ -74,4 +74,7 @@ export default defineConfig({
       reportsDirectory: '.report/coverage',
     },
   },
+  optimizeDeps: {
+    exclude: ['@electric-sql/pglite'],
+  },
 });

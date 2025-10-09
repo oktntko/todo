@@ -48,7 +48,7 @@ export const mypage = router({
     }),
 
   // 二要素認証関連
-  // # profile.generateSecret
+  // mypage.generateSecret
   generateSecret: protectedProcedure.input(z.void()).mutation(async ({ ctx }) => {
     return $transaction(ctx.prisma, async (prisma) => {
       const data = await MypageService.generateSecret({ ...ctx, prisma });
@@ -63,7 +63,7 @@ export const mypage = router({
     });
   }),
 
-  // # profile.enableSecret
+  // mypage.enableSecret
   enableSecret: protectedProcedure
     .input(MypageRouterSchema.enableSecretInput)
     .output(z.void())
@@ -81,7 +81,7 @@ export const mypage = router({
       });
     }),
 
-  // profile.disableSecret
+  // mypage.disableSecret
   disableSecret: protectedProcedure
     .input(z.void())
     .output(z.void())
@@ -94,7 +94,7 @@ export const mypage = router({
       });
     }),
 
-  // profile.patchAichat
+  // mypage.patchAichat
   patchAichat: protectedProcedure
     .input(MypageRouterSchema.patchAichatInput)
     .output(ProfileSchema)

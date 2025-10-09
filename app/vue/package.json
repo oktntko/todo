@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:msw": "vite --mode msw",
+    "dev:msw": "run-s drizzle:generate && vite --mode msw",
     "build": "vite build",
     "build:msw": "vite build --mode msw",
     "type-check": "vue-tsc --build --force tsconfig.app.json",
@@ -16,7 +16,8 @@
     "format": "prettier --write src/",
     "test:unit": "vitest run",
     "test:preview": "vitest --ui",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "drizzle:generate": "drizzle-kit generate && tsx ./drizzle.generate-migrations.ts && prettier --write src/mock/migrations.json"
   },
   "dependencies": {
     "@daypilot/daypilot-lite-javascript": "^4.5.0",
@@ -29,7 +30,6 @@
     "axios": "^1.12.0",
     "dompurify": "^3.2.7",
     "fabric": "^6.7.1",
-    "microdiff": "^1.5.0",
     "pinia": "^3.0.3",
     "sortablejs": "^1.15.6",
     "superjson": "^2.2.2",
@@ -39,6 +39,7 @@
   },
   "devDependencies": {
     "@cspell/eslint-plugin": "^9.2.1",
+    "@electric-sql/pglite": "^0.3.10",
     "@iconify/json": "^2.2.383",
     "@iconify/tailwind4": "^1.0.6",
     "@playwright/test": "^1.55.0",
@@ -60,6 +61,8 @@
     "@vue/runtime-core": "^3.5.21",
     "@vue/test-utils": "^2.4.6",
     "@vue/tsconfig": "^0.8.1",
+    "drizzle-kit": "^0.31.5",
+    "drizzle-orm": "^0.44.6",
     "eslint": "^9.35.0",
     "eslint-plugin-oxlint": "^1.15.0",
     "eslint-plugin-vue": "^10.4.0",
