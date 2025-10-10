@@ -1,4 +1,8 @@
 <script setup lang="ts">
+definePage({
+  alias: ['/'],
+});
+
 import type { RouterOutput } from '~/lib/trpc';
 import Space from '~/page/index/todo/component/Space.vue';
 import SpaceList from '~/page/index/todo/component/SpaceList.vue';

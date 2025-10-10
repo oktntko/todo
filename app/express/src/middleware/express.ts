@@ -73,6 +73,8 @@ export const ErrorHandler: ErrorRequestHandler = (err, _, res, next) => {
           return 415;
         case 'UNPROCESSABLE_CONTENT':
           return 422;
+        case 'PRECONDITION_REQUIRED':
+          return 428;
         case 'TOO_MANY_REQUESTS':
           return 429;
         case 'CLIENT_CLOSED_REQUEST':
