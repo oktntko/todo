@@ -22,7 +22,7 @@ export const FileService = {
   searchFile,
 };
 
-// # /api/file/download/single
+// /api/file/download/single
 async function readFile(ctx: ProtectedContext, input: z.infer<typeof FileRouterSchema.getInput>) {
   log.trace(ctx.reqid, 'readFile', ctx.operator.user_id, input);
 
@@ -45,7 +45,7 @@ async function readFile(ctx: ProtectedContext, input: z.infer<typeof FileRouterS
   return { filedata, buffer };
 }
 
-// # /api/file/download/many
+// /api/file/download/many
 async function readManyFile(
   ctx: ProtectedContext,
   input: z.infer<typeof FileRouterSchema.getManyInput>,
@@ -67,7 +67,7 @@ async function readManyFile(
   };
 }
 
-// # /api/file/upload/single
+// /api/file/upload/single
 async function createFile(
   ctx: ProtectedContext,
   input: z.infer<typeof FileRouterSchema.createInput>,
@@ -104,7 +104,7 @@ async function createFile(
   return filedata;
 }
 
-// # /api/file/upload/many
+// /api/file/upload/many
 async function createManyFile(
   ctx: ProtectedContext,
   input: z.infer<typeof FileRouterSchema.createManyInput>,
@@ -121,7 +121,7 @@ async function createManyFile(
   );
 }
 
-// # file.delete
+// file.delete
 async function deleteFile(
   ctx: ProtectedContext,
   input: z.infer<typeof FileRouterSchema.deleteInput>,

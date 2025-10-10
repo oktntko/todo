@@ -79,7 +79,7 @@ async function findUserBySession(params: {
   return prisma.user.findUnique({ where: { user_id: params.user_id } });
 }
 
-// # session.get
+// session.get
 async function getSession(session_key: string): Promise<SessionData | null> {
   log.debug('getSession', session_key);
 
@@ -107,7 +107,7 @@ async function getSession(session_key: string): Promise<SessionData | null> {
   };
 }
 
-// # session.set
+// session.set
 async function setSession(session_key: string, session: SessionData) {
   log.debug('setSession', session_key);
 
@@ -132,7 +132,7 @@ async function setSession(session_key: string, session: SessionData) {
   });
 }
 
-// # session.destroy
+// session.destroy
 async function destroySession(session_key: string) {
   log.debug('destroySession', session_key);
 

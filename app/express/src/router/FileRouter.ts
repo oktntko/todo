@@ -82,6 +82,7 @@ FileRouter.post(
 // trpc
 ////////////////////////////////////////////////
 export const file = router({
+  // file.search
   search: protectedProcedure
     .input(FileRouterSchema.searchInput)
     .output(FileRouterSchema.searchOutput)
@@ -91,6 +92,7 @@ export const file = router({
       });
     }),
 
+  // file.delete
   delete: protectedProcedure
     .input(FileRouterSchema.deleteInput)
     .mutation(async ({ ctx, input }) => {
@@ -99,6 +101,7 @@ export const file = router({
       });
     }),
 
+  // file.deleteMany
   deleteMany: protectedProcedure
     .input(FileRouterSchema.deleteInput.array())
     .mutation(async ({ ctx, input }) => {

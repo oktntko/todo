@@ -1,10 +1,13 @@
 <script setup lang="ts">
+import type { RouterOutput } from '~/lib/trpc';
 import Space from '~/page/index/todo/component/Space.vue';
 import SpaceList from '~/page/index/todo/component/SpaceList.vue';
 import { useSpaceStore } from '~/store/SpaceStore';
 
 const { storedSpaceList } = storeToRefs(useSpaceStore());
-const checkedSpaceList = ref([storedSpaceList.value[0]!]);
+const checkedSpaceList = ref<RouterOutput['space']['list']>(
+  storedSpaceList.value[0] ? [storedSpaceList.value[0]] : [],
+);
 </script>
 
 <template>

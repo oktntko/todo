@@ -31,7 +31,7 @@ async function getMypage(ctx: ProtectedContext) {
   });
 }
 
-// # mypage.deleteMypage
+// mypage.deleteMypage
 async function deleteMypage(ctx: ProtectedContext) {
   log.trace(ctx.reqid, 'deleteProfile', ctx.operator.user_id);
 
@@ -79,7 +79,7 @@ async function patchProfile(
   });
 }
 
-// # profile.generateSecret
+// mypage.generateSecret
 async function generateSecret(ctx: ProtectedContext) {
   log.trace(ctx.reqid, 'generateSecret', ctx.operator.user_id);
 
@@ -99,7 +99,7 @@ async function generateSecret(ctx: ProtectedContext) {
   return { dataurl, setting_twofa };
 }
 
-// # profile.enableSecret
+// mypage.enableSecret
 async function enableSecret(
   ctx: ProtectedContext,
   input: z.infer<typeof MypageRouterSchema.enableSecretInput> & {
@@ -133,7 +133,7 @@ async function enableSecret(
   });
 }
 
-// # profile.disableSecret
+// mypage.disableSecret
 async function disableSecret(ctx: ProtectedContext) {
   log.trace(ctx.reqid, 'disableSecret', ctx.operator.user_id);
 
@@ -143,7 +143,7 @@ async function disableSecret(ctx: ProtectedContext) {
   });
 }
 
-// # profile.patchAichat
+// mypage.patchAichat
 async function patchAichat(
   ctx: ProtectedContext,
   input: z.infer<typeof MypageRouterSchema.patchAichatInput>,
