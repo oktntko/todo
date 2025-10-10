@@ -21,10 +21,10 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.15.1",
+  "packageManager": "pnpm@10.18.2",
   "devDependencies": {
     "cspell": "^9.2.1",
     "prettier": "^3.6.2",
-    "turbo": "^2.5.6"
+    "turbo": "^2.5.8"
   }
 }
