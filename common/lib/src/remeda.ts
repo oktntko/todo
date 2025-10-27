@@ -47,7 +47,7 @@ function hex(rgb: string): string {
 
   const [r, g, b] = match.map(Number);
 
-  const toHex = (n: number) => n.toString(16).padStart(2, '0');
+  const toHex = (n: number) => n.toString(16).padStart(2, '0').toUpperCase();
 
   return `#${toHex(r!)}${toHex(g!)}${toHex(b!)}`;
 }

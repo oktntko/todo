@@ -1,8 +1,10 @@
-import { ColorSchema, DateSchema, TimeSchema } from '~/zod';
+import { ColorSchema, DateSchema, TimeSchema, z } from '~/zod';
 
 describe('zod', () => {
   describe('DateSchema', () => {
-    const error = [{ message: '無効な日付形式です。' }];
+    const error = {
+      errors: ['無効な日付形式です。'],
+    };
     test.each`
       arg              | success  | data            | error
       ${'1997-07-17'}  | ${true}  | ${'1997-07-17'} | ${undefined}
@@ -15,15 +17,18 @@ describe('zod', () => {
     `(`parse($arg) => $success: 'data=$data' 'error=$error'`, ({ arg, success, data, error }) => {
       const result = DateSchema.safeParse(arg);
       expect(result.success).toBe(success);
-      expect(result.data).toBe(data);
-      if (error) {
-        expect(result.error?.errors).toMatchObject(error);
+      if (result.success) {
+        expect(result.data).toBe(data);
+      } else {
+        expect(z.treeifyError(result.error)).toMatchObject(error);
       }
     });
   });
 
   describe('TimeSchema', () => {
-    const error = [{ message: '無効な時刻形式です。' }];
+    const error = {
+      errors: ['無効な時刻形式です。'],
+    };
     test.each`
       arg         | success  | data         | error
       ${'07:17'}  | ${true}  | ${'07:17'}   | ${undefined}
@@ -37,15 +42,18 @@ describe('zod', () => {
     `(`parse($arg) => $success: 'data=$data' 'error=$error'`, ({ arg, success, data, error }) => {
       const result = TimeSchema.safeParse(arg);
       expect(result.success).toBe(success);
-      expect(result.data).toBe(data);
-      if (error) {
-        expect(result.error?.errors).toMatchObject(error);
+      if (result.success) {
+        expect(result.data).toBe(data);
+      } else {
+        expect(z.treeifyError(result.error)).toMatchObject(error);
       }
     });
   });
 
   describe('ColorSchema', () => {
-    const error = [{ message: '無効な色です。' }];
+    const error = {
+      errors: ['無効な色です。'],
+    };
     // cSpell:ignore afafah
     test.each`
       arg                | success  | data              | error
@@ -66,9 +74,10 @@ describe('zod', () => {
     `(`parse($arg) => $success: 'data=$data' 'error=$error'`, ({ arg, success, data, error }) => {
       const result = ColorSchema.safeParse(arg);
       expect(result.success).toBe(success);
-      expect(result.data).toBe(data);
-      if (error) {
-        expect(result.error?.errors).toMatchObject(error);
+      if (result.success) {
+        expect(result.data).toBe(data);
+      } else {
+        expect(z.treeifyError(result.error)).toMatchObject(error);
       }
     });
   });
