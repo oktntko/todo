@@ -1,6 +1,6 @@
 services:
   database:
-    image: mysql:9.0.1
+    image: mysql:9.5.0
     restart: on-failure
     environment:
       MYSQL_ROOT_PASSWORD: root
