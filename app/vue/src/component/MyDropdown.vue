@@ -14,12 +14,12 @@ const { innerClass = '' } = defineProps<{ innerClass?: string }>();
     </OnClickOutside>
 
     <Transition
-      enter-from-class="transform opacity-0 scale-95"
+      enter-from-class="transform opacity-0 -translate-y-2"
       enter-active-class="transition ease-out duration-100"
-      enter-to-class="transform opacity-100 scale-100"
-      leave-from-class="transform opacity-100 scale-100"
+      enter-to-class="transform opacity-100 translate-y-0"
+      leave-from-class="transform opacity-100 translate-y-0"
       leave-active-class="transition ease-in duration-75"
-      leave-to-class="transform opacity-0 scale-95"
+      leave-to-class="transform opacity-0 -translate-y-2"
     >
       <div
         v-show="showMenu"

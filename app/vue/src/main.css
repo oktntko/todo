@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 
-@plugin "@iconify/tailwind4";
+@plugin '@iconify/tailwind4';
 
 @theme {
   --font-sans: 'Noto Sans JP', sans-serif;
@@ -35,7 +35,8 @@
   input[type='datetime-local']::-webkit-calendar-picker-indicator,
   input[type='month']::-webkit-calendar-picker-indicator,
   input[type='time']::-webkit-calendar-picker-indicator,
-  input[type='week']::-webkit-calendar-picker-indicator {
+  input[type='week']::-webkit-calendar-picker-indicator,
+  select {
     cursor: pointer;
   }
 
