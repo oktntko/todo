@@ -11,22 +11,8 @@ generator client {
 }
 
 generator zod {
-  provider                         = "zod-prisma-types"
-  output                           = "../src/schema/generated" // default is ./generated/zod
-  useMultipleFiles                 = true // default is false
-  writeBarrelFiles                 = true // default is true This will create an index.ts file in each sub folder that exports all the files in the folder. This option may be beneficial for typescript performance on big schemas.
-  createInputTypes                 = false // default is true
-  createModelTypes                 = true // default is true
-  addInputTypeValidation           = true // default is true
-  addIncludeType                   = true // default is true
-  addSelectType                    = true // default is true
-  validateWhereUniqueInput         = true // default is true
-  createOptionalDefaultValuesTypes = false // default is false
-  createRelationValuesTypes        = false // default is false
-  createPartialTypes               = false // default is false
-  useDefaultValidators             = true // default is true
-  coerceDate                       = true // default is true
-  writeNullishInModelTypes         = false // default is false
+  provider = "prisma-zod-generator"
+  output   = "../src/schema/generated"
 }
 
 datasource db {
@@ -34,16 +20,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/// @zod.import(["import { ColorSchema } from '@todo/lib/zod'"])
+/// @zod.import(["import { ColorSchema } from '@todo/lib/zod'"]);
 model Space {
   space_id Int @id @default(autoincrement())
 
   owner_id Int
   owner    User @relation(fields: [owner_id], references: [user_id], onDelete: Cascade)
 
-  space_name        String @db.VarChar(100) /// @zod.string.trim().min(1).max(100)
-  space_description String @default("") @db.VarChar(400) /// @zod.string.max(400)
-  space_order       Int    @default(0) /// @zod.number.int()
+  space_name        String @db.VarChar(100) /// @zod.trim().min(1).max(100)
+  space_description String @default("") @db.VarChar(400) /// @zod.max(400)
+  space_order       Int    @default(0)
   space_image       String @default(dbgenerated("('')")) @db.Text
   space_color       String @default("") @db.VarChar(100) /// @zod.custom.use(ColorSchema.or(z.literal('')))
 
@@ -58,20 +44,20 @@ model Space {
   @@map("space")
 }
 
-/// @zod.import(["import { DateSchema, TimeSchema } from '@todo/lib/zod'"])
+/// @zod.import(["import { DateSchema, TimeSchema } from '@todo/lib/zod'"]);
 model Todo {
-  todo_id String @id @default(uuid()) @db.VarChar(191) /// @zod.string.uuid()
+  todo_id String @id @default(uuid()) @db.VarChar(191) /// @zod.uuid()
 
   space_id Int   @db.Int
   space    Space @relation(fields: [space_id], references: [space_id], onDelete: Cascade)
 
-  title       String    @default("") @db.VarChar(100) /// @zod.string.trim().max(100)
-  description String    @default(dbgenerated("('')")) @db.Text /// @zod.string
+  title       String    @default("") @db.VarChar(100) /// @zod.trim().max(100)
+  description String    @default(dbgenerated("('')")) @db.Text
   begin_date  String    @default("") @db.VarChar(10) /// @zod.custom.use(DateSchema.or(z.literal('')))
   begin_time  String    @default("") @db.VarChar(10) /// @zod.custom.use(TimeSchema.or(z.literal('')))
   limit_date  String    @default("") @db.VarChar(10) /// @zod.custom.use(DateSchema.or(z.literal('')))
   limit_time  String    @default("") @db.VarChar(10) /// @zod.custom.use(TimeSchema.or(z.literal('')))
-  order       Int       @default(0) /// @zod.number.int()
+  order       Int       @default(0)
   done_at     DateTime? @db.DateTime(3)
 
   file_list File[]
@@ -93,9 +79,9 @@ model Whiteboard {
   owner_id Int
   owner    User @relation(fields: [owner_id], references: [user_id], onDelete: Cascade)
 
-  whiteboard_name        String @default("") @db.VarChar(100) /// @zod.string.trim().max(100)
-  whiteboard_description String @default("") @db.VarChar(400) /// @zod.string.max(400)
-  whiteboard_order       Int    @default(0) /// @zod.number.int()
+  whiteboard_name        String @default("") @db.VarChar(100) /// @zod.trim().max(100)
+  whiteboard_description String @default("") @db.VarChar(400) /// @zod.max(400)
+  whiteboard_order       Int    @default(0)
   whiteboard_content     String @default(dbgenerated("('')")) @db.LongText
 
   created_at DateTime @default(now()) @db.DateTime(3)
@@ -107,7 +93,7 @@ model Whiteboard {
 }
 
 model Aichat {
-  aichat_id String @id @default(uuid()) @db.VarChar(191) /// @zod.string.uuid()
+  aichat_id String @id @default(uuid()) @db.VarChar(191) /// @zod.uuid()
 
   message String @db.Text
 
@@ -121,27 +107,27 @@ model Aichat {
 ////////////////////////////////
 
 /// ユーザ
-/// @zod.import(["import { AichatModelSchema } from '../../option'"])
+/// @zod.import(["import { AichatModelSchema } from '../../../option'"])
 model User {
   user_id Int @id @default(autoincrement())
 
-  email          String  @unique @db.VarChar(255) /// @zod.string.trim().min(1).max(255).email()
-  password       String  @db.VarChar(255) /// @zod.string.trim().min(1).max(255)
-  username       String  @db.VarChar(100) /// @zod.string.trim().min(1).max(100)
+  email          String  @unique @db.VarChar(255) /// @zod.email().trim().min(1).max(255)
+  password       String  @db.VarChar(255) /// @zod.trim().min(1).max(255)
+  username       String  @db.VarChar(100) /// @zod.trim().min(1).max(100)
   /// アバターイメージ
   avatar_image   String  @default(dbgenerated("('')")) @db.Text
   /// 自己紹介
-  description    String  @default("") @db.VarChar(400) /// @zod.string.trim().max(400)
+  description    String  @default("") @db.VarChar(400) /// @zod.trim().max(400)
   /// 二要素認証の有効化 `true`: 有効 / `false`: 無効
   twofa_enable   Boolean @default(false)
   /// 二要素認証の秘密鍵
-  twofa_secret   String  @default("") @db.VarChar(255) /// @zod.string.trim().max(255)
+  twofa_secret   String  @default("") @db.VarChar(255) /// @zod.trim().max(255)
   /// AIチャットの有効化 `true`: 有効 / `false`: 無効
   aichat_enable  Boolean @default(false)
   /// AIチャットのモデル
   aichat_model   String  @default("") @db.VarChar(100) /// @zod.custom.use(AichatModelSchema.or(z.literal('')))
   /// AIチャットのAPIキー
-  aichat_api_key String  @default("") @db.VarChar(255) /// @zod.string.trim().max(255)
+  aichat_api_key String  @default("") @db.VarChar(255) /// @zod.trim().max(255)
 
   created_at DateTime @default(now()) @db.DateTime(3)
   updated_at DateTime @updatedAt @db.DateTime(3)
@@ -175,9 +161,9 @@ model Session {
 }
 
 model File {
-  file_id  String @id @default(uuid()) @db.VarChar(191) /// @zod.string.uuid()
-  filename String @db.VarChar(255) /// @zod.string.trim().min(1).max(255)
-  mimetype String @db.VarChar(100) /// @zod.string.trim().min(1).max(100)
+  file_id  String @id @default(uuid()) @db.VarChar(191) /// @zod.uuid()
+  filename String @db.VarChar(255) /// @zod.trim().min(1).max(255)
+  mimetype String @db.VarChar(100) /// @zod.trim().min(1).max(100)
   filesize Int
 
   created_at DateTime @default(now()) @db.DateTime(3)

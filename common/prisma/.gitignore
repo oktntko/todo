@@ -1,1 +1,3 @@
-generated
+src/client/generated/*
+src/schema/generated/*
+!src/schema/generated/index.ts
