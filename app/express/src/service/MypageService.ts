@@ -1,7 +1,7 @@
 import { dayjs } from '@todo/lib/dayjs';
 import type { z } from '@todo/lib/zod';
 import { TRPCError } from '@trpc/server';
-import OpenAI from 'openai';
+import OpenAI, { APIError } from 'openai';
 import { log } from '~/lib/log4js';
 import { HashPassword, OnetimePassword, SecretPassword } from '~/lib/secret';
 import { ProtectedContext } from '~/middleware/trpc';
@@ -49,7 +49,7 @@ async function patchPassword(
   if (!HashPassword.compare(input.current_password, ctx.operator.password)) {
     throw new TRPCError({
       code: 'BAD_REQUEST',
-      message: 'パスワードが誤っています。',
+      message: 'Your current password is incorrect. Please try again.',
     });
   }
   // 新しいパスワードをハッシュ化
@@ -112,9 +112,12 @@ async function enableSecret(
   log.trace(ctx.reqid, 'enableSecret', ctx.operator.user_id, input);
 
   if (!input.setting_twofa || dayjs(input.setting_twofa.expires).isBefore(dayjs())) {
+    // setting_twofa がないのは generateSecret が実行されていない場合（またはセッションがリセットされた場合）。
+    // 通常の操作では起こりづらいため、有効期限がきれていることだけ伝える。
     throw new TRPCError({
       code: 'BAD_REQUEST',
-      message: '二要素認証のQRコードが発行されていないか、QRコードの有効期限が切れています。',
+      message:
+        'Your two-factor authentication setup has expired. Please start the setup process again.',
     });
   }
 
@@ -124,7 +127,10 @@ async function enableSecret(
   });
 
   if (!verified) {
-    throw new TRPCError({ code: 'BAD_REQUEST', message: 'コードが合致しません。' });
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: 'Invalid authentication code. Please try again.',
+    });
   }
 
   return UserRepository.updateUser(ctx.prisma, {
@@ -151,21 +157,22 @@ async function patchAichat(
   log.trace(ctx.reqid, 'patchAichat', ctx.operator.user_id);
 
   if (input.aichat_enable) {
-    const openai = new OpenAI({ apiKey: input.aichat_api_key });
-    const response = await openai.chat.completions.create({
-      model: input.aichat_model,
-      messages: [
-        {
-          role: 'user',
-          content: 'test',
-        },
-      ],
-    });
+    // OpenAI には「APIキーを検証する専用API」は存在しないため、軽い API コールを 1 回実行して、成功/失敗で判断する
+    try {
+      const openai = new OpenAI({ apiKey: input.aichat_api_key });
+      await openai.models.list();
+    } catch (e) {
+      if (e instanceof APIError && (e.status === 401 || e.status === 403)) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'The AI chat API key is invalid. Please check and try again.',
+        });
+      }
 
-    if (response.choices.length === 0) {
+      log.error(ctx.reqid, 'patchAichat', 'OpenAI API key validation failed', e);
       throw new TRPCError({
         code: 'BAD_REQUEST',
-        message: 'API失敗',
+        message: 'The service is temporarily unavailable. Please try again in a moment.',
       });
     }
   }

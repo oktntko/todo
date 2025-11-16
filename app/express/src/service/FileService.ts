@@ -3,12 +3,9 @@ import { type Prisma } from '@todo/prisma/client';
 import { TRPCError } from '@trpc/server';
 import AdmZip from 'adm-zip';
 import { log } from '~/lib/log4js';
+import { message } from '~/lib/message';
 import { ProtectedContext } from '~/middleware/trpc';
-import {
-  checkDataExist,
-  checkPreviousVersion,
-  MESSAGE_DATA_IS_NOT_EXIST,
-} from '~/repository/_repository';
+import { checkDataExist, checkPreviousVersion } from '~/repository/_repository';
 import { FileRepository } from '~/repository/FileRepository';
 import { FileRouterSchema } from '~/schema/FileRouterSchema';
 
@@ -38,7 +35,7 @@ async function readFile(ctx: ProtectedContext, input: z.infer<typeof FileRouterS
   if (buffer == null) {
     throw new TRPCError({
       code: 'NOT_FOUND',
-      message: MESSAGE_DATA_IS_NOT_EXIST,
+      message: message.error.NOT_FOUND,
     });
   }
 

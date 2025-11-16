@@ -5,14 +5,10 @@ import type { ErrorRequestHandler, Request, RequestHandler, Response } from 'exp
 import { NextFunction } from 'express-serve-static-core';
 import crypto from 'node:crypto';
 import { log } from '~/lib/log4js';
+import { message } from '~/lib/message';
 import { type PrismaClient } from '~/middleware/prisma';
 import { SessionService } from '~/middleware/session';
 import { createContext } from '~/middleware/trpc';
-import {
-  MESSAGE_INPUT_INVALID,
-  MESSAGE_INTERNAL_SERVER_ERROR,
-  MESSAGE_UNAUTHORIZED,
-} from '~/repository/_repository';
 
 // Custom Request
 // node_modules/@types/express-session/index.d.ts
@@ -98,7 +94,7 @@ export const NotFoundHandler: RequestHandler = (_, res, next) => {
 
   res.status(404).json({
     code: 'NOT_FOUND',
-    message: 'アクセス先が見つかりません。',
+    message: message.error.NOT_FOUND,
   });
 };
 
@@ -111,7 +107,7 @@ export const UnexpectedErrorHandler: ErrorRequestHandler = (err, _, res, next) =
 
   res.status(500).json({
     code: 'INTERNAL_SERVER_ERROR',
-    message: MESSAGE_INTERNAL_SERVER_ERROR,
+    message: message.error.INTERNAL_SERVER_ERROR,
   });
 };
 
@@ -156,7 +152,7 @@ export function createHandler<T extends z.ZodRawShape>(
         return next(
           new TRPCError({
             code: 'BAD_REQUEST',
-            message: MESSAGE_INPUT_INVALID,
+            message: message.error.BAD_REQUEST,
           }),
         );
       }
@@ -199,7 +195,7 @@ export function createProtectHandler<T extends z.ZodRawShape>(
       if (user == null) {
         throw new TRPCError({
           code: 'UNAUTHORIZED',
-          message: MESSAGE_UNAUTHORIZED,
+          message: message.error.UNAUTHORIZED,
         });
       }
 
@@ -208,7 +204,7 @@ export function createProtectHandler<T extends z.ZodRawShape>(
         return next(
           new TRPCError({
             code: 'BAD_REQUEST',
-            message: MESSAGE_INPUT_INVALID,
+            message: message.error.BAD_REQUEST,
           }),
         );
       }

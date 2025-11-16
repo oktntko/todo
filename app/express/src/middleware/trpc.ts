@@ -3,13 +3,9 @@ import { User } from '@todo/prisma/client';
 import { initTRPC, TRPCError } from '@trpc/server';
 import * as trpcExpress from '@trpc/server/adapters/express';
 import superjson from 'superjson';
+import { message } from '~/lib/message';
 import { generatePrisma, PrismaClient } from '~/middleware/prisma';
 import { SessionService } from '~/middleware/session';
-import {
-  MESSAGE_INPUT_INVALID,
-  MESSAGE_INTERNAL_SERVER_ERROR,
-  MESSAGE_UNAUTHORIZED,
-} from '~/repository/_repository';
 
 // The app's context - is generated for each incoming request
 export function createContext(
@@ -43,9 +39,9 @@ const t = initTRPC.context<Context>().create({
       code: opts.shape.code, // TRPC_ERROR_CODE_NUMBER
       message:
         opts.error.code === 'INTERNAL_SERVER_ERROR'
-          ? MESSAGE_INTERNAL_SERVER_ERROR
+          ? message.error.INTERNAL_SERVER_ERROR
           : opts.error.code === 'BAD_REQUEST' && opts.error.cause instanceof ZodError
-            ? MESSAGE_INPUT_INVALID
+            ? message.error.BAD_REQUEST
             : opts.shape.message, // string,
       data: {
         httpStatus: opts.shape.data.httpStatus,
@@ -80,7 +76,7 @@ const isAuthed = middleware(async ({ next, ctx }) => {
   if (user == null) {
     throw new TRPCError({
       code: 'UNAUTHORIZED',
-      message: MESSAGE_UNAUTHORIZED,
+      message: message.error.UNAUTHORIZED,
     });
   }
 
@@ -96,6 +92,25 @@ export const protectedProcedure = publicProcedure.use(isAuthed);
 export type ProtectedContext = PublicContext & {
   operator: User;
 };
+
+export function authorizationProcedure(role: string | string[]) {
+  const roles = Array.isArray(role) ? role : [role];
+  const hasAuthority = isAuthed.unstable_pipe(({ next, ctx }) => {
+    // TODO: ctx.operator.role との比較に修正
+    if (!roles.includes(/* ctx.operator.role */ '')) {
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: message.error.FORBIDDEN,
+      });
+    }
+
+    return next({
+      ctx,
+    });
+  });
+
+  return protectedProcedure.use(hasAuthority);
+}
 
 export function createExpressMiddleware(
   opts: Omit<Parameters<typeof trpcExpress.createExpressMiddleware>[0], 'createContext'>,

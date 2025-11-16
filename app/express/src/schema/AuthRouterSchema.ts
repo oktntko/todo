@@ -4,14 +4,12 @@ import { UserSchema } from '@todo/prisma/schema';
 const signupInput = UserSchema.pick({
   email: true,
 })
-  .merge(
-    z.object({
-      new_password: z.string().trim().min(8).max(255),
-      confirm: z.string().trim().min(1).max(255),
-    }),
-  )
+  .extend({
+    new_password: z.string().trim().min(8).max(255),
+    confirm: z.string().trim().min(1).max(255),
+  })
   .refine((data) => data.new_password === data.confirm, {
-    message: 'パスワードが一致していません。',
+    message: 'Passwords do not match.',
     path: ['confirm'],
   });
 

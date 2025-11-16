@@ -1,13 +1,6 @@
 import { R } from '@todo/lib/remeda';
 import { TRPCError } from '@trpc/server';
-
-export const MESSAGE_UNAUTHORIZED = 'ログインしていません。';
-export const MESSAGE_INTERNAL_SERVER_ERROR = 'システムエラーが発生しました。';
-export const MESSAGE_INPUT_INVALID = '入力値に誤りがあります。';
-export const MESSAGE_DATA_IS_NOT_EXIST = '対象のデータは既に削除されています。';
-export const MESSAGE_DUPLICATE_IS_EXISTING = '重複するデータが既に存在しています。';
-export const MESSAGE_PREVIOUS_IS_UPDATED =
-  '対象のデータは変更されています。最新の状態で再度実行してください。';
+import { message } from '~/lib/message';
 
 export async function checkDataExist<T>(params: {
   data: T | null | Promise<T | null>;
@@ -17,7 +10,7 @@ export async function checkDataExist<T>(params: {
   if (!data) {
     throw new TRPCError({
       code: 'NOT_FOUND',
-      message: params.dataIsNotExistMessage || MESSAGE_DATA_IS_NOT_EXIST,
+      message: params.dataIsNotExistMessage || message.error.NOT_FOUND,
     });
   }
 
@@ -35,14 +28,14 @@ export async function checkDuplicate<T>(params: {
     // 重複データがあるだけでデータが登録できない
     throw new TRPCError({
       code: 'CONFLICT',
-      message: params.duplicateIsExistingMessage || MESSAGE_DUPLICATE_IS_EXISTING,
+      message: params.duplicateIsExistingMessage || message.error.CONFLICT_DUPLICATE_WHEN_CREATE,
     });
   } else if (data && params.current && data[params.current.key] !== params.current.value) {
     // 更新のとき
     // 重複データが自身と一致しないときだけデータが更新できない
     throw new TRPCError({
       code: 'CONFLICT',
-      message: params.duplicateIsExistingMessage || MESSAGE_DUPLICATE_IS_EXISTING,
+      message: params.duplicateIsExistingMessage || message.error.CONFLICT_DUPLICATE_WHEN_UPDATE,
     });
   }
 
@@ -66,7 +59,7 @@ export async function checkPreviousVersion<T extends { updated_at: Date }>(param
   if (data.updated_at.getTime() !== date.getTime()) {
     throw new TRPCError({
       code: 'CONFLICT',
-      message: params.previousIsUpdatedMessage || MESSAGE_PREVIOUS_IS_UPDATED,
+      message: params.previousIsUpdatedMessage || message.error.CONFLICT_PREVIOUS_UPDATED,
     });
   }
 

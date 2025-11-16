@@ -3,6 +3,7 @@ import { type Prisma } from '@todo/prisma/client';
 import { TodoStatusSchema } from '@todo/prisma/schema';
 import { TRPCError } from '@trpc/server';
 import { log } from '~/lib/log4js';
+import { message } from '~/lib/message';
 import { ProtectedContext } from '~/middleware/trpc';
 import { checkDataExist, checkPreviousVersion } from '~/repository/_repository';
 import { SpaceRepository } from '~/repository/SpaceRepository';
@@ -145,7 +146,7 @@ async function upsertTodo(
   if (previous && previous.space.owner_id !== ctx.operator.user_id) {
     throw new TRPCError({
       code: 'FORBIDDEN',
-      message: '',
+      message: message.error.FORBIDDEN,
     });
   }
 
@@ -221,7 +222,7 @@ async function updateTodo(
   if (previous.space.owner_id !== ctx.operator.user_id) {
     throw new TRPCError({
       code: 'FORBIDDEN',
-      message: '',
+      message: message.error.FORBIDDEN,
     });
   }
 
@@ -268,7 +269,7 @@ async function updateManyTodo(
       if (previous.space.owner_id !== ctx.operator.user_id) {
         throw new TRPCError({
           code: 'FORBIDDEN',
-          message: '',
+          message: message.error.FORBIDDEN,
         });
       }
     }),
@@ -304,7 +305,7 @@ async function deleteTodo(ctx: ProtectedContext, input: z.infer<typeof TodoRoute
   if (previous.space.owner_id !== ctx.operator.user_id) {
     throw new TRPCError({
       code: 'FORBIDDEN',
-      message: '',
+      message: message.error.FORBIDDEN,
     });
   }
 
@@ -330,7 +331,7 @@ async function deleteManyTodo(
       if (previous.space.owner_id !== ctx.operator.user_id) {
         throw new TRPCError({
           code: 'FORBIDDEN',
-          message: '',
+          message: message.error.FORBIDDEN,
         });
       }
     }),
@@ -349,13 +350,13 @@ async function checkRelation(ctx: ProtectedContext, params: { space_id: number; 
   if (space == null) {
     throw new TRPCError({
       code: 'BAD_REQUEST',
-      message: '',
+      message: message.error.NOT_FOUND,
     });
   }
   if (space.owner_id !== params.user_id) {
     throw new TRPCError({
       code: 'FORBIDDEN',
-      message: '',
+      message: message.error.FORBIDDEN,
     });
   }
 

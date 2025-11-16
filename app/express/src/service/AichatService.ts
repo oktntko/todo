@@ -82,9 +82,11 @@ async function chatAichat(
   });
 
   if (response.choices.length === 0) {
+    // 空配列になるのは、 API 側の障害・内部エラー・タイムアウト後の異常レスポンス などが起きている場合。
+    // 正常時は必ず 1 個以上の choice が返る。
     throw new TRPCError({
       code: 'BAD_REQUEST',
-      message: 'API失敗',
+      message: 'The service is temporarily unavailable. Please try again in a moment.',
     });
   }
 

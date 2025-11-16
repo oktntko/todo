@@ -23,7 +23,10 @@ async function signup(ctx: PublicContext, input: z.infer<typeof AuthRouterSchema
     duplicate: UserRepository.findUniqueUser(ctx.prisma, {
       where: { email: input.email },
     }),
-    duplicateIsExistingMessage: 'メールアドレスは既に登録されています。',
+    duplicateIsExistingMessage: 'Email address already in use.',
+    // TODO: メールアドレスの登録有無を返すメッセージは、攻撃者にとって ユーザー列挙（User Enumeration） の手がかりになる。
+    // 登録されていてもされていなくても同じルートを通す。
+    // メール認証 => パスワード設定のフローに変更する際に対応する。
   });
 
   const hashedPassword = HashPassword.hash(input.new_password);
@@ -61,8 +64,8 @@ async function signin(ctx: PublicContext, input: z.infer<typeof AuthRouterSchema
   if (!user || !HashPassword.compare(input.password, user.password)) {
     throw new TRPCError({
       code: 'BAD_REQUEST',
-      message:
-        'ログインに失敗しました。メールアドレスが登録されていないか、パスワードが誤っています。',
+      message: 'The email or password you entered is incorrect.',
+      // TODO: 連続失敗時にアカウントロックや CAPTCHA を組み合わせる。
     });
   }
 
@@ -84,7 +87,7 @@ async function signinTwofa(
   if (!input.auth_twofa || dayjs(input.auth_twofa.expires).isBefore(dayjs())) {
     throw new TRPCError({
       code: 'BAD_REQUEST',
-      message: 'ログインの有効期限が切れています。最初から操作をやり直してください。',
+      message: 'Your authentication session has expired. Please sign in again.',
     });
   }
 
@@ -92,7 +95,7 @@ async function signinTwofa(
     data: UserRepository.findUniqueUser(ctx.prisma, {
       where: { user_id: input.auth_twofa.user_id },
     }),
-    dataIsNotExistMessage: 'ログインの有効期限が切れています。最初から操作をやり直してください。',
+    dataIsNotExistMessage: 'Your authentication session has expired. Please sign in again.',
   });
 
   const verified = OnetimePassword.verifyToken({
@@ -103,7 +106,7 @@ async function signinTwofa(
   if (!verified) {
     throw new TRPCError({
       code: 'BAD_REQUEST',
-      message: 'コードが合致しません。',
+      message: 'Invalid authentication code. Please try again.',
     });
   }
 

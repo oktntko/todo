@@ -15,7 +15,7 @@ const patchPasswordInput = z
     confirm: z.string().trim().min(1).max(255),
   })
   .refine((data) => data.new_password === data.confirm, {
-    message: 'パスワードが一致していません。',
+    message: 'Passwords do not match.',
     path: ['confirm'],
   });
 
