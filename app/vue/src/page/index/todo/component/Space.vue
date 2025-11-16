@@ -160,7 +160,7 @@ onMounted(async () => {
         </div>
         <div
           v-if="space.space_description"
-          class="inline-block max-w-full text-xs break-words whitespace-pre-wrap text-gray-500"
+          class="inline-block max-w-full text-xs wrap-break-word whitespace-pre-wrap text-gray-500"
         >
           {{ space.space_description }}
         </div>

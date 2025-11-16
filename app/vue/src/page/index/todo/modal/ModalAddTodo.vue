@@ -17,10 +17,10 @@ const { storedSpaceList } = storeToRefs(useSpaceStore());
 
 const props = defineProps<{
   space_id?: number;
-  begin_date: string;
-  begin_time: string;
-  limit_date: string;
-  limit_time: string;
+  begin_date: '' | `${number}-${number}-${number}`;
+  begin_time: '' | `${number}:${number}`;
+  limit_date: '' | `${number}-${number}-${number}`;
+  limit_time: '' | `${number}:${number}`;
 }>();
 
 const modelValue = ref<ModelValue>({

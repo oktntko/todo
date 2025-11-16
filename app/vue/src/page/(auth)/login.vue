@@ -25,7 +25,7 @@ const { validateSubmit, ErrorMessage } = useVueValidateZod(
     <div class="mx-auto flex h-screen flex-col items-center justify-center px-6 py-8 lg:py-0">
       <!-- タイトル -->
       <h1 class="mx-auto mb-6 flex items-center gap-1 text-2xl font-semibold">
-        <span class="icon-[flat-color-icons--todo-list] ml-[-16px] h-8 w-8 p-2"></span>
+        <span class="icon-[flat-color-icons--todo-list] -ml-4 h-8 w-8 p-2"></span>
         <span class="">MyTodo</span>
       </h1>
 

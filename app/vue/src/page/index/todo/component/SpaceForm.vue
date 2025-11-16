@@ -67,7 +67,7 @@ async function handleFileInput(files?: FileList | null) {
             />
             <button
               type="button"
-              class="absolute top-[-8px] right-[-8px] flex h-4 w-4 cursor-pointer items-center justify-center rounded-full border border-gray-300 bg-white text-gray-900 transition-colors hover:bg-gray-200"
+              class="absolute -top-2 -right-2 flex h-4 w-4 cursor-pointer items-center justify-center rounded-full border border-gray-300 bg-white text-gray-900 transition-colors hover:bg-gray-200"
               aria-label="Close"
               @click="modelValue.space_image = ''"
             >

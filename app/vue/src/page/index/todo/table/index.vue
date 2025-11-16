@@ -283,17 +283,13 @@ const headerCheckbox = computed(() => {
           <tr class="divide-x divide-gray-200">
             <th
               scope="col"
-              :class="[
-                'sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize',
-              ]"
+              :class="['sticky -top-px z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize']"
             >
               No
             </th>
             <th
               scope="col"
-              :class="[
-                'sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize',
-              ]"
+              :class="['sticky -top-px z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize']"
             >
               <label class="flex h-full justify-center hover:cursor-pointer">
                 <input
@@ -313,9 +309,7 @@ const headerCheckbox = computed(() => {
             </th>
             <th
               scope="col"
-              :class="[
-                'sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize',
-              ]"
+              :class="['sticky -top-px z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize']"
             >
               <div class="flex items-center justify-center">
                 space
@@ -328,9 +322,7 @@ const headerCheckbox = computed(() => {
             </th>
             <th
               scope="col"
-              :class="[
-                'sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize',
-              ]"
+              :class="['sticky -top-px z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize']"
             >
               <div class="flex items-center justify-center">
                 title
@@ -343,9 +335,7 @@ const headerCheckbox = computed(() => {
             </th>
             <th
               scope="col"
-              :class="[
-                'sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize',
-              ]"
+              :class="['sticky -top-px z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize']"
             >
               <div class="flex items-center justify-center">
                 begin
@@ -358,9 +348,7 @@ const headerCheckbox = computed(() => {
             </th>
             <th
               scope="col"
-              :class="[
-                'sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize',
-              ]"
+              :class="['sticky -top-px z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize']"
             >
               <div class="flex items-center justify-center">
                 limit
@@ -373,9 +361,7 @@ const headerCheckbox = computed(() => {
             </th>
             <th
               scope="col"
-              :class="[
-                'sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize',
-              ]"
+              :class="['sticky -top-px z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize']"
             >
               <div class="flex items-center justify-center">
                 description
@@ -388,17 +374,13 @@ const headerCheckbox = computed(() => {
             </th>
             <th
               scope="col"
-              :class="[
-                'sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize',
-              ]"
+              :class="['sticky -top-px z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize']"
             >
               files
             </th>
             <th
               scope="col"
-              :class="[
-                'sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize',
-              ]"
+              :class="['sticky -top-px z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize']"
             >
               <div class="flex items-center justify-center">
                 done
@@ -411,9 +393,7 @@ const headerCheckbox = computed(() => {
             </th>
             <th
               scope="col"
-              :class="[
-                'sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize',
-              ]"
+              :class="['sticky -top-px z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize']"
             >
               <div class="flex items-center justify-center">
                 created
@@ -426,9 +406,7 @@ const headerCheckbox = computed(() => {
             </th>
             <th
               scope="col"
-              :class="[
-                'sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize',
-              ]"
+              :class="['sticky -top-px z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize']"
             >
               <div class="flex items-center justify-center">
                 updated
@@ -504,7 +482,7 @@ const headerCheckbox = computed(() => {
             </td>
             <td class="max-w-48">
               <div
-                class="line-clamp-4 min-w-28 px-2 py-1 break-words whitespace-pre-wrap"
+                class="line-clamp-4 min-w-28 px-2 py-1 wrap-break-word whitespace-pre-wrap"
                 :title="todo.description"
               >
                 {{ todo.description }}

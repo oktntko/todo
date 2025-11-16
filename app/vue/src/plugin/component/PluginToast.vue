@@ -62,7 +62,7 @@ function close() {
         </div>
 
         <div class="min-w-0 grow">
-          <div class="inline-block max-w-full text-sm break-words whitespace-pre-wrap">
+          <div class="inline-block max-w-full text-sm wrap-break-word whitespace-pre-wrap">
             {{ message }}
           </div>
         </div>

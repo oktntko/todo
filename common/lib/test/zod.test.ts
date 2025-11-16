@@ -1,4 +1,12 @@
-import { ColorSchema, DateSchema, TimeSchema, z } from '~/zod';
+import {
+  ColorSchema,
+  DateSchema,
+  MonthSchema,
+  SignedDecimalSchema,
+  TimeSchema,
+  UnsignedDecimalSchema,
+  z,
+} from '~/zod';
 
 describe('zod', () => {
   describe('DateSchema', () => {
@@ -16,6 +24,27 @@ describe('zod', () => {
       ${'2000-02-29'}  | ${true}  | ${'2000-02-29'} | ${undefined}
     `(`parse($arg) => $success: 'data=$data' 'error=$error'`, ({ arg, success, data, error }) => {
       const result = DateSchema.safeParse(arg);
+      expect(result.success).toBe(success);
+      if (result.success) {
+        expect(result.data).toBe(data);
+      } else {
+        expect(z.treeifyError(result.error)).toMatchObject(error);
+      }
+    });
+  });
+
+  describe('MonthSchema', () => {
+    const error = {
+      errors: ['無効な年月形式です。'],
+    };
+    test.each`
+      arg           | success  | data         | error
+      ${'1997-07'}  | ${true}  | ${'1997-07'} | ${undefined}
+      ${'1997-7'}   | ${false} | ${undefined} | ${error}
+      ${'21997-07'} | ${false} | ${undefined} | ${error}
+      ${'1997-13'}  | ${false} | ${undefined} | ${error}
+    `(`parse($arg) => $success: 'data=$data' 'error=$error'`, ({ arg, success, data, error }) => {
+      const result = MonthSchema.safeParse(arg);
       expect(result.success).toBe(success);
       if (result.success) {
         expect(result.data).toBe(data);
@@ -73,6 +102,75 @@ describe('zod', () => {
       ${'#afafah' /* */} | ${false} | ${undefined}      | ${error}
     `(`parse($arg) => $success: 'data=$data' 'error=$error'`, ({ arg, success, data, error }) => {
       const result = ColorSchema.safeParse(arg);
+      expect(result.success).toBe(success);
+      if (result.success) {
+        expect(result.data).toBe(data);
+      } else {
+        expect(z.treeifyError(result.error)).toMatchObject(error);
+      }
+    });
+  });
+
+  describe('UnsignedDecimalSchema', () => {
+    const error = {
+      errors: ['無効な数値形式です。'],
+    };
+    // cSpell:ignore afafah
+    test.each`
+      arg                                            | success  | data                                          | error
+      ${'123'}                                       | ${true}  | ${'123'}                                      | ${undefined}
+      ${'0.123'}                                     | ${true}  | ${'0.123'}                                    | ${undefined}
+      ${'12345678901234567890'}                      | ${true}  | ${'12345678901234567890'}                     | ${undefined}
+      ${'0.12345678901234567890'}                    | ${true}  | ${'0.12345678901234567890'}                   | ${undefined}
+      ${'1234567890123456789.12345678901234567890'}  | ${true}  | ${'1234567890123456789.12345678901234567890'} | ${undefined}
+      ${'-123'}                                      | ${false} | ${undefined}                                  | ${error}
+      ${'-0.123'}                                    | ${false} | ${undefined}                                  | ${error}
+      ${'-12345678901234567890'}                     | ${false} | ${undefined}                                  | ${error}
+      ${'-0.12345678901234567890'}                   | ${false} | ${undefined}                                  | ${error}
+      ${'-1234567890123456789.12345678901234567890'} | ${false} | ${undefined}                                  | ${error}
+      ${'+123'}                                      | ${false} | ${undefined}                                  | ${error}
+      ${'0.123.123'}                                 | ${false} | ${undefined}                                  | ${error}
+      ${'.5'}                                        | ${false} | ${undefined}                                  | ${error}
+      ${'5.'}                                        | ${false} | ${undefined}                                  | ${error}
+      ${'123456789012345678901'}                     | ${false} | ${undefined}                                  | ${error}
+      ${'0.123456789012345678901'}                   | ${false} | ${undefined}                                  | ${error}
+      ${'e'}                                         | ${false} | ${undefined}                                  | ${error}
+    `(`parse($arg) => $success: 'data=$data' 'error=$error'`, ({ arg, success, data, error }) => {
+      const result = UnsignedDecimalSchema.safeParse(arg);
+      expect(result.success).toBe(success);
+      if (result.success) {
+        expect(result.data).toBe(data);
+      } else {
+        expect(z.treeifyError(result.error)).toMatchObject(error);
+      }
+    });
+  });
+
+  describe('SignedDecimalSchema', () => {
+    const error = {
+      errors: ['無効な数値形式です。'],
+    };
+    test.each`
+      arg                                            | success  | data                                           | error
+      ${'123'}                                       | ${true}  | ${'123'}                                       | ${undefined}
+      ${'0.123'}                                     | ${true}  | ${'0.123'}                                     | ${undefined}
+      ${'-123'}                                      | ${true}  | ${'-123'}                                      | ${undefined}
+      ${'-0.123'}                                    | ${true}  | ${'-0.123'}                                    | ${undefined}
+      ${'12345678901234567890'}                      | ${true}  | ${'12345678901234567890'}                      | ${undefined}
+      ${'0.12345678901234567890'}                    | ${true}  | ${'0.12345678901234567890'}                    | ${undefined}
+      ${'1234567890123456789.12345678901234567890'}  | ${true}  | ${'1234567890123456789.12345678901234567890'}  | ${undefined}
+      ${'-12345678901234567890'}                     | ${true}  | ${'-12345678901234567890'}                     | ${undefined}
+      ${'-0.12345678901234567890'}                   | ${true}  | ${'-0.12345678901234567890'}                   | ${undefined}
+      ${'-1234567890123456789.12345678901234567890'} | ${true}  | ${'-1234567890123456789.12345678901234567890'} | ${undefined}
+      ${'+123'}                                      | ${false} | ${undefined}                                   | ${error}
+      ${'0.123.123'}                                 | ${false} | ${undefined}                                   | ${error}
+      ${'.5'}                                        | ${false} | ${undefined}                                   | ${error}
+      ${'5.'}                                        | ${false} | ${undefined}                                   | ${error}
+      ${'123456789012345678901'}                     | ${false} | ${undefined}                                   | ${error}
+      ${'0.123456789012345678901'}                   | ${false} | ${undefined}                                   | ${error}
+      ${'e'}                                         | ${false} | ${undefined}                                   | ${error}
+    `(`parse($arg) => $success: 'data=$data' 'error=$error'`, ({ arg, success, data, error }) => {
+      const result = SignedDecimalSchema.safeParse(arg);
       expect(result.success).toBe(success);
       if (result.success) {
         expect(result.data).toBe(data);

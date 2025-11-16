@@ -225,17 +225,13 @@ const headerCheckbox = computed(() => {
           <tr class="divide-x divide-gray-200">
             <th
               scope="col"
-              :class="[
-                'sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize',
-              ]"
+              :class="['sticky -top-px z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize']"
             >
               No
             </th>
             <th
               scope="col"
-              :class="[
-                'sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize',
-              ]"
+              :class="['sticky -top-px z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize']"
             >
               <label class="flex h-full justify-center hover:cursor-pointer">
                 <input
@@ -255,9 +251,7 @@ const headerCheckbox = computed(() => {
             </th>
             <th
               scope="col"
-              :class="[
-                'sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize',
-              ]"
+              :class="['sticky -top-px z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize']"
             >
               <div class="flex items-center justify-center">
                 filename
@@ -270,9 +264,7 @@ const headerCheckbox = computed(() => {
             </th>
             <th
               scope="col"
-              :class="[
-                'sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize',
-              ]"
+              :class="['sticky -top-px z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize']"
             >
               <div class="flex items-center justify-center">
                 mimetype
@@ -285,9 +277,7 @@ const headerCheckbox = computed(() => {
             </th>
             <th
               scope="col"
-              :class="[
-                'sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize',
-              ]"
+              :class="['sticky -top-px z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize']"
             >
               <div class="flex items-center justify-center">
                 filesize
@@ -300,17 +290,13 @@ const headerCheckbox = computed(() => {
             </th>
             <th
               scope="col"
-              :class="[
-                'sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize',
-              ]"
+              :class="['sticky -top-px z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize']"
             >
               todo
             </th>
             <th
               scope="col"
-              :class="[
-                'sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize',
-              ]"
+              :class="['sticky -top-px z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize']"
             >
               <div class="flex items-center justify-center">
                 created
@@ -323,9 +309,7 @@ const headerCheckbox = computed(() => {
             </th>
             <th
               scope="col"
-              :class="[
-                'sticky top-[-1px] z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize',
-              ]"
+              :class="['sticky -top-px z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize']"
             >
               <div class="flex items-center justify-center">
                 updated
@@ -407,11 +391,11 @@ const headerCheckbox = computed(() => {
                       todo_id: todo.todo_id,
                     },
                   }"
-                  class="line-clamp-1 break-words whitespace-pre-wrap text-blue-600 hover:underline"
+                  class="line-clamp-1 wrap-break-word whitespace-pre-wrap text-blue-600 hover:underline"
                 >
                   {{ todo.title }}
                 </RouterLink>
-                <div class="line-clamp-4 text-xs break-words whitespace-pre-wrap text-gray-500">
+                <div class="line-clamp-4 text-xs wrap-break-word whitespace-pre-wrap text-gray-500">
                   {{ todo.description }}
                 </div>
               </div>

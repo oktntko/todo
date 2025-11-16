@@ -197,10 +197,12 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
   }),
 
   // space
+  // @ts-expect-error space_color
   trpcMsw.space.list.query(async () => {
     console.trace('space.list');
     return drizzle.select().from(pgSpace).orderBy(asc(pgSpace.space_order));
   }),
+  // @ts-expect-error space_color
   trpcMsw.space.get.query(async ({ input }) => {
     console.trace('space.get', input);
     const space = await drizzle.query.pgSpace.findFirst({
@@ -214,6 +216,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
     }
     return space;
   }),
+  // @ts-expect-error space_color
   trpcMsw.space.create.mutation(async ({ input }) => {
     console.trace('space.create', input);
     // space_orderは自動採番
@@ -238,6 +241,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
 
     return space!;
   }),
+  // @ts-expect-error space_color
   trpcMsw.space.update.mutation(async ({ input }) => {
     console.trace('space.update', input);
     // 楽観ロックやバージョンチェックは省略
@@ -259,6 +263,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
     }
     return space;
   }),
+  // @ts-expect-error space_color
   trpcMsw.space.delete.mutation(async ({ input }) => {
     console.trace('space.delete', input);
     // 楽観ロックやバージョンチェックは省略
@@ -272,6 +277,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
     }
     return space;
   }),
+  // @ts-expect-error space_color
   trpcMsw.space.reorder.mutation(async ({ input }) => {
     console.trace('space.reorder', input);
     const updated: InferSelectModel<typeof pgSpace>[] = [];
@@ -293,11 +299,13 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
   }),
 
   // todo
+  // @ts-expect-error space_color begin_date begin_time limit_date limit_time
   trpcMsw.todo.list.query(async (args) => {
     console.trace('todo.list', args?.input);
     return findManyTodo(args);
   }),
 
+  // @ts-expect-error space_color begin_date begin_time limit_date limit_time
   trpcMsw.todo.search.query(async ({ input }) => {
     console.trace('todo.search', input);
     const where = [];
@@ -366,11 +374,13 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
     };
   }),
 
+  // @ts-expect-error space_color begin_date begin_time limit_date limit_time
   trpcMsw.todo.get.query(async (args) => {
     console.trace('todo.get', args.input);
     return findUniqueTodo(args);
   }),
 
+  // @ts-expect-error space_color begin_date begin_time limit_date limit_time
   trpcMsw.todo.upsert.mutation(async ({ input }) => {
     console.trace('todo.upsert', input);
     // upsert: 存在すればupdate、なければinsert
@@ -419,6 +429,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
     return findUniqueTodo({ input: todo! });
   }),
 
+  // @ts-expect-error space_color begin_date begin_time limit_date limit_time
   trpcMsw.todo.create.mutation(async ({ input }) => {
     console.trace('todo.create', input);
     const [todo] = await drizzle
@@ -443,6 +454,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
     return findUniqueTodo({ input: todo! });
   }),
 
+  // @ts-expect-error space_color begin_date begin_time limit_date limit_time
   trpcMsw.todo.update.mutation(async ({ input }) => {
     console.trace('todo.update', input);
     const [todo] = await drizzle
@@ -503,6 +515,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
     });
   }),
 
+  // @ts-expect-error space_color begin_date begin_time limit_date limit_time
   trpcMsw.todo.delete.mutation(async ({ input }) => {
     console.trace('todo.delete', input);
     const [todo] = await drizzle
