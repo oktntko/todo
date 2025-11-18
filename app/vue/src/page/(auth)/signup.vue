@@ -1,5 +1,5 @@
 <script setup lang="ts">
-useTitle('アカウントを作る | MyTodo');
+useTitle('Signup | MyTodo');
 
 import { AuthRouterSchema } from '@todo/express/schema';
 import type { z } from '@todo/lib/zod';
@@ -108,7 +108,7 @@ const { validateSubmit, ErrorMessage } = useVueValidateZod(
           <div class="text-sm font-light text-gray-500">
             アカウントを持っていますか？
             <RouterLink
-              :to="{ name: '/(auth)/login' }"
+              :to="{ name: '/(auth)/signin' }"
               class="text-primary-600 font-medium text-blue-600 hover:underline"
             >
               ログインする
@@ -119,8 +119,3 @@ const { validateSubmit, ErrorMessage } = useVueValidateZod(
     </div>
   </div>
 </template>
-
-<route lang="yaml">
-meta:
-  layout: empty
-</route>

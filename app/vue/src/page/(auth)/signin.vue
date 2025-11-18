@@ -1,5 +1,5 @@
 <script setup lang="ts">
-useTitle('ログイン | MyTodo');
+useTitle('Signin | MyTodo');
 
 import { AuthRouterSchema } from '@todo/express/schema';
 import type { z } from '@todo/lib/zod';
@@ -63,7 +63,9 @@ const { validateSubmit, ErrorMessage } = useVueValidateZod(
         >
           <section class="flex flex-col gap-4">
             <div class="flex flex-col gap-1">
-              <label for="email" class="text-sm font-medium text-gray-900"> メールアドレス </label>
+              <label for="email" class="text-sm font-medium text-gray-900 capitalize">
+                email address
+              </label>
               <input
                 id="email"
                 v-model.lazy="modelValue.email"
@@ -75,7 +77,9 @@ const { validateSubmit, ErrorMessage } = useVueValidateZod(
               <ErrorMessage class="text-xs text-red-600" field="email"></ErrorMessage>
             </div>
             <div class="flex flex-col gap-1">
-              <label for="password" class="text-sm font-medium text-gray-900"> パスワード </label>
+              <label for="password" class="text-sm font-medium text-gray-900 capitalize">
+                password
+              </label>
               <MyInputPassword
                 id="password"
                 v-model.lazy="modelValue.password"
@@ -94,10 +98,11 @@ const { validateSubmit, ErrorMessage } = useVueValidateZod(
                 'min-w-[120px] rounded-md border px-4 py-2 text-sm font-medium',
                 'border-green-700 bg-green-600 text-white hover:bg-green-800',
                 'w-full',
+                'capitalize',
               ]"
               type="submit"
             >
-              ログイン
+              signin
             </button>
           </section>
         </form>
@@ -105,7 +110,7 @@ const { validateSubmit, ErrorMessage } = useVueValidateZod(
         <section class="mt-8 flex flex-col items-end">
           <div class="text-sm font-light text-gray-500">
             <RouterLink to="#" class="text-primary-600 font-medium text-blue-600 hover:underline">
-              パスワードを忘れてしまった
+              Forgot password?
             </RouterLink>
           </div>
           <div class="text-sm font-light text-gray-500">
@@ -113,7 +118,7 @@ const { validateSubmit, ErrorMessage } = useVueValidateZod(
               :to="{ name: '/(auth)/signup' }"
               class="text-primary-600 font-medium text-blue-600 hover:underline"
             >
-              アカウントを作る
+              Create an account
             </RouterLink>
           </div>
         </section>
@@ -121,8 +126,3 @@ const { validateSubmit, ErrorMessage } = useVueValidateZod(
     </div>
   </div>
 </template>
-
-<route lang="yaml">
-meta:
-  layout: empty
-</route>

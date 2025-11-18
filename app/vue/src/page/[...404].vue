@@ -27,8 +27,3 @@ useTitle('お探しのページは存在しません | MyTodo');
     </div>
   </section>
 </template>
-
-<route lang="yaml">
-meta:
-  layout: empty
-</route>

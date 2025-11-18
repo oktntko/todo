@@ -39,10 +39,8 @@ defineEmits<{
   >
     <section class="flex flex-col gap-4">
       <div class="flex flex-col gap-1">
-        <label for="token" class="text-sm font-medium text-gray-900"> 認証コード </label>
-        <p class="text-sm text-gray-400">
-          Authenticatorアプリに表示される6桁の数字を入力してください。
-        </p>
+        <label for="token" class="text-sm font-medium text-gray-900"> authcode </label>
+        <p class="text-sm text-gray-400">Enter the authcode shown in the Authenticator app.</p>
         <input
           id="token"
           v-model.lazy="modelValue.token"
@@ -65,7 +63,7 @@ defineEmits<{
           'border-green-700 bg-green-600 text-white hover:bg-green-800',
         ]"
       >
-        認証
+        Authentication
       </button>
     </section>
   </form>

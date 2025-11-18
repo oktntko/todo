@@ -175,14 +175,15 @@
             <span class="icon-[bx--notification] h-5 w-5"></span>
             <span class="sr-only capitalize">notification</span>
           </button>
-          <button
+          <RouterLink
+            :to="{ name: '/(auth)/signin' }"
             type="button"
             class="relative flex cursor-pointer items-center justify-center rounded-full p-1.5 transition-colors hover:bg-gray-200"
             title="avatar"
           >
             <span class="icon-[radix-icons--avatar] h-5 w-5"></span>
             <span class="sr-only capitalize">avatar</span>
-          </button>
+          </RouterLink>
         </nav>
       </header>
 

@@ -32,7 +32,7 @@ const { validateSubmit, ErrorMessage, isDirty, reset } = useVueValidateZod(
             confirm: '',
           });
 
-          $toast.success('データを保存しました。');
+          $toast.success('Password changed successfully.');
         } finally {
           loading.close();
         }
@@ -43,9 +43,9 @@ const { validateSubmit, ErrorMessage, isDirty, reset } = useVueValidateZod(
       <div>
         <label
           for="current_password"
-          class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+          class="mb-1 block text-sm font-medium text-gray-900 capitalize dark:text-white"
         >
-          現在のパスワード
+          Current password
         </label>
         <input
           id="current_password"
@@ -60,9 +60,9 @@ const { validateSubmit, ErrorMessage, isDirty, reset } = useVueValidateZod(
       <div>
         <label
           for="new_password"
-          class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+          class="mb-1 block text-sm font-medium text-gray-900 capitalize dark:text-white"
         >
-          新しいパスワード
+          New password
         </label>
         <MyInputPassword
           id="new_password"
@@ -75,8 +75,11 @@ const { validateSubmit, ErrorMessage, isDirty, reset } = useVueValidateZod(
       </div>
 
       <div>
-        <label for="confirm" class="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
-          (確認用)もう一度パスワードを入力してください
+        <label
+          for="confirm"
+          class="mb-1 block text-sm font-medium text-gray-900 capitalize dark:text-white"
+        >
+          Confirm new password
         </label>
         <input
           id="confirm"
@@ -102,7 +105,7 @@ const { validateSubmit, ErrorMessage, isDirty, reset } = useVueValidateZod(
         ]"
         :disabled="!isDirty"
       >
-        変更
+        change password
       </button>
     </section>
   </form>

@@ -52,8 +52,8 @@ const dragging = ref(false);
       ]"
     >
       <span class="icon-[material-symbols--upload-file] h-12 w-12"> </span>
-      <span class="font-semibold">ファイルをドラッグ＆ドロップしてください</span>
-      <span class="text-xs">クリックするとファイルを選択できます</span>
+      <span class="font-semibold">Drag and drop the file, </span>
+      <span class="text-xs">or click to select the file.</span>
       <input
         v-bind="props"
         type="file"

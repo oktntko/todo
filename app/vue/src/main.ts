@@ -19,7 +19,6 @@ if (import.meta.env.MODE === 'msw') {
   });
 }
 
-
 const app = createApp(App);
 
 app.use(createPinia());
@@ -54,7 +53,7 @@ function handleError(error: unknown) {
       0 < status && status < 400 ? 'blue' : 400 <= status && status < 500 ? 'yellow' : 'red';
 
     if (status === 401 /*UNAUTHORIZED*/ || status === 403 /*FORBIDDEN*/) {
-      router.replace({ name: '/(auth)/login' });
+      router.replace({ name: '/(auth)/signin' });
     }
 
     return app.config.globalProperties.$dialog.open({

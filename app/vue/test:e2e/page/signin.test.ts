@@ -7,10 +7,10 @@ import {
 } from 'test:e2e/helper';
 import type { RouterOutput } from '~/lib/trpc';
 
-test.describe('login.vue', () => {
+test.describe('signin.vue', () => {
   test('should be able to log in with valid credentials.', async ({ page }, testInfo) => {
     // #region arrange
-    await page.goto('/login');
+    await page.goto('/signin');
 
     // 必須項目を入力する
     await page.locator('#email').fill('test@example.com');
@@ -41,7 +41,7 @@ test.describe('login.vue', () => {
   });
   test('should be unable to log in with invalid credentials.', async ({ page }, testInfo) => {
     // #region arrange
-    await page.goto('/login');
+    await page.goto('/signin');
 
     // 必須項目を入力する
     await page.locator('#email').fill('test@example.com');
@@ -66,7 +66,7 @@ test.describe('login.vue', () => {
     await expect(page.locator('body')).toContainText('[test] Error Message.');
 
     // ホームページに遷移していないこと
-    await expect(page).toHaveURL('/login');
+    await expect(page).toHaveURL('/signin');
 
     await page.screenshot({ path: screenshotPath(testInfo) });
     // #endregion

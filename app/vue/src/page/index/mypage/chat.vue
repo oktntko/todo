@@ -36,7 +36,7 @@ const { validateSubmit, ErrorMessage, isDirty, reset } = useVueValidateZod(
             aichat_api_key: '',
           });
 
-          $toast.success('データを保存しました。');
+          $toast.success('Data saved successfully.');
         } finally {
           loading.close();
         }
@@ -49,7 +49,7 @@ const { validateSubmit, ErrorMessage, isDirty, reset } = useVueValidateZod(
         <div>
           <label
             for="aichat_enable"
-            class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+            class="mb-1 block text-sm font-medium text-gray-900 capitalize dark:text-white"
           >
             enable
           </label>
@@ -65,7 +65,7 @@ const { validateSubmit, ErrorMessage, isDirty, reset } = useVueValidateZod(
         <div>
           <label
             for="aichat_api_key"
-            class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+            class="mb-1 block text-sm font-medium text-gray-900 capitalize dark:text-white"
           >
             <!-- 保存されているキーを入力する必要があるので、「編集」ボタンを置いて、有効な場合は入力必須、無効な場合は undefined にして更新を避ける  -->
             api key
@@ -84,7 +84,7 @@ const { validateSubmit, ErrorMessage, isDirty, reset } = useVueValidateZod(
         <div>
           <label
             for="aichat_model"
-            class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+            class="mb-1 block text-sm font-medium text-gray-900 capitalize dark:text-white"
           >
             model
           </label>

@@ -45,7 +45,7 @@ async function handleSubmit() {
       <div>
         <textarea v-model="modelValue.content" class="w-full bg-white"></textarea>
       </div>
-      <button type="submit">submit</button>
+      <button type="submit">send</button>
     </form>
   </div>
 </template>

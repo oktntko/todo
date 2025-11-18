@@ -23,7 +23,7 @@ await fetchMypage();
                 class="icon-[material-symbols--public] h-5 w-5 text-gray-500 group-hover:text-gray-900"
               >
               </span>
-              <span class="ml-2">公開情報</span>
+              <span class="ml-2 capitalize">profile</span>
             </RouterLink>
           </li>
           <li>
@@ -38,7 +38,7 @@ await fetchMypage();
                 class="icon-[mdi--password-outline] h-5 w-5 text-gray-500 group-hover:text-gray-900"
               >
               </span>
-              <span class="ml-2">パスワード変更</span>
+              <span class="ml-2 capitalize">change password</span>
             </RouterLink>
           </li>
           <li>
@@ -53,7 +53,7 @@ await fetchMypage();
                 class="icon-[wpf--security-checked] h-5 w-5 text-gray-500 group-hover:text-gray-900"
               >
               </span>
-              <span class="ml-2">セキュリティ</span>
+              <span class="ml-2 capitalize">security</span>
             </RouterLink>
           </li>
           <li>
@@ -79,7 +79,7 @@ await fetchMypage();
             >
               <span class="icon-[codicon--account] h-5 w-5 text-gray-500 group-hover:text-gray-900">
               </span>
-              <span class="ml-2">アカウント</span>
+              <span class="ml-2 capitalize">account</span>
             </RouterLink>
           </li>
         </ul>

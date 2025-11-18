@@ -54,8 +54,8 @@ const refInputToken = ref<HTMLInputElement>();
             >
               {{
                 mypage.twofa_enable
-                  ? '二要素認証が有効です。'
-                  : '二要素認証が有効になっていません。'
+                  ? 'Two-factor authentication is enabled.'
+                  : 'Two-factor authentication is not enabled.'
               }}
             </h3>
             <button
@@ -64,13 +64,13 @@ const refInputToken = ref<HTMLInputElement>();
               class="inline-flex items-center justify-center px-4 py-2 text-sm text-gray-700 transition-colors hover:text-blue-600"
               @click="
                 async () => {
-                  if (await $dialog.confirm('二要素認証を無効化しますか？')) {
+                  if (await $dialog.confirm('Do you want to disable two-factor authentication?')) {
                     const loading = $loading.open();
                     try {
                       await trpc.mypage.disableSecret.mutate();
                       mypage.twofa_enable = false;
 
-                      $toast.success('二要素認証を無効化しました。');
+                      $toast.success('Two-factor authentication has been disabled.');
                     } finally {
                       loading.close();
                     }
@@ -79,7 +79,7 @@ const refInputToken = ref<HTMLInputElement>();
               "
             >
               <span class="icon-[fluent-emoji-flat--light-bulb] mr-2 -ml-1 h-4 w-4"></span>
-              無効化する
+              disable
             </button>
             <button
               v-else
@@ -93,7 +93,7 @@ const refInputToken = ref<HTMLInputElement>();
               "
             >
               <span class="icon-[wpf--security-checked] mr-2 -ml-1 h-4 w-4 text-green-400"></span>
-              有効化の設定を開始する
+              Start two-factor authentication setup
             </button>
           </div>
         </div>
@@ -117,10 +117,10 @@ const refInputToken = ref<HTMLInputElement>();
             </span>
             <div>
               <h3 class="leading-tight font-medium">
-                AuthenticatorアプリでQRコードをスキャンしてください。
+                Scan the QR code with the Authenticator app.
               </h3>
               <p class="text-sm text-gray-400">
-                Authenticatorアプリは
+                Popular authenticator apps include
                 <a
                   href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2"
                   target="_blank"
@@ -129,7 +129,7 @@ const refInputToken = ref<HTMLInputElement>();
                 >
                   Google Authenticator
                 </a>
-                や
+                and
                 <a
                   href="https://play.google.com/store/apps/details?id=com.azure.authenticator"
                   target="_blank"
@@ -138,7 +138,7 @@ const refInputToken = ref<HTMLInputElement>();
                 >
                   Microsoft Authenticator
                 </a>
-                が人気です。
+                .
               </p>
             </div>
           </div>
@@ -168,7 +168,7 @@ const refInputToken = ref<HTMLInputElement>();
                 qrcode.dataurl = '';
                 mypage.twofa_enable = true;
 
-                $toast.success('二要素認証を有効化しました。');
+                $toast.success('Two-factor authentication was enabled successfully.');
               } finally {
                 loading.close();
               }
@@ -182,9 +182,9 @@ const refInputToken = ref<HTMLInputElement>();
               2
             </span>
             <span>
-              <span class="leading-tight font-medium">コードを検証します。</span>
+              <span class="leading-tight font-medium">Validate your code.</span>
               <span class="block text-sm text-gray-400">
-                Authenticatorアプリに表示される6桁の数字を入力してください。
+                Enter the authcode shown in the Authenticator app.
               </span>
             </span>
           </label>
@@ -201,7 +201,7 @@ const refInputToken = ref<HTMLInputElement>();
                 required
                 maxlength="6"
               />
-              <span class="text-xs text-gray-400"> {{ modelValue.token.length }}/6 桁 </span>
+              <span class="text-xs text-gray-400"> {{ modelValue.token.length }}/6 char </span>
             </div>
             <ErrorMessage class="text-xs text-red-600" field="token"></ErrorMessage>
           </div>
@@ -218,7 +218,7 @@ const refInputToken = ref<HTMLInputElement>();
               ]"
               :disabled="!isDirty"
             >
-              コードを検証し二要素認証を有効化する
+              enable two-factor authentication
             </button>
           </section>
         </form>

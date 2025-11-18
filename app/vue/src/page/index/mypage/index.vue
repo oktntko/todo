@@ -54,7 +54,7 @@ async function handleFileInput(files?: FileList | null) {
 
           reset(mypage);
 
-          $toast.success('データを保存しました。');
+          $toast.success('Data saved successfully.');
         } finally {
           loading.close();
         }
@@ -67,9 +67,9 @@ async function handleFileInput(files?: FileList | null) {
         <div>
           <label
             for="username"
-            class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+            class="mb-1 block text-sm font-medium text-gray-900 capitalize dark:text-white"
           >
-            名前
+            username
           </label>
           <input
             id="username"
@@ -82,8 +82,11 @@ async function handleFileInput(files?: FileList | null) {
         </div>
         <!-- メールアドレス -->
         <div>
-          <label for="email" class="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
-            メールアドレス
+          <label
+            for="email"
+            class="mb-1 block text-sm font-medium text-gray-900 capitalize dark:text-white"
+          >
+            email address
           </label>
           <input
             id="email"
@@ -98,9 +101,9 @@ async function handleFileInput(files?: FileList | null) {
         <div>
           <label
             for="description"
-            class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+            class="mb-1 block text-sm font-medium text-gray-900 capitalize dark:text-white"
           >
-            自己紹介
+            description
           </label>
           <textarea
             id="description"
