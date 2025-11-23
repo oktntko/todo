@@ -21,7 +21,13 @@ export default defineConfig({
       exclude: ['**/component', '**/modal'],
       dts: 'src/vue-router.d.ts',
     }),
-    Vue(),
+    Vue({
+      template: {
+        compilerOptions: {
+          isCustomElement: (tag) => ['selectedcontent'].includes(tag),
+        },
+      },
+    }),
     VueJsx(),
     Unfonts({
       // https://fonts.google.com/

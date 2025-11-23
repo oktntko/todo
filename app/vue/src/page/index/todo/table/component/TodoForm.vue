@@ -3,7 +3,7 @@ import { TodoRouterSchema } from '@todo/express/schema';
 import type { z } from '@todo/lib/zod';
 import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import type { DownloadFile } from '~/component/MyDownloadFileList.vue';
-import MyInputFile from '~/component/MyInputFile.vue';
+import MyInputFile from '~/component/form/MyInputFile.vue';
 import { useFile } from '~/composable/useFile';
 import { useSpaceStore } from '~/store/SpaceStore';
 
@@ -34,9 +34,9 @@ const handleSubmit = validateSubmit((value) => {
 </script>
 
 <template>
-  <form class="flex flex-col gap-2" autocomplete="off" @submit.prevent="handleSubmit">
-    <section class="flex flex-col gap-1">
-      <div class="focus-container flex grow flex-col gap-0.5">
+  <form class="flex flex-col gap-6" autocomplete="off" @submit.prevent="handleSubmit">
+    <section class="flex flex-col gap-3">
+      <div class="focus-container flex flex-col gap-0.5">
         <div>
           <label for="space_id" class="required text-sm capitalize"> space </label>
         </div>
@@ -46,29 +46,30 @@ const handleSubmit = validateSubmit((value) => {
             id="space_id"
             v-model="modelValue.space_id"
             class="flex min-w-60 rounded-lg border border-gray-300 bg-white p-2.5 text-sm text-gray-900 transition-colors"
-            :selectedcontent_class="'flex items-center'"
           >
             <option
               v-for="space of storedSpaceList"
               :key="space.space_id"
               :value="space.space_id"
-              class="flex items-center border border-gray-300 p-2 text-sm text-gray-900 transition-colors"
+              class="border border-gray-300 p-2 transition-colors"
               :class="[
                 'not-first-of-type:border-t-0 not-last-of-type:border-b-0 first-of-type:rounded-t-lg last-of-type:rounded-b-lg',
                 'hover:bg-gray-100',
                 'checked:bg-blue-100 checked:font-bold',
               ]"
             >
-              <img
-                v-if="space.space_image"
-                :src="space.space_image"
-                width="16"
-                height="16"
-                decoding="async"
-                class="h-4 w-4 rounded-sm object-cover object-center"
-              />
-              <span v-else class="icon-[ri--image-circle-fill] h-4 w-4"></span>
-              <span class="ms-1">{{ space.space_name }}</span>
+              <div class="flex items-center text-sm text-gray-900">
+                <img
+                  v-if="space.space_image"
+                  :src="space.space_image"
+                  width="16"
+                  height="16"
+                  decoding="async"
+                  class="h-4 w-4 rounded-sm object-cover object-center"
+                />
+                <span v-else class="icon-[ri--image-circle-fill] h-4 w-4"></span>
+                <span class="ms-1">{{ space.space_name }}</span>
+              </div>
             </option>
           </MySelect>
         </div>
@@ -76,7 +77,7 @@ const handleSubmit = validateSubmit((value) => {
         <ErrorMessage class="text-xs text-red-600" field="space_id" />
       </div>
 
-      <div class="focus-container flex grow flex-col gap-0.5">
+      <div class="focus-container flex flex-col gap-0.5">
         <div>
           <label for="title" class="optional text-sm capitalize"> title </label>
         </div>

@@ -5,7 +5,7 @@ import type { z } from '@todo/lib/zod';
 import { vOnClickOutside } from '@vueuse/components';
 import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import type { DownloadFile } from '~/component/MyDownloadFileList.vue';
-import MyInputFile from '~/component/MyInputFile.vue';
+import MyInputFile from '~/component/form/MyInputFile.vue';
 import { useFile } from '~/composable/useFile';
 import { trpc } from '~/lib/trpc';
 

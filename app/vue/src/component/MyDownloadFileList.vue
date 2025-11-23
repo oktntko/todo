@@ -21,15 +21,15 @@ const { downloadSingleFile } = useFile();
 </script>
 
 <template>
-  <ul class="flex flex-row flex-wrap gap-1.5" @click.stop>
+  <ul class="flex flex-wrap" :class="['flex-col gap-1 lg:flex-row lg:gap-2']" @click.stop>
     <li
       v-for="(file, i) of file_list"
       :key="file.file_id"
-      class="inline-flex flex-row items-center gap-1 rounded-full px-1 text-xs underline transition-colors hover:bg-gray-100"
+      class="inline-flex flex-row items-center gap-0.5 text-sm"
     >
       <button
         type="button"
-        class="inline-flex items-end gap-0.5 text-blue-500 hover:text-blue-800"
+        class="inline-flex flex-row items-center gap-0.5 text-blue-600 transition-colors hover:text-blue-800 hover:underline"
         @click="() => downloadSingleFile({ file_id: file.file_id })"
       >
         <span class="icon-[simple-line-icons--cloud-download]"></span>
@@ -39,7 +39,7 @@ const { downloadSingleFile } = useFile();
       <button
         type="button"
         aria-label="close"
-        class="inline-flex items-end rounded-full p-0.5 transition-colors hover:bg-gray-300 hover:text-yellow-600"
+        class="peer inline-flex flex-row items-center rounded-full p-0.5 text-gray-900 transition-colors hover:bg-gray-300"
         @click="
           async () => {
             const yes = await $dialog.confirm(
@@ -62,7 +62,7 @@ const { downloadSingleFile } = useFile();
           }
         "
       >
-        <span class="icon-[bi--x]" />
+        <span class="icon-[bi--x] h-4 w-4" />
       </button>
     </li>
   </ul>

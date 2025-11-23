@@ -76,87 +76,80 @@ const headerCheckbox = computed(() => {
 </script>
 
 <template>
-  <div class="mb-8 flex flex-col gap-6 px-4">
-    <div class="flex flex-col gap-4">
-      <div class="flex flex-col gap-2">
-        <nav class="flex" aria-label="Breadcrumb">
-          <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
-            <li class="inline-flex items-center">
-              <RouterLink
-                :to="{
-                  name: '//todo/table/',
-                }"
-                class="inline-flex items-center text-sm font-medium text-gray-900 hover:text-blue-600"
-              >
-                <span class="icon-[fontisto--table-2] h-3 w-3 transition duration-75"> </span>
-                <span class="ms-1 capitalize">table</span>
-              </RouterLink>
-            </li>
-          </ol>
-        </nav>
-
-        <div class="flex items-center gap-1 text-lg font-bold">
-          <span class="icon-[fontisto--table-2] h-5 w-5"></span>
-          <span class="capitalize">search todo</span>
-        </div>
-      </div>
+  <div class="mb-8 flex flex-col gap-4 px-4">
+    <div>
+      <nav aria-label="Breadcrumb">
+        <MyBreadcrumb class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
+          <RouterLink
+            :to="{
+              name: '//todo/table/',
+            }"
+            class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-blue-600"
+          >
+            <span class="icon-[fontisto--table-2] h-3 w-3 transition duration-75"> </span>
+            <span class="ms-1 capitalize">table</span>
+          </RouterLink>
+        </MyBreadcrumb>
+      </nav>
     </div>
 
-    <form class="flex flex-col gap-4 px-4" autocomplete="off" @submit.prevent="handleSubmit">
-      <section class="flex flex-col gap-2">
-        <div class="focus-container flex flex-col gap-1">
-          <label for="where.todo_keyword" class="optional text-sm capitalize"> keyword </label>
-          <input
-            id="where.todo_keyword"
-            v-model.lazy="modelValue.where.todo_keyword"
-            class="block rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
-            maxlength="100"
-          />
+    <div>
+      <form class="flex flex-col gap-6" autocomplete="off" @submit.prevent="handleSubmit">
+        <section class="flex flex-col gap-3">
+          <div class="focus-container flex flex-col gap-1">
+            <label for="where.todo_keyword" class="optional text-sm capitalize"> keyword </label>
+            <input
+              id="where.todo_keyword"
+              v-model.lazy="modelValue.where.todo_keyword"
+              class="block rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
+              maxlength="100"
+            />
 
-          <ErrorMessage class="text-xs text-red-600" field="where.todo_keyword" />
-        </div>
-
-        <div class="flex flex-col gap-1">
-          <span class="optional text-sm capitalize"> status </span>
-          <div class="focus-container flex flex-col gap-1 sm:flex-row sm:gap-2">
-            <label
-              v-for="todo_status of TodoStatusList"
-              :key="todo_status"
-              :for="`status-${todo_status}`"
-              class="flex items-center font-medium text-gray-900 capitalize"
-            >
-              <input
-                :id="`status-${todo_status}`"
-                v-model="modelValue.where.todo_status"
-                type="checkbox"
-                :value="todo_status"
-                class="mr-1 h-4 w-4 border-gray-300 bg-gray-100 text-blue-600"
-              />
-              {{ todo_status }}
-            </label>
-
-            <ErrorMessage class="text-xs text-red-600" field="where.todo_status" />
+            <ErrorMessage class="text-xs text-red-600" field="where.todo_keyword" />
           </div>
-        </div>
-      </section>
 
-      <section class="flex gap-2">
-        <button
-          type="submit"
-          :class="[
-            'inline-flex items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
-            'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
-            'min-w-[120px] rounded-md border px-4 py-2 text-sm font-medium',
-            'border-green-700 bg-green-600 text-white hover:bg-green-800',
-            'capitalize',
-          ]"
-          :disabled="loading"
-        >
-          <span class="icon-[bx--search] h-4 w-4"></span>
-          <span class="ms-1 capitalize">search</span>
-        </button>
-      </section>
-    </form>
+          <div class="flex flex-col gap-1">
+            <span class="optional text-sm capitalize"> status </span>
+            <div class="focus-container flex flex-col gap-1 sm:flex-row sm:gap-2">
+              <label
+                v-for="todo_status of TodoStatusList"
+                :key="todo_status"
+                :for="`status-${todo_status}`"
+                class="flex items-center font-medium text-gray-900 capitalize"
+              >
+                <input
+                  :id="`status-${todo_status}`"
+                  v-model="modelValue.where.todo_status"
+                  type="checkbox"
+                  :value="todo_status"
+                  class="mr-1 h-4 w-4 border-gray-300 bg-gray-100 text-blue-600"
+                />
+                {{ todo_status }}
+              </label>
+
+              <ErrorMessage class="text-xs text-red-600" field="where.todo_status" />
+            </div>
+          </div>
+        </section>
+
+        <section class="flex gap-2">
+          <button
+            type="submit"
+            :class="[
+              'inline-flex items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
+              'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
+              'min-w-[120px] rounded-md border px-4 py-2 text-sm font-medium',
+              'border-green-700 bg-green-600 text-white hover:bg-green-800',
+              'capitalize',
+            ]"
+            :disabled="loading"
+          >
+            <span class="icon-[bx--search] h-4 w-4"></span>
+            <span class="ms-1 capitalize">search</span>
+          </button>
+        </section>
+      </form>
+    </div>
 
     <div class="">
       <header

@@ -1,25 +1,20 @@
 <script setup lang="ts">
 import type { SelectHTMLAttributes } from 'vue';
 
-interface Props extends /* @vue-ignore */ SelectHTMLAttributes {
-  selectedcontent_class?: string;
-}
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+interface Props extends /* @vue-ignore */ SelectHTMLAttributes {}
 
 defineProps<Props>();
 
 const modelValue = defineModel<string | number | null>({
   required: true,
 });
-
-watchEffect(() => {
-  console.log('Selected value changed to:', modelValue.value);
-});
 </script>
 
 <template>
-  <select v-bind="$props" v-model="modelValue" class="relative">
+  <select v-model="modelValue" class="relative">
     <button>
-      <selectedcontent :class="selectedcontent_class"></selectedcontent>
+      <selectedcontent></selectedcontent>
     </button>
 
     <slot></slot>
