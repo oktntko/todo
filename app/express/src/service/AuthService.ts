@@ -1,6 +1,7 @@
 import { dayjs } from '@todo/lib/dayjs';
 import type { z } from '@todo/lib/zod';
 import { TRPCError } from '@trpc/server';
+import { ReqCtx } from '~/lib/context';
 import { log } from '~/lib/log4js';
 import { HashPassword, OnetimePassword, SecretPassword } from '~/lib/secret';
 import { PublicContext } from '~/middleware/trpc';
@@ -17,7 +18,7 @@ export const AuthService = {
 
 // auth.signup
 async function signup(ctx: PublicContext, input: z.infer<typeof AuthRouterSchema.signupInput>) {
-  log.trace(ctx.reqid, 'signup', input);
+  log.trace(ReqCtx.reqid, 'signup', input);
 
   await checkDuplicate({
     duplicate: UserRepository.findUniqueUser(ctx.prisma, {
@@ -55,7 +56,7 @@ async function signup(ctx: PublicContext, input: z.infer<typeof AuthRouterSchema
 
 // auth.signin
 async function signin(ctx: PublicContext, input: z.infer<typeof AuthRouterSchema.signinInput>) {
-  log.trace(ctx.reqid, 'signup', input);
+  log.trace(ReqCtx.reqid, 'signup', input);
 
   const user = await UserRepository.findUniqueUser(ctx.prisma, {
     where: { email: input.email },
@@ -82,7 +83,7 @@ async function signinTwofa(
     } | null;
   },
 ) {
-  log.trace(ctx.reqid, 'signinTwofa', input);
+  log.trace(ReqCtx.reqid, 'signinTwofa', input);
 
   if (!input.auth_twofa || dayjs(input.auth_twofa.expires).isBefore(dayjs())) {
     throw new TRPCError({

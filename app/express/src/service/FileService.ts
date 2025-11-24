@@ -2,6 +2,7 @@ import type { z } from '@todo/lib/zod';
 import { type Prisma } from '@todo/prisma/client';
 import { TRPCError } from '@trpc/server';
 import AdmZip from 'adm-zip';
+import { ReqCtx } from '~/lib/context';
 import { log } from '~/lib/log4js';
 import { message } from '~/lib/message';
 import { ProtectedContext } from '~/middleware/trpc';
@@ -21,7 +22,7 @@ export const FileService = {
 
 // /api/file/download/single
 async function readFile(ctx: ProtectedContext, input: z.infer<typeof FileRouterSchema.getInput>) {
-  log.trace(ctx.reqid, 'readFile', ctx.operator.user_id, input);
+  log.trace(ReqCtx.reqid, 'readFile', ctx.operator.user_id, input);
 
   // テーブルからデータを取得
   const filedata = await checkDataExist({
@@ -47,7 +48,7 @@ async function readManyFile(
   ctx: ProtectedContext,
   input: z.infer<typeof FileRouterSchema.getManyInput>,
 ) {
-  log.trace(ctx.reqid, 'readManyFile', ctx.operator.user_id, input);
+  log.trace(ReqCtx.reqid, 'readManyFile', ctx.operator.user_id, input);
 
   const dataList = await Promise.all(
     input.file_id_list.map((file_id) => FileService.readFile(ctx, { file_id })),
@@ -69,7 +70,7 @@ async function createFile(
   ctx: ProtectedContext,
   input: z.infer<typeof FileRouterSchema.createInput>,
 ) {
-  log.trace(ctx.reqid, 'createFile', ctx.operator.user_id, input);
+  log.trace(ReqCtx.reqid, 'createFile', ctx.operator.user_id, input);
 
   const filename = decodeURIComponent(input.file.originalname);
 
@@ -106,7 +107,7 @@ async function createManyFile(
   ctx: ProtectedContext,
   input: z.infer<typeof FileRouterSchema.createManyInput>,
 ) {
-  log.trace(ctx.reqid, 'createManyFile', ctx.operator.user_id, input);
+  log.trace(ReqCtx.reqid, 'createManyFile', ctx.operator.user_id, input);
 
   return Promise.all(
     input.files.map((file) =>
@@ -123,7 +124,7 @@ async function deleteFile(
   ctx: ProtectedContext,
   input: z.infer<typeof FileRouterSchema.deleteInput>,
 ) {
-  log.trace(ctx.reqid, 'deleteFile', ctx.operator.user_id, input);
+  log.trace(ReqCtx.reqid, 'deleteFile', ctx.operator.user_id, input);
 
   // テーブルを更新
   await checkPreviousVersion({
@@ -147,7 +148,7 @@ async function deleteManyFile(
   ctx: ProtectedContext,
   input: z.infer<typeof FileRouterSchema.deleteInput>[],
 ) {
-  log.trace(ctx.reqid, 'deleteManyFile', ctx.operator.user_id, input);
+  log.trace(ReqCtx.reqid, 'deleteManyFile', ctx.operator.user_id, input);
 
   return Promise.all(input.map((x) => FileService.deleteFile(ctx, x)));
 }
@@ -157,7 +158,7 @@ async function searchFile(
   ctx: ProtectedContext,
   input: z.infer<typeof FileRouterSchema.searchInput>,
 ) {
-  log.trace(ctx.reqid, 'searchFile', ctx.operator.user_id, input);
+  log.trace(ReqCtx.reqid, 'searchFile', ctx.operator.user_id, input);
 
   const AND: Prisma.FileWhereInput[] = [];
 
@@ -174,10 +175,10 @@ async function searchFile(
     user_list: { some: { user_id: ctx.operator.user_id } },
     AND,
   };
-  log.debug(ctx.reqid, 'where', where);
+  log.debug(ReqCtx.reqid, 'where', where);
 
   const orderBy: Prisma.FileOrderByWithRelationInput = { [input.sort.field]: input.sort.order };
-  log.debug(ctx.reqid, 'orderBy', orderBy);
+  log.debug(ReqCtx.reqid, 'orderBy', orderBy);
 
   const total = await FileRepository.countFile(ctx.prisma, {
     where,

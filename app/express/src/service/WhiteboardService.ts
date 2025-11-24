@@ -1,6 +1,7 @@
 import { dayjs } from '@todo/lib/dayjs';
 import type { z } from '@todo/lib/zod';
 import { type Prisma } from '@todo/prisma/client';
+import { ReqCtx } from '~/lib/context';
 import { log } from '~/lib/log4js';
 import { ProtectedContext } from '~/middleware/trpc';
 import { checkDataExist, checkPreviousVersion } from '~/repository/_repository';
@@ -19,13 +20,13 @@ export const WhiteboardService = {
 
 // whiteboard.list
 async function listWhiteboard(ctx: ProtectedContext) {
-  log.trace(ctx.reqid, 'listWhiteboard', ctx.operator.user_id);
+  log.trace(ReqCtx.reqid, 'listWhiteboard', ctx.operator.user_id);
 
   const where: Prisma.WhiteboardWhereInput = {
     owner_id: ctx.operator.user_id,
   };
 
-  log.debug(ctx.reqid, 'where', where);
+  log.debug(ReqCtx.reqid, 'where', where);
 
   return WhiteboardRepository.findManyWhiteboard(ctx.prisma, {
     where,
@@ -38,7 +39,7 @@ async function getWhiteboard(
   ctx: ProtectedContext,
   input: z.infer<typeof WhiteboardRouterSchema.getInput>,
 ) {
-  log.trace(ctx.reqid, 'getWhiteboard', ctx.operator.user_id, input);
+  log.trace(ReqCtx.reqid, 'getWhiteboard', ctx.operator.user_id, input);
 
   return checkDataExist({
     data: WhiteboardRepository.findUniqueWhiteboard(ctx.prisma, {
@@ -52,7 +53,7 @@ async function createWhiteboard(
   ctx: ProtectedContext,
   input: z.infer<typeof WhiteboardRouterSchema.createInput>,
 ) {
-  log.trace(ctx.reqid, 'createWhiteboard', ctx.operator.user_id, input);
+  log.trace(ReqCtx.reqid, 'createWhiteboard', ctx.operator.user_id, input);
 
   const count = await WhiteboardRepository.countWhiteboard(ctx.prisma, {
     where: { owner_id: ctx.operator.user_id },
@@ -75,7 +76,7 @@ async function updateWhiteboard(
   ctx: ProtectedContext,
   input: z.infer<typeof WhiteboardRouterSchema.updateInput>,
 ) {
-  log.trace(ctx.reqid, 'updateWhiteboard', ctx.operator.user_id, input);
+  log.trace(ReqCtx.reqid, 'updateWhiteboard', ctx.operator.user_id, input);
 
   const previous = await checkPreviousVersion({
     previous: WhiteboardRepository.findUniqueWhiteboard(ctx.prisma, {
@@ -102,7 +103,7 @@ async function upsertWhiteboard(
   ctx: ProtectedContext,
   input: z.infer<typeof WhiteboardRouterSchema.upsertInput>,
 ) {
-  log.trace(ctx.reqid, 'upsertWhiteboard', ctx.operator.user_id, input);
+  log.trace(ReqCtx.reqid, 'upsertWhiteboard', ctx.operator.user_id, input);
 
   if (input.whiteboard_id) {
     return WhiteboardRepository.updateWhiteboard(ctx.prisma, {
@@ -126,7 +127,7 @@ async function deleteWhiteboard(
   ctx: ProtectedContext,
   input: z.infer<typeof WhiteboardRouterSchema.deleteInput>,
 ) {
-  log.trace(ctx.reqid, 'deleteWhiteboard', ctx.operator.user_id, input);
+  log.trace(ReqCtx.reqid, 'deleteWhiteboard', ctx.operator.user_id, input);
 
   await checkPreviousVersion({
     previous: WhiteboardRepository.findUniqueWhiteboard(ctx.prisma, {
@@ -145,7 +146,7 @@ async function reorderWhiteboard(
   ctx: ProtectedContext,
   input: z.infer<typeof WhiteboardRouterSchema.reorderInputList>,
 ) {
-  log.trace(ctx.reqid, 'reorderWhiteboard', ctx.operator.user_id, input);
+  log.trace(ReqCtx.reqid, 'reorderWhiteboard', ctx.operator.user_id, input);
 
   return Promise.all(
     input.map((x) =>

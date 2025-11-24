@@ -4,22 +4,20 @@ import { initTRPC, TRPCError } from '@trpc/server';
 import * as trpcExpress from '@trpc/server/adapters/express';
 import superjson from 'superjson';
 import { message } from '~/lib/message';
-import { generatePrisma, PrismaClient } from '~/middleware/prisma';
+import { ExtendsPrismaClient, PrismaClient } from '~/middleware/prisma';
 import { SessionService } from '~/middleware/session';
 
 // The app's context - is generated for each incoming request
 export function createContext(
   opts: Pick<trpcExpress.CreateExpressContextOptions, 'req' | 'res'>,
-  prisma: PrismaClient = generatePrisma(opts.req.reqid),
+  prisma: PrismaClient = ExtendsPrismaClient,
 ): {
   req: trpcExpress.CreateExpressContextOptions['req'];
-  reqid: string;
   res: trpcExpress.CreateExpressContextOptions['res'];
   prisma: PrismaClient;
 } {
   return {
     req: opts.req,
-    reqid: opts.req.reqid,
     res: opts.res,
     prisma,
   };
@@ -27,7 +25,6 @@ export function createContext(
 
 type Context = ReturnType<typeof createContext>;
 export type PublicContext = {
-  reqid: string;
   prisma: PrismaClient;
 };
 

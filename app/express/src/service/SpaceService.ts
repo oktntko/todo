@@ -1,5 +1,6 @@
 import type { z } from '@todo/lib/zod';
 import { type Prisma } from '@todo/prisma/client';
+import { ReqCtx } from '~/lib/context';
 import { log } from '~/lib/log4js';
 import { ProtectedContext } from '~/middleware/trpc';
 import { checkDataExist, checkPreviousVersion } from '~/repository/_repository';
@@ -17,13 +18,13 @@ export const SpaceService = {
 
 // space.list
 async function listSpace(ctx: ProtectedContext) {
-  log.trace(ctx.reqid, 'listSpace', ctx.operator.user_id);
+  log.trace(ReqCtx.reqid, 'listSpace', ctx.operator.user_id);
 
   const where: Prisma.SpaceWhereInput = {
     owner_id: ctx.operator.user_id,
   };
 
-  log.debug(ctx.reqid, 'where', where);
+  log.debug(ReqCtx.reqid, 'where', where);
 
   return SpaceRepository.findManySpace(ctx.prisma, {
     where,
@@ -33,7 +34,7 @@ async function listSpace(ctx: ProtectedContext) {
 
 // space.get
 async function getSpace(ctx: ProtectedContext, input: z.infer<typeof SpaceRouterSchema.getInput>) {
-  log.trace(ctx.reqid, 'getSpace', ctx.operator.user_id, input);
+  log.trace(ReqCtx.reqid, 'getSpace', ctx.operator.user_id, input);
 
   return checkDataExist({
     data: SpaceRepository.findUniqueSpace(ctx.prisma, {
@@ -47,7 +48,7 @@ async function createSpace(
   ctx: ProtectedContext,
   input: z.infer<typeof SpaceRouterSchema.createInput>,
 ) {
-  log.trace(ctx.reqid, 'createSpace', ctx.operator.user_id, input);
+  log.trace(ReqCtx.reqid, 'createSpace', ctx.operator.user_id, input);
 
   const count = await SpaceRepository.countSpace(ctx.prisma, {
     where: { owner_id: ctx.operator.user_id },
@@ -71,7 +72,7 @@ async function updateSpace(
   ctx: ProtectedContext,
   input: z.infer<typeof SpaceRouterSchema.updateInput>,
 ) {
-  log.trace(ctx.reqid, 'updateSpace', ctx.operator.user_id, input);
+  log.trace(ReqCtx.reqid, 'updateSpace', ctx.operator.user_id, input);
 
   const previous = await checkPreviousVersion({
     previous: SpaceRepository.findUniqueSpace(ctx.prisma, {
@@ -99,7 +100,7 @@ async function deleteSpace(
   ctx: ProtectedContext,
   input: z.infer<typeof SpaceRouterSchema.deleteInput>,
 ) {
-  log.trace(ctx.reqid, 'deleteSpace', ctx.operator.user_id, input);
+  log.trace(ReqCtx.reqid, 'deleteSpace', ctx.operator.user_id, input);
 
   await checkPreviousVersion({
     previous: SpaceRepository.findUniqueSpace(ctx.prisma, {
@@ -118,7 +119,7 @@ async function reorderSpace(
   ctx: ProtectedContext,
   input: z.infer<typeof SpaceRouterSchema.reorderInputList>,
 ) {
-  log.trace(ctx.reqid, 'reorderSpace', ctx.operator.user_id, input);
+  log.trace(ReqCtx.reqid, 'reorderSpace', ctx.operator.user_id, input);
 
   return Promise.all(
     input.map((x) =>

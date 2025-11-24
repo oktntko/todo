@@ -2,6 +2,7 @@ import { dayjs } from '@todo/lib/dayjs';
 import type { z } from '@todo/lib/zod';
 import { TRPCError } from '@trpc/server';
 import OpenAI, { APIError } from 'openai';
+import { ReqCtx } from '~/lib/context';
 import { log } from '~/lib/log4js';
 import { HashPassword, OnetimePassword, SecretPassword } from '~/lib/secret';
 import { ProtectedContext } from '~/middleware/trpc';
@@ -22,7 +23,7 @@ export const MypageService = {
 
 // mypage.get
 async function getMypage(ctx: ProtectedContext) {
-  log.trace(ctx.reqid, 'getMypage', ctx.operator.user_id);
+  log.trace(ReqCtx.reqid, 'getMypage', ctx.operator.user_id);
 
   return checkDataExist({
     data: UserRepository.findUniqueUser(ctx.prisma, {
@@ -33,7 +34,7 @@ async function getMypage(ctx: ProtectedContext) {
 
 // mypage.deleteMypage
 async function deleteMypage(ctx: ProtectedContext) {
-  log.trace(ctx.reqid, 'deleteProfile', ctx.operator.user_id);
+  log.trace(ReqCtx.reqid, 'deleteProfile', ctx.operator.user_id);
 
   return UserRepository.deleteUser(ctx.prisma, { where: { user_id: ctx.operator.user_id } });
 }
@@ -43,7 +44,7 @@ async function patchPassword(
   ctx: ProtectedContext,
   input: z.infer<typeof MypageRouterSchema.patchPasswordInput>,
 ) {
-  log.trace(ctx.reqid, 'patchPassword', ctx.operator.user_id, input);
+  log.trace(ReqCtx.reqid, 'patchPassword', ctx.operator.user_id, input);
 
   // 現在のパスワードの確認
   if (!HashPassword.compare(input.current_password, ctx.operator.password)) {
@@ -66,7 +67,7 @@ async function patchProfile(
   ctx: ProtectedContext,
   input: z.infer<typeof MypageRouterSchema.patchProfileInput>,
 ) {
-  log.trace(ctx.reqid, 'updateProfile', ctx.operator.user_id, input);
+  log.trace(ReqCtx.reqid, 'updateProfile', ctx.operator.user_id, input);
 
   await checkDuplicate({
     duplicate: UserRepository.findUniqueUser(ctx.prisma, { where: { email: ctx.operator.email } }),
@@ -81,7 +82,7 @@ async function patchProfile(
 
 // mypage.generateSecret
 async function generateSecret(ctx: ProtectedContext) {
-  log.trace(ctx.reqid, 'generateSecret', ctx.operator.user_id);
+  log.trace(ReqCtx.reqid, 'generateSecret', ctx.operator.user_id);
 
   const secret = OnetimePassword.generateSecret({ name: ctx.operator.email });
 
@@ -109,7 +110,7 @@ async function enableSecret(
     } | null;
   },
 ) {
-  log.trace(ctx.reqid, 'enableSecret', ctx.operator.user_id, input);
+  log.trace(ReqCtx.reqid, 'enableSecret', ctx.operator.user_id, input);
 
   if (!input.setting_twofa || dayjs(input.setting_twofa.expires).isBefore(dayjs())) {
     // setting_twofa がないのは generateSecret が実行されていない場合（またはセッションがリセットされた場合）。
@@ -141,7 +142,7 @@ async function enableSecret(
 
 // mypage.disableSecret
 async function disableSecret(ctx: ProtectedContext) {
-  log.trace(ctx.reqid, 'disableSecret', ctx.operator.user_id);
+  log.trace(ReqCtx.reqid, 'disableSecret', ctx.operator.user_id);
 
   return UserRepository.updateUser(ctx.prisma, {
     data: { twofa_enable: false, twofa_secret: '' },
@@ -154,7 +155,7 @@ async function patchAichat(
   ctx: ProtectedContext,
   input: z.infer<typeof MypageRouterSchema.patchAichatInput>,
 ) {
-  log.trace(ctx.reqid, 'patchAichat', ctx.operator.user_id);
+  log.trace(ReqCtx.reqid, 'patchAichat', ctx.operator.user_id);
 
   if (input.aichat_enable) {
     // OpenAI には「APIキーを検証する専用API」は存在しないため、軽い API コールを 1 回実行して、成功/失敗で判断する
@@ -169,7 +170,7 @@ async function patchAichat(
         });
       }
 
-      log.error(ctx.reqid, 'patchAichat', 'OpenAI API key validation failed', e);
+      log.error(ReqCtx.reqid, 'patchAichat', 'OpenAI API key validation failed', e);
       throw new TRPCError({
         code: 'BAD_REQUEST',
         message: 'The service is temporarily unavailable. Please try again in a moment.',

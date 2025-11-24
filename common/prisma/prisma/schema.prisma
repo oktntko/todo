@@ -5,9 +5,8 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider     = "prisma-client"
-  output       = "../src/client/generated"
-  moduleFormat = "esm"
+  provider = "prisma-client"
+  output   = "../src/client/generated"
 }
 
 generator zod {
@@ -17,7 +16,6 @@ generator zod {
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
 }
 
 /// @zod.import(["import { ColorSchema } from '@todo/lib/zod'"]);

@@ -2,6 +2,7 @@ import type { z } from '@todo/lib/zod';
 import { type Prisma } from '@todo/prisma/client';
 import { TodoStatusSchema } from '@todo/prisma/schema';
 import { TRPCError } from '@trpc/server';
+import { ReqCtx } from '~/lib/context';
 import { log } from '~/lib/log4js';
 import { message } from '~/lib/message';
 import { ProtectedContext } from '~/middleware/trpc';
@@ -24,7 +25,7 @@ export const TodoService = {
 
 // todo.list
 async function listTodo(ctx: ProtectedContext, input: z.infer<typeof TodoRouterSchema.listInput>) {
-  log.trace(ctx.reqid, 'listTodo', ctx.operator.user_id, input);
+  log.trace(ReqCtx.reqid, 'listTodo', ctx.operator.user_id, input);
 
   const AND: Prisma.TodoWhereInput[] = [];
   if (input.space_id_list.length > 0) {
@@ -36,7 +37,7 @@ async function listTodo(ctx: ProtectedContext, input: z.infer<typeof TodoRouterS
     space: { owner_id: ctx.operator.user_id },
     AND,
   };
-  log.debug(ctx.reqid, 'where', where);
+  log.debug(ReqCtx.reqid, 'where', where);
 
   return TodoRepository.findManyTodo(ctx.prisma, {
     where,
@@ -49,7 +50,7 @@ async function searchTodo(
   ctx: ProtectedContext,
   input: z.infer<typeof TodoRouterSchema.searchInput>,
 ) {
-  log.trace(ctx.reqid, 'searchTodo', ctx.operator.user_id, input);
+  log.trace(ReqCtx.reqid, 'searchTodo', ctx.operator.user_id, input);
 
   const AND: Prisma.TodoWhereInput[] = [];
 
@@ -86,7 +87,7 @@ async function searchTodo(
     space: { owner_id: ctx.operator.user_id },
     AND,
   };
-  log.debug(ctx.reqid, 'where', where);
+  log.debug(ReqCtx.reqid, 'where', where);
 
   const orderBy: Prisma.TodoOrderByWithRelationInput =
     input.sort.field === 'space'
@@ -96,7 +97,7 @@ async function searchTodo(
           },
         }
       : { [input.sort.field]: input.sort.order };
-  log.debug(ctx.reqid, 'orderBy', orderBy);
+  log.debug(ReqCtx.reqid, 'orderBy', orderBy);
 
   const total = await TodoRepository.countTodo(ctx.prisma, {
     where,
@@ -116,7 +117,7 @@ async function searchTodo(
 
 // todo.get
 async function getTodo(ctx: ProtectedContext, input: z.infer<typeof TodoRouterSchema.getInput>) {
-  log.trace(ctx.reqid, 'getTodo', ctx.operator.user_id, input);
+  log.trace(ReqCtx.reqid, 'getTodo', ctx.operator.user_id, input);
 
   return checkDataExist({
     data: TodoRepository.findUniqueTodo(ctx.prisma, {
@@ -133,7 +134,7 @@ async function upsertTodo(
   ctx: ProtectedContext,
   input: z.infer<typeof TodoRouterSchema.upsertInput>,
 ) {
-  log.trace(ctx.reqid, 'upsertTodo', ctx.operator.user_id, input);
+  log.trace(ReqCtx.reqid, 'upsertTodo', ctx.operator.user_id, input);
 
   await checkRelation(ctx, {
     space_id: input.space_id,
@@ -177,7 +178,7 @@ async function createTodo(
   ctx: ProtectedContext,
   input: z.infer<typeof TodoRouterSchema.createInput>,
 ) {
-  log.trace(ctx.reqid, 'createTodo', ctx.operator.user_id, input);
+  log.trace(ReqCtx.reqid, 'createTodo', ctx.operator.user_id, input);
 
   await checkRelation(ctx, {
     space_id: input.space_id,
@@ -206,7 +207,7 @@ async function updateTodo(
   ctx: ProtectedContext,
   input: z.infer<typeof TodoRouterSchema.updateInput>,
 ) {
-  log.trace(ctx.reqid, 'updateTodo', ctx.operator.user_id, input);
+  log.trace(ReqCtx.reqid, 'updateTodo', ctx.operator.user_id, input);
 
   if (input.space_id) {
     await checkRelation(ctx, {
@@ -251,7 +252,7 @@ async function updateManyTodo(
   ctx: ProtectedContext,
   input: z.infer<typeof TodoRouterSchema.updateManyInput>,
 ) {
-  log.trace(ctx.reqid, 'updateManyTodo', ctx.operator.user_id, input);
+  log.trace(ReqCtx.reqid, 'updateManyTodo', ctx.operator.user_id, input);
 
   if (input.space_id) {
     await checkRelation(ctx, {
@@ -295,7 +296,7 @@ async function updateManyTodo(
 
 // todo.delete
 async function deleteTodo(ctx: ProtectedContext, input: z.infer<typeof TodoRouterSchema.getInput>) {
-  log.trace(ctx.reqid, 'deleteTodo', ctx.operator.user_id, input);
+  log.trace(ReqCtx.reqid, 'deleteTodo', ctx.operator.user_id, input);
 
   const previous = await checkDataExist({
     data: TodoRepository.findUniqueTodo(ctx.prisma, {
@@ -319,7 +320,7 @@ async function deleteManyTodo(
   ctx: ProtectedContext,
   inputList: z.infer<typeof TodoRouterSchema.deleteManyInput>,
 ) {
-  log.trace(ctx.reqid, 'deleteManyTodo', ctx.operator.user_id, inputList);
+  log.trace(ReqCtx.reqid, 'deleteManyTodo', ctx.operator.user_id, inputList);
 
   await Promise.all(
     inputList.map(async (input) => {

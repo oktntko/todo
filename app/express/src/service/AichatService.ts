@@ -2,6 +2,7 @@ import { z } from '@todo/lib/zod';
 import { TRPCError } from '@trpc/server';
 import OpenAI from 'openai';
 import superjson from 'superjson';
+import { ReqCtx } from '~/lib/context';
 import { log } from '~/lib/log4js';
 import { SecretPassword } from '~/lib/secret';
 import { ProtectedContext } from '~/middleware/trpc';
@@ -17,7 +18,7 @@ async function listAichat(
   ctx: ProtectedContext,
   input: z.infer<typeof AichatRouterSchema.listInput>,
 ) {
-  log.trace(ctx.reqid, 'listAichat', ctx.operator.user_id, input);
+  log.trace(ReqCtx.reqid, 'listAichat', ctx.operator.user_id, input);
 
   return ctx.prisma.aichat.findMany({
     orderBy: [{ created_at: 'asc' }],
@@ -29,7 +30,7 @@ async function chatAichat(
   ctx: ProtectedContext,
   input: z.infer<typeof AichatRouterSchema.chatInput>,
 ) {
-  log.trace(ctx.reqid, 'createAichat', ctx.operator.user_id, input);
+  log.trace(ReqCtx.reqid, 'createAichat', ctx.operator.user_id, input);
 
   const aichat_api_key = SecretPassword.decrypt(ctx.operator.aichat_api_key);
   const openai = new OpenAI({ apiKey: aichat_api_key });
@@ -90,7 +91,7 @@ async function chatAichat(
     });
   }
 
-  log.trace(ctx.reqid, 'chat', response.choices);
+  log.trace(ReqCtx.reqid, 'chat', response.choices);
   const choice = response.choices[0]!;
 
   if (choice.finish_reason === 'tool_calls') {

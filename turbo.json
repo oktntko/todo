@@ -6,8 +6,11 @@
       "persistent": true,
       "env": [
         "EXPRESS_PORT",
-        "DATABASE_URL",
-        "DB_PORT"
+        "DATABASE_USER",
+        "DATABASE_PASSWORD",
+        "DATABASE_HOST",
+        "DATABASE_PORT",
+        "DATABASE_NAME"
       ],
       "dependsOn": [
         "@todo/lib#build",
@@ -42,18 +45,28 @@
       ],
       "env": [
         "EXPRESS_PORT",
-        "DATABASE_URL",
-        "DB_PORT"
+        "DATABASE_USER",
+        "DATABASE_PASSWORD",
+        "DATABASE_HOST",
+        "DATABASE_PORT",
+        "DATABASE_NAME"
       ]
     },
-    "prisma:generate": {},
+    "prisma:generate": {
+      "env": [
+        "DATABASE_URL"
+      ]
+    },
     "lint": {},
     "format": {},
     "test": {
       "env": [
         "EXPRESS_PORT",
-        "DATABASE_URL",
-        "DB_PORT"
+        "DATABASE_USER",
+        "DATABASE_PASSWORD",
+        "DATABASE_HOST",
+        "DATABASE_PORT",
+        "DATABASE_NAME"
       ],
       "dependsOn": [
         "@todo/lib#build",

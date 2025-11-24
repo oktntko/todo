@@ -9,7 +9,7 @@ services:
       MYSQL_PASSWORD: todo
       TZ: 'Asia/Tokyo'
     ports:
-      - ${DB_PORT}:3306
+      - ${DATABASE_PORT}:3306
     volumes:
       - todo-volume:/var/lib/mysql
       - ./docker/database/initdb.d/:/docker-entrypoint-initdb.d/

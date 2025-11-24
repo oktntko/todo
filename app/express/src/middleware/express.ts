@@ -4,24 +4,17 @@ import { TRPCError } from '@trpc/server';
 import type { ErrorRequestHandler, Request, RequestHandler, Response } from 'express';
 import { NextFunction } from 'express-serve-static-core';
 import crypto from 'node:crypto';
+import { ReqCtx } from '~/lib/context';
 import { log } from '~/lib/log4js';
 import { message } from '~/lib/message';
 import { type PrismaClient } from '~/middleware/prisma';
 import { SessionService } from '~/middleware/session';
 import { createContext } from '~/middleware/trpc';
 
-// Custom Request
-// node_modules/@types/express-session/index.d.ts
-declare module 'http' {
-  interface IncomingMessage {
-    reqid: crypto.UUID;
-  }
-}
-
-export const InjectRequestIdHandler: RequestHandler = (req, _, next) => {
-  req.reqid = crypto.randomUUID();
-
-  return next();
+export const InjectRequestIdHandler: RequestHandler = (_req, _res, next) => {
+  ReqCtx.context.run({ reqid: crypto.randomUUID() }, () => {
+    return next();
+  });
 };
 
 // Error Handler
@@ -124,7 +117,7 @@ export const LogHandler: RequestHandler = (req, res, next) => {
 };
 
 function formatAccessInfo(prefix: string, req: Request, res?: Response) {
-  return `${req.reqid} ${prefix} - "${req.method} ${decodeURIComponent(req.originalUrl || req.url)}" ${
+  return `${ReqCtx.reqid} ${prefix} - "${req.method} ${decodeURIComponent(req.originalUrl || req.url)}" ${
     res?.statusCode ?? '( )'
   } - ${req.headers['x-forwarded-for'] || req.ip}`;
 }
@@ -135,7 +128,6 @@ export function createHandler<T extends z.ZodRawShape>(
   resolver: (opts: {
     ctx: {
       req: Request;
-      reqid: string;
       res: Response;
       prisma: PrismaClient;
       next: NextFunction;
@@ -158,7 +150,7 @@ export function createHandler<T extends z.ZodRawShape>(
       }
 
       return await resolver({
-        ctx: { ...ctx, reqid: req.reqid, next },
+        ctx: { ...ctx, next },
         input: result.data,
       });
     } catch (e) {
@@ -174,7 +166,6 @@ export function createProtectHandler<T extends z.ZodRawShape>(
   resolver: (opts: {
     ctx: {
       req: Request;
-      reqid: string;
       res: Response;
       prisma: PrismaClient;
       next: NextFunction;
@@ -210,7 +201,7 @@ export function createProtectHandler<T extends z.ZodRawShape>(
       }
 
       return resolver({
-        ctx: { ...ctx, reqid: req.reqid, operator: user, next },
+        ctx: { ...ctx, operator: user, next },
         input: result.data,
       });
     } catch (e) {

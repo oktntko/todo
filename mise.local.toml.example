@@ -1,4 +1,8 @@
 [env]
-DB_PORT = 1234
 EXPRESS_PORT = 8081
-DATABASE_URL = "mysql://todo:todo@localhost:{{env.DB_PORT}}/todo"
+DATABASE_USER = "todo"
+DATABASE_PASSWORD = "todo"
+DATABASE_HOST = "localhost"
+DATABASE_PORT = 1234
+DATABASE_NAME = "todo"
+DATABASE_URL = "mysql://{{env.DATABASE_USER}}:{{env.DATABASE_PASSWORD}}@{{env.DATABASE_HOST}}:{{env.DATABASE_PORT}}/{{env.DATABASE_NAME}}"

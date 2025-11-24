@@ -13,6 +13,7 @@ onlyBuiltDependencies:
   - esbuild
   - msw
   - prisma
+  - prisma-zod-generator
 
 overrides:
   esbuild@<=0.24.2: '>=0.25.0'
