@@ -6,12 +6,11 @@ import { ReqCtx } from '~/lib/context';
 import { log } from '~/lib/log4js';
 import { HashPassword, OnetimePassword, SecretPassword } from '~/lib/secret';
 import { ProtectedContext } from '~/middleware/trpc';
-import { checkDataExist, checkDuplicate } from '~/repository/_repository';
+import { checkDuplicate } from '~/repository/_repository';
 import { UserRepository } from '~/repository/UserRepository';
 import { MypageRouterSchema } from '~/schema/MypageRouterSchema';
 
 export const MypageService = {
-  getMypage,
   deleteMypage,
   patchPassword,
   patchProfile,
@@ -21,22 +20,13 @@ export const MypageService = {
   patchAichat,
 };
 
-// mypage.get
-async function getMypage(ctx: ProtectedContext) {
-  log.trace(ReqCtx.reqid, 'getMypage', ctx.operator.user_id);
-
-  return checkDataExist({
-    data: UserRepository.findUniqueUser(ctx.prisma, {
-      where: { user_id: ctx.operator.user_id },
-    }),
-  });
-}
-
 // mypage.deleteMypage
 async function deleteMypage(ctx: ProtectedContext) {
   log.trace(ReqCtx.reqid, 'deleteProfile', ctx.operator.user_id);
 
-  return UserRepository.deleteUser(ctx.prisma, { where: { user_id: ctx.operator.user_id } });
+  return UserRepository.deleteUser(ctx.prisma, {
+    where: { user_id: ctx.operator.user_id },
+  });
 }
 
 // mypage.patchPassword
@@ -70,7 +60,7 @@ async function patchProfile(
   log.trace(ReqCtx.reqid, 'updateProfile', ctx.operator.user_id, input);
 
   await checkDuplicate({
-    duplicate: UserRepository.findUniqueUser(ctx.prisma, { where: { email: ctx.operator.email } }),
+    duplicate: UserRepository.findUniqueUser(ctx.prisma, { where: { email: input.email } }),
     current: { key: 'user_id', value: ctx.operator.user_id },
   });
 

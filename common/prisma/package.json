@@ -18,7 +18,7 @@
     "type-check": "tsc --project tsconfig.base.json --noEmit",
     "lint": "eslint src/ --max-warnings 0",
     "format": "prettier . --write",
-    "prisma:generate": "prisma generate && find src/schema -type f | xargs sed -i -e \"s#from 'zod';#from '@todo/lib/zod';#g\" && tsx src/generate.ts && prettier src/schema --write",
+    "prisma:generate": "prisma generate && find src/schema -type f | xargs sed -i -e \"s#from 'zod';#from '@todo/lib/zod';#g\" && tsx ../../script/generateBarrelFile.ts src/schema/generated/schemas/enums src/schema/option && prettier src/schema --write",
     "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:migrate:dev": "prisma migrate dev",
     "prisma:push": "prisma db push",

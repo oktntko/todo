@@ -53,7 +53,7 @@ async function createWhiteboard(
   prisma: PrismaClient,
   params: {
     data: Omit<Prisma.WhiteboardUncheckedCreateInput, CommonColumn>;
-    operator_id: number;
+    operator_id: string;
   },
 ) {
   return prisma.whiteboard.create({
@@ -76,7 +76,7 @@ async function updateWhiteboard(
   params: {
     where: Prisma.WhiteboardWhereUniqueInput;
     data: Partial<Omit<Prisma.WhiteboardUncheckedCreateInput, CommonColumn>>;
-    operator_id: number;
+    operator_id: string;
   },
 ) {
   return prisma.whiteboard.update({

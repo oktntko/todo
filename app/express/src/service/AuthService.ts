@@ -79,7 +79,7 @@ async function signinTwofa(
   input: z.infer<typeof AuthRouterSchema.signinTwofaInput> & {
     auth_twofa: {
       expires: Date;
-      user_id: number;
+      user_id: string;
     } | null;
   },
 ) {

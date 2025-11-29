@@ -77,6 +77,7 @@ export const auth = router({
   // auth.get
   get: publicProcedure.output(AuthSchema).query(async ({ ctx }) => {
     const user = await SessionService.findUserBySession({
+      prisma: ctx.prisma,
       user_id: ctx.req.session.user_id,
       expires: ctx.req.session.cookie.expires,
     });

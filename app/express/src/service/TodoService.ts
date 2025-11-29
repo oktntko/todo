@@ -344,7 +344,7 @@ async function deleteManyTodo(
 }
 
 // ================================================================ //
-async function checkRelation(ctx: ProtectedContext, params: { space_id: number; user_id: number }) {
+async function checkRelation(ctx: ProtectedContext, params: { space_id: number; user_id: string }) {
   const space = await SpaceRepository.findUniqueSpace(ctx.prisma, {
     where: { space_id: params.space_id },
   });

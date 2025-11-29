@@ -60,7 +60,7 @@ async function createSpace(
   prisma: PrismaClient,
   params: {
     data: Omit<Prisma.SpaceUncheckedCreateInput, CommonColumn | 'todo_list'>;
-    operator_id: number;
+    operator_id: string;
   },
 ) {
   return prisma.space.create({
@@ -84,7 +84,7 @@ async function updateSpace(
   params: {
     where: Prisma.SpaceWhereUniqueInput;
     data: Partial<Omit<Prisma.SpaceUncheckedCreateInput, CommonColumn | 'todo_list'>>;
-    operator_id: number;
+    operator_id: string;
   },
 ) {
   return prisma.space.update({

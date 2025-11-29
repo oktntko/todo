@@ -66,7 +66,7 @@ async function findUniqueFile(
 
 async function createFile(
   prisma: PrismaClient,
-  operator_id: number,
+  operator_id: string,
   params: { data: Omit<Prisma.FileUncheckedCreateInput, CommonColumn> },
 ) {
   return prisma.file.create({

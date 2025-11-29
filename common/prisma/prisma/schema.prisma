@@ -22,8 +22,8 @@ datasource db {
 model Space {
   space_id Int @id @default(autoincrement())
 
-  owner_id Int
-  owner    User @relation(fields: [owner_id], references: [user_id], onDelete: Cascade)
+  owner_id String
+  owner    User   @relation(fields: [owner_id], references: [user_id], onDelete: Cascade)
 
   space_name        String @db.VarChar(100) /// @zod.trim().min(1).max(100)
   space_description String @default("") @db.VarChar(400) /// @zod.max(400)
@@ -34,9 +34,9 @@ model Space {
   todo_list Todo[]
 
   created_at DateTime @default(now()) @db.DateTime(3)
-  created_by Int
+  created_by String
   updated_at DateTime @updatedAt @db.DateTime(3)
-  updated_by Int
+  updated_by String
 
   @@index([space_name])
   @@map("space")
@@ -44,7 +44,7 @@ model Space {
 
 /// @zod.import(["import { DateSchema, TimeSchema } from '@todo/lib/zod'"]);
 model Todo {
-  todo_id String @id @default(uuid()) @db.VarChar(36) /// @zod.length(36)
+  todo_id String @id @default(uuid(7)) @db.VarChar(36) /// @zod.length(36)
 
   space_id Int   @db.Int
   space    Space @relation(fields: [space_id], references: [space_id], onDelete: Cascade)
@@ -61,9 +61,9 @@ model Todo {
   file_list File[]
 
   created_at DateTime @default(now()) @db.DateTime(3)
-  created_by Int
+  created_by String
   updated_at DateTime @updatedAt @db.DateTime(3)
-  updated_by Int
+  updated_by String
 
   @@index([title])
   @@index([begin_date])
@@ -74,8 +74,8 @@ model Todo {
 model Whiteboard {
   whiteboard_id Int @id @default(autoincrement())
 
-  owner_id Int
-  owner    User @relation(fields: [owner_id], references: [user_id], onDelete: Cascade)
+  owner_id String
+  owner    User   @relation(fields: [owner_id], references: [user_id], onDelete: Cascade)
 
   whiteboard_name        String @default("") @db.VarChar(100) /// @zod.trim().max(100)
   whiteboard_description String @default("") @db.VarChar(400) /// @zod.max(400)
@@ -83,9 +83,9 @@ model Whiteboard {
   whiteboard_content     String @default(dbgenerated("('')")) @db.LongText
 
   created_at DateTime @default(now()) @db.DateTime(3)
-  created_by Int
+  created_by String
   updated_at DateTime @updatedAt @db.DateTime(3)
-  updated_by Int
+  updated_by String
 
   @@map("whiteboard")
 }
@@ -107,7 +107,7 @@ model Aichat {
 /// ユーザ
 /// @zod.import(["import { AichatModelSchema } from '../../../option'"])
 model User {
-  user_id Int @id @default(autoincrement())
+  user_id String @id @default(uuid(7)) @db.VarChar(36) /// @zod.length(36)
 
   email          String  @unique @db.VarChar(255) /// @zod.email().trim().min(1).max(255)
   password       String  @db.VarChar(255) /// @zod.trim().min(1).max(255)
@@ -147,7 +147,7 @@ model Session {
   originalMaxAge Int?
   expires        DateTime? @default(now()) @db.DateTime(3)
   /// custom
-  user_id        Int?
+  user_id        String?
   data           String    @default(dbgenerated("('{}')")) @db.Text
 
   user User? @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
@@ -165,9 +165,9 @@ model File {
   filesize Int
 
   created_at DateTime @default(now()) @db.DateTime(3)
-  created_by Int
+  created_by String
   updated_at DateTime @updatedAt @db.DateTime(3)
-  updated_by Int
+  updated_by String
 
   user_list User[]
   todo_list Todo[]

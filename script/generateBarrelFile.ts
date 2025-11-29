@@ -19,7 +19,10 @@ async function generate(dir: string) {
   console.log('Generated:', outputPath, targets);
 }
 
-generate(path.resolve(cwd(), process.argv[2] || 'src/schema/generated/schemas/enums'));
+const [, , ...dirs] = process.argv;
+for (const dir of dirs) {
+  generate(path.resolve(cwd(), dir));
+}
 
 // TODO 暫定対応
 // 1. useMultipleFiles: false にすると、 '.' で始まるカスタムインポート文(@zod.import)が生成ファイルに出力されない (prisma-zod-generatorの問題)

@@ -65,7 +65,7 @@ async function upsertTodo(
   params: {
     where: Prisma.TodoWhereUniqueInput;
     data: Omit<Prisma.TodoUncheckedCreateInput, CommonColumn>;
-    operator_id: number;
+    operator_id: string;
   },
 ) {
   return prisma.todo.upsert({
@@ -112,7 +112,7 @@ async function createTodo(
   prisma: PrismaClient,
   params: {
     data: Omit<Prisma.TodoUncheckedCreateInput, CommonColumn | 'todo_id'>;
-    operator_id: number;
+    operator_id: string;
   },
 ) {
   return prisma.todo.create({
@@ -143,7 +143,7 @@ async function updateTodo(
   params: {
     where: Prisma.TodoWhereUniqueInput;
     data: Omit<Prisma.TodoUncheckedUpdateInput, CommonColumn | 'todo_id'>;
-    operator_id: number;
+    operator_id: string;
   },
 ) {
   return prisma.todo.update({
@@ -175,7 +175,7 @@ async function updateManyTodo(
   params: {
     where: { todo_id: string }[];
     data: Omit<Prisma.TodoUncheckedUpdateInput, CommonColumn | 'todo_id' | 'tag_list'>;
-    operator_id: number;
+    operator_id: string;
   },
 ) {
   return prisma.todo.updateMany({

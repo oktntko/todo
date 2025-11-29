@@ -179,6 +179,7 @@ export function createProtectHandler<T extends z.ZodRawShape>(
       const ctx = createContext({ req, res });
 
       const user = await SessionService.findUserBySession({
+        prisma: ctx.prisma,
         expires: ctx.req.session.cookie.expires,
         user_id: ctx.req.session.user_id,
       });

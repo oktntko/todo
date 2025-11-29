@@ -1,36 +1,26 @@
 import { z } from '@todo/lib/zod';
 import { TRPCError } from '@trpc/server';
 import supertest from 'supertest';
-import { mockCreateContext, mockopts } from 't/helper/express';
-import { transactionRollback } from 't/helper/prisma';
-import 't/helper/session';
+import { TEST_USER_ID } from 't/helper/express';
+import { transactionRollbackUseCaller, transactionRollbackUseMockSession } from 't/helper/prisma';
 import { app } from '~/app';
-import { generatePrisma, PrismaClient } from '~/middleware/prisma';
-import { createContext } from '~/middleware/trpc';
-import {
-  MESSAGE_DATA_IS_NOT_EXIST,
-  MESSAGE_INPUT_INVALID,
-  MESSAGE_INTERNAL_SERVER_ERROR,
-  MESSAGE_PREVIOUS_IS_UPDATED,
-} from '~/repository/_repository';
+import { message } from '~/lib/message';
+import { ExtendsPrismaClient, PrismaClient } from '~/middleware/prisma';
 import { FileRepository } from '~/repository/FileRepository';
-import { createCaller } from '~/router/_router';
 import { FileRouterSchema } from '~/schema/FileRouterSchema';
 
-const prisma = generatePrisma('test');
+const prisma = ExtendsPrismaClient;
 
 describe(`FileRouter`, () => {
   describe(`/api/file/download/single`, () => {
     test(`success`, async () => {
-      return transactionRollback(prisma, async (prisma) => {
+      return transactionRollbackUseMockSession(prisma, async ({ tx }) => {
         // arrange
-        mockCreateContext(prisma);
-
         const input: z.infer<typeof FileRouterSchema.getInput> = {
           file_id: crypto.randomUUID(),
         };
 
-        await prisma.file.createMany({
+        await tx.file.createMany({
           data: [
             {
               file_id: input.file_id,
@@ -39,8 +29,8 @@ describe(`FileRouter`, () => {
               filesize: 1024,
               created_at: new Date(2001, 2, 3),
               updated_at: new Date(2001, 2, 3),
-              created_by: 0,
-              updated_by: 0,
+              created_by: TEST_USER_ID,
+              updated_by: TEST_USER_ID,
             },
           ],
         });
@@ -61,15 +51,13 @@ describe(`FileRouter`, () => {
       });
     });
     test(`file not found in storage`, async () => {
-      return transactionRollback(prisma, async (prisma) => {
+      return transactionRollbackUseMockSession(prisma, async ({ tx }) => {
         // arrange
-        mockCreateContext(prisma);
-
         const input: z.infer<typeof FileRouterSchema.getInput> = {
           file_id: crypto.randomUUID(),
         };
 
-        await prisma.file.createMany({
+        await tx.file.createMany({
           data: [
             {
               file_id: input.file_id,
@@ -78,8 +66,8 @@ describe(`FileRouter`, () => {
               filesize: 1024,
               created_at: new Date(2001, 2, 3),
               updated_at: new Date(2001, 2, 3),
-              created_by: 0,
-              updated_by: 0,
+              created_by: TEST_USER_ID,
+              updated_by: TEST_USER_ID,
             },
           ],
         });
@@ -91,15 +79,13 @@ describe(`FileRouter`, () => {
         expect(res.statusCode).toBe(404);
         expect(res.body).toEqual({
           code: 'NOT_FOUND',
-          message: MESSAGE_DATA_IS_NOT_EXIST,
+          message: message.error.NOT_FOUND,
         });
       });
     });
     test(`file not found in database`, async () => {
-      return transactionRollback(prisma, async (prisma) => {
+      return transactionRollbackUseMockSession(prisma, async () => {
         // arrange
-        mockCreateContext(prisma);
-
         const input: z.infer<typeof FileRouterSchema.getInput> = {
           file_id: crypto.randomUUID(),
         };
@@ -111,15 +97,13 @@ describe(`FileRouter`, () => {
         expect(res.statusCode).toBe(404);
         expect(res.body).toEqual({
           code: 'NOT_FOUND',
-          message: MESSAGE_DATA_IS_NOT_EXIST,
+          message: message.error.NOT_FOUND,
         });
       });
     });
     test(`input error`, async () => {
-      return transactionRollback(prisma, async (prisma) => {
+      return transactionRollbackUseMockSession(prisma, async () => {
         // arrange
-        mockCreateContext(prisma);
-
         const input: z.infer<typeof FileRouterSchema.getInput> = {
           file_id: 'crypto.randomUUID()',
         };
@@ -131,15 +115,13 @@ describe(`FileRouter`, () => {
         expect(res.statusCode).toBe(400);
         expect(res.body).toEqual({
           code: 'BAD_REQUEST',
-          message: MESSAGE_INPUT_INVALID,
+          message: message.error.BAD_REQUEST,
         });
       });
     });
     test(`system error`, async () => {
-      return transactionRollback(prisma, async (prisma) => {
+      return transactionRollbackUseMockSession(prisma, async () => {
         // arrange
-        mockCreateContext(prisma);
-
         const input: z.infer<typeof FileRouterSchema.getInput> = {
           file_id: crypto.randomUUID(),
         };
@@ -154,7 +136,7 @@ describe(`FileRouter`, () => {
         expect(res.statusCode).toBe(500);
         expect(res.body).toEqual({
           code: 'INTERNAL_SERVER_ERROR',
-          message: MESSAGE_INTERNAL_SERVER_ERROR,
+          message: message.error.INTERNAL_SERVER_ERROR,
         });
       });
     });
@@ -162,15 +144,13 @@ describe(`FileRouter`, () => {
 
   describe(`/api/file/download/many`, () => {
     test(`success`, async () => {
-      return transactionRollback(prisma, async (prisma) => {
+      return transactionRollbackUseMockSession(prisma, async ({ tx }) => {
         // arrange
-        mockCreateContext(prisma);
-
         const input: z.infer<typeof FileRouterSchema.getManyInput> = {
           file_id_list: [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()],
         };
 
-        await prisma.file.createMany({
+        await tx.file.createMany({
           data: [
             {
               file_id: input.file_id_list[0],
@@ -179,8 +159,8 @@ describe(`FileRouter`, () => {
               filesize: 1024,
               created_at: new Date(2001, 2, 3),
               updated_at: new Date(2001, 2, 3),
-              created_by: 0,
-              updated_by: 0,
+              created_by: TEST_USER_ID,
+              updated_by: TEST_USER_ID,
             },
             {
               file_id: input.file_id_list[1],
@@ -189,8 +169,8 @@ describe(`FileRouter`, () => {
               filesize: 1024,
               created_at: new Date(2001, 2, 3),
               updated_at: new Date(2001, 2, 3),
-              created_by: 0,
-              updated_by: 0,
+              created_by: TEST_USER_ID,
+              updated_by: TEST_USER_ID,
             },
             {
               file_id: input.file_id_list[2],
@@ -199,8 +179,8 @@ describe(`FileRouter`, () => {
               filesize: 1024,
               created_at: new Date(2001, 2, 3),
               updated_at: new Date(2001, 2, 3),
-              created_by: 0,
-              updated_by: 0,
+              created_by: TEST_USER_ID,
+              updated_by: TEST_USER_ID,
             },
           ],
         });
@@ -219,19 +199,18 @@ describe(`FileRouter`, () => {
         });
         expect(res.body).toEqual(expect.anything());
 
+        // after
         mockReadFile.mockRestore();
       });
     });
     test(`file not found in storage`, async () => {
-      return transactionRollback(prisma, async (prisma) => {
+      return transactionRollbackUseMockSession(prisma, async ({ tx }) => {
         // arrange
-        mockCreateContext(prisma);
-
         const input: z.infer<typeof FileRouterSchema.getManyInput> = {
           file_id_list: [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()],
         };
 
-        await prisma.file.createMany({
+        await tx.file.createMany({
           data: [
             {
               file_id: input.file_id_list[0],
@@ -240,8 +219,8 @@ describe(`FileRouter`, () => {
               filesize: 1024,
               created_at: new Date(2001, 2, 3),
               updated_at: new Date(2001, 2, 3),
-              created_by: 0,
-              updated_by: 0,
+              created_by: TEST_USER_ID,
+              updated_by: TEST_USER_ID,
             },
             {
               file_id: input.file_id_list[1],
@@ -250,8 +229,8 @@ describe(`FileRouter`, () => {
               filesize: 1024,
               created_at: new Date(2001, 2, 3),
               updated_at: new Date(2001, 2, 3),
-              created_by: 0,
-              updated_by: 0,
+              created_by: TEST_USER_ID,
+              updated_by: TEST_USER_ID,
             },
             {
               file_id: input.file_id_list[2],
@@ -260,8 +239,8 @@ describe(`FileRouter`, () => {
               filesize: 1024,
               created_at: new Date(2001, 2, 3),
               updated_at: new Date(2001, 2, 3),
-              created_by: 0,
-              updated_by: 0,
+              created_by: TEST_USER_ID,
+              updated_by: TEST_USER_ID,
             },
           ],
         });
@@ -273,15 +252,13 @@ describe(`FileRouter`, () => {
         expect(res.statusCode).toBe(404);
         expect(res.body).toEqual({
           code: 'NOT_FOUND',
-          message: MESSAGE_DATA_IS_NOT_EXIST,
+          message: message.error.NOT_FOUND,
         });
       });
     });
     test(`file not found in database`, async () => {
-      return transactionRollback(prisma, async (prisma) => {
+      return transactionRollbackUseMockSession(prisma, async () => {
         // arrange
-        mockCreateContext(prisma);
-
         const input: z.infer<typeof FileRouterSchema.getManyInput> = {
           file_id_list: [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()],
         };
@@ -293,15 +270,13 @@ describe(`FileRouter`, () => {
         expect(res.statusCode).toBe(404);
         expect(res.body).toEqual({
           code: 'NOT_FOUND',
-          message: MESSAGE_DATA_IS_NOT_EXIST,
+          message: message.error.NOT_FOUND,
         });
       });
     });
     test(`input error`, async () => {
-      return transactionRollback(prisma, async (prisma) => {
+      return transactionRollbackUseMockSession(prisma, async () => {
         // arrange
-        mockCreateContext(prisma);
-
         const input: z.infer<typeof FileRouterSchema.getManyInput> = {
           file_id_list: ['crypto.randomUUID()', crypto.randomUUID(), crypto.randomUUID()],
         };
@@ -313,15 +288,13 @@ describe(`FileRouter`, () => {
         expect(res.statusCode).toBe(400);
         expect(res.body).toEqual({
           code: 'BAD_REQUEST',
-          message: MESSAGE_INPUT_INVALID,
+          message: message.error.BAD_REQUEST,
         });
       });
     });
     test(`system error`, async () => {
-      return transactionRollback(prisma, async (prisma) => {
+      return transactionRollbackUseMockSession(prisma, async () => {
         // arrange
-        mockCreateContext(prisma);
-
         const input: z.infer<typeof FileRouterSchema.getManyInput> = {
           file_id_list: [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()],
         };
@@ -336,7 +309,7 @@ describe(`FileRouter`, () => {
         expect(res.statusCode).toBe(500);
         expect(res.body).toEqual({
           code: 'INTERNAL_SERVER_ERROR',
-          message: MESSAGE_INTERNAL_SERVER_ERROR,
+          message: message.error.INTERNAL_SERVER_ERROR,
         });
       });
     });
@@ -344,12 +317,10 @@ describe(`FileRouter`, () => {
 
   describe(`/api/file/upload/single`, () => {
     test(`success`, async () => {
-      return transactionRollback(prisma, async (prisma) => {
+      return transactionRollbackUseMockSession(prisma, async () => {
         // arrange
-        mockCreateContext(prisma);
-
-        const mockReadFile = vi.spyOn(FileRepository, 'writeFile');
-        mockReadFile.mockResolvedValueOnce();
+        const mockWriteFile = vi.spyOn(FileRepository, 'writeFile');
+        mockWriteFile.mockResolvedValueOnce();
 
         const output = Buffer.from('test');
 
@@ -365,18 +336,16 @@ describe(`FileRouter`, () => {
           filesize: 4,
           filename: 'test.txt',
           mimetype: 'text/plain',
-          created_by: 1,
           created_at: expect.anything(),
-          updated_by: 1,
           updated_at: expect.anything(),
+          created_by: TEST_USER_ID,
+          updated_by: TEST_USER_ID,
         });
       });
     });
     test(`input error`, async () => {
-      return transactionRollback(prisma, async (prisma) => {
+      return transactionRollbackUseMockSession(prisma, async () => {
         // arrange
-        mockCreateContext(prisma);
-
         const mockReadFile = vi.spyOn(FileRepository, 'writeFile');
         mockReadFile.mockResolvedValueOnce();
 
@@ -387,17 +356,15 @@ describe(`FileRouter`, () => {
         expect(res.statusCode).toBe(400);
         expect(res.body).toEqual({
           code: 'BAD_REQUEST',
-          message: MESSAGE_INPUT_INVALID,
+          message: message.error.BAD_REQUEST,
         });
       });
     });
     test(`system error`, async () => {
-      return transactionRollback(prisma, async (prisma) => {
+      return transactionRollbackUseMockSession(prisma, async () => {
         // arrange
-        mockCreateContext(prisma);
-
-        const mockFindUniqueFile = vi.spyOn(FileRepository, 'createFile');
-        mockFindUniqueFile.mockRejectedValueOnce('test');
+        const mockFindCreateFile = vi.spyOn(FileRepository, 'createFile');
+        mockFindCreateFile.mockRejectedValueOnce('test');
 
         const output = Buffer.from('test');
 
@@ -410,20 +377,21 @@ describe(`FileRouter`, () => {
         expect(res.statusCode).toBe(500);
         expect(res.body).toEqual({
           code: 'INTERNAL_SERVER_ERROR',
-          message: MESSAGE_INTERNAL_SERVER_ERROR,
+          message: message.error.INTERNAL_SERVER_ERROR,
         });
+
+        // after
+        mockFindCreateFile.mockRestore();
       });
     });
   });
 
   describe(`/api/file/upload/many`, () => {
     test(`success`, async () => {
-      return transactionRollback(prisma, async (prisma) => {
+      return transactionRollbackUseMockSession(prisma, async () => {
         // arrange
-        mockCreateContext(prisma);
-
-        const mockReadFile = vi.spyOn(FileRepository, 'writeFile');
-        mockReadFile.mockResolvedValue();
+        const mockWriteFile = vi.spyOn(FileRepository, 'writeFile');
+        mockWriteFile.mockResolvedValue();
 
         const output1 = Buffer.from('test1');
         const output2 = Buffer.from('test2');
@@ -444,41 +412,40 @@ describe(`FileRouter`, () => {
             filesize: 5,
             filename: 'test1.txt',
             mimetype: 'text/plain',
-            created_by: 1,
             created_at: expect.anything(),
-            updated_by: 1,
             updated_at: expect.anything(),
+            created_by: TEST_USER_ID,
+            updated_by: TEST_USER_ID,
           },
           {
             file_id: expect.anything(),
             filesize: 5,
             filename: 'test2.txt',
             mimetype: 'text/plain',
-            created_by: 1,
             created_at: expect.anything(),
-            updated_by: 1,
             updated_at: expect.anything(),
+            created_by: TEST_USER_ID,
+            updated_by: TEST_USER_ID,
           },
           {
             file_id: expect.anything(),
             filesize: 5,
             filename: 'test3.txt',
             mimetype: 'text/plain',
-            created_by: 1,
             created_at: expect.anything(),
-            updated_by: 1,
             updated_at: expect.anything(),
+            created_by: TEST_USER_ID,
+            updated_by: TEST_USER_ID,
           },
         ]);
 
-        mockReadFile.mockRestore();
+        // after
+        mockWriteFile.mockRestore();
       });
     });
     test(`input error`, async () => {
-      return transactionRollback(prisma, async (prisma) => {
+      return transactionRollbackUseMockSession(prisma, async () => {
         // arrange
-        mockCreateContext(prisma);
-
         const mockReadFile = vi.spyOn(FileRepository, 'writeFile');
         mockReadFile.mockResolvedValueOnce();
 
@@ -489,17 +456,15 @@ describe(`FileRouter`, () => {
         expect(res.statusCode).toBe(400);
         expect(res.body).toEqual({
           code: 'BAD_REQUEST',
-          message: MESSAGE_INPUT_INVALID,
+          message: message.error.BAD_REQUEST,
         });
       });
     });
     test(`system error`, async () => {
-      return transactionRollback(prisma, async (prisma) => {
+      return transactionRollbackUseMockSession(prisma, async () => {
         // arrange
-        mockCreateContext(prisma);
-
-        const mockFindUniqueFile = vi.spyOn(FileRepository, 'createFile');
-        mockFindUniqueFile.mockRejectedValueOnce('test');
+        const mockFindCreateFile = vi.spyOn(FileRepository, 'createFile');
+        mockFindCreateFile.mockRejectedValueOnce('test');
 
         const output = Buffer.from('test');
 
@@ -512,8 +477,10 @@ describe(`FileRouter`, () => {
         expect(res.statusCode).toBe(500);
         expect(res.body).toEqual({
           code: 'INTERNAL_SERVER_ERROR',
-          message: MESSAGE_INTERNAL_SERVER_ERROR,
+          message: message.error.INTERNAL_SERVER_ERROR,
         });
+
+        mockFindCreateFile.mockRestore();
       });
     });
   });
@@ -527,8 +494,8 @@ describe(`FileRouter`, () => {
         filesize: 1024,
         created_at: new Date(2001, 2, 3),
         updated_at: new Date(2001, 2, 3),
-        created_by: 0,
-        updated_by: 0,
+        created_by: TEST_USER_ID,
+        updated_by: TEST_USER_ID,
       },
     });
   }
@@ -536,11 +503,8 @@ describe(`FileRouter`, () => {
   describe(`file.delete`, () => {
     describe(`test decision table`, () => {
       test(`success`, async () => {
-        return transactionRollback(prisma, async (prisma) => {
-          const ctx = createContext(mockopts(), prisma);
-          const caller = createCaller(ctx);
-          //
-          const file = await createFile(prisma);
+        return transactionRollbackUseCaller(prisma, async ({ tx, caller }) => {
+          const file = await createFile(tx);
 
           const input: z.infer<typeof FileRouterSchema.deleteInput> = {
             ...file,
@@ -554,11 +518,8 @@ describe(`FileRouter`, () => {
         });
       });
       test(`fail. previous is updated.`, async () => {
-        return transactionRollback(prisma, async (prisma) => {
-          const ctx = createContext(mockopts(), prisma);
-          const caller = createCaller(ctx);
-          //
-          const { file_id } = await createFile(prisma);
+        return transactionRollbackUseCaller(prisma, async ({ tx, caller }) => {
+          const { file_id } = await createFile(tx);
 
           const input: z.infer<typeof FileRouterSchema.deleteInput> = {
             file_id,
@@ -569,17 +530,13 @@ describe(`FileRouter`, () => {
           await expect(caller.file.delete(input)).rejects.toThrow(
             new TRPCError({
               code: 'CONFLICT',
-              message: MESSAGE_PREVIOUS_IS_UPDATED,
+              message: message.error.CONFLICT_PREVIOUS_UPDATED,
             }),
           );
         });
       });
       test(`fail. data is not exist.`, async () => {
-        return transactionRollback(prisma, async (prisma) => {
-          const ctx = createContext(mockopts(), prisma);
-          const caller = createCaller(ctx);
-          //
-
+        return transactionRollbackUseCaller(prisma, async ({ caller }) => {
           const input: z.infer<typeof FileRouterSchema.deleteInput> = {
             file_id: '82ecb7c5-97db-4bf9-b647-48bb5d56822e', // not found
             updated_at: new Date(2001, 2, 4),
@@ -589,19 +546,16 @@ describe(`FileRouter`, () => {
           await expect(caller.file.delete(input)).rejects.toThrow(
             new TRPCError({
               code: 'NOT_FOUND',
-              message: MESSAGE_DATA_IS_NOT_EXIST,
+              message: message.error.NOT_FOUND,
             }),
           );
         });
       });
     });
     describe(`test data access`, () => {
-      test(`UserRepository.deleteUser`, async () => {
-        return transactionRollback(prisma, async (prisma) => {
-          const ctx = createContext(mockopts(), prisma);
-          const caller = createCaller(ctx);
-          //
-          const file = await createFile(prisma);
+      test(`FileRepository.deleteFile single`, async () => {
+        return transactionRollbackUseCaller(prisma, async ({ tx, caller }) => {
+          const file = await createFile(tx);
 
           const input: z.infer<typeof FileRouterSchema.deleteInput> = {
             ...file,
@@ -612,7 +566,7 @@ describe(`FileRouter`, () => {
 
           //
           expect(output).toEqual(file);
-          expect(await prisma.file.findUnique({ where: { file_id: output.file_id } })).toBeNull();
+          expect(await tx.file.findUnique({ where: { file_id: output.file_id } })).toBeNull();
         });
       });
     });
@@ -621,11 +575,8 @@ describe(`FileRouter`, () => {
   describe(`file.deleteMany`, () => {
     describe(`test decision table`, () => {
       test(`success`, async () => {
-        return transactionRollback(prisma, async (prisma) => {
-          const ctx = createContext(mockopts(), prisma);
-          const caller = createCaller(ctx);
-          //
-          const file = await createFile(prisma);
+        return transactionRollbackUseCaller(prisma, async ({ tx, caller }) => {
+          const file = await createFile(tx);
 
           const input: z.infer<typeof FileRouterSchema.deleteInput>[] = [{ ...file }];
 
@@ -637,11 +588,8 @@ describe(`FileRouter`, () => {
         });
       });
       test(`fail. previous is updated.`, async () => {
-        return transactionRollback(prisma, async (prisma) => {
-          const ctx = createContext(mockopts(), prisma);
-          const caller = createCaller(ctx);
-          //
-          const { file_id } = await createFile(prisma);
+        return transactionRollbackUseCaller(prisma, async ({ tx, caller }) => {
+          const { file_id } = await createFile(tx);
 
           const input: z.infer<typeof FileRouterSchema.deleteInput>[] = [
             {
@@ -654,17 +602,13 @@ describe(`FileRouter`, () => {
           await expect(caller.file.deleteMany(input)).rejects.toThrow(
             new TRPCError({
               code: 'CONFLICT',
-              message: MESSAGE_PREVIOUS_IS_UPDATED,
+              message: message.error.CONFLICT_PREVIOUS_UPDATED,
             }),
           );
         });
       });
       test(`fail. data is not exist.`, async () => {
-        return transactionRollback(prisma, async (prisma) => {
-          const ctx = createContext(mockopts(), prisma);
-          const caller = createCaller(ctx);
-          //
-
+        return transactionRollbackUseCaller(prisma, async ({ caller }) => {
           const input: z.infer<typeof FileRouterSchema.deleteInput>[] = [
             {
               file_id: '82ecb7c5-97db-4bf9-b647-48bb5d56822e', // not found
@@ -676,19 +620,16 @@ describe(`FileRouter`, () => {
           await expect(caller.file.deleteMany(input)).rejects.toThrow(
             new TRPCError({
               code: 'NOT_FOUND',
-              message: MESSAGE_DATA_IS_NOT_EXIST,
+              message: message.error.NOT_FOUND,
             }),
           );
         });
       });
     });
     describe(`test data access`, () => {
-      test(`UserRepository.deleteUser`, async () => {
-        return transactionRollback(prisma, async (prisma) => {
-          const ctx = createContext(mockopts(), prisma);
-          const caller = createCaller(ctx);
-          //
-          const file = await createFile(prisma);
+      test(`FileRepository.deleteFile many`, async () => {
+        return transactionRollbackUseCaller(prisma, async ({ tx, caller }) => {
+          const file = await createFile(tx);
 
           const input: z.infer<typeof FileRouterSchema.deleteInput>[] = [{ ...file }];
 

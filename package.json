@@ -1,8 +1,11 @@
 {
   "name": "todo",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "type": "module",
+  "packageManager": "pnpm@10.23.0",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "scripts": {
     "dev": "turbo dev --ui=tui || true",
     "dev:msw": "MODE='msw' pnpm --filter='@todo/vue' dev:msw",
@@ -18,10 +21,6 @@
     "format": "turbo format",
     "test": "turbo test"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@10.23.0",
   "devDependencies": {
     "cspell": "^9.3.2",
     "prettier": "^3.6.2",

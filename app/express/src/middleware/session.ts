@@ -3,6 +3,7 @@ import { prisma } from '@todo/prisma/client';
 import { SessionData, Store } from 'express-session';
 import superjson from 'superjson';
 import { log } from '~/lib/log4js';
+import { PrismaClient } from '~/middleware/prisma';
 
 /**
  * https://github.com/microsoft/TypeScript-Node-Starter/blob/master/src/types/express-session-types.d.ts
@@ -12,7 +13,7 @@ import { log } from '~/lib/log4js';
  */
 declare module 'express-session' {
   interface SessionData {
-    user_id?: number | null;
+    user_id?: string | null;
     data?: {
       // 二要素認証 設定
       setting_twofa?: {
@@ -22,7 +23,7 @@ declare module 'express-session' {
       // 二要素認証 ログイン
       auth_twofa?: {
         expires: Date;
-        user_id: number;
+        user_id: string;
       } | null;
     };
   }
@@ -65,8 +66,9 @@ export const SessionService = {
 };
 
 async function findUserBySession(params: {
+  prisma: PrismaClient;
   expires?: Date | null | undefined;
-  user_id?: number | null;
+  user_id?: string | null;
 }) {
   if (!params.expires || dayjs(params.expires).isBefore(dayjs())) {
     log.debug('Session has expired.');
@@ -76,7 +78,7 @@ async function findUserBySession(params: {
     return null;
   }
 
-  return prisma.user.findUnique({ where: { user_id: params.user_id } });
+  return params.prisma.user.findUnique({ where: { user_id: params.user_id } });
 }
 
 // session.get

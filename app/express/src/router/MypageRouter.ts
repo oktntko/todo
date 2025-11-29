@@ -11,21 +11,24 @@ export const mypage = router({
     .input(z.void())
     .output(ProfileSchema)
     .query(async ({ ctx }) => {
-      return $transaction(ctx.prisma, async (prisma) => {
-        return MypageService.getMypage({ ...ctx, prisma });
+      return $transaction(ctx.prisma, async () => {
+        return ctx.operator;
       });
     }),
 
   // mypage.delete
-  delete: protectedProcedure.output(z.void()).mutation(async ({ ctx }) => {
-    return $transaction(ctx.prisma, async (prisma) => {
-      await MypageService.deleteMypage({ ...ctx, prisma });
+  delete: protectedProcedure
+    .input(z.void())
+    .output(z.void())
+    .mutation(async ({ ctx }) => {
+      return $transaction(ctx.prisma, async (prisma) => {
+        await MypageService.deleteMypage({ ...ctx, prisma });
 
-      ctx.req.session.destroy(() => {
-        /*Nothing To Do*/
+        ctx.req.session.destroy(() => {
+          /*Nothing To Do*/
+        });
       });
-    });
-  }),
+    }),
 
   // mypage.patchPassword
   patchPassword: protectedProcedure

@@ -16,6 +16,7 @@
     "dev": "run-p dev:*",
     "dev:serve": "tsx watch --tsconfig tsconfig.base.json src/index.ts",
     "dev:type": "nodemon --watch src --exec \"pnpm type-check\" src/index.ts",
+    "dev:barrel": "tsx watch --include='src/schema' --exclude='src/schema/index.ts' ../../script/generateBarrelFile.ts src/schema",
     "build": "tsup-node",
     "type-check": "rm -rf types && tsc --project tsconfig.base.json && tsc-alias --project tsconfig.base.json",
     "preview": "node --enable-source-maps --disable-warning=ExperimentalWarning dist/index.js",

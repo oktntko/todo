@@ -1,5 +1,5 @@
-import { ZodError } from '@todo/lib/zod';
-import { User } from '@todo/prisma/client';
+import { z, ZodError } from '@todo/lib/zod';
+import { UserSchema } from '@todo/prisma/schema';
 import { initTRPC, TRPCError } from '@trpc/server';
 import * as trpcExpress from '@trpc/server/adapters/express';
 import superjson from 'superjson';
@@ -46,7 +46,7 @@ const t = initTRPC.context<Context>().create({
         path: opts.shape.data.path,
         cause:
           opts.error.code === 'BAD_REQUEST' && opts.error.cause instanceof ZodError
-            ? opts.error.cause.flatten()
+            ? z.treeifyError(opts.error.cause)
             : undefined,
       },
     };
@@ -66,6 +66,7 @@ export const publicProcedure = procedure;
  **/
 const isAuthed = middleware(async ({ next, ctx }) => {
   const user = await SessionService.findUserBySession({
+    prisma: ctx.prisma,
     expires: ctx.req.session.cookie.expires,
     user_id: ctx.req.session.user_id,
   });
@@ -87,7 +88,7 @@ const isAuthed = middleware(async ({ next, ctx }) => {
 
 export const protectedProcedure = publicProcedure.use(isAuthed);
 export type ProtectedContext = PublicContext & {
-  operator: User;
+  operator: z.infer<typeof UserSchema>;
 };
 
 export function authorizationProcedure(role: string | string[]) {

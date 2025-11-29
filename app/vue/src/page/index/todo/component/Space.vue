@@ -56,9 +56,9 @@ function createNewEmptyTodo(): TodoWithStatus {
     file_list: [],
 
     created_at: new Date(),
-    created_by: 0,
+    created_by: '',
     updated_at: new Date(),
-    updated_by: 0,
+    updated_by: '',
 
     is_new: true,
     editing: true,
