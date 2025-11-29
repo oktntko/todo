@@ -1,5 +1,5 @@
 import { z } from '@todo/lib/zod';
-import { User } from '@todo/prisma/client';
+import { UserSchema } from '@todo/prisma/schema';
 import { TRPCError } from '@trpc/server';
 import type { ErrorRequestHandler, Request, RequestHandler, Response } from 'express';
 import { NextFunction } from 'express-serve-static-core';
@@ -169,7 +169,7 @@ export function createProtectHandler<T extends z.ZodRawShape>(
       res: Response;
       prisma: PrismaClient;
       next: NextFunction;
-      operator: User;
+      operator: z.infer<typeof UserSchema>;
     };
     input: z.infer<typeof schema>;
   }) => Promise<void> | void,
@@ -178,13 +178,13 @@ export function createProtectHandler<T extends z.ZodRawShape>(
     try {
       const ctx = createContext({ req, res });
 
-      const user = await SessionService.findUserBySession({
+      const operator = await SessionService.findUserBySession({
         prisma: ctx.prisma,
         expires: ctx.req.session.cookie.expires,
         user_id: ctx.req.session.user_id,
       });
 
-      if (user == null) {
+      if (operator == null) {
         throw new TRPCError({
           code: 'UNAUTHORIZED',
           message: message.error.UNAUTHORIZED,
@@ -202,7 +202,7 @@ export function createProtectHandler<T extends z.ZodRawShape>(
       }
 
       return resolver({
-        ctx: { ...ctx, operator: user, next },
+        ctx: { ...ctx, operator, next },
         input: result.data,
       });
     } catch (e) {
