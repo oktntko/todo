@@ -37,7 +37,7 @@ async function findManyFile(
   prisma: PrismaClient,
   params: {
     where: Prisma.FileWhereInput;
-    orderBy: Prisma.FileOrderByWithRelationInput;
+    orderBy: Prisma.FileOrderByWithRelationInput | Prisma.FileOrderByWithRelationInput[];
     take?: number;
     skip?: number;
   },

@@ -3,7 +3,7 @@ import { type Prisma } from '@todo/prisma/client';
 import { ReqCtx } from '~/lib/context';
 import { log } from '~/lib/log4js';
 import { ProtectedContext } from '~/middleware/trpc';
-import { checkDataExist, checkPreviousVersion } from '~/repository/_repository';
+import { _repository } from '~/repository/_repository';
 import { SpaceRepository } from '~/repository/SpaceRepository';
 import { SpaceRouterSchema } from '~/schema/SpaceRouterSchema';
 
@@ -36,7 +36,7 @@ async function listSpace(ctx: ProtectedContext) {
 async function getSpace(ctx: ProtectedContext, input: z.infer<typeof SpaceRouterSchema.getInput>) {
   log.trace(ReqCtx.reqid, 'getSpace', ctx.operator.user_id, input);
 
-  return checkDataExist({
+  return _repository.checkDataExist({
     data: SpaceRepository.findUniqueSpace(ctx.prisma, {
       where: { space_id: input.space_id },
     }),
@@ -74,7 +74,7 @@ async function updateSpace(
 ) {
   log.trace(ReqCtx.reqid, 'updateSpace', ctx.operator.user_id, input);
 
-  const previous = await checkPreviousVersion({
+  const previous = await _repository.checkPreviousVersion({
     previous: SpaceRepository.findUniqueSpace(ctx.prisma, {
       where: { space_id: input.space_id },
     }),
@@ -102,7 +102,7 @@ async function deleteSpace(
 ) {
   log.trace(ReqCtx.reqid, 'deleteSpace', ctx.operator.user_id, input);
 
-  await checkPreviousVersion({
+  await _repository.checkPreviousVersion({
     previous: SpaceRepository.findUniqueSpace(ctx.prisma, {
       where: { space_id: input.space_id },
     }),

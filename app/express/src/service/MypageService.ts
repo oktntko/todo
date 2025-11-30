@@ -6,7 +6,7 @@ import { ReqCtx } from '~/lib/context';
 import { log } from '~/lib/log4js';
 import { HashPassword, OnetimePassword, SecretPassword } from '~/lib/secret';
 import { ProtectedContext } from '~/middleware/trpc';
-import { checkDuplicate } from '~/repository/_repository';
+import { _repository } from '~/repository/_repository';
 import { UserRepository } from '~/repository/UserRepository';
 import { MypageRouterSchema } from '~/schema/MypageRouterSchema';
 
@@ -59,7 +59,7 @@ async function patchProfile(
 ) {
   log.trace(ReqCtx.reqid, 'updateProfile', ctx.operator.user_id, input);
 
-  await checkDuplicate({
+  await _repository.checkDuplicate({
     duplicate: UserRepository.findUniqueUser(ctx.prisma, { where: { email: input.email } }),
     current: { key: 'user_id', value: ctx.operator.user_id },
   });

@@ -25,7 +25,7 @@ async function findManyUser(
   prisma: PrismaClient,
   params: {
     where: Prisma.UserWhereInput;
-    orderBy: Prisma.UserOrderByWithRelationInput;
+    orderBy: Prisma.UserOrderByWithRelationInput | Prisma.UserOrderByWithRelationInput[];
     take?: number;
     skip?: number;
   },
@@ -52,7 +52,7 @@ async function findUniqueUser(
 async function createUser(
   prisma: PrismaClient,
   params: {
-    data: Omit<Prisma.UserUncheckedCreateInput, CommonColumn | 'session_list' | 'file_list'>;
+    data: Omit<Prisma.UserUncheckedCreateInput, CommonColumn>;
   },
 ) {
   return prisma.user.create({
@@ -60,6 +60,16 @@ async function createUser(
       email: params.data.email,
       password: params.data.password,
       username: params.data.username,
+      avatar_image: params.data.avatar_image,
+      description: params.data.description,
+      twofa_enable: params.data.twofa_enable,
+      twofa_secret: params.data.twofa_secret,
+      aichat_enable: params.data.aichat_enable,
+      aichat_model: params.data.aichat_model,
+      aichat_api_key: params.data.aichat_api_key,
+
+      session_list: params.data.session_list,
+      file_list: params.data.file_list,
     },
   });
 }
@@ -68,9 +78,7 @@ async function updateUser(
   prisma: PrismaClient,
   params: {
     where: Prisma.UserWhereUniqueInput;
-    data: Partial<
-      Omit<Prisma.UserUncheckedUpdateInput, CommonColumn | 'session_list' | 'file_list'>
-    >;
+    data: Omit<Prisma.UserUncheckedUpdateInput, CommonColumn>;
   },
 ) {
   return prisma.user.update({
@@ -85,6 +93,9 @@ async function updateUser(
       aichat_enable: params.data.aichat_enable,
       aichat_model: params.data.aichat_model,
       aichat_api_key: params.data.aichat_api_key,
+
+      session_list: params.data.session_list,
+      file_list: params.data.file_list,
     },
     where: params.where,
   });

@@ -38,11 +38,9 @@ const deleteInput = FileSchema.pick({
   updated_at: true,
 });
 
-export const FileOutputSchema = FileSchema.merge(
-  z.object({
-    todo_list: z.lazy(() => TodoSchema).array(),
-  }),
-);
+export const FileOutputSchema = FileSchema.extend({
+  todo_list: z.lazy(() => TodoSchema).array(),
+});
 
 const searchInput = z.object({
   where: z.object({

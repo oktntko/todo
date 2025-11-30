@@ -25,7 +25,7 @@ async function findManySpace(
   prisma: PrismaClient,
   params: {
     where: Prisma.SpaceWhereInput;
-    orderBy: Prisma.SpaceOrderByWithRelationInput;
+    orderBy: Prisma.SpaceOrderByWithRelationInput | Prisma.SpaceOrderByWithRelationInput[];
     take?: number;
     skip?: number;
   },
@@ -59,7 +59,7 @@ async function findUniqueSpace(
 async function createSpace(
   prisma: PrismaClient,
   params: {
-    data: Omit<Prisma.SpaceUncheckedCreateInput, CommonColumn | 'todo_list'>;
+    data: Omit<Prisma.SpaceUncheckedCreateInput, CommonColumn>;
     operator_id: string;
   },
 ) {
@@ -75,6 +75,8 @@ async function createSpace(
 
       created_by: params.operator_id,
       updated_by: params.operator_id,
+
+      todo_list: params.data.todo_list,
     },
   });
 }
@@ -83,7 +85,7 @@ async function updateSpace(
   prisma: PrismaClient,
   params: {
     where: Prisma.SpaceWhereUniqueInput;
-    data: Partial<Omit<Prisma.SpaceUncheckedCreateInput, CommonColumn | 'todo_list'>>;
+    data: Omit<Prisma.SpaceUncheckedUpdateInput, CommonColumn>;
     operator_id: string;
   },
 ) {
@@ -96,6 +98,8 @@ async function updateSpace(
       space_color: params.data.space_color,
 
       updated_by: params.operator_id,
+
+      todo_list: params.data.todo_list,
     },
     where: params.where,
   });

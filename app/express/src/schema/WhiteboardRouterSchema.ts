@@ -18,7 +18,7 @@ const deleteInput = WhiteboardSchema.pick({
   updated_at: true,
 });
 
-const updateInput = createInput.merge(deleteInput);
+const updateInput = createInput.extend(deleteInput.shape);
 
 const upsertInput = z.object({
   whiteboard_id: WhiteboardSchema.shape.whiteboard_id.nullish(),

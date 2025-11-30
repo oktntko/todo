@@ -7,7 +7,7 @@ import { HashPassword, OnetimePassword, SecretPassword } from '~/lib/secret';
 import { PublicContext } from '~/middleware/trpc';
 import { SpaceRepository } from '~/repository/SpaceRepository';
 import { UserRepository } from '~/repository/UserRepository';
-import { checkDataExist, checkDuplicate } from '~/repository/_repository';
+import { _repository } from '~/repository/_repository';
 import { AuthRouterSchema } from '~/schema/AuthRouterSchema';
 
 export const AuthService = {
@@ -20,7 +20,7 @@ export const AuthService = {
 async function signup(ctx: PublicContext, input: z.infer<typeof AuthRouterSchema.signupInput>) {
   log.trace(ReqCtx.reqid, 'signup', input);
 
-  await checkDuplicate({
+  await _repository.checkDuplicate({
     duplicate: UserRepository.findUniqueUser(ctx.prisma, {
       where: { email: input.email },
     }),
@@ -92,7 +92,7 @@ async function signinTwofa(
     });
   }
 
-  const user = await checkDataExist({
+  const user = await _repository.checkDataExist({
     data: UserRepository.findUniqueUser(ctx.prisma, {
       where: { user_id: input.auth_twofa.user_id },
     }),

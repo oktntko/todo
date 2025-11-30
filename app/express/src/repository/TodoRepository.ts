@@ -28,7 +28,7 @@ async function findManyTodo(
   prisma: PrismaClient,
   params: {
     where: Prisma.TodoWhereInput;
-    orderBy: Prisma.TodoOrderByWithRelationInput;
+    orderBy: Prisma.TodoOrderByWithRelationInput | Prisma.TodoOrderByWithRelationInput[];
     take?: number;
     skip?: number;
   },
@@ -111,7 +111,7 @@ async function upsertTodo(
 async function createTodo(
   prisma: PrismaClient,
   params: {
-    data: Omit<Prisma.TodoUncheckedCreateInput, CommonColumn | 'todo_id'>;
+    data: Omit<Prisma.TodoUncheckedCreateInput, CommonColumn>;
     operator_id: string;
   },
 ) {
@@ -142,7 +142,7 @@ async function updateTodo(
   prisma: PrismaClient,
   params: {
     where: Prisma.TodoWhereUniqueInput;
-    data: Omit<Prisma.TodoUncheckedUpdateInput, CommonColumn | 'todo_id'>;
+    data: Omit<Prisma.TodoUncheckedUpdateInput, CommonColumn>;
     operator_id: string;
   },
 ) {
@@ -173,8 +173,8 @@ async function updateTodo(
 async function updateManyTodo(
   prisma: PrismaClient,
   params: {
-    where: { todo_id: string }[];
-    data: Omit<Prisma.TodoUncheckedUpdateInput, CommonColumn | 'todo_id' | 'tag_list'>;
+    where: Prisma.TodoWhereInput;
+    data: Omit<Prisma.TodoUncheckedUpdateInput, CommonColumn>;
     operator_id: string;
   },
 ) {
@@ -194,11 +194,7 @@ async function updateManyTodo(
       created_by: params.operator_id,
       updated_by: params.operator_id,
     },
-    where: {
-      todo_id: {
-        in: params.where.map((x) => x.todo_id),
-      },
-    },
+    where: params.where,
   });
 }
 
@@ -220,14 +216,10 @@ async function deleteTodo(
 async function deleteManyTodo(
   prisma: PrismaClient,
   params: {
-    where: { todo_id: string }[];
+    where: Prisma.TodoWhereInput;
   },
 ) {
   return prisma.todo.deleteMany({
-    where: {
-      todo_id: {
-        in: params.where.map((x) => x.todo_id),
-      },
-    },
+    where: params.where,
   });
 }

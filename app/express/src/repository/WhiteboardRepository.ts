@@ -25,7 +25,9 @@ async function findManyWhiteboard(
   prisma: PrismaClient,
   params: {
     where: Prisma.WhiteboardWhereInput;
-    orderBy: Prisma.WhiteboardOrderByWithRelationInput;
+    orderBy:
+      | Prisma.WhiteboardOrderByWithRelationInput
+      | Prisma.WhiteboardOrderByWithRelationInput[];
     take?: number;
     skip?: number;
   },
@@ -75,7 +77,7 @@ async function updateWhiteboard(
   prisma: PrismaClient,
   params: {
     where: Prisma.WhiteboardWhereUniqueInput;
-    data: Partial<Omit<Prisma.WhiteboardUncheckedCreateInput, CommonColumn>>;
+    data: Omit<Prisma.WhiteboardUncheckedUpdateInput, CommonColumn>;
     operator_id: string;
   },
 ) {

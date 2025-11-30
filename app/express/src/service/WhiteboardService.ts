@@ -4,7 +4,7 @@ import { type Prisma } from '@todo/prisma/client';
 import { ReqCtx } from '~/lib/context';
 import { log } from '~/lib/log4js';
 import { ProtectedContext } from '~/middleware/trpc';
-import { checkDataExist, checkPreviousVersion } from '~/repository/_repository';
+import { _repository } from '~/repository/_repository';
 import { WhiteboardRepository } from '~/repository/WhiteboardRepository';
 import { WhiteboardRouterSchema } from '~/schema/WhiteboardRouterSchema';
 
@@ -41,7 +41,7 @@ async function getWhiteboard(
 ) {
   log.trace(ReqCtx.reqid, 'getWhiteboard', ctx.operator.user_id, input);
 
-  return checkDataExist({
+  return _repository.checkDataExist({
     data: WhiteboardRepository.findUniqueWhiteboard(ctx.prisma, {
       where: { whiteboard_id: input.whiteboard_id },
     }),
@@ -78,7 +78,7 @@ async function updateWhiteboard(
 ) {
   log.trace(ReqCtx.reqid, 'updateWhiteboard', ctx.operator.user_id, input);
 
-  const previous = await checkPreviousVersion({
+  const previous = await _repository.checkPreviousVersion({
     previous: WhiteboardRepository.findUniqueWhiteboard(ctx.prisma, {
       where: { whiteboard_id: input.whiteboard_id },
     }),
@@ -129,7 +129,7 @@ async function deleteWhiteboard(
 ) {
   log.trace(ReqCtx.reqid, 'deleteWhiteboard', ctx.operator.user_id, input);
 
-  await checkPreviousVersion({
+  await _repository.checkPreviousVersion({
     previous: WhiteboardRepository.findUniqueWhiteboard(ctx.prisma, {
       where: { whiteboard_id: input.whiteboard_id },
     }),

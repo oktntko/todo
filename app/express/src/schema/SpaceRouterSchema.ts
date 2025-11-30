@@ -18,7 +18,7 @@ const deleteInput = SpaceSchema.pick({
   updated_at: true,
 });
 
-const updateInput = createInput.merge(deleteInput);
+const updateInput = createInput.extend(deleteInput.shape);
 
 const getInput = SpaceSchema.pick({
   space_id: true,

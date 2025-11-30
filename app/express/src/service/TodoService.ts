@@ -6,7 +6,7 @@ import { ReqCtx } from '~/lib/context';
 import { log } from '~/lib/log4js';
 import { message } from '~/lib/message';
 import { ProtectedContext } from '~/middleware/trpc';
-import { checkDataExist, checkPreviousVersion } from '~/repository/_repository';
+import { _repository } from '~/repository/_repository';
 import { SpaceRepository } from '~/repository/SpaceRepository';
 import { TodoRepository } from '~/repository/TodoRepository';
 import { TodoRouterSchema } from '~/schema/TodoRouterSchema';
@@ -119,7 +119,7 @@ async function searchTodo(
 async function getTodo(ctx: ProtectedContext, input: z.infer<typeof TodoRouterSchema.getInput>) {
   log.trace(ReqCtx.reqid, 'getTodo', ctx.operator.user_id, input);
 
-  return checkDataExist({
+  return _repository.checkDataExist({
     data: TodoRepository.findUniqueTodo(ctx.prisma, {
       where: {
         todo_id: input.todo_id,
@@ -216,7 +216,7 @@ async function updateTodo(
     });
   }
 
-  const previous = await checkPreviousVersion({
+  const previous = await _repository.checkPreviousVersion({
     previous: TodoRepository.findUniqueTodo(ctx.prisma, { where: { todo_id: input.todo_id } }),
     updated_at: input.updated_at,
   });
@@ -263,7 +263,7 @@ async function updateManyTodo(
 
   await Promise.all(
     input.list.map(async (input) => {
-      const previous = await checkPreviousVersion({
+      const previous = await _repository.checkPreviousVersion({
         previous: TodoRepository.findUniqueTodo(ctx.prisma, { where: { todo_id: input.todo_id } }),
         updated_at: input.updated_at,
       });
@@ -289,7 +289,9 @@ async function updateManyTodo(
       order: input.order,
       done_at: input.done_at,
     },
-    where: input.list,
+    where: {
+      todo_id: { in: input.list.map((x) => x.todo_id) },
+    },
     operator_id: ctx.operator.user_id,
   });
 }
@@ -298,7 +300,7 @@ async function updateManyTodo(
 async function deleteTodo(ctx: ProtectedContext, input: z.infer<typeof TodoRouterSchema.getInput>) {
   log.trace(ReqCtx.reqid, 'deleteTodo', ctx.operator.user_id, input);
 
-  const previous = await checkDataExist({
+  const previous = await _repository.checkDataExist({
     data: TodoRepository.findUniqueTodo(ctx.prisma, {
       where: { todo_id: input.todo_id },
     }),
@@ -324,7 +326,7 @@ async function deleteManyTodo(
 
   await Promise.all(
     inputList.map(async (input) => {
-      const previous = await checkDataExist({
+      const previous = await _repository.checkDataExist({
         data: TodoRepository.findUniqueTodo(ctx.prisma, {
           where: { todo_id: input.todo_id },
         }),
@@ -339,7 +341,9 @@ async function deleteManyTodo(
   );
 
   return TodoRepository.deleteManyTodo(ctx.prisma, {
-    where: inputList,
+    where: {
+      todo_id: { in: inputList.map((x) => x.todo_id) },
+    },
   });
 }
 

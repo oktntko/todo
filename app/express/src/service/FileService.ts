@@ -6,7 +6,7 @@ import { ReqCtx } from '~/lib/context';
 import { log } from '~/lib/log4js';
 import { message } from '~/lib/message';
 import { ProtectedContext } from '~/middleware/trpc';
-import { checkDataExist, checkPreviousVersion } from '~/repository/_repository';
+import { _repository } from '~/repository/_repository';
 import { FileRepository } from '~/repository/FileRepository';
 import { FileRouterSchema } from '~/schema/FileRouterSchema';
 
@@ -25,7 +25,7 @@ async function readFile(ctx: ProtectedContext, input: z.infer<typeof FileRouterS
   log.trace(ReqCtx.reqid, 'readFile', ctx.operator.user_id, input);
 
   // テーブルからデータを取得
-  const filedata = await checkDataExist({
+  const filedata = await _repository.checkDataExist({
     data: FileRepository.findUniqueFile(ctx.prisma, {
       where: { file_id: input.file_id },
     }),
@@ -127,7 +127,7 @@ async function deleteFile(
   log.trace(ReqCtx.reqid, 'deleteFile', ctx.operator.user_id, input);
 
   // テーブルを更新
-  await checkPreviousVersion({
+  await _repository.checkPreviousVersion({
     previous: FileRepository.findUniqueFile(ctx.prisma, {
       where: { file_id: input.file_id },
     }),

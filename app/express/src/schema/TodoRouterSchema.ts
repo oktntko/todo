@@ -8,12 +8,10 @@ import {
   TodoStatusSchema,
 } from '@todo/prisma/schema';
 
-export const TodoOutputSchema = TodoSchema.merge(
-  z.object({
-    space: z.lazy(() => SpaceSchema),
-    file_list: z.lazy(() => FileSchema).array(),
-  }),
-);
+export const TodoOutputSchema = TodoSchema.extend({
+  space: z.lazy(() => SpaceSchema),
+  file_list: z.lazy(() => FileSchema).array(),
+});
 
 const upsertInput = TodoSchema.omit({
   created_by: true,
@@ -30,23 +28,21 @@ const createInput = TodoSchema.omit({
   updated_at: true,
 });
 
-const updateInput = createInput.partial().merge(
+const updateInput = createInput.partial().extend(
   TodoSchema.pick({
     todo_id: true,
     updated_at: true,
-  }),
+  }).shape,
 );
 
-const updateManyInput = createInput.partial().merge(
-  z.object({
-    list: TodoSchema.pick({
-      todo_id: true,
-      updated_at: true,
-    })
-      .array()
-      .min(1),
-  }),
-);
+const updateManyInput = createInput.partial().extend({
+  list: TodoSchema.pick({
+    todo_id: true,
+    updated_at: true,
+  })
+    .array()
+    .min(1),
+});
 
 const getInput = TodoSchema.pick({
   todo_id: true,

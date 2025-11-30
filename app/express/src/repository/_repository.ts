@@ -2,7 +2,13 @@ import { R } from '@todo/lib/remeda';
 import { TRPCError } from '@trpc/server';
 import { message } from '~/lib/message';
 
-export async function checkDataExist<T>(params: {
+export const _repository = {
+  checkDataExist,
+  checkDuplicate,
+  checkPreviousVersion,
+};
+
+async function checkDataExist<T>(params: {
   data: T | null | Promise<T | null>;
   dataIsNotExistMessage?: string;
 }) {
@@ -17,7 +23,7 @@ export async function checkDataExist<T>(params: {
   return data;
 }
 
-export async function checkDuplicate<T>(params: {
+async function checkDuplicate<T>(params: {
   duplicate: T | null | Promise<T | null>;
   current?: { key: keyof T; value: unknown };
   duplicateIsExistingMessage?: string;
@@ -42,7 +48,7 @@ export async function checkDuplicate<T>(params: {
   return data;
 }
 
-export async function checkPreviousVersion<T extends { updated_at: Date }>(params: {
+async function checkPreviousVersion<T extends { updated_at: Date }>(params: {
   previous: T | null | Promise<T | null>;
   updated_at: string | Date;
   dataIsNotExistMessage?: string;
