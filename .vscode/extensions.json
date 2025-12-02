@@ -5,7 +5,7 @@
     "antfu.iconify",
     "bradlc.vscode-tailwindcss",
     "dbaeumer.vscode-eslint",
-    "esbenp.prettier-vscode",
+    "prettier.prettier-vscode",
     "kingwl.vscode-vitest-runner",
     "streetsidesoftware.code-spell-checker",
     "vitest.explorer"

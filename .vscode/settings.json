@@ -8,7 +8,7 @@
   "editor.codeActionsOnSave": {
     "source.fixAll": "explicit"
   },
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.defaultFormatter": "prettier.prettier-vscode",
   "editor.formatOnSave": true,
   "editor.rulers": [100],
   "eslint.useFlatConfig": true,
@@ -16,11 +16,17 @@
   "files.eol": "\n",
   "files.insertFinalNewline": true,
   "files.trimFinalNewlines": true,
-  "[prisma]": {
-    "editor.defaultFormatter": "Prisma.prisma"
-  },
   "files.associations": {
     "*.css": "tailwindcss"
   },
-  "vitest.shellType": "terminal"
+  "vitest.shellType": "terminal",
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "prettier.prettier-vscode"
+  },
+  "[vue]": {
+    "editor.defaultFormatter": "prettier.prettier-vscode"
+  }
 }
