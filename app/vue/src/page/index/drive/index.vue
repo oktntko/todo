@@ -3,7 +3,7 @@ import { FileRouterSchema } from '@todo/express/schema';
 import { dayjs } from '@todo/lib/dayjs';
 import type { z } from '@todo/lib/zod';
 import { useVueValidateZod } from 'use-vue-validate-schema/zod';
-import MyInputFile from '~/component/form/MyInputFile.vue';
+import MyInputFile from '~/component/input/MyInputFile.vue';
 import { useFile } from '~/composable/useFile';
 import { trpc, type RouterOutput } from '~/lib/trpc';
 

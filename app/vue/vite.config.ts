@@ -43,6 +43,7 @@ export default defineConfig({
     }),
     VueComponents({
       dirs: ['src/component'],
+      extensions: ['vue', 'tsx'],
       resolvers: [VueUseComponentsResolver()],
       dts: 'src/vue-components.d.ts',
     }),

@@ -13,12 +13,13 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     MyBreadcrumb: typeof import('./component/navi/MyBreadcrumb.vue')['default']
+    MyButton: typeof import('./component/button/MyButton.tsx')['default']
     MyDownloadFileList: typeof import('./component/MyDownloadFileList.vue')['default']
     MyDropdown: typeof import('./component/MyDropdown.vue')['default']
-    MyInputFile: typeof import('./component/form/MyInputFile.vue')['default']
-    MyInputPassword: typeof import('./component/form/MyInputPassword.vue')['default']
+    MyInputFile: typeof import('./component/input/MyInputFile.vue')['default']
+    MyInputPassword: typeof import('./component/input/MyInputPassword.vue')['default']
     MyLoading: typeof import('./component/MyLoading.vue')['default']
-    MySelect: typeof import('./component/form/MySelect.vue')['default']
+    MySelect: typeof import('./component/input/MySelect.vue')['default']
     MySortButton: typeof import('./component/MySortButton.vue')['default']
     OnClickOutside: typeof import('@vueuse/components')['OnClickOutside']
     RouterLink: typeof import('vue-router')['RouterLink']
@@ -29,12 +30,13 @@ declare module 'vue' {
 // For TSX support
 declare global {
   const MyBreadcrumb: typeof import('./component/navi/MyBreadcrumb.vue')['default']
+  const MyButton: typeof import('./component/button/MyButton.tsx')['default']
   const MyDownloadFileList: typeof import('./component/MyDownloadFileList.vue')['default']
   const MyDropdown: typeof import('./component/MyDropdown.vue')['default']
-  const MyInputFile: typeof import('./component/form/MyInputFile.vue')['default']
-  const MyInputPassword: typeof import('./component/form/MyInputPassword.vue')['default']
+  const MyInputFile: typeof import('./component/input/MyInputFile.vue')['default']
+  const MyInputPassword: typeof import('./component/input/MyInputPassword.vue')['default']
   const MyLoading: typeof import('./component/MyLoading.vue')['default']
-  const MySelect: typeof import('./component/form/MySelect.vue')['default']
+  const MySelect: typeof import('./component/input/MySelect.vue')['default']
   const MySortButton: typeof import('./component/MySortButton.vue')['default']
   const OnClickOutside: typeof import('@vueuse/components')['OnClickOutside']
   const RouterLink: typeof import('vue-router')['RouterLink']

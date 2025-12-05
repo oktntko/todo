@@ -22,11 +22,5 @@
   "vitest.shellType": "terminal",
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
-  },
-  "[typescript]": {
-    "editor.defaultFormatter": "prettier.prettier-vscode"
-  },
-  "[vue]": {
-    "editor.defaultFormatter": "prettier.prettier-vscode"
   }
 }

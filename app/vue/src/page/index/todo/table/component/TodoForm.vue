@@ -3,7 +3,7 @@ import { TodoRouterSchema } from '@todo/express/schema';
 import type { z } from '@todo/lib/zod';
 import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import type { DownloadFile } from '~/component/MyDownloadFileList.vue';
-import MyInputFile from '~/component/form/MyInputFile.vue';
+import MyInputFile from '~/component/input/MyInputFile.vue';
 import { useFile } from '~/composable/useFile';
 import { useSpaceStore } from '~/store/SpaceStore';
 

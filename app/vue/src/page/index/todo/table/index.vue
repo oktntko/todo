@@ -4,6 +4,7 @@ import { dayjs } from '@todo/lib/dayjs';
 import type { z } from '@todo/lib/zod';
 import { TodoStatusList } from '@todo/prisma/schema';
 import { useVueValidateZod } from 'use-vue-validate-schema/zod';
+import { RouterLink } from 'vue-router';
 import { useFile } from '~/composable/useFile';
 import { trpc, type RouterOutput } from '~/lib/trpc';
 
@@ -133,20 +134,10 @@ const headerCheckbox = computed(() => {
         </section>
 
         <section class="flex gap-2">
-          <button
-            type="submit"
-            :class="[
-              'inline-flex items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
-              'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
-              'min-w-[120px] rounded-md border px-4 py-2 text-sm font-medium',
-              'border-green-700 bg-green-600 text-white hover:bg-green-800',
-              'capitalize',
-            ]"
-            :disabled="loading"
-          >
+          <MyButton type="submit" color="green" variant="contained" :disabled="loading">
             <span class="icon-[bx--search] h-4 w-4"></span>
-            <span class="ms-1 capitalize">search</span>
-          </button>
+            <span class="capitalize">search</span>
+          </MyButton>
         </section>
       </form>
     </div>
@@ -155,30 +146,13 @@ const headerCheckbox = computed(() => {
       <header
         class="z-10 flex flex-row items-center gap-2 rounded-t border border-gray-300 bg-gray-50 p-2 px-4 py-2 text-sm"
       >
-        <RouterLink
-          :class="[
-            'inline-flex items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
-            'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
-            'min-w-[120px] rounded-md border px-4 py-2 text-sm font-medium',
-            'border-blue-700 bg-white text-blue-700 hover:bg-blue-800 hover:text-white',
-            'capitalize',
-          ]"
-          :to="{
-            name: '//todo/table/add',
-          }"
-        >
+        <MyButton :tag="RouterLink" color="blue" :to="{ name: '//todo/table/add' }">
           <span class="icon-[icon-park-solid--add-one] h-4 w-4"></span>
-          <span class="ms-1 capitalize">add todo</span>
-        </RouterLink>
-        <button
+          <span class="capitalize">add todo</span>
+        </MyButton>
+        <MyButton
           type="button"
-          :class="[
-            'inline-flex items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
-            'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
-            'min-w-[120px] rounded-md border px-4 py-2 text-sm font-medium',
-            'border-green-700 bg-white text-green-700 hover:bg-green-800 hover:text-white',
-            'capitalize',
-          ]"
+          color="green"
           :disabled="loading || checkedList.length === 0"
           @click="
             async () => {
@@ -203,17 +177,10 @@ const headerCheckbox = computed(() => {
           "
         >
           <span class="icon-[material-symbols--check-circle-outline-rounded] h-4 w-4"></span>
-          <span class="ms-1 capitalize">done</span>
-        </button>
-        <button
+          <span class="capitalize">done</span>
+        </MyButton>
+        <MyButton
           type="button"
-          :class="[
-            'inline-flex items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
-            'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
-            'min-w-[120px] rounded-md border px-4 py-2 text-sm font-medium',
-            'border-gray-300 bg-white text-gray-800 hover:bg-gray-200',
-            'capitalize',
-          ]"
           :disabled="loading || checkedList.length === 0"
           @click="
             async () => {
@@ -233,17 +200,10 @@ const headerCheckbox = computed(() => {
           "
         >
           <span class="icon-[simple-line-icons--cloud-download] h-4 w-4"></span>
-          <span class="ms-1 capitalize">download</span>
-        </button>
-        <button
+          <span class="capitalize">download</span>
+        </MyButton>
+        <MyButton
           type="button"
-          :class="[
-            'inline-flex items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
-            'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
-            'min-w-[120px] rounded-md border px-4 py-2 text-sm font-medium',
-            'border-gray-300 bg-white text-gray-800 hover:bg-gray-200',
-            'capitalize',
-          ]"
           :disabled="loading || checkedList.length === 0"
           @click="
             async () => {
@@ -265,8 +225,8 @@ const headerCheckbox = computed(() => {
           "
         >
           <span class="icon-[tabler--trash-filled] h-4 w-4"></span>
-          <span class="ms-1 capitalize">delete</span>
-        </button>
+          <span class="capitalize">delete</span>
+        </MyButton>
       </header>
 
       <table
