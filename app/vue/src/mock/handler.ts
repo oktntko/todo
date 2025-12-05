@@ -24,7 +24,7 @@ await migrate();
 
 const ctx = {
   user: {
-    user_id: 1,
+    user_id: '019aeeb6-10e4-7e44-b31d-0c1f45e91ad9',
     email: 'example@example.com',
     password: 'example@example.com',
     username: 'example',
@@ -149,9 +149,9 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
       filesize: 0,
       mimetype: '',
       created_at: new Date(),
-      created_by: 0,
+      created_by: '019aeeb6-10e4-7e44-b31d-0c1f45e91ad9',
       updated_at: new Date(),
-      updated_by: 0,
+      updated_by: '019aeeb6-10e4-7e44-b31d-0c1f45e91ad9',
     };
   }),
   trpcMsw.file.deleteMany.mutation(() => {

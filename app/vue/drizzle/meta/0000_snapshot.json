@@ -1,5 +1,5 @@
 {
-  "id": "39f270fe-9aef-4759-92fc-4e13183b1ee6",
+  "id": "2746217c-0df1-4efe-b57a-57a7bf9d593e",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -75,7 +75,7 @@
         },
         "created_by": {
           "name": "created_by",
-          "type": "integer",
+          "type": "varchar(36)",
           "primaryKey": false,
           "notNull": true
         },
@@ -88,7 +88,7 @@
         },
         "updated_by": {
           "name": "updated_by",
-          "type": "integer",
+          "type": "varchar(36)",
           "primaryKey": false,
           "notNull": true
         }
@@ -132,7 +132,7 @@
         },
         "user_id": {
           "name": "user_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
@@ -201,7 +201,7 @@
         },
         "owner_id": {
           "name": "owner_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
@@ -248,7 +248,7 @@
         },
         "created_by": {
           "name": "created_by",
-          "type": "integer",
+          "type": "varchar(36)",
           "primaryKey": false,
           "notNull": true
         },
@@ -261,7 +261,7 @@
         },
         "updated_by": {
           "name": "updated_by",
-          "type": "integer",
+          "type": "varchar(36)",
           "primaryKey": false,
           "notNull": true
         }
@@ -370,7 +370,7 @@
         },
         "created_by": {
           "name": "created_by",
-          "type": "integer",
+          "type": "varchar(36)",
           "primaryKey": false,
           "notNull": true
         },
@@ -383,7 +383,7 @@
         },
         "updated_by": {
           "name": "updated_by",
-          "type": "integer",
+          "type": "varchar(36)",
           "primaryKey": false,
           "notNull": true
         }
@@ -479,9 +479,10 @@
       "columns": {
         "user_id": {
           "name": "user_id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "email": {
           "name": "email",
@@ -587,7 +588,7 @@
       "columns": {
         "user_id": {
           "name": "user_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
@@ -655,7 +656,7 @@
         },
         "owner_id": {
           "name": "owner_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
@@ -696,7 +697,7 @@
         },
         "created_by": {
           "name": "created_by",
-          "type": "integer",
+          "type": "varchar(36)",
           "primaryKey": false,
           "notNull": true
         },
@@ -709,7 +710,7 @@
         },
         "updated_by": {
           "name": "updated_by",
-          "type": "integer",
+          "type": "varchar(36)",
           "primaryKey": false,
           "notNull": true
         }

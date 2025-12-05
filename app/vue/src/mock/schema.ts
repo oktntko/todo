@@ -16,7 +16,7 @@ export const pgSchemaTodo = pgSchema('todo');
 
 // User
 export const pgUser = pgSchemaTodo.table('user', {
-  user_id: serial('user_id').primaryKey(),
+  user_id: uuid('user_id').primaryKey().defaultRandom(),
   email: varchar('email', { length: 255 }).notNull().unique(),
   password: varchar('password', { length: 255 }).notNull(),
   username: varchar('username', { length: 100 }).notNull(),
@@ -34,7 +34,7 @@ export const pgUser = pgSchemaTodo.table('user', {
 // Space
 export const pgSpace = pgSchemaTodo.table('space', {
   space_id: serial('space_id').primaryKey(),
-  owner_id: integer('owner_id')
+  owner_id: uuid('owner_id')
     .notNull()
     .references(() => pgUser.user_id, { onDelete: 'cascade' }),
   space_name: varchar('space_name', { length: 100 }).notNull(),
@@ -43,9 +43,9 @@ export const pgSpace = pgSchemaTodo.table('space', {
   space_image: text('space_image').default('').notNull(),
   space_color: varchar('space_color', { length: 100 }).default('').notNull(),
   created_at: timestamp('created_at', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
-  created_by: integer('created_by').notNull(),
+  created_by: varchar('created_by', { length: 36 }).notNull(),
   updated_at: timestamp('updated_at', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
-  updated_by: integer('updated_by').notNull(),
+  updated_by: varchar('updated_by', { length: 36 }).notNull(),
 });
 
 // Todo
@@ -63,15 +63,15 @@ export const pgTodo = pgSchemaTodo.table('todo', {
   order: integer('order').default(0).notNull(),
   done_at: timestamp('done_at', { withTimezone: true, mode: 'date' }),
   created_at: timestamp('created_at', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
-  created_by: integer('created_by').notNull(),
+  created_by: varchar('created_by', { length: 36 }).notNull(),
   updated_at: timestamp('updated_at', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
-  updated_by: integer('updated_by').notNull(),
+  updated_by: varchar('updated_by', { length: 36 }).notNull(),
 });
 
 // Whiteboard
 export const pgWhiteboard = pgSchemaTodo.table('whiteboard', {
   whiteboard_id: serial('whiteboard_id').primaryKey(),
-  owner_id: integer('owner_id')
+  owner_id: uuid('owner_id')
     .notNull()
     .references(() => pgUser.user_id, { onDelete: 'cascade' }),
   whiteboard_name: varchar('whiteboard_name', { length: 100 }).default('').notNull(),
@@ -79,9 +79,9 @@ export const pgWhiteboard = pgSchemaTodo.table('whiteboard', {
   whiteboard_order: integer('whiteboard_order').default(0).notNull(),
   whiteboard_content: text('whiteboard_content').default('').notNull(),
   created_at: timestamp('created_at', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
-  created_by: integer('created_by').notNull(),
+  created_by: varchar('created_by', { length: 36 }).notNull(),
   updated_at: timestamp('updated_at', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
-  updated_by: integer('updated_by').notNull(),
+  updated_by: varchar('updated_by', { length: 36 }).notNull(),
 });
 
 // Aichat
@@ -97,7 +97,9 @@ export const pgSession = pgSchemaTodo.table('session', {
   session_key: varchar('session_key', { length: 255 }).notNull().unique(),
   originalMaxAge: integer('originalMaxAge'),
   expires: timestamp('expires', { withTimezone: true, mode: 'date' }).defaultNow(),
-  user_id: integer('user_id').references(() => pgUser.user_id, { onDelete: 'cascade' }),
+  user_id: uuid('user_id').references(() => pgUser.user_id, {
+    onDelete: 'cascade',
+  }),
   data: text('data').default('{}').notNull(),
   created_at: timestamp('created_at', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
   updated_at: timestamp('updated_at', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
@@ -110,16 +112,16 @@ export const pgFile = pgSchemaTodo.table('file', {
   mimetype: varchar('mimetype', { length: 100 }).notNull(),
   filesize: integer('filesize').notNull(),
   created_at: timestamp('created_at', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
-  created_by: integer('created_by').notNull(),
+  created_by: varchar('created_by', { length: 36 }).notNull(),
   updated_at: timestamp('updated_at', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
-  updated_by: integer('updated_by').notNull(),
+  updated_by: varchar('updated_by', { length: 36 }).notNull(),
 });
 
 // ================= Many-to-many =================
 export const pgUserToFile = pgSchemaTodo.table(
   'user_to_file',
   {
-    user_id: integer('user_id')
+    user_id: uuid('user_id')
       .notNull()
       .references(() => pgUser.user_id),
     file_id: uuid('file_id')

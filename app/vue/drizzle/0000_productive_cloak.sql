@@ -12,9 +12,9 @@ CREATE TABLE "todo"."file" (
 	"mimetype" varchar(100) NOT NULL,
 	"filesize" integer NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"created_by" integer NOT NULL,
+	"created_by" varchar(36) NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"updated_by" integer NOT NULL
+	"updated_by" varchar(36) NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "todo"."session" (
@@ -22,7 +22,7 @@ CREATE TABLE "todo"."session" (
 	"session_key" varchar(255) NOT NULL,
 	"originalMaxAge" integer,
 	"expires" timestamp with time zone DEFAULT now(),
-	"user_id" integer,
+	"user_id" uuid,
 	"data" text DEFAULT '{}' NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
@@ -31,16 +31,16 @@ CREATE TABLE "todo"."session" (
 --> statement-breakpoint
 CREATE TABLE "todo"."space" (
 	"space_id" serial PRIMARY KEY NOT NULL,
-	"owner_id" integer NOT NULL,
+	"owner_id" uuid NOT NULL,
 	"space_name" varchar(100) NOT NULL,
 	"space_description" varchar(400) DEFAULT '' NOT NULL,
 	"space_order" integer DEFAULT 0 NOT NULL,
 	"space_image" text DEFAULT '' NOT NULL,
 	"space_color" varchar(100) DEFAULT '' NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"created_by" integer NOT NULL,
+	"created_by" varchar(36) NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"updated_by" integer NOT NULL
+	"updated_by" varchar(36) NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "todo"."todo" (
@@ -55,9 +55,9 @@ CREATE TABLE "todo"."todo" (
 	"order" integer DEFAULT 0 NOT NULL,
 	"done_at" timestamp with time zone,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"created_by" integer NOT NULL,
+	"created_by" varchar(36) NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"updated_by" integer NOT NULL
+	"updated_by" varchar(36) NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "todo"."todo_to_file" (
@@ -67,7 +67,7 @@ CREATE TABLE "todo"."todo_to_file" (
 );
 --> statement-breakpoint
 CREATE TABLE "todo"."user" (
-	"user_id" serial PRIMARY KEY NOT NULL,
+	"user_id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"email" varchar(255) NOT NULL,
 	"password" varchar(255) NOT NULL,
 	"username" varchar(100) NOT NULL,
@@ -84,22 +84,22 @@ CREATE TABLE "todo"."user" (
 );
 --> statement-breakpoint
 CREATE TABLE "todo"."user_to_file" (
-	"user_id" integer NOT NULL,
+	"user_id" uuid NOT NULL,
 	"file_id" uuid NOT NULL,
 	CONSTRAINT "user_to_file_user_id_file_id_pk" PRIMARY KEY("user_id","file_id")
 );
 --> statement-breakpoint
 CREATE TABLE "todo"."whiteboard" (
 	"whiteboard_id" serial PRIMARY KEY NOT NULL,
-	"owner_id" integer NOT NULL,
+	"owner_id" uuid NOT NULL,
 	"whiteboard_name" varchar(100) DEFAULT '' NOT NULL,
 	"whiteboard_description" varchar(400) DEFAULT '' NOT NULL,
 	"whiteboard_order" integer DEFAULT 0 NOT NULL,
 	"whiteboard_content" text DEFAULT '' NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"created_by" integer NOT NULL,
+	"created_by" varchar(36) NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"updated_by" integer NOT NULL
+	"updated_by" varchar(36) NOT NULL
 );
 --> statement-breakpoint
 ALTER TABLE "todo"."session" ADD CONSTRAINT "session_user_id_user_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "todo"."user"("user_id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
