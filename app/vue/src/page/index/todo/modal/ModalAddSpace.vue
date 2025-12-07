@@ -6,8 +6,11 @@ import { useLoading } from '~/plugin/LoadingPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
 import { useSpaceStore } from '~/store/SpaceStore';
 
-const emit = defineEmits<{
-  close: [RouterOutput['space']['create']];
+export type ModalAddSpaceResult = { space: RouterOutput['space']['create'] };
+
+const $emit = defineEmits<{
+  done: [ModalAddSpaceResult];
+  close: [];
 }>();
 
 const { storedSpaceList } = storeToRefs(useSpaceStore());
@@ -29,7 +32,7 @@ async function handleSubmit(input: ModelValue) {
 
     storedSpaceList.value.push(space);
 
-    emit('close', space);
+    $emit('done', { space });
 
     $toast.success('Data has been saved.');
   } finally {
@@ -39,8 +42,10 @@ async function handleSubmit(input: ModelValue) {
 </script>
 
 <template>
-  <div class="p-4">
-    <header class="mb-4 text-lg font-bold capitalize">create new space</header>
-    <SpaceForm v-model="modelValue" class="px-4" @submit="handleSubmit"> </SpaceForm>
-  </div>
+  <PluginModal @close="$emit('close')">
+    <div class="p-4">
+      <header class="mb-4 text-lg font-bold capitalize">create new space</header>
+      <SpaceForm v-model="modelValue" class="px-4" @submit="handleSubmit"> </SpaceForm>
+    </div>
+  </PluginModal>
 </template>

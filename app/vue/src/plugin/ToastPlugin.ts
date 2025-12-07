@@ -1,5 +1,5 @@
 import type { App } from 'vue';
-import type { ComponentProps } from '~/utility-types';
+import type { ComponentProps } from 'vue-component-type-helpers';
 import PluginToast from './component/PluginToast.vue';
 
 type ToastProps = Omit<ComponentProps<typeof PluginToast>, 'onClose'>;

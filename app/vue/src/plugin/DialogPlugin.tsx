@@ -1,9 +1,9 @@
 import type { App } from 'vue';
+import type { ComponentProps } from 'vue-component-type-helpers';
 import { useDialogStore } from '~/store/DialogStore';
-import type { ComponentProps } from '~/utility-types';
 import PluginDialog from './component/PluginDialog.vue';
 
-type DialogProps = Omit<ComponentProps<typeof PluginDialog>, 'onClose'>;
+type DialogProps = ComponentProps<typeof PluginDialog>;
 type DialogPlugin = ReturnType<typeof installDialogPlugin>;
 
 const DialogPluginKey = Symbol() as InjectionKey<DialogPlugin>;

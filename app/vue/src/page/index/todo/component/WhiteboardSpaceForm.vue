@@ -6,7 +6,7 @@ import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 export type ModelValue = z.infer<typeof WhiteboardRouterSchema.createInput>;
 export type Reset = (modelValue: ModelValue) => void;
 
-const emit = defineEmits<{
+const $emit = defineEmits<{
   submit: [ModelValue, Reset];
 }>();
 
@@ -18,7 +18,7 @@ const { validateSubmit, ErrorMessage, reset, isDirty } = useVueValidateZod(
 );
 
 const handleSubmit = validateSubmit(async () => {
-  emit('submit', modelValue.value, reset);
+  $emit('submit', modelValue.value, reset);
 });
 </script>
 

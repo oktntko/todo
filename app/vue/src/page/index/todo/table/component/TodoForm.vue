@@ -3,7 +3,7 @@ import { TodoRouterSchema } from '@todo/express/schema';
 import type { z } from '@todo/lib/zod';
 import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import type { DownloadFile } from '~/component/MyDownloadFileList.vue';
-import MyInputFile from '~/component/input/MyInputFile.vue';
+import MyModalInputFile from '~/component/input/MyModalInputFile.vue';
 import { useFile } from '~/composable/useFile';
 import { useSpaceStore } from '~/store/SpaceStore';
 
@@ -17,7 +17,7 @@ const modelValueFileList = defineModel<DownloadFile[]>('file_list', { required: 
 
 defineProps<{ todo_id?: string }>();
 
-const emit = defineEmits<{
+const $emit = defineEmits<{
   submit: [ModelValue, Reset];
 }>();
 
@@ -29,7 +29,7 @@ const { validateSubmit, ErrorMessage, reset, isDirty } = useVueValidateZod(
 );
 
 const handleSubmit = validateSubmit((value) => {
-  emit('submit', value, reset);
+  $emit('submit', value, reset);
 });
 </script>
 
@@ -177,14 +177,13 @@ const handleSubmit = validateSubmit((value) => {
               :disabled="!todo_id"
               @click="
                 async () => {
-                  const files = await $modal.open<File[]>({
-                    component: MyInputFile,
-                    componentProps: {
-                      multiple: true,
-                    },
-                  });
+                  const files: File[] = await $modal.open(MyModalInputFile, (resolve, reject) => ({
+                    multiple: true,
+                    onDone: resolve,
+                    onClose: reject,
+                  }));
 
-                  if (files && files.length > 0) {
+                  if (files.length > 0) {
                     const { data } = await uploadManyFiles(files, {
                       todo_id,
                     });

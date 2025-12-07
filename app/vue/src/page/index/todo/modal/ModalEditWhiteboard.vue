@@ -7,8 +7,13 @@ import WhiteboardSpaceForm, {
 import { useLoading } from '~/plugin/LoadingPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
 
-const emit = defineEmits<{
-  close: [{ event: 'update' | 'delete'; whiteboard: RouterOutput['whiteboard']['update'] }];
+export type ModalEditWhiteboardResult =
+  | { event: 'update'; whiteboard: RouterOutput['whiteboard']['update'] }
+  | { event: 'delete'; whiteboard: RouterOutput['whiteboard']['delete'] };
+
+const $emit = defineEmits<{
+  done: [ModalEditWhiteboardResult];
+  close: [];
 }>();
 
 const props = defineProps<{
@@ -36,7 +41,7 @@ async function handleSubmit(input: ModelValue) {
       updated_at,
     });
 
-    emit('close', { event: 'update', whiteboard });
+    $emit('done', { event: 'update', whiteboard });
 
     $toast.success('Data has been saved.');
   } finally {
@@ -46,55 +51,57 @@ async function handleSubmit(input: ModelValue) {
 </script>
 
 <template>
-  <div class="p-4">
-    <header class="mb-4 text-lg font-bold capitalize">edit whiteboard</header>
-    <Transition
-      mode="out-in"
-      enter-from-class="transform opacity-0"
-      enter-active-class="transition ease-out duration-200"
-      enter-to-class="transform opacity-100"
-    >
-      <WhiteboardSpaceForm
-        v-if="modelValue"
-        v-model="modelValue"
-        class="px-4"
-        @submit="handleSubmit"
+  <PluginModal @close="$emit('close')">
+    <div class="p-4">
+      <header class="mb-4 text-lg font-bold capitalize">edit whiteboard</header>
+      <Transition
+        mode="out-in"
+        enter-from-class="transform opacity-0"
+        enter-active-class="transition ease-out duration-200"
+        enter-to-class="transform opacity-100"
       >
-        <template #buttons>
-          <button
-            type="button"
-            :class="[
-              'inline-flex items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
-              'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
-              'min-w-[120px] rounded-md border px-4 py-2 text-sm font-medium',
-              'border-yellow-500 bg-white text-yellow-800 hover:bg-yellow-500 hover:text-gray-800',
-              'capitalize',
-            ]"
-            @click="
-              async () => {
-                const yes = await $dialog.confirm(`Do you really want to delete this data?`);
-                if (!yes) {
-                  return;
-                }
-                const loading = $loading.open();
-                try {
-                  const whiteboard = await trpc.whiteboard.delete.mutate({
-                    whiteboard_id,
-                    updated_at,
-                  });
+        <WhiteboardSpaceForm
+          v-if="modelValue"
+          v-model="modelValue"
+          class="px-4"
+          @submit="handleSubmit"
+        >
+          <template #buttons>
+            <button
+              type="button"
+              :class="[
+                'inline-flex items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
+                'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
+                'min-w-[120px] rounded-md border px-4 py-2 text-sm font-medium',
+                'border-yellow-500 bg-white text-yellow-800 hover:bg-yellow-500 hover:text-gray-800',
+                'capitalize',
+              ]"
+              @click="
+                async () => {
+                  const yes = await $dialog.confirm(`Do you really want to delete this data?`);
+                  if (!yes) {
+                    return;
+                  }
+                  const loading = $loading.open();
+                  try {
+                    const whiteboard = await trpc.whiteboard.delete.mutate({
+                      whiteboard_id,
+                      updated_at,
+                    });
 
-                  emit('close', { event: 'delete', whiteboard });
-                } finally {
-                  loading.close();
+                    $emit('done', { event: 'delete', whiteboard });
+                  } finally {
+                    loading.close();
+                  }
                 }
-              }
-            "
-          >
-            delete
-          </button>
-        </template>
-      </WhiteboardSpaceForm>
-      <MyLoading v-else class="flex grow flex-col gap-8"> </MyLoading>
-    </Transition>
-  </div>
+              "
+            >
+              delete
+            </button>
+          </template>
+        </WhiteboardSpaceForm>
+        <MyLoading v-else class="flex grow flex-col gap-8"> </MyLoading>
+      </Transition>
+    </div>
+  </PluginModal>
 </template>

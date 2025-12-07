@@ -42,7 +42,7 @@ export default defineConfig({
       dts: 'src/vue-auto-import.d.ts',
     }),
     VueComponents({
-      dirs: ['src/component'],
+      dirs: ['src/component', 'src/plugin/component'],
       extensions: ['vue', 'tsx'],
       resolvers: [VueUseComponentsResolver()],
       dts: 'src/vue-components.d.ts',

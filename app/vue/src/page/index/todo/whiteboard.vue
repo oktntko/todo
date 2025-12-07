@@ -7,7 +7,9 @@ import * as fabric from 'fabric';
 import Sortable from 'sortablejs';
 import { trpc, type RouterOutput } from '~/lib/trpc';
 import { useToast } from '~/plugin/ToastPlugin';
-import ModalEditWhiteboard from './modal/ModalEditWhiteboard.vue';
+import ModalEditWhiteboard, {
+  type ModalEditWhiteboardResult,
+} from './modal/ModalEditWhiteboard.vue';
 
 const refstate = ref<{
   mode:
@@ -605,28 +607,25 @@ onMounted(async () => {
                     :class="['invisible group-hover/item:visible', 'hover:bg-gray-300']"
                     @click.prevent="
                       async () => {
-                        const result = await $modal.open<{
-                          event: 'update' | 'delete';
-                          space: RouterOutput['whiteboard']['update'];
-                        }>({
-                          component: ModalEditWhiteboard,
-                          componentProps: { whiteboard_id: whiteboard.whiteboard_id },
-                        });
-
-                        if (result == null) {
-                          return;
-                        }
+                        const result: ModalEditWhiteboardResult = await $modal.open(
+                          ModalEditWhiteboard,
+                          (resolve, reject) => ({
+                            whiteboard_id: whiteboard.whiteboard_id,
+                            onDone: resolve,
+                            onClose: reject,
+                          }),
+                        );
 
                         const index = whiteboard_list.findIndex(
-                          (x) => x.whiteboard_id === whiteboard.whiteboard_id,
+                          (x) => x.whiteboard_id === result.whiteboard.whiteboard_id,
                         );
 
                         if (result.event === 'delete') {
                           whiteboard_list.splice(index, 1);
                           setCurrentWhiteboard(whiteboard_list[0]);
                         } else {
-                          whiteboard_list.splice(index, 1, whiteboard);
-                          setCurrentWhiteboard(whiteboard);
+                          whiteboard_list.splice(index, 1, result.whiteboard);
+                          setCurrentWhiteboard(result.whiteboard);
                         }
                       }
                     "

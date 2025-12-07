@@ -9,8 +9,11 @@ import { useLoading } from '~/plugin/LoadingPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
 import { useSpaceStore } from '~/store/SpaceStore';
 
-const emit = defineEmits<{
-  close: [{ todo: z.infer<typeof TodoOutputSchema> }];
+export type ModalAddTodoResult = { todo: z.infer<typeof TodoOutputSchema> };
+
+const $emit = defineEmits<{
+  done: [ModalAddTodoResult];
+  close: [];
 }>();
 
 const { storedSpaceList } = storeToRefs(useSpaceStore());
@@ -47,7 +50,7 @@ async function handleSubmit(value: ModelValue) {
   try {
     const todo = await trpc.todo.create.mutate(value);
 
-    emit('close', { todo });
+    $emit('done', { todo });
 
     $toast.success('Todo has been saved.');
   } finally {
@@ -57,15 +60,17 @@ async function handleSubmit(value: ModelValue) {
 </script>
 
 <template>
-  <div class="p-4">
-    <header class="mb-4 text-lg font-bold capitalize">add todo</header>
-    <TodoForm
-      v-model="modelValue"
-      v-model:file_list="modelValueFileList"
-      v-model:space="modelValueSpace"
-      class="px-4"
-      @submit="handleSubmit"
-    >
-    </TodoForm>
-  </div>
+  <PluginModal @close="$emit('close')">
+    <div class="p-4">
+      <header class="mb-4 text-lg font-bold capitalize">add todo</header>
+      <TodoForm
+        v-model="modelValue"
+        v-model:file_list="modelValueFileList"
+        v-model:space="modelValueSpace"
+        class="px-4"
+        @submit="handleSubmit"
+      >
+      </TodoForm>
+    </div>
+  </PluginModal>
 </template>

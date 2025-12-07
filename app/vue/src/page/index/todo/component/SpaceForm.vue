@@ -10,7 +10,7 @@ export type Reset = (modelValue: ModelValue) => void;
 
 const $dialog = useDialog();
 
-const emit = defineEmits<{
+const $emit = defineEmits<{
   submit: [ModelValue, Reset];
 }>();
 
@@ -22,7 +22,7 @@ const { validateSubmit, ErrorMessage, reset, isDirty } = useVueValidateZod(
 );
 
 const handleSubmit = validateSubmit(async () => {
-  emit('submit', modelValue.value, reset);
+  $emit('submit', modelValue.value, reset);
 });
 
 const dragging = ref(false);

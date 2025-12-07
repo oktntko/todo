@@ -3,7 +3,7 @@ import { FileRouterSchema } from '@todo/express/schema';
 import { dayjs } from '@todo/lib/dayjs';
 import type { z } from '@todo/lib/zod';
 import { useVueValidateZod } from 'use-vue-validate-schema/zod';
-import MyInputFile from '~/component/input/MyInputFile.vue';
+import MyModalInputFile from '~/component/input/MyModalInputFile.vue';
 import { useFile } from '~/composable/useFile';
 import { trpc, type RouterOutput } from '~/lib/trpc';
 
@@ -204,29 +204,27 @@ const headerCheckbox = computed(() => {
           :class="[
             'inline-flex items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
             'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
-
             'min-w-[120px] rounded-md border px-4 py-2 text-sm font-medium',
             'border-blue-700 bg-white text-blue-700 hover:bg-blue-800 hover:text-white',
             'capitalize',
           ]"
           @click="
-            async () => {
-              const files = await $modal.open<File[]>({
-                component: MyInputFile,
-                componentProps: {
-                  multiple: true,
-                },
-              });
+          async () => {
+            const files: File[] = await $modal.open(MyModalInputFile, (resolve, reject) => ({
+              multiple: true,
+              onDone: resolve,
+              onClose: reject,
+            }));
 
-              if (files && files.length > 0) {
-                await uploadManyFiles(files);
+            if (files.length > 0) {
+              await uploadManyFiles(files);
 
-                $toast.success('File have been uploaded.');
+              $toast.success('File have been uploaded.');
 
-                await handleSubmit();
-              }
+              await handleSubmit();
             }
-          "
+          }
+        "
         >
           <span class="icon-[icon-park-solid--add-one] h-4 w-4"></span>
           <span class="ms-1 capitalize">upload file</span>

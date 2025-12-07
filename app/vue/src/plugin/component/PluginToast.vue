@@ -11,7 +11,7 @@ const {
   duration?: number;
 }>();
 
-const emit = defineEmits<{
+const $emit = defineEmits<{
   close: [];
 }>();
 
@@ -25,7 +25,7 @@ onMounted(() => {
 
 function close() {
   open.value = false;
-  setTimeout(() => emit('close'), 200);
+  setTimeout(() => $emit('close'), 200);
 }
 </script>
 

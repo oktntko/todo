@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { DayPilot } from '@daypilot/daypilot-lite-javascript';
-import type { TodoOutputSchema } from '@todo/express/schema';
 import { dayjs } from '@todo/lib/dayjs';
-import type { z } from '@todo/lib/zod';
 import DOMPurify from 'dompurify';
 import { trpc } from '~/lib/trpc';
 import SpaceList from '~/page/index/todo/component/SpaceList.vue';
@@ -10,8 +8,8 @@ import { useLoading } from '~/plugin/LoadingPlugin';
 import { useModal } from '~/plugin/ModalPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
 import { useSpaceStore } from '~/store/SpaceStore';
-import ModalAddTodo from './modal/ModalAddTodo.vue';
-import ModalEditTodo from './modal/ModalEditTodo.vue';
+import ModalAddTodo, { type ModalAddTodoResult } from './modal/ModalAddTodo.vue';
+import ModalEditTodo, { type ModalEditTodoResult } from './modal/ModalEditTodo.vue';
 
 const $modal = useModal();
 const $toast = useToast();
@@ -283,21 +281,15 @@ async function onTimeRangeSelected(args: TimeRangeArgs) {
   const start = dayjs(args.start.toString());
   const end = dayjs(args.end.toString());
 
-  const result = await $modal.open<{ todo: z.infer<typeof TodoOutputSchema> }>({
-    component: ModalAddTodo,
-    componentProps: {
-      space_id: args.resource ? Number(args.resource) : undefined,
-      begin_date: start.format('YYYY-MM-DD'),
-      begin_time: start.format('HH:mm'),
-      limit_date: end.format('YYYY-MM-DD'),
-      limit_time: end.format('HH:mm'),
-    },
-    componentEvents: {},
-  });
-
-  if (result == null) {
-    return;
-  }
+  const result: ModalAddTodoResult = await $modal.open(ModalAddTodo, (resolve, reject) => ({
+    space_id: args.resource ? Number(args.resource) : undefined,
+    begin_date: start.format('YYYY-MM-DD') as `${number}-${number}-${number}`,
+    begin_time: start.format('HH:mm') as `${number}:${number}`,
+    limit_date: end.format('YYYY-MM-DD') as `${number}-${number}-${number}`,
+    limit_time: end.format('HH:mm') as `${number}:${number}`,
+    onDone: resolve,
+    onClose: reject,
+  }));
 
   todo_list.value.push(result.todo);
 
@@ -307,24 +299,17 @@ async function onTimeRangeSelected(args: TimeRangeArgs) {
 }
 
 async function onEventClicked(args: EventArgs) {
-  const result = await $modal.open<{
-    event: 'update' | 'delete';
-    todo: z.infer<typeof TodoOutputSchema>;
-  }>({
-    component: ModalEditTodo,
-    componentProps: {
-      todo_id: args.e.id(),
-    },
-    componentEvents: {},
-  });
+  const result: ModalEditTodoResult = await $modal.open(ModalEditTodo, (resolve, reject) => ({
+    todo_id: args.e.id() as string,
+    onDone: resolve,
+    onClose: reject,
+  }));
 
-  if (result == null) {
-    return;
-  }
-
-  todo_list.value = todo_list.value.filter((v) => v.todo_id !== result.todo.todo_id);
-  if (result.event === 'update') {
-    todo_list.value.push(result.todo);
+  const index = todo_list.value.findIndex((x) => x.todo_id === result.todo.todo_id);
+  if (result.event === 'delete') {
+    todo_list.value.splice(index, 1);
+  } else {
+    todo_list.value.splice(index, 1, result.todo);
   }
 
   calendar?.update({ events: events.value });

@@ -4,7 +4,7 @@ useTitle('Signin | MyTodo');
 import { AuthRouterSchema } from '@todo/express/schema';
 import type { z } from '@todo/lib/zod';
 import { useVueValidateZod } from 'use-vue-validate-schema/zod';
-import { trpc, type RouterOutput } from '~/lib/trpc';
+import { trpc } from '~/lib/trpc';
 import ModalSigninTwofa from '~/page/component/ModalSigninTwofa.vue';
 
 const router = useRouter();
@@ -49,15 +49,12 @@ const { validateSubmit, ErrorMessage } = useVueValidateZod(
               }
 
               // 二要素認証
-              const result = await $modal.open<RouterOutput['auth']['signinTwofa']>({
-                component: ModalSigninTwofa,
-                componentProps: {},
-                componentEvents: {},
-              });
+              await $modal.open(ModalSigninTwofa, (resolve, reject) => ({
+                onSuccess: resolve,
+                onClose: reject,
+              }));
 
-              if (result?.auth) {
-                router.push({ name: '//todo/list' });
-              }
+              router.push({ name: '//todo/list' });
             })()
           "
         >

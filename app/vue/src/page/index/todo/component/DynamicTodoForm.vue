@@ -5,7 +5,7 @@ import type { z } from '@todo/lib/zod';
 import { vOnClickOutside } from '@vueuse/components';
 import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import type { DownloadFile } from '~/component/MyDownloadFileList.vue';
-import MyInputFile from '~/component/input/MyInputFile.vue';
+import MyModalInputFile from '~/component/input/MyModalInputFile.vue';
 import { useFile } from '~/composable/useFile';
 import { trpc } from '~/lib/trpc';
 
@@ -191,14 +191,16 @@ watch(
                       async () => {
                         status.fixedEditing = true;
                         try {
-                          const files = await $modal.open<File[]>({
-                            component: MyInputFile,
-                            componentProps: {
+                          const files: File[] = await $modal.open(
+                            MyModalInputFile,
+                            (resolve, reject) => ({
                               multiple: true,
-                            },
-                          });
+                              onDone: resolve,
+                              onClose: reject,
+                            }),
+                          );
 
-                          if (files && files.length > 0) {
+                          if (files.length > 0) {
                             const { data } = await uploadManyFiles(files, {
                               todo_id: modelValue.todo_id,
                             });

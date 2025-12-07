@@ -108,17 +108,11 @@ onMounted(async () => {
               :class="['invisible group-hover/item:visible', 'hover:bg-gray-300']"
               @click.prevent="
                 async () => {
-                  const result = await $modal.open<{
-                    event: 'update' | 'delete';
-                    space: RouterOutput['space']['update'];
-                  }>({
-                    component: ModalEditSpace,
-                    componentProps: { space_id: space.space_id },
-                  });
-
-                  if (result == null) {
-                    return;
-                  }
+                  await $modal.open(ModalEditSpace, (resolve, reject) => ({
+                    space_id: space.space_id,
+                    onDone: resolve,
+                    onClose: reject,
+                  }));
 
                   // space_list と同一インスタンスを参照することで v-model にバインドできているので、
                   // checked_space_list も更新する
@@ -142,9 +136,10 @@ onMounted(async () => {
         class="group sticky bottom-0 flex w-full cursor-pointer items-center rounded-e-full bg-gray-200/10 p-2 text-blue-600 backdrop-blur transition duration-75 hover:bg-gray-200"
         @click="
           async () => {
-            return $modal.open<RouterOutput['space']['create']>({
-              component: ModalAddSpace,
-            });
+            await $modal.open(ModalAddSpace, (resolve, reject) => ({
+              onDone: resolve,
+              onClose: reject,
+            }));
           }
         "
       >

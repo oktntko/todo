@@ -19,7 +19,7 @@ const {
   autofocus?: 'confirm' | 'cancel';
 }>();
 
-const emit = defineEmits<{
+const $emit = defineEmits<{
   close: [ok: boolean];
 }>();
 
@@ -55,13 +55,13 @@ function closeDelay(returnValue?: typeof CONFIRMED_VALUE | undefined) {
     dialog.addEventListener('transitionend', (e) => {
       if (e.target === dialog) {
         dialog.close();
-        emit('close', returnValue === CONFIRMED_VALUE);
+        $emit('close', returnValue === CONFIRMED_VALUE);
       }
     });
 
     open.value = false;
   } else {
-    emit('close', returnValue === CONFIRMED_VALUE);
+    $emit('close', returnValue === CONFIRMED_VALUE);
   }
 }
 </script>

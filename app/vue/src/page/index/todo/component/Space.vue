@@ -14,7 +14,7 @@ const modelValue = ref<z.infer<typeof TodoRouterSchema.listInput>>({
 });
 
 export type TodoWithStatus = RouterOutput['todo']['get'] & { is_new?: boolean; editing?: boolean };
-const emit = defineEmits<{
+const $emit = defineEmits<{
   add: [callback: (todo: TodoWithStatus) => void];
   remove: [TodoWithStatus];
 }>();
@@ -89,7 +89,7 @@ onMounted(async () => {
       // addイベントに、バインドされているオブジェクトの情報は含まれないため、
       // 親コンポーネントにコールバックを渡し、
       // removeイベントが実行されたらコールバックを呼び出してもらう
-      emit('add', async function (todo: TodoWithStatus) {
+      $emit('add', async function (todo: TodoWithStatus) {
         if (e.newIndex == null) return;
 
         todo_list.value.splice(e.newIndex, 0, todo);
@@ -106,7 +106,7 @@ onMounted(async () => {
     onRemove(e) {
       if (e.oldIndex == null) return;
 
-      emit('remove', todo_list.value[e.oldIndex]!);
+      $emit('remove', todo_list.value[e.oldIndex]!);
       todo_list.value.splice(e.oldIndex, 1);
     },
 

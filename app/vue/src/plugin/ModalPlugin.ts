@@ -1,9 +1,7 @@
-import type { App } from 'vue';
+import type { App, Component } from 'vue';
+import type { ComponentProps } from 'vue-component-type-helpers';
 import { useDialogStore } from '~/store/DialogStore';
-import type { ComponentProps } from '~/utility-types';
-import PluginModal from './component/PluginModal.vue';
 
-type ModalProps = Omit<ComponentProps<typeof PluginModal>, 'onClose'>;
 type ModalPlugin = ReturnType<typeof installModalPlugin>;
 
 const ModalPluginKey = Symbol() as InjectionKey<ModalPlugin>;
@@ -29,18 +27,21 @@ declare module '@vue/runtime-core' {
 function installModalPlugin(parentApp: App) {
   const DialogStore = useDialogStore();
   return {
-    async open<T>(props?: ModalProps) {
+    async open<T, C extends Component>(
+      component: C,
+      props?: (
+        resolve: (value: T | PromiseLike<T>) => void,
+        reject: (reason?: unknown) => void,
+      ) => ComponentProps<C>,
+    ) {
       const parent = document.createElement('div');
       document.body.appendChild(parent);
 
       let app: App<Element>;
-      return new Promise<T | undefined>((resolve) => {
+      return new Promise<T>((resolve, reject) => {
         // TODO: onClose 以外のイベントも Close できるようにする
-        app = createApp(PluginModal, {
-          ...props,
-          onClose: (data?: T) => {
-            resolve(data);
-          },
+        app = createApp(component, {
+          ...props?.(resolve, reject),
         });
 
         // https://github.com/quasarframework/quasar/blob/dev/ui/src/install-quasar.js#L25

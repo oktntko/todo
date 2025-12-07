@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const emit = defineEmits<{
+const $emit = defineEmits<{
   close: [returnValue?: string | undefined];
 }>();
 
@@ -28,13 +28,13 @@ function closeDelay(returnValue?: string | undefined) {
     dialog.addEventListener('transitionend', (e) => {
       if (e.target === dialog) {
         dialog.close();
-        emit('close', returnValue);
+        $emit('close', returnValue);
       }
     });
 
     open.value = false;
   } else {
-    emit('close', returnValue);
+    $emit('close', returnValue);
   }
 }
 
