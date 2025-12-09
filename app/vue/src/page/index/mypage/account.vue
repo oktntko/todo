@@ -10,15 +10,10 @@ const $router = useRouter();
       <div class="mb-4 text-2xl font-bold dark:text-white">Delete account</div>
 
       <section class="flex gap-4">
-        <button
+        <MyButton
           type="submit"
-          :class="[
-            'inline-flex items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
-            'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
-            'min-w-[120px] rounded-md border px-4 py-2 text-sm font-medium',
-            'border-red-700 bg-red-600 text-white hover:bg-red-800',
-            'capitalize',
-          ]"
+          color="red"
+          variant="contained"
           @click="
             async () => {
               if (
@@ -35,7 +30,7 @@ Please type 'delete permanently' to confirm.`) === 'delete permanently'
           "
         >
           Delete your account
-        </button>
+        </MyButton>
       </section>
     </div>
   </div>

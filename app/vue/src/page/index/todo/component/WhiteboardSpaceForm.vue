@@ -24,50 +24,51 @@ const handleSubmit = validateSubmit(async () => {
 
 <template>
   <form class="flex flex-col gap-6" autocomplete="off" @submit.prevent="handleSubmit">
-    <section class="flex flex-col gap-2">
-      <div class="focus-container flex flex-col gap-1">
-        <label for="whiteboard_name" class="required text-sm capitalize"> name </label>
-        <input
-          id="whiteboard_name"
-          v-model.lazy="modelValue.whiteboard_name"
-          type="text"
-          class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
-          maxlength="100"
-          required
-        />
+    <section class="flex flex-col gap-3">
+      <div class="focus-container flex flex-col gap-0.5">
+        <div>
+          <label for="whiteboard_name" class="required text-sm capitalize"> name </label>
+        </div>
+
+        <div>
+          <input
+            id="whiteboard_name"
+            v-model.lazy="modelValue.whiteboard_name"
+            type="text"
+            class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
+            maxlength="100"
+            required
+          />
+        </div>
+
         <ErrorMessage class="text-xs text-red-600" field="whiteboard_name" />
       </div>
 
-      <div class="focus-container flex flex-col gap-1">
-        <label for="whiteboard_description" class="optional text-sm capitalize">
-          description
-        </label>
-        <textarea
-          id="whiteboard_description"
-          v-model.lazy="modelValue.whiteboard_description"
-          class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
-          rows="4"
-          maxlength="400"
-        ></textarea>
+      <div class="focus-container flex flex-col gap-0.5">
+        <div>
+          <label for="whiteboard_description" class="optional text-sm capitalize">
+            description
+          </label>
+        </div>
+
+        <div>
+          <textarea
+            id="whiteboard_description"
+            v-model.lazy="modelValue.whiteboard_description"
+            class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
+            rows="4"
+            maxlength="400"
+          ></textarea>
+        </div>
 
         <ErrorMessage class="text-xs text-red-600" field="whiteboard_description" />
       </div>
     </section>
 
     <section class="flex gap-2">
-      <button
-        type="submit"
-        :class="[
-          'inline-flex items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
-          'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
-          'min-w-[120px] rounded-md border px-4 py-2 text-sm font-medium',
-          'border-green-700 bg-green-600 text-white hover:bg-green-800',
-          'capitalize',
-        ]"
-        :disabled="!isDirty"
-      >
-        save
-      </button>
+      <MyButton type="submit" :disabled="!isDirty" color="green" variant="contained">
+        <span class="capitalize">save</span>
+      </MyButton>
       <slot name="buttons"></slot>
     </section>
   </form>

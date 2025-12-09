@@ -34,7 +34,7 @@ const { validateSubmit, ErrorMessage } = useVueValidateZod(
         class="w-full rounded-lg border border-gray-200 bg-gray-50 p-6 shadow-md sm:max-w-md sm:p-8 md:mt-0"
       >
         <form
-          class="flex flex-col gap-8"
+          class="flex flex-col gap-6"
           @submit.prevent="
             validateSubmit(async () => {
               const loading = $loading.open();
@@ -58,53 +58,57 @@ const { validateSubmit, ErrorMessage } = useVueValidateZod(
             })()
           "
         >
-          <section class="flex flex-col gap-4">
-            <div class="flex flex-col gap-1">
-              <label for="email" class="text-sm font-medium text-gray-900 capitalize">
-                email address
-              </label>
-              <input
-                id="email"
-                v-model.lazy="modelValue.email"
-                type="email"
-                required
-                class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
-                autocomplete="username"
-              />
+          <section class="flex flex-col gap-3">
+            <div class="focus-container flex flex-col gap-0.5">
+              <div>
+                <label for="email" class="text-sm font-medium text-gray-900 capitalize">
+                  email address
+                </label>
+              </div>
+
+              <div>
+                <input
+                  id="email"
+                  v-model.lazy="modelValue.email"
+                  type="email"
+                  required
+                  class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
+                  autocomplete="username"
+                />
+              </div>
+
               <ErrorMessage class="text-xs text-red-600" field="email"></ErrorMessage>
             </div>
-            <div class="flex flex-col gap-1">
-              <label for="password" class="text-sm font-medium text-gray-900 capitalize">
-                password
-              </label>
-              <MyInputPassword
-                id="password"
-                v-model.lazy="modelValue.password"
-                required
-                autocomplete="current-password"
-                class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
-              />
+
+            <div class="focus-container flex flex-col gap-0.5">
+              <div>
+                <label for="password" class="text-sm font-medium text-gray-900 capitalize">
+                  password
+                </label>
+              </div>
+
+              <div>
+                <MyInputPassword
+                  id="password"
+                  v-model.lazy="modelValue.password"
+                  required
+                  autocomplete="current-password"
+                  class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
+                />
+              </div>
+
               <ErrorMessage class="text-xs text-red-600" field="email"></ErrorMessage>
             </div>
           </section>
 
-          <section>
-            <button
-              :class="[
-                'inline-flex cursor-pointer items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
-                'min-w-[120px] rounded-md border px-4 py-2 text-sm font-medium',
-                'border-green-700 bg-green-600 text-white hover:bg-green-800',
-                'w-full',
-                'capitalize',
-              ]"
-              type="submit"
-            >
-              signin
-            </button>
+          <section class="flex gap-2">
+            <MyButton type="submit" color="green" variant="contained" class="w-full">
+              <span class="capitalize">signin</span>
+            </MyButton>
           </section>
         </form>
 
-        <section class="mt-8 flex flex-col items-end">
+        <section class="mt-8 flex flex-col items-end gap-1">
           <div class="text-sm font-light text-gray-500">
             <RouterLink to="#" class="text-primary-600 font-medium text-blue-600 hover:underline">
               Forgot password?

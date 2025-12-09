@@ -18,11 +18,11 @@ datasource db {
   provider = "mysql"
 }
 
-/// @zod.import(["import { ColorSchema } from '@todo/lib/zod'"]);
+/// @zod.import(["import { ColorSchema, StringRelationIdSchema } from '@todo/lib/zod'"]);
 model Space {
   space_id Int @id @default(autoincrement())
 
-  owner_id String
+  owner_id String /// @zod.custom.use(StringRelationIdSchema)
   owner    User   @relation(fields: [owner_id], references: [user_id], onDelete: Cascade)
 
   space_name        String @db.VarChar(100) /// @zod.trim().min(1).max(100)
@@ -42,11 +42,11 @@ model Space {
   @@map("space")
 }
 
-/// @zod.import(["import { DateSchema, TimeSchema } from '@todo/lib/zod'"]);
+/// @zod.import(["import { DateSchema, TimeSchema, NumberRelationIdSchema } from '@todo/lib/zod'"]);
 model Todo {
   todo_id String @id @default(uuid(7)) @db.VarChar(36) /// @zod.length(36)
 
-  space_id Int   @db.Int
+  space_id Int   @db.Int /// @zod.custom.use(NumberRelationIdSchema)
   space    Space @relation(fields: [space_id], references: [space_id], onDelete: Cascade)
 
   title       String    @default("") @db.VarChar(100) /// @zod.trim().max(100)
@@ -71,10 +71,11 @@ model Todo {
   @@map("todo")
 }
 
+/// @zod.import(["import { StringRelationIdSchema } from '@todo/lib/zod'"]);
 model Whiteboard {
   whiteboard_id Int @id @default(autoincrement())
 
-  owner_id String
+  owner_id String /// @zod.custom.use(StringRelationIdSchema)
   owner    User   @relation(fields: [owner_id], references: [user_id], onDelete: Cascade)
 
   whiteboard_name        String @default("") @db.VarChar(100) /// @zod.trim().max(100)

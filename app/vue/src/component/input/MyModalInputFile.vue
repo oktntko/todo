@@ -18,9 +18,9 @@ const dragging = ref(false);
 </script>
 
 <template>
-  <PluginModal>
+  <PluginModal class="p-8" @close="$emit('close')">
     <div
-      class="flex flex-col items-center justify-center p-4"
+      class="flex min-w-lg flex-col items-center justify-center"
       @dragenter="dragging = true"
       @dragleave="
         (e) => {

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { R } from '@todo/lib/remeda';
 import type { z } from '@todo/lib/zod';
 import type { SpaceSchema } from '@todo/prisma/schema';
 import type { DownloadFile } from '~/component/MyDownloadFileList.vue';
@@ -7,26 +8,18 @@ import { useLoading } from '~/plugin/LoadingPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
 import TodoForm, { type ModelValue } from './component/TodoForm.vue';
 
-const router = useRouter();
-const route = useRoute('//todo/table/[todo_id]');
-const todo_id = route.params.todo_id;
-
-const modelValue = ref<ModelValue>();
-const modelValueFileList = ref<DownloadFile[]>([]);
-const modelValueSpace = ref<z.infer<typeof SpaceSchema>>();
-let updated_at = new Date();
-
-onMounted(async () => {
-  const todo = await trpc.todo.get.query({ todo_id });
-
-  modelValue.value = todo;
-  modelValueFileList.value = todo.file_list;
-  modelValueSpace.value = todo.space;
-  updated_at = todo.updated_at;
-});
-
+const $router = useRouter();
+const $route = useRoute('//todo/table/[todo_id]');
 const $toast = useToast();
 const $loading = useLoading();
+
+const todo_id = $route.params.todo_id;
+const todo = await trpc.todo.get.query({ todo_id });
+
+const modelValue = ref<ModelValue>(R.omit(todo, ['file_list', 'space']));
+const modelValueFileList = ref<DownloadFile[]>(todo.file_list);
+const modelValueSpace = ref<z.infer<typeof SpaceSchema>>(todo.space);
+const updated_at = todo.updated_at;
 
 async function handleSubmit(value: ModelValue) {
   const loading = $loading.open();
@@ -35,7 +28,7 @@ async function handleSubmit(value: ModelValue) {
 
     $toast.success('Todo has been saved.');
 
-    router.push({ name: '//todo/table/' });
+    $router.push({ name: '//todo/table/' });
   } finally {
     loading.close();
   }
@@ -51,10 +44,10 @@ async function handleSubmit(value: ModelValue) {
             :to="{
               name: '//todo/table/',
             }"
-            class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-blue-600"
+            class="inline-flex items-center gap-0.5 text-sm font-medium text-gray-400 hover:text-blue-600"
           >
             <span class="icon-[fontisto--table-2] h-3 w-3 transition duration-75"> </span>
-            <span class="ms-1 capitalize">table</span>
+            <span class="capitalize">table</span>
           </RouterLink>
           <RouterLink
             :to="{
@@ -63,67 +56,52 @@ async function handleSubmit(value: ModelValue) {
                 todo_id,
               },
             }"
-            class="inline-flex items-center text-sm font-medium text-gray-900 hover:text-blue-600"
+            class="inline-flex items-center gap-0.5 text-sm font-medium text-gray-900"
           >
-            <span class="ms-1 capitalize">edit todo</span>
+            <span class="capitalize">edit todo</span>
           </RouterLink>
         </MyBreadcrumb>
       </nav>
     </div>
 
     <div>
-      <Transition
-        mode="out-in"
-        enter-from-class="transform opacity-0"
-        enter-active-class="transition ease-out duration-200"
-        enter-to-class="transform opacity-100"
+      <TodoForm
+        v-model="modelValue"
+        v-model:file_list="modelValueFileList"
+        v-model:space="modelValueSpace"
+        :todo_id="todo_id"
+        @submit="handleSubmit"
       >
-        <TodoForm
-          v-if="modelValue"
-          v-model="modelValue"
-          v-model:file_list="modelValueFileList"
-          v-model:space="modelValueSpace"
-          :todo_id="todo_id"
-          @submit="handleSubmit"
-        >
-          <template #buttons>
-            <button
-              type="button"
-              :class="[
-                'inline-flex items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
-                'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
-                'min-w-[120px] rounded-md border px-4 py-2 text-sm font-medium',
-                'border-yellow-500 bg-white text-yellow-800 hover:bg-yellow-500 hover:text-gray-800',
-                'capitalize',
-              ]"
-              @click="
-                async () => {
-                  const yes = await $dialog.confirm(`Do you really want to delete this data?`);
-                  if (!yes) {
-                    return;
-                  }
-                  const loading = $loading.open();
-                  try {
-                    await trpc.todo.delete.mutate({ todo_id });
-
-                    $toast.success('Todo have been deleted.');
-
-                    router.replace({
-                      name: '//todo/table/',
-                    });
-                  } finally {
-                    loading.close();
-                  }
+        <template #buttons>
+          <MyButton
+            type="button"
+            color="yellow"
+            variant="outlined"
+            @click="
+              async () => {
+                const yes = await $dialog.confirm(`Do you really want to delete this data?`);
+                if (!yes) {
+                  return;
                 }
-              "
-            >
-              delete
-            </button>
-          </template>
-        </TodoForm>
+                const loading = $loading.open();
+                try {
+                  await trpc.todo.delete.mutate({ todo_id });
 
-        <MyLoading v-else> </MyLoading>
-      </Transition>
+                  $toast.success('Todo have been deleted.');
+
+                  $router.replace({
+                    name: '//todo/table/',
+                  });
+                } finally {
+                  loading.close();
+                }
+              }
+            "
+          >
+            <span class="capitalize">delete</span>
+          </MyButton>
+        </template>
+      </TodoForm>
     </div>
   </div>
 </template>

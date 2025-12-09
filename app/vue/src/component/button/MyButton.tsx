@@ -1,4 +1,4 @@
-import type { IntrinsicElementAttributes } from 'vue';
+import type { IntrinsicElementAttributes, VNode } from 'vue';
 import type { RouterLink, RouterLinkProps } from 'vue-router';
 
 type Tag = keyof IntrinsicElementAttributes | typeof RouterLink;
@@ -13,7 +13,7 @@ export default function MyButton<T extends Tag = 'button'>(
     color?: 'white' | 'gray' | 'green' | 'red' | 'blue' | 'yellow';
     variant?: 'outlined' | 'contained';
   } & Props<T>,
-  { slots }: { slots: { default?: () => void } },
+  { slots }: { slots: { default?: () => VNode[] } },
 ) {
   const { tag: Tag = 'button', color = 'white', variant = 'outlined', ...rest } = props;
 
@@ -22,8 +22,8 @@ export default function MyButton<T extends Tag = 'button'>(
       {...rest}
       class={[
         'inline-flex items-center justify-center gap-0.5 transition',
-        'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
-        'min-w-28 rounded-md border px-4 py-2 hover:ring-2 focus:ring-2 focus:outline-none',
+        'min-w-28 rounded-md border px-4 py-2 text-sm hover:ring-2 focus:ring-2 focus:outline-none',
+        'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200 disabled:hover:ring-gray-300 disabled:focus:ring-gray-300',
         color === 'white' &&
           (variant === 'outlined'
             ? 'border-gray-300 bg-white text-gray-900 hover:bg-gray-50 hover:ring-gray-300 focus:ring-gray-300'

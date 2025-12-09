@@ -6,6 +6,11 @@ import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import MyModalInputFile from '~/component/input/MyModalInputFile.vue';
 import { useFile } from '~/composable/useFile';
 import { trpc, type RouterOutput } from '~/lib/trpc';
+import { useModal } from '~/plugin/ModalPlugin';
+import { useToast } from '~/plugin/ToastPlugin';
+
+const $modal = useModal();
+const $toast = useToast();
 
 function MimetypeIcon({ mimetype }: { mimetype: string }) {
   // https://www.iana.org/assignments/media-types/media-types.xhtml
@@ -149,95 +154,82 @@ const headerCheckbox = computed(() => {
       checkedList.value.length > 0 && checkedList.value.length < data.value.file_list.length,
   };
 });
+
+async function handleUpload() {
+  const files: File[] = await $modal.open(MyModalInputFile, (resolve, reject) => ({
+    multiple: true,
+    onDone: resolve,
+    onClose: reject,
+  }));
+
+  if (files.length > 0) {
+    await uploadManyFiles(files);
+
+    $toast.success('File have been uploaded.');
+
+    await handleSubmit();
+  }
+}
 </script>
 
 <template>
-  <div class="mb-8 flex flex-col gap-6 px-4">
-    <div class="flex flex-col gap-4">
-      <div class="flex flex-col gap-2">
-        <div class="flex items-center gap-1 text-lg font-bold">
-          <span class="icon-[vaadin--folder-open] h-5 w-5"></span>
-          <span class="capitalize">Drive</span>
-        </div>
-      </div>
+  <div class="mb-8 flex flex-col gap-4 px-4">
+    <div>
+      <nav aria-label="Breadcrumb">
+        <MyBreadcrumb class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
+          <RouterLink
+            :to="{
+              name: '//drive/',
+            }"
+            class="inline-flex items-center gap-0.5 text-sm font-medium text-gray-900"
+          >
+            <span class="icon-[vaadin--folder-open] h-3 w-3 transition duration-75"> </span>
+            <span class="capitalize">drive</span>
+          </RouterLink>
+        </MyBreadcrumb>
+      </nav>
     </div>
 
-    <form class="flex flex-col gap-4 px-4" autocomplete="off" @submit.prevent="handleSubmit">
-      <section class="flex flex-col gap-2">
-        <div class="focus-container flex flex-col gap-1">
-          <label for="where.file_keyword" class="optional text-sm capitalize"> keyword </label>
-          <input
-            id="where.file_keyword"
-            v-model.lazy="modelValue.where.file_keyword"
-            class="block rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
-            maxlength="100"
-          />
+    <div>
+      <form class="flex flex-col gap-6" autocomplete="off" @submit.prevent="handleSubmit">
+        <section class="flex flex-col gap-3">
+          <div class="focus-container flex flex-col gap-0.5">
+            <div>
+              <label for="where.file_keyword" class="optional text-sm capitalize"> keyword </label>
+            </div>
 
-          <ErrorMessage class="text-xs text-red-600" field="where.file_keyword" />
-        </div>
-      </section>
+            <div>
+              <input
+                id="where.file_keyword"
+                v-model.lazy="modelValue.where.file_keyword"
+                class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
+                maxlength="100"
+              />
+            </div>
 
-      <section class="flex gap-2">
-        <button
-          type="submit"
-          :class="[
-            'inline-flex items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
-            'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
-            'min-w-[120px] rounded-md border px-4 py-2 text-sm font-medium',
-            'border-green-700 bg-green-600 text-white hover:bg-green-800',
-            'capitalize',
-          ]"
-          :disabled="loading"
-        >
-          <span class="icon-[bx--search] h-4 w-4"></span>
-          <span class="ms-1 capitalize">search</span>
-        </button>
-      </section>
-    </form>
+            <ErrorMessage class="text-xs text-red-600" field="where.file_keyword" />
+          </div>
+        </section>
+
+        <section class="flex gap-2">
+          <MyButton type="submit" color="green" variant="contained" :disabled="loading">
+            <span class="icon-[bx--search] h-4 w-4"></span>
+            <span class="capitalize">search</span>
+          </MyButton>
+        </section>
+      </form>
+    </div>
 
     <div class="">
       <header
         class="z-10 flex flex-row items-center gap-2 rounded-t border border-gray-300 bg-gray-50 p-2 px-4 py-2 text-sm"
       >
-        <button
-          type="button"
-          :class="[
-            'inline-flex items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
-            'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
-            'min-w-[120px] rounded-md border px-4 py-2 text-sm font-medium',
-            'border-blue-700 bg-white text-blue-700 hover:bg-blue-800 hover:text-white',
-            'capitalize',
-          ]"
-          @click="
-          async () => {
-            const files: File[] = await $modal.open(MyModalInputFile, (resolve, reject) => ({
-              multiple: true,
-              onDone: resolve,
-              onClose: reject,
-            }));
-
-            if (files.length > 0) {
-              await uploadManyFiles(files);
-
-              $toast.success('File have been uploaded.');
-
-              await handleSubmit();
-            }
-          }
-        "
-        >
+        <MyButton type="button" color="blue" variant="outlined" @click="handleUpload">
           <span class="icon-[icon-park-solid--add-one] h-4 w-4"></span>
-          <span class="ms-1 capitalize">upload file</span>
-        </button>
-        <button
+          <span class="capitalize">upload file</span>
+        </MyButton>
+        <MyButton
           type="button"
-          :class="[
-            'inline-flex items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
-            'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
-            'min-w-[120px] rounded-md border px-4 py-2 text-sm font-medium',
-            'border-gray-300 bg-white text-gray-800 hover:bg-gray-200',
-            'capitalize',
-          ]"
           :disabled="loading || checkedList.length === 0"
           @click="
             async () => {
@@ -257,17 +249,10 @@ const headerCheckbox = computed(() => {
           "
         >
           <span class="icon-[simple-line-icons--cloud-download] h-4 w-4"></span>
-          <span class="ms-1 capitalize">download</span>
-        </button>
-        <button
+          <span class="capitalize">download</span>
+        </MyButton>
+        <MyButton
           type="button"
-          :class="[
-            'inline-flex items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
-            'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
-            'min-w-[120px] rounded-md border px-4 py-2 text-sm font-medium',
-            'border-gray-300 bg-white text-gray-800 hover:bg-gray-200',
-            'capitalize',
-          ]"
           :disabled="loading || checkedList.length === 0"
           @click="
             async () => {
@@ -289,8 +274,8 @@ const headerCheckbox = computed(() => {
           "
         >
           <span class="icon-[tabler--trash-filled] h-4 w-4"></span>
-          <span class="ms-1 capitalize">delete</span>
-        </button>
+          <span class="capitalize">delete</span>
+        </MyButton>
       </header>
 
       <table

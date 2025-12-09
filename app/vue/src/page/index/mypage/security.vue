@@ -206,20 +206,10 @@ const refInputToken = ref<HTMLInputElement>();
             <ErrorMessage class="text-xs text-red-600" field="token"></ErrorMessage>
           </div>
 
-          <section class="flex gap-4">
-            <button
-              type="submit"
-              :class="[
-                'inline-flex items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
-                'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
-                'min-w-[120px] rounded-md border px-4 py-2 text-sm font-medium',
-                'border-green-700 bg-green-600 text-white hover:bg-green-800',
-                'capitalize',
-              ]"
-              :disabled="!isDirty"
-            >
-              enable two-factor authentication
-            </button>
+          <section class="flex gap-2">
+            <MyButton type="submit" :disabled="!isDirty" color="green" variant="contained">
+              <span class="capitalize">enable two-factor authentication</span>
+            </MyButton>
           </section>
         </form>
       </Transition>

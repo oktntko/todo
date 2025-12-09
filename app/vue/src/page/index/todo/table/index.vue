@@ -14,7 +14,7 @@ const modelValue = ref<z.infer<typeof TodoRouterSchema.searchInput>>({
   where: {
     space_id_list: [],
     todo_keyword: '',
-    todo_status: ['active'],
+    todo_status: [TodoStatusList[0]],
   },
   sort: {
     field: 'updated_at',
@@ -85,10 +85,10 @@ const headerCheckbox = computed(() => {
             :to="{
               name: '//todo/table/',
             }"
-            class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-blue-600"
+            class="inline-flex items-center gap-0.5 text-sm font-medium text-gray-900"
           >
             <span class="icon-[fontisto--table-2] h-3 w-3 transition duration-75"> </span>
-            <span class="ms-1 capitalize">table</span>
+            <span class="capitalize">table</span>
           </RouterLink>
         </MyBreadcrumb>
       </nav>
@@ -97,39 +97,49 @@ const headerCheckbox = computed(() => {
     <div>
       <form class="flex flex-col gap-6" autocomplete="off" @submit.prevent="handleSubmit">
         <section class="flex flex-col gap-3">
-          <div class="focus-container flex flex-col gap-1">
-            <label for="where.todo_keyword" class="optional text-sm capitalize"> keyword </label>
-            <input
-              id="where.todo_keyword"
-              v-model.lazy="modelValue.where.todo_keyword"
-              class="block rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
-              maxlength="100"
-            />
+          <div class="focus-container flex flex-col gap-0.5">
+            <div>
+              <label for="where.todo_keyword" class="optional text-sm capitalize"> keyword </label>
+            </div>
+
+            <div>
+              <input
+                id="where.todo_keyword"
+                v-model.lazy="modelValue.where.todo_keyword"
+                class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
+                maxlength="100"
+              />
+            </div>
 
             <ErrorMessage class="text-xs text-red-600" field="where.todo_keyword" />
           </div>
 
-          <div class="flex flex-col gap-1">
-            <span class="optional text-sm capitalize"> status </span>
-            <div class="focus-container flex flex-col gap-1 sm:flex-row sm:gap-2">
+          <div class="focus-container flex flex-col gap-0.5">
+            <div>
+              <label :for="`status-${TodoStatusList[0]}`" class="optional text-sm capitalize">
+                status
+              </label>
+            </div>
+
+            <div class="flex flex-col gap-1 sm:flex-row sm:gap-3">
               <label
                 v-for="todo_status of TodoStatusList"
                 :key="todo_status"
                 :for="`status-${todo_status}`"
-                class="flex items-center font-medium text-gray-900 capitalize"
+                class="flex items-center gap-1 font-medium text-gray-900 sm:text-sm"
               >
                 <input
                   :id="`status-${todo_status}`"
                   v-model="modelValue.where.todo_status"
                   type="checkbox"
                   :value="todo_status"
-                  class="mr-1 h-4 w-4 border-gray-300 bg-gray-100 text-blue-600"
+                  class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600"
                 />
-                {{ todo_status }}
+                <span class="capitalize">{{ todo_status }}</span>
               </label>
-
-              <ErrorMessage class="text-xs text-red-600" field="where.todo_status" />
             </div>
+
+            <ErrorMessage class="text-xs text-red-600" field="where.todo_status" />
           </div>
         </section>
 
@@ -142,7 +152,7 @@ const headerCheckbox = computed(() => {
       </form>
     </div>
 
-    <div class="">
+    <div>
       <header
         class="z-10 flex flex-row items-center gap-2 rounded-t border border-gray-300 bg-gray-50 p-2 px-4 py-2 text-sm"
       >

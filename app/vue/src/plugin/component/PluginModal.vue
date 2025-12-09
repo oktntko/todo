@@ -33,7 +33,7 @@ function closeDelay() {
   <dialog
     ref="refDialog"
     :class="[
-      'm-auto max-w-full min-w-60 rounded-lg text-gray-900 shadow-xl outline-hidden',
+      'm-auto max-w-full min-w-md rounded-lg text-gray-900 shadow-xl outline-hidden',
       { open },
       'translate-y-4 scale-100 transform opacity-0 transition duration-200 ease-out sm:translate-y-4 sm:scale-95',
       '[&.open]:translate-y-0 [&.open]:opacity-100 [&.open]:sm:scale-100',

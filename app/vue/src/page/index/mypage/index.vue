@@ -61,62 +61,67 @@ async function handleFileInput(files?: FileList | null) {
       })()
     "
   >
-    <section class="flex flex-col gap-4 md:flex-row md:gap-8">
-      <div class="flex grow flex-col gap-4">
+    <section class="flex flex-col gap-4 lg:flex-row lg:gap-8">
+      <div class="flex grow flex-col gap-3">
         <!-- 名前 -->
-        <div>
-          <label
-            for="username"
-            class="mb-1 block text-sm font-medium text-gray-900 capitalize dark:text-white"
-          >
-            username
-          </label>
-          <input
-            id="username"
-            v-model.lazy="modelValue.username"
-            type="text"
-            class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
-            required
-          />
+        <div class="focus-container flex flex-col gap-0.5">
+          <div>
+            <label for="username" class="required text-sm capitalize"> username </label>
+          </div>
+
+          <div>
+            <input
+              id="username"
+              v-model="modelValue.username"
+              type="text"
+              class="flex w-full rounded-lg border border-gray-300 bg-white p-2.5 text-sm text-gray-900 transition-colors"
+              required
+            />
+          </div>
+
           <ErrorMessage class="text-xs text-red-600" field="username" />
         </div>
+
         <!-- メールアドレス -->
-        <div>
-          <label
-            for="email"
-            class="mb-1 block text-sm font-medium text-gray-900 capitalize dark:text-white"
-          >
-            email address
-          </label>
-          <input
-            id="email"
-            v-model.lazy="modelValue.email"
-            type="email"
-            class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
-            required
-          />
+        <div class="focus-container flex flex-col gap-0.5">
+          <div>
+            <label for="email" class="required text-sm capitalize"> email address </label>
+          </div>
+
+          <div>
+            <input
+              id="email"
+              v-model="modelValue.email"
+              type="email"
+              class="flex w-full rounded-lg border border-gray-300 bg-white p-2.5 text-sm text-gray-900 transition-colors"
+              required
+            />
+          </div>
+
           <ErrorMessage class="text-xs text-red-600" field="email" />
         </div>
+
         <!-- 自己紹介 -->
-        <div>
-          <label
-            for="description"
-            class="mb-1 block text-sm font-medium text-gray-900 capitalize dark:text-white"
-          >
-            description
-          </label>
-          <textarea
-            id="description"
-            v-model.lazy="modelValue.description"
-            rows="4"
-            class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
-          ></textarea>
+        <div class="focus-container flex flex-col gap-0.5">
+          <div>
+            <label for="description" class="optional text-sm capitalize"> description </label>
+          </div>
+
+          <div>
+            <textarea
+              id="description"
+              v-model="modelValue.description"
+              rows="4"
+              class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
+            ></textarea>
+          </div>
 
           <ErrorMessage class="text-xs text-red-600" field="description" />
         </div>
       </div>
+
       <!-- 画像 -->
-      <div class="flex flex-col items-center gap-4">
+      <div class="flex flex-col items-center gap-3">
         <div v-if="modelValue.avatar_image" class="relative h-64 w-64">
           <img
             :src="modelValue.avatar_image"
@@ -181,19 +186,9 @@ async function handleFileInput(files?: FileList | null) {
     </section>
 
     <section class="flex gap-2">
-      <button
-        type="submit"
-        :class="[
-          'inline-flex items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
-          'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
-          'min-w-[120px] rounded-md border px-4 py-2 text-sm font-medium',
-          'border-green-700 bg-green-600 text-white hover:bg-green-800',
-          'capitalize',
-        ]"
-        :disabled="!isDirty"
-      >
-        save
-      </button>
+      <MyButton type="submit" :disabled="!isDirty" color="green" variant="contained">
+        <span class="capitalize">save</span>
+      </MyButton>
     </section>
   </form>
 </template>

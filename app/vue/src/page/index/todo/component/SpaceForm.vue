@@ -52,7 +52,7 @@ async function handleFileInput(files?: FileList | null) {
 
 <template>
   <form class="flex flex-col gap-6" autocomplete="off" @submit.prevent="handleSubmit">
-    <section class="flex flex-col gap-2">
+    <section class="flex flex-col gap-3">
       <div class="flex gap-6">
         <div class="flex items-start">
           <!-- 画像があるとき -->
@@ -118,60 +118,67 @@ async function handleFileInput(files?: FileList | null) {
           </label>
         </div>
 
-        <div class="focus-container flex grow flex-col gap-1">
-          <label for="space_name" class="required text-sm capitalize"> name </label>
-          <input
-            id="space_name"
-            v-model.lazy="modelValue.space_name"
-            type="text"
-            class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
-            maxlength="100"
-            required
-          />
+        <div class="focus-container flex flex-col gap-0.5">
+          <div>
+            <label for="space_name" class="required text-sm capitalize"> name </label>
+          </div>
+
+          <div>
+            <input
+              id="space_name"
+              v-model.lazy="modelValue.space_name"
+              type="text"
+              class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
+              maxlength="100"
+              required
+            />
+          </div>
+
           <ErrorMessage class="text-xs text-red-600" field="space_name" />
         </div>
 
-        <div class="focus-container flex flex-col gap-1">
-          <label for="space_color" class="text-sm capitalize"> color </label>
-          <input
-            id="space_color"
-            v-model.lazy="modelValue.space_color"
-            list="color-picker"
-            type="color"
-            class="block h-full w-16 rounded-lg border border-gray-300 bg-white p-1 text-gray-900 sm:text-sm"
-          />
+        <div class="focus-container flex flex-col gap-0.5">
+          <div>
+            <label for="space_color" class="text-sm capitalize"> color </label>
+          </div>
+
+          <div class="grow">
+            <input
+              id="space_color"
+              v-model.lazy="modelValue.space_color"
+              list="color-picker"
+              type="color"
+              class="block h-full w-16 rounded-lg border border-gray-300 bg-white p-1 text-gray-900 sm:text-sm"
+            />
+          </div>
+
           <ErrorMessage class="text-xs text-red-600" field="space_color" />
         </div>
       </div>
 
-      <div class="focus-container flex flex-col gap-1">
-        <label for="space_description" class="optional text-sm capitalize"> description </label>
-        <textarea
-          id="space_description"
-          v-model.lazy="modelValue.space_description"
-          class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
-          rows="4"
-          maxlength="400"
-        ></textarea>
+      <div class="focus-container flex flex-col gap-0.5">
+        <div>
+          <label for="space_description" class="optional text-sm capitalize"> description </label>
+        </div>
+
+        <div>
+          <textarea
+            id="space_description"
+            v-model.lazy="modelValue.space_description"
+            class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
+            rows="4"
+            maxlength="400"
+          ></textarea>
+        </div>
 
         <ErrorMessage class="text-xs text-red-600" field="space_description" />
       </div>
     </section>
 
     <section class="flex gap-2">
-      <button
-        type="submit"
-        :class="[
-          'inline-flex items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
-          'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200',
-          'min-w-[120px] rounded-md border px-4 py-2 text-sm font-medium',
-          'border-green-700 bg-green-600 text-white hover:bg-green-800',
-          'capitalize',
-        ]"
-        :disabled="!isDirty"
-      >
-        save
-      </button>
+      <MyButton type="submit" :disabled="!isDirty" color="green" variant="contained">
+        <span class="capitalize">save</span>
+      </MyButton>
       <slot name="buttons"></slot>
     </section>
   </form>

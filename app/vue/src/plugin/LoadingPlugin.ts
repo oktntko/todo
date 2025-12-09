@@ -1,5 +1,4 @@
 import type { App } from 'vue';
-import { useDialogStore } from '~/store/DialogStore';
 import PluginLoading from './component/PluginLoading.vue';
 
 type LoadingPlugin = ReturnType<typeof installLoadingPlugin>;
@@ -25,7 +24,6 @@ declare module '@vue/runtime-core' {
 }
 
 function installLoadingPlugin(parentApp: App) {
-  const DialogStore = useDialogStore();
   return {
     open() {
       const parent = document.createElement('div');
@@ -35,7 +33,6 @@ function installLoadingPlugin(parentApp: App) {
         onClose: () => {
           app.unmount();
           document.body.removeChild(parent);
-          DialogStore.decrement();
         },
       });
 
@@ -44,7 +41,6 @@ function installLoadingPlugin(parentApp: App) {
       Object.assign(app._context, parentApp._context);
 
       const vm = app.mount(parent) as InstanceType<typeof PluginLoading>;
-      DialogStore.increment();
       return {
         close: vm.close,
       };

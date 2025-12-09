@@ -1,6 +1,6 @@
 import type { App, Component } from 'vue';
 import type { ComponentProps } from 'vue-component-type-helpers';
-import { useDialogStore } from '~/store/DialogStore';
+import ModalApp from './component/ModalApp.vue';
 
 type ModalPlugin = ReturnType<typeof installModalPlugin>;
 
@@ -25,7 +25,6 @@ declare module '@vue/runtime-core' {
 }
 
 function installModalPlugin(parentApp: App) {
-  const DialogStore = useDialogStore();
   return {
     async open<T, C extends Component>(
       component: C,
@@ -39,8 +38,8 @@ function installModalPlugin(parentApp: App) {
 
       let app: App<Element>;
       return new Promise<T>((resolve, reject) => {
-        // TODO: onClose 以外のイベントも Close できるようにする
-        app = createApp(component, {
+        app = createApp(ModalApp, {
+          component,
           ...props?.(resolve, reject),
         });
 
@@ -48,12 +47,14 @@ function installModalPlugin(parentApp: App) {
         app.config.globalProperties = parentApp.config.globalProperties;
         Object.assign(app._context, parentApp._context);
 
+        app.config.errorHandler = (error, instance, info) => {
+          console.error(error, instance, info);
+          reject(error);
+        };
         app.mount(parent);
-        DialogStore.increment();
       }).finally(() => {
         app.unmount();
         document.body.removeChild(parent);
-        DialogStore.decrement();
       });
     },
   };

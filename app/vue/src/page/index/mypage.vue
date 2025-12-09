@@ -7,7 +7,7 @@ await fetchMypage();
 </script>
 
 <template>
-  <div class="flex flex-row">
+  <div class="container mx-auto flex max-w-5xl flex-row">
     <aside class="flex w-56 shrink-0 flex-col gap-2 px-4">
       <div>
         <ul class="text-sm">
@@ -86,33 +86,8 @@ await fetchMypage();
       </div>
     </aside>
 
-    <RouterView v-slot="{ Component }" class="grow">
-      <template v-if="Component">
-        <Transition
-          mode="out-in"
-          enter-from-class="transform opacity-0"
-          enter-active-class="transition ease-out duration-200"
-          enter-to-class="transform opacity-100"
-        >
-          <KeepAlive>
-            <Suspense>
-              <!-- main content -->
-              <component :is="Component" class="px-4"></component>
-
-              <!-- loading state -->
-              <template #fallback>
-                <div
-                  class="container flex min-h-dvh grow flex-col items-center justify-center gap-4"
-                >
-                  <span
-                    class="icon-[line-md--loading-loop] text-opacity-60 h-16 w-16 text-gray-600"
-                  ></span>
-                </div>
-              </template>
-            </Suspense>
-          </KeepAlive>
-        </Transition>
-      </template>
-    </RouterView>
+    <div class="grow">
+      <RouterView> </RouterView>
+    </div>
   </div>
 </template>

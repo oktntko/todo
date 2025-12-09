@@ -32,9 +32,9 @@ async function handleSubmit(input: ModelValue) {
 
     storedSpaceList.value.push(space);
 
-    $emit('done', { space });
-
     $toast.success('Data has been saved.');
+
+    $emit('done', { space });
   } finally {
     loading.close();
   }
@@ -42,10 +42,8 @@ async function handleSubmit(input: ModelValue) {
 </script>
 
 <template>
-  <PluginModal @close="$emit('close')">
-    <div class="p-4">
-      <header class="mb-4 text-lg font-bold capitalize">create new space</header>
-      <SpaceForm v-model="modelValue" class="px-4" @submit="handleSubmit"> </SpaceForm>
-    </div>
+  <PluginModal class="p-8" @close="$emit('close')">
+    <header class="mb-4 text-lg font-bold capitalize">create new space</header>
+    <SpaceForm v-model="modelValue" @submit="handleSubmit"> </SpaceForm>
   </PluginModal>
 </template>

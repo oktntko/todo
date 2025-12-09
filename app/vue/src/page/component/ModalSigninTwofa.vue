@@ -9,7 +9,7 @@ const modelValue = ref<z.infer<typeof AuthRouterSchema.signinTwofaInput>>({
   token: '',
 });
 
-const { validateSubmit, ErrorMessage } = useVueValidateZod(
+const { validateSubmit, ErrorMessage, isDirty } = useVueValidateZod(
   AuthRouterSchema.signinTwofaInput,
   modelValue,
 );
@@ -21,10 +21,9 @@ defineEmits<{
 </script>
 
 <template>
-  <PluginModal @close="$emit('close')">
+  <PluginModal class="p-8" @close="$emit('close')">
     <form
-      class="laptop:max-w-3xl desktop:max-w-4xl flex flex-col gap-8"
-      :class="['container mx-auto w-96 p-4']"
+      class="flex flex-col gap-6"
       autocomplete="off"
       @submit.prevent="
         validateSubmit(async () => {
@@ -39,34 +38,40 @@ defineEmits<{
         })()
       "
     >
-      <section class="flex flex-col gap-4">
-        <div class="flex flex-col gap-1">
-          <label for="token" class="text-sm font-medium text-gray-900"> authcode </label>
+      <section class="flex flex-col gap-3">
+        <div class="focus-container flex flex-col gap-0.5">
+          <div>
+            <label for="token" class="text-sm capitalize"> authcode </label>
+          </div>
+
           <p class="text-sm text-gray-400">Enter the authcode shown in the Authenticator app.</p>
-          <input
-            id="token"
-            v-model.lazy="modelValue.token"
-            type="text"
-            pattern="\d{6}"
-            class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
-            required
-            maxlength="6"
-          />
+
+          <div>
+            <input
+              id="token"
+              v-model="modelValue.token"
+              type="text"
+              pattern="\d{6}"
+              class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
+              required
+              maxlength="6"
+            />
+          </div>
+
           <ErrorMessage class="text-xs text-red-600" field="token"></ErrorMessage>
         </div>
       </section>
 
-      <section>
-        <button
+      <section class="flex gap-2">
+        <MyButton
           type="submit"
-          :class="[
-            'inline-flex cursor-pointer items-center justify-center shadow-xs transition-all focus:ring-3 focus:outline-hidden',
-            'min-w-[120px] rounded-md border px-4 py-2 text-sm font-medium',
-            'border-green-700 bg-green-600 text-white hover:bg-green-800',
-          ]"
+          :disabled="!isDirty"
+          color="green"
+          variant="contained"
+          class="w-full"
         >
-          Authentication
-        </button>
+          <span class="capitalize">authentication</span>
+        </MyButton>
       </section>
     </form>
   </PluginModal>

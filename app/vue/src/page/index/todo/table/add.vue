@@ -2,12 +2,15 @@
 import type { DownloadFile } from '~/component/MyDownloadFileList.vue';
 import { trpc } from '~/lib/trpc';
 import { useLoading } from '~/plugin/LoadingPlugin';
+import { useToast } from '~/plugin/ToastPlugin';
 import TodoForm, { type ModelValue } from './component/TodoForm.vue';
 
-const router = useRouter();
+const $router = useRouter();
+const $toast = useToast();
+const $loading = useLoading();
 
 const modelValue = ref<ModelValue>({
-  space_id: 0,
+  space_id: null,
   title: '',
   description: '',
   begin_date: '',
@@ -19,13 +22,14 @@ const modelValue = ref<ModelValue>({
 });
 const modelValueFileList = ref<DownloadFile[]>([]);
 
-const $loading = useLoading();
 async function handleSubmit(value: ModelValue) {
   const loading = $loading.open();
   try {
     await trpc.todo.create.mutate(value);
 
-    router.push({
+    $toast.success('Todo has been saved.');
+
+    $router.push({
       name: '//todo/table/',
     });
   } finally {
@@ -43,18 +47,18 @@ async function handleSubmit(value: ModelValue) {
             :to="{
               name: '//todo/table/',
             }"
-            class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-blue-600"
+            class="inline-flex items-center gap-0.5 text-sm font-medium text-gray-400 hover:text-blue-600"
           >
             <span class="icon-[fontisto--table-2] h-3 w-3 transition duration-75"> </span>
-            <span class="ms-1 capitalize">table</span>
+            <span class="capitalize">table</span>
           </RouterLink>
           <RouterLink
             :to="{
               name: '//todo/table/add',
             }"
-            class="inline-flex items-center text-sm font-medium text-gray-900 hover:text-blue-600"
+            class="inline-flex items-center gap-0.5 text-sm font-medium text-gray-900"
           >
-            <span class="ms-1 capitalize">add todo</span>
+            <span class="capitalize">add todo</span>
           </RouterLink>
         </MyBreadcrumb>
       </nav>
