@@ -281,14 +281,13 @@ async function onTimeRangeSelected(args: TimeRangeArgs) {
   const start = dayjs(args.start.toString());
   const end = dayjs(args.end.toString());
 
-  const result: ModalAddTodoResult = await $modal.open(ModalAddTodo, (resolve, reject) => ({
+  const result: ModalAddTodoResult = await $modal.showModal(ModalAddTodo, (resolve) => ({
     space_id: args.resource ? Number(args.resource) : undefined,
     begin_date: start.format('YYYY-MM-DD') as `${number}-${number}-${number}`,
     begin_time: start.format('HH:mm') as `${number}:${number}`,
     limit_date: end.format('YYYY-MM-DD') as `${number}-${number}-${number}`,
     limit_time: end.format('HH:mm') as `${number}:${number}`,
     onDone: resolve,
-    onClose: reject,
   }));
 
   todo_list.value.push(result.todo);
@@ -299,10 +298,9 @@ async function onTimeRangeSelected(args: TimeRangeArgs) {
 }
 
 async function onEventClicked(args: EventArgs) {
-  const result: ModalEditTodoResult = await $modal.open(ModalEditTodo, (resolve, reject) => ({
+  const result: ModalEditTodoResult = await $modal.showModal(ModalEditTodo, (resolve) => ({
     todo_id: args.e.id() as string,
     onDone: resolve,
-    onClose: reject,
   }));
 
   const index = todo_list.value.findIndex((x) => x.todo_id === result.todo.todo_id);

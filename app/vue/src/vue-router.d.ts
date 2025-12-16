@@ -40,6 +40,7 @@ declare module 'vue-router/auto-routes' {
       | '//todo/board'
       | '//todo/calendar'
       | '//todo/list'
+      | '//todo/table'
       | '//todo/table/'
       | '//todo/table/[todo_id]'
       | '//todo/table/add'
@@ -113,6 +114,7 @@ declare module 'vue-router/auto-routes' {
       | '//todo/board'
       | '//todo/calendar'
       | '//todo/list'
+      | '//todo/table'
       | '//todo/table/'
       | '//todo/table/[todo_id]'
       | '//todo/table/add'
@@ -138,6 +140,15 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       Record<never, never>,
       | never
+    >,
+    '//todo/table': RouteRecordInfo<
+      '//todo/table',
+      '/todo/table',
+      Record<never, never>,
+      Record<never, never>,
+      | '//todo/table/'
+      | '//todo/table/[todo_id]'
+      | '//todo/table/add'
     >,
     '//todo/table/': RouteRecordInfo<
       '//todo/table/',
@@ -216,6 +227,7 @@ declare module 'vue-router/auto-routes' {
         | '//todo/board'
         | '//todo/calendar'
         | '//todo/list'
+        | '//todo/table'
         | '//todo/table/'
         | '//todo/table/[todo_id]'
         | '//todo/table/add'
@@ -282,6 +294,7 @@ declare module 'vue-router/auto-routes' {
         | '//todo/board'
         | '//todo/calendar'
         | '//todo/list'
+        | '//todo/table'
         | '//todo/table/'
         | '//todo/table/[todo_id]'
         | '//todo/table/add'
@@ -306,6 +319,15 @@ declare module 'vue-router/auto-routes' {
         | '//todo/list'
       views:
         | never
+    }
+    'src/page/index/todo/table.vue': {
+      routes:
+        | '//todo/table'
+        | '//todo/table/'
+        | '//todo/table/[todo_id]'
+        | '//todo/table/add'
+      views:
+        | 'default'
     }
     'src/page/index/todo/table/index.vue': {
       routes:

@@ -156,10 +156,9 @@ const headerCheckbox = computed(() => {
 });
 
 async function handleUpload() {
-  const files: File[] = await $modal.open(MyModalInputFile, (resolve, reject) => ({
+  const files: File[] = await $modal.showModal(MyModalInputFile, (resolve) => ({
     multiple: true,
     onDone: resolve,
-    onClose: reject,
   }));
 
   if (files.length > 0) {

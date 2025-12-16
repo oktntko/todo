@@ -16,7 +16,6 @@ const $loading = useLoading();
 
 const $emit = defineEmits<{
   done: [ModalEditWhiteboardResult];
-  close: [];
 }>();
 
 const props = defineProps<{
@@ -47,7 +46,7 @@ async function handleSubmit(input: ModelValue) {
 </script>
 
 <template>
-  <PluginModal class="p-8" @close="$emit('close')">
+  <div class="rounded-lg bg-linear-to-b from-white to-gray-100 p-8 text-gray-900 shadow-xl">
     <header class="mb-4 text-lg font-bold capitalize">edit whiteboard</header>
     <WhiteboardSpaceForm v-model="modelValue" @submit="handleSubmit">
       <template #buttons>
@@ -79,5 +78,5 @@ async function handleSubmit(input: ModelValue) {
         </MyButton>
       </template>
     </WhiteboardSpaceForm>
-  </PluginModal>
+  </div>
 </template>

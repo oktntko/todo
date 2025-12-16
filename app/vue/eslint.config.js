@@ -36,6 +36,8 @@ export default defineConfigWithVueTs(
           },
         },
       ],
+      'vue/one-component-per-file': 'off',
+      'vue/require-default-prop': 'off',
       '@typescript-eslint/switch-exhaustiveness-check': 'error',
     },
     languageOptions: {

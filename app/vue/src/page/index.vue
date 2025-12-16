@@ -143,7 +143,7 @@
     </aside>
 
     <div
-      class="flex min-h-screen grow flex-col bg-linear-to-b from-white to-gray-200 text-gray-900"
+      class="flex min-h-screen grow flex-col bg-linear-to-b from-white to-gray-100 text-gray-900"
     >
       <header class="flex h-16 flex-row flex-nowrap items-center justify-between p-4">
         <nav class="flex items-center">

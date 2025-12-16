@@ -21,7 +21,7 @@ defineEmits<{
 </script>
 
 <template>
-  <PluginModal class="p-8" @close="$emit('close')">
+  <div class="rounded-lg bg-linear-to-b from-white to-gray-100 p-8 text-gray-900 shadow-xl">
     <form
       class="flex flex-col gap-6"
       autocomplete="off"
@@ -74,5 +74,5 @@ defineEmits<{
         </MyButton>
       </section>
     </form>
-  </PluginModal>
+  </div>
 </template>

@@ -16,7 +16,6 @@ const $loading = useLoading();
 
 const $emit = defineEmits<{
   done: [ModalAddTodoResult];
-  close: [];
 }>();
 
 const { storedSpaceList } = storeToRefs(useSpaceStore());
@@ -60,7 +59,7 @@ async function handleSubmit(value: ModelValue) {
 </script>
 
 <template>
-  <PluginModal class="p-8" @close="$emit('close')">
+  <div class="rounded-lg bg-linear-to-b from-white to-gray-100 p-8 text-gray-900 shadow-xl">
     <header class="mb-4 text-lg font-bold capitalize">add todo</header>
     <TodoForm
       v-model="modelValue"
@@ -69,5 +68,5 @@ async function handleSubmit(value: ModelValue) {
       @submit="handleSubmit"
     >
     </TodoForm>
-  </PluginModal>
+  </div>
 </template>

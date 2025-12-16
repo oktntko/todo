@@ -10,7 +10,6 @@ export type ModalAddSpaceResult = { space: RouterOutput['space']['create'] };
 
 const $emit = defineEmits<{
   done: [ModalAddSpaceResult];
-  close: [];
 }>();
 
 const { storedSpaceList } = storeToRefs(useSpaceStore());
@@ -42,8 +41,8 @@ async function handleSubmit(input: ModelValue) {
 </script>
 
 <template>
-  <PluginModal class="p-8" @close="$emit('close')">
+  <div class="rounded-lg bg-linear-to-b from-white to-gray-100 p-8 text-gray-900 shadow-xl">
     <header class="mb-4 text-lg font-bold capitalize">create new space</header>
     <SpaceForm v-model="modelValue" @submit="handleSubmit"> </SpaceForm>
-  </PluginModal>
+  </div>
 </template>

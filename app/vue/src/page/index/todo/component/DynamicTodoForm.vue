@@ -191,12 +191,11 @@ watch(
                       async () => {
                         status.fixedEditing = true;
                         try {
-                          const files: File[] = await $modal.open(
+                          const files: File[] = await $modal.showModal(
                             MyModalInputFile,
-                            (resolve, reject) => ({
+                            (resolve) => ({
                               multiple: true,
                               onDone: resolve,
-                              onClose: reject,
                             }),
                           );
 

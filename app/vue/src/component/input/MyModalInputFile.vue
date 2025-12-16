@@ -11,14 +11,13 @@ defineProps<Props>();
 
 defineEmits<{
   done: [File[]];
-  close: [];
 }>();
 
 const dragging = ref(false);
 </script>
 
 <template>
-  <PluginModal class="p-8" @close="$emit('close')">
+  <div class="rounded-lg bg-white p-8 text-gray-900 shadow-xl">
     <div
       class="flex min-w-lg flex-col items-center justify-center"
       @dragenter="dragging = true"
@@ -66,5 +65,5 @@ const dragging = ref(false);
         />
       </label>
     </div>
-  </PluginModal>
+  </div>
 </template>

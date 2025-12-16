@@ -607,12 +607,11 @@ onMounted(async () => {
                     :class="['invisible group-hover/item:visible', 'hover:bg-gray-300']"
                     @click.prevent="
                       async () => {
-                        const result: ModalEditWhiteboardResult = await $modal.open(
+                        const result: ModalEditWhiteboardResult = await $modal.showModal(
                           ModalEditWhiteboard,
-                          (resolve, reject) => ({
+                          (resolve) => ({
                             whiteboard_id: whiteboard.whiteboard_id,
                             onDone: resolve,
-                            onClose: reject,
                           }),
                         );
 
