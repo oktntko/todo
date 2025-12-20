@@ -1,4 +1,17 @@
-import { Suspense, Transition, type App, type Component, type InputHTMLAttributes } from 'vue';
+import {
+  computed,
+  createApp,
+  defineComponent,
+  inject,
+  ref,
+  Suspense,
+  Transition,
+  type App,
+  type Component,
+  type InjectionKey,
+  type InputHTMLAttributes,
+  type PropType,
+} from 'vue';
 import type { ComponentProps } from 'vue-component-type-helpers';
 import MyButton from '~/component/button/MyButton';
 
@@ -70,14 +83,12 @@ function installModalPlugin(parentApp: App) {
     {
       closedby = 'any',
       showCloseButton = true,
-      closeResolveMethod = 'reject',
     }: {
       closedby?:
         | 'any' /* 外側タップ */
         | 'closerequest' /* Esc・戻るジェスチャー */
         | 'none' /* dialog.close()のみ */;
       showCloseButton?: boolean;
-      closeResolveMethod?: 'resolve' | 'reject';
     } = {},
   ) {
     // HTML dialog を作る
@@ -148,10 +159,7 @@ function installModalPlugin(parentApp: App) {
             { once: true },
           );
 
-          // TODO as unknown as T
-          return (closeResolveMethod === 'reject' ? reject : resolve)(
-            dialog.returnValue as unknown as T,
-          );
+          return reject(dialog.returnValue);
         },
         { once: true },
       );
@@ -161,7 +169,7 @@ function installModalPlugin(parentApp: App) {
       Object.assign(app._context, parentApp._context);
 
       // Suspense で解決されなかった場合、ダイアログを閉じて親アプリに伝える
-      // TODO ダイアログにダイアログを重ねている場合はどうなる？
+      // ダイアログにダイアログを重ねていると、2層目以降のダイアログのリジェクトは大元のアプリに伝わらない
       app.config.errorHandler = (error) => {
         dialog.close('cancel');
         reject(error);
@@ -179,10 +187,20 @@ function installModalPlugin(parentApp: App) {
     });
   }
 
-  function showWindowDialog<T extends string>(message: string, options?: WindowDialogOptions) {
-    return showModal<T, typeof WindowDialog>(WindowDialog, () => ({ message, ...options }), {
-      closeResolveMethod: 'resolve',
-    });
+  async function showWindowDialog<T extends string>(
+    message: string,
+    options?: WindowDialogOptions,
+  ) {
+    return showModal<T, typeof WindowDialog>(WindowDialog, (resolve) => ({
+      message,
+      ...options,
+      onConfirm: (value) => {
+        resolve(value as T);
+      },
+      onCancel: () => {
+        resolve('cancel' as T);
+      },
+    }));
   }
 
   return {
@@ -190,96 +208,84 @@ function installModalPlugin(parentApp: App) {
 
     get alert() {
       type O = Pick<WindowDialogOptions, 'color' | 'confirmText'>;
-      function showConfirmDialog(message: string, { confirmText = 'OK', ...options }: O = {}) {
-        return showWindowDialog<'confirm' | 'cancel'>(message, { confirmText, ...options });
-      }
-
       return {
-        success(message: string, { color = 'green', ...options }: O = {}) {
-          return showConfirmDialog(message, { color, ...options });
+        async open(message: string, { confirmText = 'OK', ...options }: O = {}) {
+          return showWindowDialog<'confirm' | 'cancel'>(message, { confirmText, ...options });
         },
-        info(message: string, { color = 'blue', ...options }: O = {}) {
-          return showConfirmDialog(message, { color, ...options });
+        async success(message: string, { color = 'green', ...options }: O = {}) {
+          return this.open(message, { color, ...options });
         },
-        warn(message: string, { color = 'yellow', ...options }: O = {}) {
-          return showConfirmDialog(message, { color, ...options });
+        async info(message: string, { color = 'blue', ...options }: O = {}) {
+          return this.open(message, { color, ...options });
         },
-        danger(message: string, { color = 'red', ...options }: O = {}) {
-          return showConfirmDialog(message, { color, ...options });
+        async warn(message: string, { color = 'yellow', ...options }: O = {}) {
+          return this.open(message, { color, ...options });
         },
-        custom(message: string, { ...options }: O = {}) {
-          return showConfirmDialog(message, { ...options });
+        async danger(message: string, { color = 'red', ...options }: O = {}) {
+          return this.open(message, { color, ...options });
         },
       };
     },
 
     get confirm() {
       type O = Pick<WindowDialogOptions, 'color' | 'confirmText' | 'cancelText'>;
-      function showConfirmDialog(
-        message: string,
-        { confirmText = 'YES', cancelText = 'NO', ...options }: O = {},
-      ) {
-        return showWindowDialog<'YES' | 'cancel'>(message, {
-          confirmText,
-          cancelText,
-          confirmValue: 'YES',
-          ...options,
-        });
-      }
-
       return {
-        success(message: string, { color = 'green', ...options }: O = {}) {
-          return showConfirmDialog(message, { color, ...options });
+        async open(
+          message: string,
+          { confirmText = 'YES', cancelText = 'NO', ...options }: O = {},
+        ) {
+          return showWindowDialog<'YES' | 'cancel'>(message, {
+            confirmText,
+            cancelText,
+            confirmValue: 'YES',
+            ...options,
+          });
         },
-        info(message: string, { color = 'blue', ...options }: O = {}) {
-          return showConfirmDialog(message, { color, ...options });
+        async success(message: string, { color = 'green', ...options }: O = {}) {
+          return this.open(message, { color, ...options });
         },
-        warn(message: string, { color = 'yellow', ...options }: O = {}) {
-          return showConfirmDialog(message, { color, ...options });
+        async info(message: string, { color = 'blue', ...options }: O = {}) {
+          return this.open(message, { color, ...options });
         },
-        danger(message: string, { color = 'red', ...options }: O = {}) {
-          return showConfirmDialog(message, { color, ...options });
+        async warn(message: string, { color = 'yellow', ...options }: O = {}) {
+          return this.open(message, { color, ...options });
         },
-        custom(message: string, { ...options }: O = {}) {
-          return showConfirmDialog(message, { ...options });
+        async danger(message: string, { color = 'red', ...options }: O = {}) {
+          return this.open(message, { color, ...options });
         },
       };
     },
 
     get prompt() {
       type O = Pick<WindowDialogOptions, 'color' | 'confirmText' | 'cancelText' | 'prompt'>;
-      function showConfirmDialog(
-        message: string,
-        {
-          confirmText = 'confirm',
-          cancelText = 'cancel',
-          prompt = { type: 'text' },
-          ...options
-        }: O = {},
-      ) {
-        return showWindowDialog<`confirm:${string}` | 'cancel'>(message, {
-          confirmText,
-          cancelText,
-          prompt,
-          ...options,
-        });
-      }
-
       return {
-        success(message: string, { color = 'green', ...options }: O = {}) {
-          return showConfirmDialog(message, { color, ...options });
+        async open(
+          message: string,
+          {
+            confirmText = 'confirm',
+            cancelText = 'cancel',
+            prompt = { type: 'text' },
+            ...options
+          }: O = {},
+        ) {
+          return showWindowDialog<`confirm:${string}` | 'cancel'>(message, {
+            confirmText,
+            cancelText,
+            prompt,
+            ...options,
+          });
         },
-        info(message: string, { color = 'blue', ...options }: O = {}) {
-          return showConfirmDialog(message, { color, ...options });
+        async success(message: string, { color = 'green', ...options }: O = {}) {
+          return this.open(message, { color, ...options });
         },
-        warn(message: string, { color = 'yellow', ...options }: O = {}) {
-          return showConfirmDialog(message, { color, ...options });
+        async info(message: string, { color = 'blue', ...options }: O = {}) {
+          return this.open(message, { color, ...options });
         },
-        danger(message: string, { color = 'red', ...options }: O = {}) {
-          return showConfirmDialog(message, { color, ...options });
+        async warn(message: string, { color = 'yellow', ...options }: O = {}) {
+          return this.open(message, { color, ...options });
         },
-        custom(message: string, { ...options }: O = {}) {
-          return showConfirmDialog(message, { ...options });
+        async danger(message: string, { color = 'red', ...options }: O = {}) {
+          return this.open(message, { color, ...options });
         },
       };
     },
@@ -399,27 +405,39 @@ const WindowDialog = defineComponent({
     },
     prompt: Object as PropType<InputHTMLAttributes>,
   },
-  setup(props) {
-    const icon = (function () {
+  emits: {
+    confirm: (_: string) => true,
+    cancel: () => true,
+  },
+  setup(props, { emit: $emit }) {
+    const icon = computed(() => {
       switch (props.color) {
         case 'green':
           return 'icon-[qlementine-icons--success-12]';
         case 'blue':
-        case 'white':
-        case 'gray':
           return 'icon-[material-symbols--info-outline-rounded]';
         case 'yellow':
           return 'icon-[material-symbols--warning-outline-rounded]';
         case 'red':
           return 'icon-[material-symbols--dangerous-outline-rounded]';
+        case 'white':
+        case 'gray':
+        default:
+          return 'icon-[solar--dialog-line-duotone]';
       }
-    })();
+    });
 
     const modelValue = ref('');
 
     return () => (
       <div class="max-w-md rounded-lg bg-linear-to-b from-white to-gray-100 p-8 text-gray-700 shadow-xl">
-        <form method="dialog" class="flex flex-col gap-6">
+        <form
+          class="flex flex-col gap-6"
+          onSubmit={(e) => {
+            e.preventDefault();
+            $emit('confirm', props.prompt ? `confirm:${modelValue.value}` : props.confirmValue);
+          }}
+        >
           <main class="flex items-center gap-4">
             <div
               class={[
@@ -432,7 +450,7 @@ const WindowDialog = defineComponent({
                 props.color === 'yellow' /*  */ && 'bg-yellow-100 text-yellow-800',
               ]}
             >
-              <span class={[icon, 'h-6 w-6']}></span>
+              <span class={[icon.value, 'h-6 w-6']}></span>
             </div>
 
             <div class="flex flex-col gap-2">
@@ -450,16 +468,11 @@ const WindowDialog = defineComponent({
           </main>
 
           <footer class="flex items-center justify-center gap-4">
-            <MyButton
-              type="submit"
-              autofocus
-              value={props.prompt ? `confirm:${modelValue.value}` : props.confirmValue}
-              color={props.color}
-            >
+            <MyButton type="submit" autofocus color={props.color}>
               <span class="capitalize">{props.confirmText}</span>
             </MyButton>
             {props.cancelText && (
-              <MyButton type="submit" value="cancel" color="white" formnovalidate>
+              <MyButton type="button" color="white" onClick={() => $emit('cancel')}>
                 <span class="capitalize">{props.cancelText}</span>
               </MyButton>
             )}
