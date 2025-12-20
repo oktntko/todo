@@ -2,7 +2,7 @@
   "name": "@todo/prisma",
   "version": "1.0.0",
   "type": "module",
-  "packageManager": "pnpm@10.24.0",
+  "packageManager": "pnpm@10.26.1",
   "exports": {
     "./client": {
       "types": "./src/client/index.ts",
@@ -26,28 +26,28 @@
     "prisma:studio": "prisma studio"
   },
   "dependencies": {
-    "@prisma/adapter-mariadb": "^7.1.0",
-    "@prisma/client": "7.1.0",
+    "@prisma/adapter-mariadb": "^7.2.0",
+    "@prisma/client": "7.2.0",
     "@todo/lib": "workspace:*"
   },
   "devDependencies": {
     "@cspell/eslint-plugin": "^9.4.0",
-    "@eslint/js": "^9.39.1",
+    "@eslint/js": "^9.39.2",
     "@tsconfig/node24": "^24.0.3",
     "@tsconfig/strictest": "^2.0.8",
     "@types/node": "^24.10.1",
-    "@typescript-eslint/eslint-plugin": "^8.48.1",
-    "@typescript-eslint/parser": "^8.48.1",
-    "eslint": "^9.39.1",
+    "@typescript-eslint/eslint-plugin": "^8.50.0",
+    "@typescript-eslint/parser": "^8.50.0",
+    "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "npm-run-all2": "^8.0.4",
     "prettier": "^3.7.4",
     "prettier-plugin-organize-imports": "^4.3.0",
-    "prisma": "^7.1.0",
+    "prisma": "^7.2.0",
     "prisma-zod-generator": "^2.1.2",
     "tsup": "^8.5.1",
     "tsx": "4.21.0",
     "typescript": "5.9.3",
-    "typescript-eslint": "^8.48.1"
+    "typescript-eslint": "^8.50.0"
   }
 }

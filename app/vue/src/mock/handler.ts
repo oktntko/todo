@@ -388,43 +388,44 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
       where: eq(pgTodo.todo_id, input.todo_id),
     });
 
-    const [todo] = current
-      ? await drizzle
-          .update(pgTodo)
-          .set({
-            space_id: input.space_id,
-            title: input.title,
-            description: input.description,
-            begin_date: input.begin_date,
-            begin_time: input.begin_time,
-            limit_date: input.limit_date,
-            limit_time: input.limit_time,
-            order: input.order,
-            done_at: input.done_at as Date | null,
-            updated_at: new Date(),
-            updated_by: ctx.user.user_id,
-          })
-          .where(eq(pgTodo.todo_id, input.todo_id))
-          .returning()
-      : await drizzle
-          .insert(pgTodo)
-          .values({
-            todo_id: input.todo_id,
-            space_id: input.space_id,
-            title: input.title,
-            description: input.description,
-            begin_date: input.begin_date,
-            begin_time: input.begin_time,
-            limit_date: input.limit_date,
-            limit_time: input.limit_time,
-            order: input.order,
-            done_at: input.done_at as Date | null | undefined,
-            created_at: new Date(),
-            created_by: ctx.user.user_id,
-            updated_at: new Date(),
-            updated_by: ctx.user.user_id,
-          })
-          .returning();
+    const [todo] =
+      current && input.space_id
+        ? await drizzle
+            .update(pgTodo)
+            .set({
+              space_id: input.space_id,
+              title: input.title,
+              description: input.description,
+              begin_date: input.begin_date,
+              begin_time: input.begin_time,
+              limit_date: input.limit_date,
+              limit_time: input.limit_time,
+              order: input.order,
+              done_at: input.done_at as Date | null,
+              updated_at: new Date(),
+              updated_by: ctx.user.user_id,
+            })
+            .where(eq(pgTodo.todo_id, input.todo_id))
+            .returning()
+        : await drizzle
+            .insert(pgTodo)
+            .values({
+              // @ts-expect-error zod が働いていないので nullable になる
+              space_id: input.space_id,
+              title: input.title,
+              description: input.description,
+              begin_date: input.begin_date,
+              begin_time: input.begin_time,
+              limit_date: input.limit_date,
+              limit_time: input.limit_time,
+              order: input.order,
+              done_at: input.done_at as Date | null | undefined,
+              created_at: new Date(),
+              created_by: ctx.user.user_id,
+              updated_at: new Date(),
+              updated_by: ctx.user.user_id,
+            })
+            .returning();
 
     return findUniqueTodo({ input: todo! });
   }),
@@ -435,6 +436,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
     const [todo] = await drizzle
       .insert(pgTodo)
       .values({
+        // @ts-expect-error zod が働いていないので nullable になる
         space_id: input.space_id,
         title: input.title,
         description: input.description,
@@ -460,6 +462,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
     const [todo] = await drizzle
       .update(pgTodo)
       .set({
+        // @ts-expect-error zod が働いていないので nullable になる
         space_id: input.space_id,
         title: input.title,
         description: input.description,
@@ -489,6 +492,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
       const [todo] = await drizzle
         .update(pgTodo)
         .set({
+          // @ts-expect-error zod が働いていないので nullable になる
           space_id: input.space_id,
           title: input.title,
           description: input.description,
