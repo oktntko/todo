@@ -6,15 +6,15 @@
   "exports": {
     "./client": {
       "types": "./src/client/index.ts",
-      "default": "./dist/client/index.js"
+      "default": "./dist/client/index.mjs"
     },
     "./schema": {
       "types": "./src/schema/index.ts",
-      "default": "./dist/schema/index.js"
+      "default": "./dist/schema/index.mjs"
     }
   },
   "scripts": {
-    "build": "tsup-node",
+    "build": "tsdown",
     "type-check": "tsc --project tsconfig.base.json --noEmit",
     "lint": "eslint src/ --max-warnings 0",
     "format": "prettier . --write",
@@ -45,7 +45,7 @@
     "prettier-plugin-organize-imports": "^4.3.0",
     "prisma": "^7.2.0",
     "prisma-zod-generator": "^2.1.2",
-    "tsup": "^8.5.1",
+    "tsdown": "^0.18.2",
     "tsx": "4.21.0",
     "typescript": "5.9.3",
     "typescript-eslint": "^8.50.0"

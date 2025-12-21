@@ -1,8 +1,7 @@
-import { defineConfig } from 'tsup';
+import { defineConfig } from 'tsdown';
 
 export default defineConfig({
-  entry: ['src/index.ts', 'src/schema/index.ts'],
-  splitting: false,
+  entry: ['src/client/index.ts', 'src/schema/index.ts'],
   sourcemap: true,
   clean: true,
   minify: true,
@@ -10,4 +9,5 @@ export default defineConfig({
   tsconfig: './tsconfig.base.json',
   format: 'esm',
   target: 'node24',
+  dts: false,
 });

@@ -6,19 +6,19 @@
   "exports": {
     "./dayjs": {
       "types": "./src/dayjs.ts",
-      "default": "./dist/dayjs.js"
+      "default": "./dist/dayjs.mjs"
     },
     "./remeda": {
       "types": "./src/remeda.ts",
-      "default": "./dist/remeda.js"
+      "default": "./dist/remeda.mjs"
     },
     "./zod": {
       "types": "./src/zod.ts",
-      "default": "./dist/zod.js"
+      "default": "./dist/zod.mjs"
     }
   },
   "scripts": {
-    "build": "tsup-node",
+    "build": "tsdown",
     "type-check": "tsc --project tsconfig.base.json --noEmit",
     "lint": "eslint src/ --max-warnings 0",
     "format": "prettier src/ --write",
@@ -45,7 +45,7 @@
     "npm-run-all2": "^8.0.4",
     "prettier": "^3.7.4",
     "prettier-plugin-organize-imports": "^4.3.0",
-    "tsup": "^8.5.1",
+    "tsdown": "^0.18.2",
     "tsx": "4.21.0",
     "typescript": "5.9.3",
     "typescript-eslint": "^8.50.0",
