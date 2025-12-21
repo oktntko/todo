@@ -191,15 +191,13 @@ function installModalPlugin(parentApp: App) {
     message: string,
     options?: WindowDialogOptions,
   ) {
-    return showModal<T, typeof WindowDialog>(WindowDialog, (resolve) => ({
+    return showModal<T, typeof WindowDialog>(WindowDialog, (resolve, reject) => ({
       message,
       ...options,
       onConfirm: (value) => {
         resolve(value as T);
       },
-      onCancel: () => {
-        resolve('cancel' as T);
-      },
+      onCancel: reject,
     }));
   }
 

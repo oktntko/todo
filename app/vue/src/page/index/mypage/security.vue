@@ -64,16 +64,16 @@ const refInputToken = ref<HTMLInputElement>();
               class="inline-flex items-center justify-center px-4 py-2 text-sm text-gray-700 transition-colors hover:text-blue-600"
               @click="
                 async () => {
-                  if (await $dialog.confirm('Do you want to disable two-factor authentication?')) {
-                    const loading = $loading.open();
-                    try {
-                      await trpc.mypage.disableSecret.mutate();
-                      mypage.twofa_enable = false;
+                  await $modal.confirm.warn('Do you want to disable two-factor authentication?');
 
-                      $toast.success('Two-factor authentication has been disabled.');
-                    } finally {
-                      loading.close();
-                    }
+                  const loading = $modal.loading();
+                  try {
+                    await trpc.mypage.disableSecret.mutate();
+                    mypage.twofa_enable = false;
+
+                    $toast.success('Two-factor authentication has been disabled.');
+                  } finally {
+                    loading.close();
                   }
                 }
               "
@@ -158,7 +158,7 @@ const refInputToken = ref<HTMLInputElement>();
           autocomplete="off"
           @submit.prevent="
             validateSubmit(async () => {
-              const loading = $loading.open();
+              const loading = $modal.loading();
               try {
                 await trpc.mypage.enableSecret.mutate({
                   ...modelValue,

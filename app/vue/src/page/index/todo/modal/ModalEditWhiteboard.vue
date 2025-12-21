@@ -4,7 +4,7 @@ import { trpc } from '~/lib/trpc';
 import WhiteboardSpaceForm, {
   type ModelValue,
 } from '~/page/index/todo/component/WhiteboardSpaceForm.vue';
-import { useLoading } from '~/plugin/LoadingPlugin';
+import { useModal } from '~/plugin/ModalPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
 
 export type ModalEditWhiteboardResult =
@@ -12,7 +12,7 @@ export type ModalEditWhiteboardResult =
   | { event: 'delete'; whiteboard: RouterOutput['whiteboard']['delete'] };
 
 const $toast = useToast();
-const $loading = useLoading();
+const $modal = useModal();
 
 const $emit = defineEmits<{
   done: [ModalEditWhiteboardResult];
@@ -28,7 +28,7 @@ const modelValue = ref<ModelValue>(whiteboard);
 const updated_at = whiteboard.updated_at;
 
 async function handleSubmit(input: ModelValue) {
-  const loading = $loading.open();
+  const loading = $modal.loading();
   try {
     const whiteboard = await trpc.whiteboard.update.mutate({
       ...input,
@@ -56,11 +56,9 @@ async function handleSubmit(input: ModelValue) {
           variant="outlined"
           @click="
             async () => {
-              const yes = await $dialog.confirm(`Do you really want to delete this data?`);
-              if (!yes) {
-                return;
-              }
-              const loading = $loading.open();
+              await $modal.confirm.warn(`Do you really want to delete this data?`);
+
+              const loading = $modal.loading();
               try {
                 const whiteboard = await trpc.whiteboard.delete.mutate({
                   whiteboard_id,

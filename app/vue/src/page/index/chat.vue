@@ -2,7 +2,9 @@
 import { MessageSchema } from '@todo/express/schema';
 import type { z } from '@todo/lib/zod';
 import { trpc, type RouterOutput } from '~/lib/trpc';
-import { useLoading } from '~/plugin/LoadingPlugin';
+import { useModal } from '~/plugin/ModalPlugin';
+
+const $modal = useModal();
 
 const data = ref<RouterOutput['aichat']['list']>([]);
 const loading = ref(false);
@@ -21,9 +23,8 @@ onMounted(async () => {
   }
 });
 
-const $loading = useLoading();
 async function handleSubmit() {
-  const loading = $loading.open();
+  const loading = $modal.loading();
   try {
     data.value = await trpc.aichat.chat.mutate({
       messages: data.value,

@@ -26,7 +26,7 @@ const { validateSubmit, ErrorMessage, isDirty, reset } = useVueValidateZod(
     autocomplete="off"
     @submit.prevent="
       validateSubmit(async () => {
-        const loading = $loading.open();
+        const loading = $modal.loading();
         try {
           mypage = await trpc.mypage.patchAichat.mutate(modelValue);
 

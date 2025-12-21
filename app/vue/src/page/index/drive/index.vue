@@ -234,8 +234,7 @@ async function handleUpload() {
             async () => {
               const file_id_list = checkedList.map((x) => x.file_id);
               if (file_id_list.length === 0) {
-                $dialog.alert('There are no files in the checked line.');
-                return;
+                return $modal.alert.info('There are no files in the checked line.');
               }
 
               loading = true;
@@ -255,10 +254,7 @@ async function handleUpload() {
           :disabled="loading || checkedList.length === 0"
           @click="
             async () => {
-              const yes = await $dialog.confirm(`Do you really want to delete checked data?`);
-              if (!yes) {
-                return;
-              }
+              await $modal.confirm.warn(`Do you really want to delete checked data?`);
 
               loading = true;
               try {

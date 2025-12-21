@@ -223,12 +223,8 @@ watch(
                     @click="
                       async () => {
                         if (!modelValue.is_new) {
-                          const yes = await $dialog.confirm(
-                            `Do you really want to delete this data?`,
-                          );
-                          if (!yes) {
-                            return;
-                          }
+                          await $modal.confirm.warn(`Do you really want to delete this data?`);
+
                           await trpc.todo.delete.mutate(modelValue);
                         }
                         $emit('change');

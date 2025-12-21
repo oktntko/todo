@@ -27,7 +27,7 @@ defineEmits<{
       autocomplete="off"
       @submit.prevent="
         validateSubmit(async () => {
-          const loading = $loading.open();
+          const loading = $modal.loading();
           try {
             const result = await trpc.auth.signinTwofa.mutate(modelValue);
 

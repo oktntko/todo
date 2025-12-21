@@ -42,13 +42,10 @@ const { downloadSingleFile } = useFile();
         class="peer inline-flex flex-row items-center rounded-full p-0.5 text-gray-900 transition-colors hover:bg-gray-300"
         @click="
           async () => {
-            const yes = await $dialog.confirm(
-              `Do you really want to delete this file?
-'${file.filename}'`,
-            );
-            if (!yes) return;
+            await $modal.confirm.warn(`Do you really want to delete this file?
+'${file.filename}'`);
 
-            const loading = $loading.open();
+            const loading = $modal.loading();
             try {
               await trpc.file.delete.mutate(file);
 

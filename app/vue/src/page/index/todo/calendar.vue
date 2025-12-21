@@ -4,7 +4,6 @@ import { dayjs } from '@todo/lib/dayjs';
 import DOMPurify from 'dompurify';
 import { trpc } from '~/lib/trpc';
 import SpaceList from '~/page/index/todo/component/SpaceList.vue';
-import { useLoading } from '~/plugin/LoadingPlugin';
 import { useModal } from '~/plugin/ModalPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
 import { useSpaceStore } from '~/store/SpaceStore';
@@ -13,7 +12,6 @@ import ModalEditTodo, { type ModalEditTodoResult } from './modal/ModalEditTodo.v
 
 const $modal = useModal();
 const $toast = useToast();
-const $loading = useLoading();
 
 const { storedSpaceList } = storeToRefs(useSpaceStore());
 const checkedSpaceList = ref(storedSpaceList.value);
@@ -322,7 +320,7 @@ async function onEventChanged(args: EventChangedArgs) {
     return;
   }
 
-  const loading = $loading.open();
+  const loading = $modal.loading();
   try {
     const newStart = dayjs(args.newStart.toString());
     const newEnd = dayjs(args.newEnd.toString());

@@ -643,7 +643,7 @@ onMounted(async () => {
               class="group sticky bottom-0 flex w-full cursor-pointer items-center rounded-e-full bg-gray-200/10 p-2 text-blue-600 backdrop-blur transition duration-75 hover:bg-gray-200"
               @click="
                 async () => {
-                  const loading = $loading.open();
+                  const loading = $modal.loading();
                   try {
                     const whiteboard = await trpc.whiteboard.upsert.mutate({
                       whiteboard_content: '',

@@ -5,14 +5,14 @@ import type { SpaceSchema } from '@todo/prisma/schema';
 import type { DownloadFile } from '~/component/MyDownloadFileList.vue';
 import { trpc } from '~/lib/trpc';
 import TodoForm, { type ModelValue } from '~/page/index/todo/table/component/TodoForm.vue';
-import { useLoading } from '~/plugin/LoadingPlugin';
+import { useModal } from '~/plugin/ModalPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
 import { useSpaceStore } from '~/store/SpaceStore';
 
 export type ModalAddTodoResult = { todo: z.infer<typeof TodoOutputSchema> };
 
 const $toast = useToast();
-const $loading = useLoading();
+const $modal = useModal();
 
 const $emit = defineEmits<{
   done: [ModalAddTodoResult];
@@ -45,7 +45,7 @@ const modelValueSpace = ref<z.infer<typeof SpaceSchema> | undefined>(
 );
 
 async function handleSubmit(value: ModelValue) {
-  const loading = $loading.open();
+  const loading = $modal.loading();
   try {
     const todo = await trpc.todo.create.mutate(value);
 
