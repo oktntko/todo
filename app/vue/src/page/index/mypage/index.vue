@@ -4,10 +4,10 @@ import type { z } from '@todo/lib/zod';
 import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import { bytesToBase64 } from '~/lib/file';
 import { trpc } from '~/lib/trpc';
-import { useModal } from '~/plugin/ModalPlugin';
+import { useDialog } from '~/plugin/DialogPlugin';
 import { useMypageStore } from '~/store/MypageStore';
 
-const $modal = useModal();
+const $dialog = useDialog();
 const { mypage } = storeToRefs(useMypageStore());
 
 const modelValue = ref<z.infer<typeof MypageRouterSchema.patchProfileInput>>({ ...mypage.value });
@@ -27,13 +27,13 @@ async function handleFileInput(files?: FileList | null) {
   const file = files[0]!;
 
   if (!file.type.startsWith('image/')) {
-    return $modal.alert.info('Choose a IMAGE file.');
+    return $dialog.alert.info('Choose a IMAGE file.');
   }
 
   if (file.size > 1024 * 15 /* 15kb */) {
     // MySQL TEXT 最大 65,535 バイト BASE64エンコードで約3倍になる
     // 65,535 / 4 = 16383.75 バイト ≒ 15.9kb => 15kb
-    return $modal.alert.info('The upper limit is 15kb.');
+    return $dialog.alert.info('The upper limit is 15kb.');
   }
 
   modelValue.value.avatar_image = await bytesToBase64(file);
@@ -46,7 +46,7 @@ async function handleFileInput(files?: FileList | null) {
     autocomplete="off"
     @submit.prevent="
       validateSubmit(async () => {
-        const loading = $modal.loading();
+        const loading = $dialog.loading();
         try {
           mypage = await trpc.mypage.patchProfile.mutate(modelValue);
 

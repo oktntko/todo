@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { trpc } from '~/lib/trpc';
-import { useModal } from '~/plugin/ModalPlugin';
+import { useDialog } from '~/plugin/DialogPlugin';
 
 const $router = useRouter();
-const $modal = useModal();
+const $dialog = useDialog();
 </script>
 
 <template>
@@ -19,7 +19,7 @@ const $modal = useModal();
           @click="
             async () => {
               if (
-                (await $modal.prompt.danger(
+                (await $dialog.prompt.danger(
                   `You are about to permanently delete your account. This action cannot be undone. Please type 'delete permanently' to confirm.`,
                 )) === 'confirm:delete permanently'
               ) {

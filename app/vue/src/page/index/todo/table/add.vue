@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { DownloadFile } from '~/component/MyDownloadFileList.vue';
 import { trpc } from '~/lib/trpc';
-import { useModal } from '~/plugin/ModalPlugin';
+import { useDialog } from '~/plugin/DialogPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
 import TodoForm, { type ModelValue } from './component/TodoForm.vue';
 
 const $router = useRouter();
 const $toast = useToast();
-const $modal = useModal();
+const $dialog = useDialog();
 
 const modelValue = ref<ModelValue>({
   space_id: null,
@@ -23,7 +23,7 @@ const modelValue = ref<ModelValue>({
 const modelValueFileList = ref<DownloadFile[]>([]);
 
 async function handleSubmit(value: ModelValue) {
-  const loading = $modal.loading();
+  const loading = $dialog.loading();
   try {
     await trpc.todo.create.mutate(value);
 

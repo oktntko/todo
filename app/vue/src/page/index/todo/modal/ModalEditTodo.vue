@@ -5,7 +5,7 @@ import type { SpaceSchema } from '@todo/prisma/schema';
 import type { DownloadFile } from '~/component/MyDownloadFileList.vue';
 import { trpc, type RouterOutput } from '~/lib/trpc';
 import TodoForm, { type ModelValue } from '~/page/index/todo/table/component/TodoForm.vue';
-import { useModal } from '~/plugin/ModalPlugin';
+import { useDialog } from '~/plugin/DialogPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
 
 export type ModalEditTodoResult =
@@ -17,7 +17,7 @@ const $emit = defineEmits<{
 }>();
 
 const $toast = useToast();
-const $modal = useModal();
+const $dialog = useDialog();
 
 const props = defineProps<{
   todo_id: string;
@@ -31,7 +31,7 @@ const modelValueSpace = ref<z.infer<typeof SpaceSchema>>(todo.space);
 const updated_at = todo.updated_at;
 
 async function handleSubmit(input: ModelValue) {
-  const loading = $modal.loading();
+  const loading = $dialog.loading();
   try {
     const todo = await trpc.todo.update.mutate({
       ...input,
@@ -65,9 +65,9 @@ async function handleSubmit(input: ModelValue) {
           variant="outlined"
           @click="
             async () => {
-              await $modal.confirm.warn(`Do you really want to delete this data?`);
+              await $dialog.confirm.warn(`Do you really want to delete this data?`);
 
-              const loading = $modal.loading();
+              const loading = $dialog.loading();
               try {
                 const todo = await trpc.todo.delete.mutate({ todo_id });
 

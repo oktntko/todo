@@ -166,7 +166,7 @@ const headerCheckbox = computed(() => {
           :disabled="loading || checkedList.length === 0"
           @click="
             async () => {
-              await $modal.confirm.warn(`Do you really want to done checked data?`);
+              await $dialog.confirm.warn(`Do you really want to done checked data?`);
 
               loading = true;
               try {
@@ -193,7 +193,7 @@ const headerCheckbox = computed(() => {
             async () => {
               const file_id_list = checkedList.flatMap((x) => x.file_list).map((x) => x.file_id);
               if (file_id_list.length === 0) {
-                return $modal.alert.info('There are no files in the checked line.');
+                return $dialog.alert.info('There are no files in the checked line.');
               }
 
               loading = true;
@@ -213,7 +213,7 @@ const headerCheckbox = computed(() => {
           :disabled="loading || checkedList.length === 0"
           @click="
             async () => {
-              await $modal.confirm.warn(`Do you really want to delete checked data?`);
+              await $dialog.confirm.warn(`Do you really want to delete checked data?`);
 
               loading = true;
               try {

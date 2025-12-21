@@ -111,7 +111,7 @@ describe('MyDownloadFileList', () => {
     expect(wrapper.vm.$dialog.confirm).toHaveBeenCalledWith(
       `Do you really want to delete this file?\n'test1.txt'`,
     );
-    expect(wrapper.vm.$modal.loading).toHaveBeenCalled();
+    expect(wrapper.vm.$dialog.loading).toHaveBeenCalled();
     expect(deleteMutateSpy).toHaveBeenCalledWith(files[0]);
     expect(wrapper.vm.$toast.success).toHaveBeenCalledWith('Data has been deleted.');
     expect(wrapper.emitted('deleted')).toEqual([[0]]);
@@ -145,7 +145,7 @@ describe('MyDownloadFileList', () => {
     // assert
     expect(wrapper.vm.$dialog.confirm).toHaveBeenCalled();
     expect(deleteMutateSpy).not.toHaveBeenCalled();
-    expect(wrapper.vm.$modal.loading).not.toHaveBeenCalled();
+    expect(wrapper.vm.$dialog.loading).not.toHaveBeenCalled();
     expect(wrapper.vm.$toast.success).not.toHaveBeenCalled();
     expect(wrapper.emitted('deleted')).toBeUndefined();
     expect(wrapper.vm.file_list).toEqual(files); // File should still be in the list

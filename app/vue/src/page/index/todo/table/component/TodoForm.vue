@@ -177,7 +177,7 @@ const handleSubmit = validateSubmit((value) => {
               :disabled="!todo_id"
               @click="
                 async () => {
-                  const files: File[] = await $modal.showModal(MyModalInputFile, (resolve) => ({
+                  const files: File[] = await $dialog.showModal(MyModalInputFile, (resolve) => ({
                     multiple: true,
                     onDone: resolve,
                   }));

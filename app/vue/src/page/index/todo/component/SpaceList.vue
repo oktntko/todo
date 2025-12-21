@@ -108,7 +108,7 @@ onMounted(async () => {
               :class="['invisible group-hover/item:visible', 'hover:bg-gray-300']"
               @click.prevent="
                 async () => {
-                  await $modal.showModal(ModalEditSpace, (resolve) => ({
+                  await $dialog.showModal(ModalEditSpace, (resolve) => ({
                     space_id: space.space_id,
                     onDone: resolve,
                   }));
@@ -135,7 +135,7 @@ onMounted(async () => {
         class="group sticky bottom-0 flex w-full cursor-pointer items-center rounded-e-full bg-gray-200/10 p-2 text-blue-600 backdrop-blur transition duration-75 hover:bg-gray-200"
         @click="
           async () => {
-            await $modal.showModal(ModalAddSpace, (resolve) => ({
+            await $dialog.showModal(ModalAddSpace, (resolve) => ({
               onDone: resolve,
             }));
           }

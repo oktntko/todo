@@ -37,7 +37,7 @@ const { validateSubmit, ErrorMessage } = useVueValidateZod(
           class="flex flex-col gap-6"
           @submit.prevent="
             validateSubmit(async () => {
-              const loading = $modal.loading();
+              const loading = $dialog.loading();
               try {
                 const { auth } = await trpc.auth.signin.mutate(modelValue);
                 if (auth) {
@@ -49,7 +49,7 @@ const { validateSubmit, ErrorMessage } = useVueValidateZod(
               }
 
               // 二要素認証
-              await $modal.showModal(ModalSigninTwofa, (resolve) => ({
+              await $dialog.showModal(ModalSigninTwofa, (resolve) => ({
                 onSuccess: resolve,
               }));
 

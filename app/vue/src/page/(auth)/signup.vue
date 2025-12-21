@@ -37,7 +37,7 @@ const { validateSubmit, ErrorMessage } = useVueValidateZod(
           class="flex flex-col gap-6"
           @submit.prevent="
             validateSubmit(async () => {
-              const loading = $modal.loading();
+              const loading = $dialog.loading();
               try {
                 await trpc.auth.signup.mutate(modelValue);
 

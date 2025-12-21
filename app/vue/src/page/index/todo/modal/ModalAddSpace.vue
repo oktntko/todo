@@ -2,7 +2,7 @@
 import type { RouterOutput } from '~/lib/trpc';
 import { trpc } from '~/lib/trpc';
 import SpaceForm, { type ModelValue } from '~/page/index/todo/component/SpaceForm.vue';
-import { useModal } from '~/plugin/ModalPlugin';
+import { useDialog } from '~/plugin/DialogPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
 import { useSpaceStore } from '~/store/SpaceStore';
 
@@ -22,10 +22,10 @@ const modelValue = ref<ModelValue>({
 });
 
 const $toast = useToast();
-const $modal = useModal();
+const $dialog = useDialog();
 
 async function handleSubmit(input: ModelValue) {
-  const loading = $modal.loading();
+  const loading = $dialog.loading();
   try {
     const space = await trpc.space.create.mutate(input);
 

@@ -607,7 +607,7 @@ onMounted(async () => {
                     :class="['invisible group-hover/item:visible', 'hover:bg-gray-300']"
                     @click.prevent="
                       async () => {
-                        const result: ModalEditWhiteboardResult = await $modal.showModal(
+                        const result: ModalEditWhiteboardResult = await $dialog.showModal(
                           ModalEditWhiteboard,
                           (resolve) => ({
                             whiteboard_id: whiteboard.whiteboard_id,
@@ -643,7 +643,7 @@ onMounted(async () => {
               class="group sticky bottom-0 flex w-full cursor-pointer items-center rounded-e-full bg-gray-200/10 p-2 text-blue-600 backdrop-blur transition duration-75 hover:bg-gray-200"
               @click="
                 async () => {
-                  const loading = $modal.loading();
+                  const loading = $dialog.loading();
                   try {
                     const whiteboard = await trpc.whiteboard.upsert.mutate({
                       whiteboard_content: '',

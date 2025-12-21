@@ -6,10 +6,10 @@ import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import MyModalInputFile from '~/component/input/MyModalInputFile.vue';
 import { useFile } from '~/composable/useFile';
 import { trpc, type RouterOutput } from '~/lib/trpc';
-import { useModal } from '~/plugin/ModalPlugin';
+import { useDialog } from '~/plugin/DialogPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
 
-const $modal = useModal();
+const $dialog = useDialog();
 const $toast = useToast();
 
 function MimetypeIcon({ mimetype }: { mimetype: string }) {
@@ -156,7 +156,7 @@ const headerCheckbox = computed(() => {
 });
 
 async function handleUpload() {
-  const files: File[] = await $modal.showModal(MyModalInputFile, (resolve) => ({
+  const files: File[] = await $dialog.showModal(MyModalInputFile, (resolve) => ({
     multiple: true,
     onDone: resolve,
   }));
@@ -234,7 +234,7 @@ async function handleUpload() {
             async () => {
               const file_id_list = checkedList.map((x) => x.file_id);
               if (file_id_list.length === 0) {
-                return $modal.alert.info('There are no files in the checked line.');
+                return $dialog.alert.info('There are no files in the checked line.');
               }
 
               loading = true;
@@ -254,7 +254,7 @@ async function handleUpload() {
           :disabled="loading || checkedList.length === 0"
           @click="
             async () => {
-              await $modal.confirm.warn(`Do you really want to delete checked data?`);
+              await $dialog.confirm.warn(`Do you really want to delete checked data?`);
 
               loading = true;
               try {

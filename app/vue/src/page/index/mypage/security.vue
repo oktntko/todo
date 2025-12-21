@@ -64,9 +64,9 @@ const refInputToken = ref<HTMLInputElement>();
               class="inline-flex items-center justify-center px-4 py-2 text-sm text-gray-700 transition-colors hover:text-blue-600"
               @click="
                 async () => {
-                  await $modal.confirm.warn('Do you want to disable two-factor authentication?');
+                  await $dialog.confirm.warn('Do you want to disable two-factor authentication?');
 
-                  const loading = $modal.loading();
+                  const loading = $dialog.loading();
                   try {
                     await trpc.mypage.disableSecret.mutate();
                     mypage.twofa_enable = false;
@@ -158,7 +158,7 @@ const refInputToken = ref<HTMLInputElement>();
           autocomplete="off"
           @submit.prevent="
             validateSubmit(async () => {
-              const loading = $modal.loading();
+              const loading = $dialog.loading();
               try {
                 await trpc.mypage.enableSecret.mutate({
                   ...modelValue,

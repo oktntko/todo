@@ -4,14 +4,14 @@ import type { z } from '@todo/lib/zod';
 import type { SpaceSchema } from '@todo/prisma/schema';
 import type { DownloadFile } from '~/component/MyDownloadFileList.vue';
 import { trpc } from '~/lib/trpc';
-import { useModal } from '~/plugin/ModalPlugin';
+import { useDialog } from '~/plugin/DialogPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
 import TodoForm, { type ModelValue } from './component/TodoForm.vue';
 
 const $router = useRouter();
 const $route = useRoute('//todo/table/[todo_id]');
 const $toast = useToast();
-const $modal = useModal();
+const $dialog = useDialog();
 
 const todo_id = $route.params.todo_id;
 const todo = await trpc.todo.get.query({ todo_id });
@@ -22,7 +22,7 @@ const modelValueSpace = ref<z.infer<typeof SpaceSchema>>(todo.space);
 const updated_at = todo.updated_at;
 
 async function handleSubmit(value: ModelValue) {
-  const loading = $modal.loading();
+  const loading = $dialog.loading();
   try {
     await trpc.todo.update.mutate({ ...value, todo_id, updated_at });
 
@@ -79,9 +79,9 @@ async function handleSubmit(value: ModelValue) {
             variant="outlined"
             @click="
               async () => {
-                await $modal.confirm.warn(`Do you really want to delete this data?`);
+                await $dialog.confirm.warn(`Do you really want to delete this data?`);
 
-                const loading = $modal.loading();
+                const loading = $dialog.loading();
                 try {
                   await trpc.todo.delete.mutate({ todo_id });
 

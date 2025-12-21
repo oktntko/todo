@@ -191,7 +191,7 @@ watch(
                       async () => {
                         status.fixedEditing = true;
                         try {
-                          const files: File[] = await $modal.showModal(
+                          const files: File[] = await $dialog.showModal(
                             MyModalInputFile,
                             (resolve) => ({
                               multiple: true,
@@ -223,7 +223,7 @@ watch(
                     @click="
                       async () => {
                         if (!modelValue.is_new) {
-                          await $modal.confirm.warn(`Do you really want to delete this data?`);
+                          await $dialog.confirm.warn(`Do you really want to delete this data?`);
 
                           await trpc.todo.delete.mutate(modelValue);
                         }

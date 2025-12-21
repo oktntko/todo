@@ -22,7 +22,7 @@ const { validateSubmit, ErrorMessage, isDirty, reset } = useVueValidateZod(
     autocomplete="off"
     @submit.prevent="
       validateSubmit(async () => {
-        const loading = $modal.loading();
+        const loading = $dialog.loading();
         try {
           await trpc.mypage.patchPassword.mutate(modelValue);
 

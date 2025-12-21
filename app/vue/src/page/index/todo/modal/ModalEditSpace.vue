@@ -2,7 +2,7 @@
 import type { RouterOutput } from '~/lib/trpc';
 import { trpc } from '~/lib/trpc';
 import SpaceForm, { type ModelValue } from '~/page/index/todo/component/SpaceForm.vue';
-import { useModal } from '~/plugin/ModalPlugin';
+import { useDialog } from '~/plugin/DialogPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
 import { useSpaceStore } from '~/store/SpaceStore';
 
@@ -11,7 +11,7 @@ export type ModalEditSpaceResult =
   | { event: 'delete'; space: RouterOutput['space']['delete'] };
 
 const $toast = useToast();
-const $modal = useModal();
+const $dialog = useDialog();
 
 const $emit = defineEmits<{
   done: [ModalEditSpaceResult];
@@ -29,7 +29,7 @@ const modelValue = ref<ModelValue>(space);
 const updated_at = space.updated_at;
 
 async function handleSubmit(input: ModelValue) {
-  const loading = $modal.loading();
+  const loading = $dialog.loading();
   try {
     const space = await trpc.space.update.mutate({
       ...input,
@@ -61,9 +61,9 @@ async function handleSubmit(input: ModelValue) {
           variant="outlined"
           @click="
             async () => {
-              await $modal.confirm.warn(`Do you really want to delete this data?`);
+              await $dialog.confirm.warn(`Do you really want to delete this data?`);
 
-              const loading = $modal.loading();
+              const loading = $dialog.loading();
               try {
                 const space = await trpc.space.delete.mutate({ space_id, updated_at });
 

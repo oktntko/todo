@@ -15,29 +15,29 @@ import {
 import type { ComponentProps } from 'vue-component-type-helpers';
 import MyButton from '~/component/button/MyButton';
 
-type ModalPlugin = ReturnType<typeof installModalPlugin>;
+type DialogPlugin = ReturnType<typeof installDialogPlugin>;
 
-const ModalPluginKey = Symbol() as InjectionKey<ModalPlugin>;
+const DialogPluginKey = Symbol() as InjectionKey<DialogPlugin>;
 
 export default function (parentApp: App) {
-  const modal = installModalPlugin(parentApp);
+  const $dialog = installDialogPlugin(parentApp);
 
-  parentApp.config.globalProperties.$modal = modal;
+  parentApp.config.globalProperties.$dialog = $dialog;
 
-  parentApp.provide<ModalPlugin>(ModalPluginKey, modal);
+  parentApp.provide<DialogPlugin>(DialogPluginKey, $dialog);
 }
 
-export function useModal() {
-  return inject<ModalPlugin>(ModalPluginKey)!;
+export function useDialog() {
+  return inject<DialogPlugin>(DialogPluginKey)!;
 }
 
 declare module '@vue/runtime-core' {
   export interface ComponentCustomProperties {
-    $modal: ModalPlugin;
+    $dialog: DialogPlugin;
   }
 }
 
-function installModalPlugin(parentApp: App) {
+function installDialogPlugin(parentApp: App) {
   const dialogTemplate = document.createElement('template');
   dialogTemplate.innerHTML = `
   <dialog

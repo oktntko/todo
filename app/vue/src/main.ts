@@ -3,7 +3,7 @@ import App from '~/App.vue';
 import router from '~/lib/router';
 import { isRouterError } from '~/lib/trpc';
 import '~/main.css';
-import ModalPlugin from '~/plugin/ModalPlugin';
+import ModalPlugin from '~/plugin/DialogPlugin';
 import ToastPlugin from '~/plugin/ToastPlugin';
 import WindowPlugin from '~/plugin/WindowPlugin';
 
@@ -36,8 +36,12 @@ app.use(ToastPlugin);
 app.mount('#app');
 
 function handleError(error: unknown) {
-  console.error('error', error);
+  if (error === 'cancel') {
+    return; // dialog cancel
+  }
+
   if (isAxiosError(error) || isRouterError(error)) {
+    console.warn('http error', error);
     const { status, message } = (function () {
       if (isAxiosError(error)) {
         return { status: error.status ?? 0, message: error.message };
@@ -53,12 +57,11 @@ function handleError(error: unknown) {
     const color =
       0 < status && status < 400 ? 'blue' : 400 <= status && status < 500 ? 'yellow' : 'red';
 
-    return app.config.globalProperties.$modal.alert.open(message, {
-      color,
-    });
-  } else {
-    console.error(error);
+    return app.config.globalProperties.$dialog.alert.open(message, { color });
   }
+
+  // unknown error
+  console.error('unknown error', error);
 }
 
 window.addEventListener('unhandledrejection', (event: PromiseRejectionEvent) => {

@@ -3,12 +3,12 @@ import { SpaceRouterSchema } from '@todo/express/schema';
 import type { z } from '@todo/lib/zod';
 import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import { bytesToBase64 } from '~/lib/file';
-import { useModal } from '~/plugin/ModalPlugin';
+import { useDialog } from '~/plugin/DialogPlugin';
 
 export type ModelValue = z.infer<typeof SpaceRouterSchema.createInput>;
 export type Reset = (modelValue: ModelValue) => void;
 
-const $modal = useModal();
+const $dialog = useDialog();
 
 const $emit = defineEmits<{
   submit: [ModelValue, Reset];
@@ -35,13 +35,13 @@ async function handleFileInput(files?: FileList | null) {
   const file = files[0]!;
 
   if (!file.type.startsWith('image/')) {
-    return $modal.alert.info('Choose a IMAGE file.');
+    return $dialog.alert.info('Choose a IMAGE file.');
   }
 
   if (file.size > 1024 * 15 /* 15kb */) {
     // MySQL TEXT 最大 65,535 バイト BASE64エンコードで約3倍になる
     // 65,535 / 4 = 16383.75 バイト ≒ 15.9kb => 15kb
-    return $modal.alert.info('The upper limit is 15kb.');
+    return $dialog.alert.info('The upper limit is 15kb.');
   }
 
   modelValue.value.space_image = await bytesToBase64(file);

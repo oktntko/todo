@@ -4,13 +4,13 @@ import { dayjs } from '@todo/lib/dayjs';
 import DOMPurify from 'dompurify';
 import { trpc } from '~/lib/trpc';
 import SpaceList from '~/page/index/todo/component/SpaceList.vue';
-import { useModal } from '~/plugin/ModalPlugin';
+import { useDialog } from '~/plugin/DialogPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
 import { useSpaceStore } from '~/store/SpaceStore';
 import ModalAddTodo, { type ModalAddTodoResult } from './modal/ModalAddTodo.vue';
 import ModalEditTodo, { type ModalEditTodoResult } from './modal/ModalEditTodo.vue';
 
-const $modal = useModal();
+const $dialog = useDialog();
 const $toast = useToast();
 
 const { storedSpaceList } = storeToRefs(useSpaceStore());
@@ -279,7 +279,7 @@ async function onTimeRangeSelected(args: TimeRangeArgs) {
   const start = dayjs(args.start.toString());
   const end = dayjs(args.end.toString());
 
-  const result: ModalAddTodoResult = await $modal.showModal(ModalAddTodo, (resolve) => ({
+  const result: ModalAddTodoResult = await $dialog.showModal(ModalAddTodo, (resolve) => ({
     space_id: args.resource ? Number(args.resource) : undefined,
     begin_date: start.format('YYYY-MM-DD') as `${number}-${number}-${number}`,
     begin_time: start.format('HH:mm') as `${number}:${number}`,
@@ -296,7 +296,7 @@ async function onTimeRangeSelected(args: TimeRangeArgs) {
 }
 
 async function onEventClicked(args: EventArgs) {
-  const result: ModalEditTodoResult = await $modal.showModal(ModalEditTodo, (resolve) => ({
+  const result: ModalEditTodoResult = await $dialog.showModal(ModalEditTodo, (resolve) => ({
     todo_id: args.e.id() as string,
     onDone: resolve,
   }));
@@ -320,7 +320,7 @@ async function onEventChanged(args: EventChangedArgs) {
     return;
   }
 
-  const loading = $modal.loading();
+  const loading = $dialog.loading();
   try {
     const newStart = dayjs(args.newStart.toString());
     const newEnd = dayjs(args.newEnd.toString());
