@@ -399,9 +399,10 @@ const WindowDialog = defineComponent({
     },
     cancelText: {
       type: String,
-      default: 'cancel',
     },
-    prompt: Object as PropType<InputHTMLAttributes>,
+    prompt: {
+      type: Object as PropType<InputHTMLAttributes>,
+    },
   },
   emits: {
     confirm: (_: string) => true,
