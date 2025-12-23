@@ -2,6 +2,7 @@
   "extends": "./tsconfig.app.json",
   "exclude": [],
   "include": ["src/**/*", "test/**/*", "test:e2e/**/*"],
+  "references": [{ "path": "../express/tsconfig.base.json" }],
   "compilerOptions": {
     "composite": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.test.tsbuildinfo",
