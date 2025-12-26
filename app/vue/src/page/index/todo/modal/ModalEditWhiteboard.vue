@@ -46,7 +46,7 @@ async function handleSubmit(input: ModelValue) {
 </script>
 
 <template>
-  <div class="rounded-lg bg-linear-to-b from-white to-gray-100 p-8 text-gray-900 shadow-xl">
+  <div class="w-sm rounded-lg bg-linear-to-b from-white to-gray-100 p-8 text-gray-900 shadow-xl">
     <header class="mb-4 text-lg font-bold capitalize">edit whiteboard</header>
     <WhiteboardSpaceForm v-model="modelValue" @submit="handleSubmit">
       <template #buttons>
@@ -64,6 +64,8 @@ async function handleSubmit(input: ModelValue) {
                   whiteboard_id,
                   updated_at,
                 });
+
+                $toast.success('Data has been deleted.');
 
                 $emit('done', { event: 'delete', whiteboard });
               } finally {

@@ -50,7 +50,7 @@ function installDialogPlugin(parentApp: App) {
       starting:[[open]]:scale-95 starting:[[open]]:opacity-0
       [[open]]:scale-100 [[open]]:opacity-100
 
-      backdrop:bg-gray-400/50 backdrop:backdrop-blur-xs
+      backdrop:bg-gray-500/10 backdrop:backdrop-blur-xs
       backdrop:transition backdrop:transition-discrete backdrop:duration-200 backdrop:ease-out
       backdrop:opacity-0
       starting:[[open]]:backdrop:opacity-0

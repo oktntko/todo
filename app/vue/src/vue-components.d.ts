@@ -22,7 +22,6 @@ declare module 'vue' {
     MySelect: typeof import('./component/input/MySelect.vue')['default']
     MySortButton: typeof import('./component/MySortButton.vue')['default']
     OnClickOutside: typeof import('@vueuse/components')['OnClickOutside']
-    PluginToast: typeof import('./plugin/component/PluginToast.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }
@@ -40,7 +39,6 @@ declare global {
   const MySelect: typeof import('./component/input/MySelect.vue')['default']
   const MySortButton: typeof import('./component/MySortButton.vue')['default']
   const OnClickOutside: typeof import('@vueuse/components')['OnClickOutside']
-  const PluginToast: typeof import('./plugin/component/PluginToast.vue')['default']
   const RouterLink: typeof import('vue-router')['RouterLink']
   const RouterView: typeof import('vue-router')['RouterView']
 }
