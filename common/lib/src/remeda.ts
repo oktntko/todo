@@ -1,12 +1,3 @@
-import * as r from 'remeda';
-
-const R = {
-  ...r,
-  rgb,
-  rgba,
-  hex,
-};
-
 function calcRgb(hex: string) {
   if (!hex) {
     return { r: 0, g: 0, b: 0 };
@@ -51,5 +42,18 @@ function hex(rgb: string): string {
 
   return `#${toHex(r!)}${toHex(g!)}${toHex(b!)}`;
 }
+
+import * as r from 'remeda';
+
+const R: typeof r & {
+  rgb: typeof rgb;
+  rgba: typeof rgba;
+  hex: typeof hex;
+} = {
+  ...r,
+  rgb,
+  rgba,
+  hex,
+} as const;
 
 export { R };

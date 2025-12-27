@@ -9,7 +9,6 @@
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "moduleResolution": "Bundler",
 
-    "baseUrl": ".",
     "paths": {
       "~/*": ["./src/*"],
       "@todo/express": ["../express/src/router/_router.ts"]

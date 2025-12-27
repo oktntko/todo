@@ -4,7 +4,6 @@
 import cspellPlugin from '@cspell/eslint-plugin';
 import skipFormatting from '@vue/eslint-config-prettier/skip-formatting';
 import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript';
-import pluginOxlint from 'eslint-plugin-oxlint';
 // import pluginPlaywright from 'eslint-plugin-playwright';
 import pluginVue from 'eslint-plugin-vue';
 import { globalIgnores } from 'eslint/config';
@@ -39,6 +38,18 @@ export default defineConfigWithVueTs(
       'vue/one-component-per-file': 'off',
       'vue/require-default-prop': 'off',
       '@typescript-eslint/switch-exhaustiveness-check': 'error',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          args: 'all',
+          argsIgnorePattern: '^_',
+          caughtErrors: 'all',
+          caughtErrorsIgnorePattern: '^_',
+          destructuredArrayIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          ignoreRestSiblings: true,
+        },
+      ],
     },
     languageOptions: {
       parserOptions: {
@@ -65,6 +76,5 @@ export default defineConfigWithVueTs(
   //   ...pluginPlaywright.configs['flat/recommended'],
   //   files: ['e2e/**/*.{test,spec}.{js,ts,jsx,tsx}'],
   // },
-  ...pluginOxlint.configs['flat/recommended'],
   skipFormatting,
 );

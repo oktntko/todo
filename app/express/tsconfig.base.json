@@ -3,7 +3,6 @@
   "extends": ["@tsconfig/node24/tsconfig.json", "@tsconfig/strictest/tsconfig.json"],
   "compilerOptions": {
     "composite": true,
-    "baseUrl": ".",
     "outDir": "./dist",
     "module": "esnext",
     "moduleResolution": "bundler",
@@ -14,7 +13,7 @@
     "exactOptionalPropertyTypes": false,
     // app settings
     "paths": {
-      "~/*": ["src/*"]
+      "~/*": ["./src/*"]
     }
   },
   "include": ["src"]

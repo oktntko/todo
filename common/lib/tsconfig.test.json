@@ -5,7 +5,7 @@
     "types": ["vitest/globals"],
     "rootDir": ".",
     "paths": {
-      "~/*": ["src/*"]
+      "~/*": ["./src/*"]
     }
   },
   "include": ["src/**/*", "test/**/*"]

@@ -12,37 +12,22 @@
         "DATABASE_PORT",
         "DATABASE_NAME"
       ],
-      "dependsOn": [
-        "@todo/lib#build",
-        "@todo/prisma#build"
-      ]
+      "dependsOn": ["@todo/lib#build", "@todo/prisma#build"]
     },
     "build": {
-      "dependsOn": [
-        "type-check",
-        "^build"
-      ]
+      "dependsOn": ["type-check", "^build"]
     },
     "build:msw": {
-      "dependsOn": [
-        "build"
-      ],
-      "env": [
-        "MODE"
-      ]
+      "dependsOn": ["build"],
+      "env": ["MODE"]
     },
     "type-check": {
-      "dependsOn": [
-        "@todo/prisma#prisma:generate",
-        "^type-check"
-      ]
+      "dependsOn": ["@todo/prisma#prisma:generate", "^type-check"]
     },
     "preview": {
       "cache": false,
       "persistent": true,
-      "dependsOn": [
-        "build"
-      ],
+      "dependsOn": ["build"],
       "env": [
         "EXPRESS_PORT",
         "DATABASE_USER",
@@ -53,9 +38,7 @@
       ]
     },
     "prisma:generate": {
-      "env": [
-        "DATABASE_URL"
-      ]
+      "env": ["DATABASE_URL"]
     },
     "lint": {},
     "format": {},
@@ -68,11 +51,7 @@
         "DATABASE_PORT",
         "DATABASE_NAME"
       ],
-      "dependsOn": [
-        "@todo/lib#build",
-        "@todo/prisma#prisma:generate",
-        "@todo/prisma#build"
-      ]
+      "dependsOn": ["@todo/lib#build", "@todo/prisma#prisma:generate", "@todo/prisma#build"]
     }
   }
 }
