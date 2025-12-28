@@ -40,7 +40,9 @@
     "prisma:generate": {
       "env": ["DATABASE_URL"]
     },
-    "lint": {},
+    "lint": {
+      "cache": false
+    },
     "format": {},
     "test": {
       "env": [

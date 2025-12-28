@@ -1,5 +1,8 @@
 // cSpell Settings
 {
+  "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
+  "ignoreRandomStrings": true,
+  "useGitignore": true,
   // Version of the setting file.  Always 0.2
   "version": "0.2",
   // language - current active spelling language
@@ -8,37 +11,22 @@
   "words": [
     "aichat",
     "appenders",
-    "arcticons",
     "autoincrement",
     "closedby",
     "closerequest",
-    "colorset",
     "Dataless",
     "dataurl",
-    "daygrid",
     "daypilot",
     "dbgenerated",
-    "debouncer",
     "dompurify",
     "esbuild",
-    "evented",
     "filesize",
-    "fontisto",
-    "grayscale",
-    "hugeicons",
     "iconify",
-    "ilike",
     "initdb",
-    "microdiff",
-    "mingcute",
     "mockopts",
     "mockreq",
     "mockres",
-    "multimonth",
-    "oktntko",
-    "oxlint",
     "pglite",
-    "qlementine",
     "qrcode",
     "refstate",
     "remeda",
@@ -46,14 +34,12 @@
     "rgba",
     "selectedcontent",
     "sortablejs",
-    "timegrid",
-    "triggerable",
+    "treeify",
     "trpc",
     "twofa",
     "unfonts",
     "unplugin",
     "userstorage",
-    "vaadin",
     "vueuse"
   ],
   // flagWords - list of words to be always considered incorrect
@@ -70,6 +56,16 @@
     "generated",
     "dist",
     "types",
-    "*.svg"
-  ]
+    "*.svg",
+    "migrations", // prisma
+    "migrations.json", // drizzle
+    "meta",
+    "mock",
+    "mockServiceWorker.js", // msw
+    "vue-auto-import.d.ts",
+    "vue-components.d.ts",
+    "vue-auto-import.d.ts"
+  ],
+  "ignoreRegExpList": ["icon-\\[[^\\]]+\\]"],
+  "import": []
 }

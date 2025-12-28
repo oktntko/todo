@@ -16,14 +16,11 @@
     "migrate": "pnpm --filter='@todo/prisma' 'prisma:migrate:dev'",
     "seed": "pnpm --filter='@todo/prisma' 'prisma:seed'",
     "lint": "turbo lint",
-    "cspell": "cspell .",
+    "spell-check": "cspell .",
     "format": "turbo format",
     "test": "turbo test"
   },
   "devDependencies": {
-    "@cspell/dict-css": "latest",
-    "@cspell/dict-html": "latest",
-    "@cspell/dict-typescript": "latest",
     "@cspell/eslint-plugin": "^9.4.0",
     "@eslint/js": "^9.39.2",
     "@rushstack/eslint-patch": "^1.15.0",
