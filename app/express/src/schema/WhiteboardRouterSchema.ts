@@ -29,6 +29,8 @@ const getInput = WhiteboardSchema.pick({
   whiteboard_id: true,
 });
 
+const getOutput = WhiteboardSchema;
+
 const reorderInput = WhiteboardSchema.pick({
   whiteboard_id: true,
   whiteboard_order: true,
@@ -41,6 +43,7 @@ export const WhiteboardRouterSchema = {
   updateInput,
   upsertInput,
   getInput,
+  getOutput,
   reorderInput,
   reorderInputList,
 };

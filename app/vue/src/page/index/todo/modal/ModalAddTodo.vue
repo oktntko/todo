@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { TodoOutputSchema } from '@todo/express/schema';
+import type { TodoRouterSchema } from '@todo/express/schema';
 import { type z } from '@todo/lib/zod';
 import type { SpaceSchema } from '@todo/prisma/schema';
 import type { DownloadFile } from '~/component/MyDownloadFileList.vue';
@@ -9,7 +9,7 @@ import { useDialog } from '~/plugin/DialogPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
 import { useSpaceStore } from '~/store/SpaceStore';
 
-export type ModalAddTodoResult = { todo: z.infer<typeof TodoOutputSchema> };
+export type ModalAddTodoResult = { todo: z.infer<typeof TodoRouterSchema.getOutput> };
 
 const $toast = useToast();
 const $dialog = useDialog();

@@ -109,9 +109,11 @@ async function deleteSpace(
     updated_at: input.updated_at,
   });
 
-  return SpaceRepository.deleteSpace(ctx.prisma, {
+  await SpaceRepository.deleteSpace(ctx.prisma, {
     where: { space_id: input.space_id },
   });
+
+  return { space_id: input.space_id };
 }
 
 // space.reorder
@@ -121,15 +123,15 @@ async function reorderSpace(
 ) {
   log.trace(ReqCtx.reqid, 'reorderSpace', ctx.operator.user_id, input);
 
-  return Promise.all(
-    input.map((x) =>
-      SpaceRepository.updateSpace(ctx.prisma, {
-        where: { space_id: x.space_id },
-        data: {
-          space_order: x.space_order,
-        },
-        operator_id: ctx.operator.user_id,
-      }),
-    ),
-  );
+  for (const x of input) {
+    await SpaceRepository.updateSpace(ctx.prisma, {
+      where: { space_id: x.space_id },
+      data: {
+        space_order: x.space_order,
+      },
+      operator_id: ctx.operator.user_id,
+    });
+  }
+
+  return { ok: true } as const;
 }

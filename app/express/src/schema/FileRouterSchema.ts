@@ -11,6 +11,8 @@ const getInput = FileSchema.pick({
 });
 const getManyInput = z.object({ file_id_list: FileSchema.shape.file_id.array().min(1) });
 
+const getOutput = FileSchema;
+
 const fileInput = z.any().refine(
   (file): file is Express.Multer.File => {
     return (
@@ -38,10 +40,6 @@ const deleteInput = FileSchema.pick({
   updated_at: true,
 });
 
-export const FileOutputSchema = FileSchema.extend({
-  todo_list: z.lazy(() => TodoSchema).array(),
-});
-
 const searchInput = z.object({
   where: z.object({
     file_keyword: z.string().trim().max(255),
@@ -56,11 +54,16 @@ const searchInput = z.object({
 
 const searchOutput = z.object({
   total: z.number(),
-  file_list: z.array(FileOutputSchema),
+  file_list: z.array(
+    FileSchema.extend({
+      todo_list: z.lazy(() => TodoSchema).array(),
+    }),
+  ),
 });
 
 export const FileRouterSchema = {
   getInput,
+  getOutput,
   getManyInput,
   createInput,
   createManyInput,

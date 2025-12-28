@@ -141,7 +141,7 @@ async function deleteFile(
   // ストレージを更新
   FileRepository.removeFile(filedata);
 
-  return filedata;
+  return { file_id: input.file_id };
 }
 
 async function deleteManyFile(
@@ -150,7 +150,11 @@ async function deleteManyFile(
 ) {
   log.trace(ReqCtx.reqid, 'deleteManyFile', ctx.operator.user_id, input);
 
-  return Promise.all(input.map((x) => FileService.deleteFile(ctx, x)));
+  for (const x of input) {
+    await FileService.deleteFile(ctx, x);
+  }
+
+  return { ok: true } as const;
 }
 
 // file.search

@@ -4,6 +4,7 @@ import multer from 'multer';
 import { createProtectHandler } from '~/middleware/express';
 import { $transaction } from '~/middleware/prisma';
 import { protectedProcedure, router } from '~/middleware/trpc';
+import { OkSchema } from '~/schema';
 import { FileRouterSchema } from '~/schema/FileRouterSchema';
 import { FileService } from '~/service/FileService';
 
@@ -95,6 +96,7 @@ export const file = router({
   // file.delete
   delete: protectedProcedure
     .input(FileRouterSchema.deleteInput)
+    .output(FileRouterSchema.getInput)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
         return FileService.deleteFile({ ...ctx, prisma }, input);
@@ -104,6 +106,7 @@ export const file = router({
   // file.deleteMany
   deleteMany: protectedProcedure
     .input(FileRouterSchema.deleteInput.array())
+    .output(OkSchema)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
         return FileService.deleteManyFile({ ...ctx, prisma }, input);

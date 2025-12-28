@@ -24,9 +24,11 @@ export const MypageService = {
 async function deleteMypage(ctx: ProtectedContext) {
   log.trace(ReqCtx.reqid, 'deleteProfile', ctx.operator.user_id);
 
-  return UserRepository.deleteUser(ctx.prisma, {
+  await UserRepository.deleteUser(ctx.prisma, {
     where: { user_id: ctx.operator.user_id },
   });
+
+  return { ok: true } as const;
 }
 
 // mypage.patchPassword

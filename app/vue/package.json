@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:msw": "run-s drizzle:generate && vite --mode msw",
+    "dev:msw": "MODE='msw' run-s drizzle:generate && vite --mode msw",
     "build": "vite build",
-    "build:msw": "vite build --mode msw",
+    "build:msw": "MODE='msw' vite build --mode msw",
     "type-check": "vue-tsc --build --force tsconfig.app.json",
     "preview": "vite preview",
     "lint": "eslint src/ --fix",

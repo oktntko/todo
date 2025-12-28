@@ -1,13 +1,14 @@
 import { $transaction } from '~/middleware/prisma';
 import { protectedProcedure, router } from '~/middleware/trpc';
-import { TodoOutputSchema, TodoRouterSchema } from '~/schema/TodoRouterSchema';
+import { OkSchema } from '~/schema';
+import { TodoRouterSchema } from '~/schema/TodoRouterSchema';
 import { TodoService } from '~/service/TodoService';
 
 export const todo = router({
   // todo.list
   list: protectedProcedure
     .input(TodoRouterSchema.listInput)
-    .output(TodoOutputSchema.array())
+    .output(TodoRouterSchema.getOutput.array())
     .query(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
         return TodoService.listTodo({ ...ctx, prisma }, input);
@@ -27,7 +28,7 @@ export const todo = router({
   // todo.get
   get: protectedProcedure
     .input(TodoRouterSchema.getInput)
-    .output(TodoOutputSchema)
+    .output(TodoRouterSchema.getOutput)
     .query(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
         return TodoService.getTodo({ ...ctx, prisma }, input);
@@ -37,7 +38,7 @@ export const todo = router({
   // todo.upsert
   upsert: protectedProcedure
     .input(TodoRouterSchema.upsertInput)
-    .output(TodoOutputSchema)
+    .output(TodoRouterSchema.getOutput)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
         return TodoService.upsertTodo({ ...ctx, prisma }, input);
@@ -47,7 +48,7 @@ export const todo = router({
   // todo.create
   create: protectedProcedure
     .input(TodoRouterSchema.createInput)
-    .output(TodoOutputSchema)
+    .output(TodoRouterSchema.getOutput)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
         return TodoService.createTodo({ ...ctx, prisma }, input);
@@ -57,7 +58,7 @@ export const todo = router({
   // todo.update
   update: protectedProcedure
     .input(TodoRouterSchema.updateInput)
-    .output(TodoOutputSchema)
+    .output(TodoRouterSchema.getOutput)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
         return TodoService.updateTodo({ ...ctx, prisma }, input);
@@ -67,6 +68,7 @@ export const todo = router({
   // todo.updateMany
   updateMany: protectedProcedure
     .input(TodoRouterSchema.updateManyInput)
+    .output(OkSchema)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
         return TodoService.updateManyTodo({ ...ctx, prisma }, input);
@@ -76,7 +78,7 @@ export const todo = router({
   // todo.delete
   delete: protectedProcedure
     .input(TodoRouterSchema.getInput)
-    .output(TodoOutputSchema)
+    .output(TodoRouterSchema.getInput)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
         return TodoService.deleteTodo({ ...ctx, prisma }, input);
@@ -86,6 +88,7 @@ export const todo = router({
   // todo.deleteMany
   deleteMany: protectedProcedure
     .input(TodoRouterSchema.deleteManyInput)
+    .output(OkSchema)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
         return TodoService.deleteManyTodo({ ...ctx, prisma }, input);

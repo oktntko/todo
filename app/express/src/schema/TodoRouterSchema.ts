@@ -8,11 +8,6 @@ import {
   TodoStatusSchema,
 } from '@todo/prisma/schema';
 
-export const TodoOutputSchema = TodoSchema.extend({
-  space: z.lazy(() => SpaceSchema),
-  file_list: z.lazy(() => FileSchema).array(),
-});
-
 const upsertInput = TodoSchema.omit({
   created_by: true,
   created_at: true,
@@ -48,6 +43,11 @@ const getInput = TodoSchema.pick({
   todo_id: true,
 });
 
+const getOutput = TodoSchema.extend({
+  space: z.lazy(() => SpaceSchema),
+  file_list: z.lazy(() => FileSchema).array(),
+});
+
 const deleteManyInput = getInput.array().min(1);
 
 const listInput = z.object({
@@ -71,7 +71,7 @@ const searchInput = z.object({
 
 const searchOutput = z.object({
   total: z.number(),
-  todo_list: z.array(TodoOutputSchema),
+  todo_list: z.array(getOutput),
 });
 
 export const TodoRouterSchema = {
@@ -80,6 +80,7 @@ export const TodoRouterSchema = {
   updateInput,
   updateManyInput,
   getInput,
+  getOutput,
   deleteManyInput,
   listInput,
   searchInput,

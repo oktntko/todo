@@ -1,7 +1,7 @@
 import { z } from '@todo/lib/zod';
-import { WhiteboardSchema } from '@todo/prisma/schema';
 import { $transaction } from '~/middleware/prisma';
 import { protectedProcedure, router } from '~/middleware/trpc';
+import { OkSchema } from '~/schema';
 import { WhiteboardRouterSchema } from '~/schema/WhiteboardRouterSchema';
 import { WhiteboardService } from '~/service/WhiteboardService';
 
@@ -9,7 +9,7 @@ export const whiteboard = router({
   // whiteboard.list
   list: protectedProcedure
     .input(z.void())
-    .output(WhiteboardSchema.array())
+    .output(WhiteboardRouterSchema.getOutput.array())
     .query(async ({ ctx }) => {
       return $transaction(ctx.prisma, async (prisma) => {
         return WhiteboardService.listWhiteboard({ ...ctx, prisma });
@@ -19,7 +19,7 @@ export const whiteboard = router({
   // whiteboard.get
   get: protectedProcedure
     .input(WhiteboardRouterSchema.getInput)
-    .output(WhiteboardSchema)
+    .output(WhiteboardRouterSchema.getOutput)
     .query(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
         return WhiteboardService.getWhiteboard({ ...ctx, prisma }, input);
@@ -29,7 +29,7 @@ export const whiteboard = router({
   // whiteboard.create
   create: protectedProcedure
     .input(WhiteboardRouterSchema.createInput)
-    .output(WhiteboardSchema)
+    .output(WhiteboardRouterSchema.getOutput)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
         return WhiteboardService.createWhiteboard({ ...ctx, prisma }, input);
@@ -39,7 +39,7 @@ export const whiteboard = router({
   // whiteboard.update
   update: protectedProcedure
     .input(WhiteboardRouterSchema.updateInput)
-    .output(WhiteboardSchema)
+    .output(WhiteboardRouterSchema.getOutput)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
         return WhiteboardService.updateWhiteboard({ ...ctx, prisma }, input);
@@ -49,7 +49,7 @@ export const whiteboard = router({
   // whiteboard.upsert
   upsert: protectedProcedure
     .input(WhiteboardRouterSchema.upsertInput)
-    .output(WhiteboardSchema)
+    .output(WhiteboardRouterSchema.getOutput)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
         return WhiteboardService.upsertWhiteboard({ ...ctx, prisma }, input);
@@ -59,7 +59,7 @@ export const whiteboard = router({
   // whiteboard.delete
   delete: protectedProcedure
     .input(WhiteboardRouterSchema.deleteInput)
-    .output(WhiteboardSchema)
+    .output(WhiteboardRouterSchema.getInput)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
         return WhiteboardService.deleteWhiteboard({ ...ctx, prisma }, input);
@@ -69,7 +69,7 @@ export const whiteboard = router({
   // whiteboard.reorder
   reorder: protectedProcedure
     .input(WhiteboardRouterSchema.reorderInputList)
-    .output(WhiteboardSchema.array())
+    .output(OkSchema)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
         return WhiteboardService.reorderWhiteboard({ ...ctx, prisma }, input);

@@ -29,7 +29,7 @@ const patchAichatInput = UserSchema.pick({
   aichat_model: true,
 });
 
-export const ProfileSchema = UserSchema.pick({
+const getOutput = UserSchema.pick({
   email: true,
   username: true,
   avatar_image: true,
@@ -44,4 +44,5 @@ export const MypageRouterSchema = {
   patchPasswordInput,
   enableSecretInput,
   patchAichatInput,
+  getOutput,
 };

@@ -156,7 +156,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
   }),
   trpcMsw.file.deleteMany.mutation(() => {
     console.trace('file.deleteMany');
-    return [];
+    return { ok: true } as const;
   }),
 
   // mypage
@@ -205,15 +205,18 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
   // @ts-expect-error space_color
   trpcMsw.space.get.query(async ({ input }) => {
     console.trace('space.get', input);
+
     const space = await drizzle.query.pgSpace.findFirst({
       where: and(eq(pgSpace.space_id, input.space_id)),
     });
+
     if (!space) {
       throw new TRPCError({
         code: 'NOT_FOUND',
         message: 'スペースが存在しません',
       });
     }
+
     return space;
   }),
   // @ts-expect-error space_color
@@ -261,21 +264,15 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
     if (!space) {
       throw new TRPCError({ code: 'NOT_FOUND', message: 'スペースが存在しません' });
     }
+
     return space;
   }),
-  // @ts-expect-error space_color
   trpcMsw.space.delete.mutation(async ({ input }) => {
     console.trace('space.delete', input);
     // 楽観ロックやバージョンチェックは省略
-    const [space] = await drizzle
-      .delete(pgSpace)
-      .where(and(eq(pgSpace.space_id, input.space_id)))
-      .returning();
+    await drizzle.delete(pgSpace).where(and(eq(pgSpace.space_id, input.space_id)));
 
-    if (!space) {
-      throw new TRPCError({ code: 'NOT_FOUND', message: 'スペースが存在しません' });
-    }
-    return space;
+    return { space_id: input.space_id };
   }),
   // @ts-expect-error space_color
   trpcMsw.space.reorder.mutation(async ({ input }) => {
@@ -512,44 +509,24 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
       }
     }
 
-    return findManyTodo({
-      input: {
-        space_id_list: todo_list.map((x) => x.space_id),
-      },
-    });
+    return { ok: true } as const;
   }),
 
-  // @ts-expect-error space_color begin_date begin_time limit_date limit_time
   trpcMsw.todo.delete.mutation(async ({ input }) => {
     console.trace('todo.delete', input);
-    const [todo] = await drizzle
-      .delete(pgTodo)
-      .where(eq(pgTodo.todo_id, input.todo_id))
-      .returning();
+    await drizzle.delete(pgTodo).where(eq(pgTodo.todo_id, input.todo_id));
 
-    if (!todo) {
-      throw new TRPCError({ code: 'NOT_FOUND', message: 'TODOが存在しません' });
-    }
-
-    return findUniqueTodo({ input: todo });
+    return { todo_id: input.todo_id };
   }),
 
   trpcMsw.todo.deleteMany.mutation(async ({ input }) => {
     console.trace('todo.deleteMany', input);
-    const todo_list: InferSelectModel<typeof pgTodo>[] = [];
 
     for (const item of input) {
-      const [result] = await drizzle
-        .delete(pgTodo)
-        .where(eq(pgTodo.todo_id, item.todo_id))
-        .returning();
-
-      if (result) {
-        todo_list.push(result);
-      }
+      await drizzle.delete(pgTodo).where(eq(pgTodo.todo_id, item.todo_id));
     }
 
-    return todo_list;
+    return { ok: true } as const;
   }),
 
   // whiteboard
@@ -663,35 +640,25 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
 
   trpcMsw.whiteboard.delete.mutation(async ({ input }) => {
     console.trace('whiteboard.delete', input);
-    const [whiteboard] = await drizzle
-      .delete(pgWhiteboard)
-      .where(eq(pgWhiteboard.whiteboard_id, input.whiteboard_id))
-      .returning();
+    await drizzle.delete(pgWhiteboard).where(eq(pgWhiteboard.whiteboard_id, input.whiteboard_id));
 
-    if (!whiteboard) {
-      throw new TRPCError({ code: 'NOT_FOUND', message: 'ホワイトボードが存在しません' });
-    }
-    return whiteboard;
+    return { whiteboard_id: input.whiteboard_id };
   }),
 
   trpcMsw.whiteboard.reorder.mutation(async ({ input }) => {
     console.trace('whiteboard.reorder', input);
-    const updated: InferSelectModel<typeof pgWhiteboard>[] = [];
     for (const x of input) {
-      const [whiteboard] = await drizzle
+      await drizzle
         .update(pgWhiteboard)
         .set({
           whiteboard_order: x.whiteboard_order,
           updated_by: ctx.user.user_id,
           updated_at: new Date(),
         })
-        .where(eq(pgWhiteboard.whiteboard_id, x.whiteboard_id))
-        .returning();
-      if (whiteboard) {
-        updated.push(whiteboard);
-      }
+        .where(eq(pgWhiteboard.whiteboard_id, x.whiteboard_id));
     }
-    return updated;
+
+    return { ok: true } as const;
   }),
 ];
 

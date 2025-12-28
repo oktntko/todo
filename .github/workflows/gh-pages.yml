@@ -39,8 +39,8 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Install dependencies
         run: pnpm install
-      - name: Build with VitePress
-        run: pnpm build:msw
+      - name: Build with Vite
+        run: DATABASE_URL='mysql://todo:todo@localhost:1234/todo' pnpm build:msw
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

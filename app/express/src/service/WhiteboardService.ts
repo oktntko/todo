@@ -136,9 +136,11 @@ async function deleteWhiteboard(
     updated_at: input.updated_at,
   });
 
-  return WhiteboardRepository.deleteWhiteboard(ctx.prisma, {
+  await WhiteboardRepository.deleteWhiteboard(ctx.prisma, {
     where: { whiteboard_id: input.whiteboard_id },
   });
+
+  return { whiteboard_id: input.whiteboard_id };
 }
 
 // whiteboard.reorder
@@ -148,15 +150,15 @@ async function reorderWhiteboard(
 ) {
   log.trace(ReqCtx.reqid, 'reorderWhiteboard', ctx.operator.user_id, input);
 
-  return Promise.all(
-    input.map((x) =>
-      WhiteboardRepository.updateWhiteboard(ctx.prisma, {
-        where: { whiteboard_id: x.whiteboard_id },
-        data: {
-          whiteboard_order: x.whiteboard_order,
-        },
-        operator_id: ctx.operator.user_id,
-      }),
-    ),
-  );
+  for (const x of input) {
+    await WhiteboardRepository.updateWhiteboard(ctx.prisma, {
+      where: { whiteboard_id: x.whiteboard_id },
+      data: {
+        whiteboard_order: x.whiteboard_order,
+      },
+      operator_id: ctx.operator.user_id,
+    });
+  }
+
+  return { ok: true } as const;
 }

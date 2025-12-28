@@ -276,7 +276,7 @@ async function updateManyTodo(
     }),
   );
 
-  return TodoRepository.updateManyTodo(ctx.prisma, {
+  await TodoRepository.updateManyTodo(ctx.prisma, {
     data: {
       space_id: input.space_id,
 
@@ -294,6 +294,8 @@ async function updateManyTodo(
     },
     operator_id: ctx.operator.user_id,
   });
+
+  return { ok: true } as const;
 }
 
 // todo.delete
@@ -312,9 +314,11 @@ async function deleteTodo(ctx: ProtectedContext, input: z.infer<typeof TodoRoute
     });
   }
 
-  return TodoRepository.deleteTodo(ctx.prisma, {
+  await TodoRepository.deleteTodo(ctx.prisma, {
     where: { todo_id: input.todo_id },
   });
+
+  return { todo_id: input.todo_id };
 }
 
 // todo.deleteMany
@@ -340,11 +344,13 @@ async function deleteManyTodo(
     }),
   );
 
-  return TodoRepository.deleteManyTodo(ctx.prisma, {
+  await TodoRepository.deleteManyTodo(ctx.prisma, {
     where: {
       todo_id: { in: inputList.map((x) => x.todo_id) },
     },
   });
+
+  return { ok: true } as const;
 }
 
 // ================================================================ //

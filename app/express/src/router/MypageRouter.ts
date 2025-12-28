@@ -2,14 +2,14 @@ import { z } from '@todo/lib/zod';
 import { log } from '~/lib/log4js';
 import { $transaction } from '~/middleware/prisma';
 import { protectedProcedure, router } from '~/middleware/trpc';
-import { MypageRouterSchema, ProfileSchema } from '~/schema/MypageRouterSchema';
+import { MypageRouterSchema } from '~/schema/MypageRouterSchema';
 import { MypageService } from '~/service/MypageService';
 
 export const mypage = router({
   // mypage.get
   get: protectedProcedure
     .input(z.void())
-    .output(ProfileSchema)
+    .output(MypageRouterSchema.getOutput)
     .query(async ({ ctx }) => {
       return $transaction(ctx.prisma, async () => {
         return ctx.operator;
@@ -33,7 +33,7 @@ export const mypage = router({
   // mypage.patchPassword
   patchPassword: protectedProcedure
     .input(MypageRouterSchema.patchPasswordInput)
-    .output(ProfileSchema)
+    .output(MypageRouterSchema.getOutput)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
         return MypageService.patchPassword({ ...ctx, prisma }, input);
@@ -43,7 +43,7 @@ export const mypage = router({
   // mypage.patchProfile
   patchProfile: protectedProcedure
     .input(MypageRouterSchema.patchProfileInput)
-    .output(ProfileSchema)
+    .output(MypageRouterSchema.getOutput)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
         return MypageService.patchProfile({ ...ctx, prisma }, input);
@@ -100,7 +100,7 @@ export const mypage = router({
   // mypage.patchAichat
   patchAichat: protectedProcedure
     .input(MypageRouterSchema.patchAichatInput)
-    .output(ProfileSchema)
+    .output(MypageRouterSchema.getOutput)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
         return MypageService.patchAichat({ ...ctx, prisma }, input);
