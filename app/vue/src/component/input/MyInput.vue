@@ -1,34 +1,12 @@
 <script setup lang="ts">
 import type { InputHTMLAttributes } from 'vue';
 
-interface Props extends /* @vue-ignore */ Omit<InputHTMLAttributes, 'type'> {
-  type?:
-    | 'button'
-    | 'color'
-    | 'date'
-    | 'datetime-local'
-    | 'email'
-    | 'file'
-    | 'hidden'
-    | 'image'
-    | 'month'
-    | 'number'
-    | 'password'
-    | 'range'
-    | 'reset'
-    | 'search'
-    | 'submit'
-    | 'tel'
-    | 'text'
-    | 'time'
-    | 'url'
-    | 'week'
-    | undefined;
-}
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+interface Props extends /* @vue-ignore */ InputHTMLAttributes {}
 
 defineProps<Props>();
 
-const modelValue = defineModel<string | number>({ required: true });
+const modelValue = defineModel<string | number>({ default: '' });
 </script>
 
 <template>

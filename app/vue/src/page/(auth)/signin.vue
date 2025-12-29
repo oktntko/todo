@@ -21,7 +21,7 @@ const { validateSubmit, ErrorMessage } = useVueValidateZod(
 </script>
 
 <template>
-  <div class="bg-linear-to-b from-white to-gray-100">
+  <div class="bg-gray-100">
     <div class="mx-auto flex h-screen flex-col items-center justify-center px-6 py-8 lg:py-0">
       <!-- タイトル -->
       <h1 class="mx-auto mb-6 flex items-center gap-1 text-2xl font-semibold">
@@ -66,12 +66,12 @@ const { validateSubmit, ErrorMessage } = useVueValidateZod(
               </div>
 
               <div>
-                <input
+                <MyInput
                   id="email"
                   v-model.lazy="modelValue.email"
                   type="email"
                   required
-                  class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
+                  class="w-full"
                   autocomplete="username"
                 />
               </div>
@@ -92,7 +92,7 @@ const { validateSubmit, ErrorMessage } = useVueValidateZod(
                   v-model.lazy="modelValue.password"
                   required
                   autocomplete="current-password"
-                  class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
+                  class="w-full"
                 />
               </div>
 

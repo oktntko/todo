@@ -59,7 +59,7 @@ async function handleSubmit(value: ModelValue) {
 </script>
 
 <template>
-  <div class="rounded-lg bg-linear-to-b from-white to-gray-100 p-8 text-gray-900 shadow-xl">
+  <div class="rounded-lg bg-gray-100 p-8 text-gray-900 shadow-xl">
     <header class="mb-4 text-lg font-bold capitalize">add todo</header>
     <TodoForm
       v-model="modelValue"

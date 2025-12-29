@@ -14,6 +14,7 @@ import {
 } from 'vue';
 import type { ComponentProps } from 'vue-component-type-helpers';
 import MyButton from '~/component/button/MyButton';
+import MyInput from '~/component/input/MyInput.vue';
 
 type DialogPlugin = ReturnType<typeof installDialogPlugin>;
 
@@ -50,7 +51,7 @@ function installDialogPlugin(parentApp: App) {
       starting:[[open]]:scale-95 starting:[[open]]:opacity-0
       [[open]]:scale-100 [[open]]:opacity-100
 
-      backdrop:bg-gray-500/10 backdrop:backdrop-blur-xs
+      backdrop:bg-gray-500/20 backdrop:backdrop-blur-xs
       backdrop:transition backdrop:transition-discrete backdrop:duration-200 backdrop:ease-out
       backdrop:opacity-0
       starting:[[open]]:backdrop:opacity-0
@@ -429,7 +430,7 @@ const WindowDialog = defineComponent({
     const modelValue = ref('');
 
     return () => (
-      <div class="max-w-md rounded-lg bg-linear-to-b from-white to-gray-100 p-8 text-gray-700 shadow-xl">
+      <div class="max-w-md rounded-lg bg-gray-100 p-8 text-gray-700 shadow-xl">
         <form
           class="flex flex-col gap-6"
           onSubmit={(e) => {
@@ -455,9 +456,9 @@ const WindowDialog = defineComponent({
             <div class="flex flex-col gap-2">
               <p class="text-sm whitespace-pre-wrap">{props.message}</p>
               {props.prompt && (
-                <input
+                <MyInput
                   v-model={modelValue.value}
-                  class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
+                  class="w-full"
                   {...props.prompt}
                   autofocus
                   required

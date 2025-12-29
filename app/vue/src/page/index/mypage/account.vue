@@ -26,6 +26,8 @@ const $dialog = useDialog();
                 await trpc.mypage.delete.mutate();
                 $toast.info('Your account has been deleted successfully.');
                 $router.push({ name: '/(auth)/signin' });
+              } else {
+                $toast.info('Account deletion has been canceled.');
               }
             }
           "

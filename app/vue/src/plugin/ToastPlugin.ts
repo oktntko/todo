@@ -44,7 +44,7 @@ function installToastPlugin() {
       role="status"
       aria-live="polite"
       aria-atomic="true"
-      class="toast-content pointer-events-auto relative flex w-xs translate-y-2 scale-95 items-center gap-2 rounded-lg border bg-linear-to-b from-white to-gray-100 p-4 opacity-0 shadow-md transition-all duration-200 ease-out"
+      class="toast-content pointer-events-auto relative flex w-xs translate-y-2 scale-95 items-center gap-2 rounded-lg border bg-white p-4 opacity-0 shadow-md transition-all duration-200 ease-out"
     >
       <div
         class="toast-icon-container inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full"

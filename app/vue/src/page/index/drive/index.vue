@@ -198,10 +198,10 @@ async function handleUpload() {
             </div>
 
             <div>
-              <input
+              <MyInput
                 id="where.file_keyword"
                 v-model.lazy="modelValue.where.file_keyword"
-                class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
+                class="w-full"
                 maxlength="100"
               />
             </div>

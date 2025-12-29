@@ -31,11 +31,11 @@ const handleSubmit = validateSubmit(async () => {
         </div>
 
         <div>
-          <input
+          <MyInput
             id="whiteboard_name"
             v-model.lazy="modelValue.whiteboard_name"
             type="text"
-            class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
+            class="w-full"
             maxlength="100"
             required
           />
@@ -52,13 +52,13 @@ const handleSubmit = validateSubmit(async () => {
         </div>
 
         <div>
-          <textarea
+          <MyTextarea
             id="whiteboard_description"
             v-model.lazy="modelValue.whiteboard_description"
-            class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
+            class="w-full"
             rows="4"
             maxlength="400"
-          ></textarea>
+          ></MyTextarea>
         </div>
 
         <ErrorMessage class="text-xs text-red-600" field="whiteboard_description" />

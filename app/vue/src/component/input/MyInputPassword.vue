@@ -9,7 +9,7 @@ const show = ref(false);
 
 <template>
   <div class="relative">
-    <input v-model="modelValue" :type="show ? 'text' : 'password'" v-bind="$attrs" />
+    <MyInput v-model="modelValue" :type="show ? 'text' : 'password'" v-bind="$attrs" />
     <div
       class="absolute inset-y-0 right-0 flex cursor-pointer items-center pr-3 text-sm leading-5"
       @click="show = !show"

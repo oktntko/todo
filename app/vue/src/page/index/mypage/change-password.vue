@@ -48,11 +48,11 @@ const { validateSubmit, ErrorMessage, isDirty, reset } = useVueValidateZod(
         </div>
 
         <div>
-          <input
+          <MyInput
             id="current_password"
             v-model="modelValue.current_password"
             type="password"
-            class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
+            class="w-full"
             autocomplete="current-password"
             required
           />
@@ -70,7 +70,7 @@ const { validateSubmit, ErrorMessage, isDirty, reset } = useVueValidateZod(
           <MyInputPassword
             id="new_password"
             v-model="modelValue.new_password"
-            class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
+            class="w-full"
             autocomplete="new-password"
             required
           />
@@ -85,11 +85,11 @@ const { validateSubmit, ErrorMessage, isDirty, reset } = useVueValidateZod(
         </div>
 
         <div>
-          <input
+          <MyInput
             id="confirm"
             v-model="modelValue.confirm"
             type="password"
-            class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
+            class="w-full"
             required
             autocomplete="new-password"
           />

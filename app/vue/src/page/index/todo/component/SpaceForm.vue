@@ -122,11 +122,11 @@ async function handleFileInput(files?: FileList | null) {
           </div>
 
           <div>
-            <input
+            <MyInput
               id="space_name"
               v-model.lazy="modelValue.space_name"
               type="text"
-              class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
+              class="w-full"
               maxlength="100"
               required
             />
@@ -141,12 +141,12 @@ async function handleFileInput(files?: FileList | null) {
           </div>
 
           <div class="grow">
-            <input
+            <MyInput
               id="space_color"
               v-model.lazy="modelValue.space_color"
               list="color-picker"
               type="color"
-              class="block h-full w-16 rounded-lg border border-gray-300 bg-white p-1 text-gray-900 sm:text-sm"
+              class="h-full w-16 p-1!"
             />
           </div>
 
@@ -160,13 +160,13 @@ async function handleFileInput(files?: FileList | null) {
         </div>
 
         <div>
-          <textarea
+          <MyTextarea
             id="space_description"
             v-model.lazy="modelValue.space_description"
-            class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
+            class="w-full"
             rows="4"
             maxlength="400"
-          ></textarea>
+          ></MyTextarea>
         </div>
 
         <ErrorMessage class="text-xs text-red-600" field="space_description" />

@@ -68,11 +68,11 @@ async function handleFileInput(files?: FileList | null) {
           </div>
 
           <div>
-            <input
+            <MyInput
               id="username"
               v-model="modelValue.username"
               type="text"
-              class="flex w-full rounded-lg border border-gray-300 bg-white p-2.5 text-sm text-gray-900 transition-colors"
+              class="w-full"
               required
             />
           </div>
@@ -87,13 +87,7 @@ async function handleFileInput(files?: FileList | null) {
           </div>
 
           <div>
-            <input
-              id="email"
-              v-model="modelValue.email"
-              type="email"
-              class="flex w-full rounded-lg border border-gray-300 bg-white p-2.5 text-sm text-gray-900 transition-colors"
-              required
-            />
+            <MyInput id="email" v-model="modelValue.email" type="email" class="w-full" required />
           </div>
 
           <ErrorMessage class="text-xs text-red-600" field="email" />
@@ -106,12 +100,12 @@ async function handleFileInput(files?: FileList | null) {
           </div>
 
           <div>
-            <textarea
+            <MyTextarea
               id="description"
               v-model="modelValue.description"
               rows="4"
-              class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
-            ></textarea>
+              class="w-full"
+            ></MyTextarea>
           </div>
 
           <ErrorMessage class="text-xs text-red-600" field="description" />

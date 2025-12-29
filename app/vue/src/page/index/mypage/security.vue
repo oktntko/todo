@@ -191,13 +191,13 @@ const refInputToken = ref<HTMLInputElement>();
 
           <div>
             <div class="flex items-center gap-2">
-              <input
+              <MyInput
                 id="token"
                 ref="refInputToken"
                 v-model.lazy="modelValue.token"
                 type="text"
                 pattern="\d{6}"
-                class="block w-24 rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
+                class="w-24"
                 required
                 maxlength="6"
               />

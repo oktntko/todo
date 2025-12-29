@@ -21,7 +21,7 @@ defineEmits<{
 </script>
 
 <template>
-  <div class="rounded-lg bg-linear-to-b from-white to-gray-100 p-8 text-gray-900 shadow-xl">
+  <div class="rounded-lg bg-gray-100 p-8 text-gray-900 shadow-xl">
     <form
       class="flex flex-col gap-6"
       autocomplete="off"
@@ -47,12 +47,12 @@ defineEmits<{
           <p class="text-sm text-gray-400">Enter the authcode shown in the Authenticator app.</p>
 
           <div>
-            <input
+            <MyInput
               id="token"
               v-model="modelValue.token"
               type="text"
               pattern="\d{6}"
-              class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
+              class="w-full"
               required
               maxlength="6"
             />
