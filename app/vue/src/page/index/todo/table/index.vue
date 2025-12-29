@@ -103,10 +103,10 @@ const headerCheckbox = computed(() => {
             </div>
 
             <div>
-              <input
+              <MyInput
                 id="where.todo_keyword"
                 v-model.lazy="modelValue.where.todo_keyword"
-                class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
+                class="w-full"
                 maxlength="100"
               />
             </div>
@@ -122,21 +122,16 @@ const headerCheckbox = computed(() => {
             </div>
 
             <div class="flex flex-col gap-1 sm:flex-row sm:gap-3">
-              <label
+              <MyCheckbox
                 v-for="todo_status of TodoStatusList"
+                :id="`status-${todo_status}`"
                 :key="todo_status"
-                :for="`status-${todo_status}`"
-                class="flex items-center gap-1 font-medium text-gray-900 sm:text-sm"
+                v-model="modelValue.where.todo_status"
+                type="checkbox"
+                :value="todo_status"
               >
-                <input
-                  :id="`status-${todo_status}`"
-                  v-model="modelValue.where.todo_status"
-                  type="checkbox"
-                  :value="todo_status"
-                  class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600"
-                />
                 <span class="capitalize">{{ todo_status }}</span>
-              </label>
+              </MyCheckbox>
             </div>
 
             <ErrorMessage class="text-xs text-red-600" field="where.todo_status" />

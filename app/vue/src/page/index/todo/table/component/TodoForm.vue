@@ -42,11 +42,7 @@ const handleSubmit = validateSubmit((value) => {
         </div>
 
         <div>
-          <MySelect
-            id="space_id"
-            v-model="modelValue.space_id"
-            class="flex min-w-60 rounded-lg border border-gray-300 bg-white p-2.5 text-sm text-gray-900 transition-colors"
-          >
+          <MySelect id="space_id" v-model="modelValue.space_id" class="flex min-w-60">
             <option
               v-for="space of storedSpaceList"
               :key="space.space_id"
@@ -83,13 +79,7 @@ const handleSubmit = validateSubmit((value) => {
         </div>
 
         <div>
-          <input
-            id="title"
-            v-model="modelValue.title"
-            type="text"
-            class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
-            maxlength="100"
-          />
+          <MyInput id="title" v-model="modelValue.title" type="text" class="w-full" />
         </div>
 
         <ErrorMessage class="text-xs text-red-600" field="title" />
@@ -102,19 +92,8 @@ const handleSubmit = validateSubmit((value) => {
           </div>
 
           <div class="flex flex-row gap-2">
-            <input
-              id="begin_date"
-              v-model="modelValue.begin_date"
-              type="date"
-              max="9999-12-31"
-              class="rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
-            />
-            <input
-              id="begin_time"
-              v-model="modelValue.begin_time"
-              type="time"
-              class="rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
-            />
+            <MyInput id="begin_date" v-model="modelValue.begin_date" type="date" max="9999-12-31" />
+            <MyInput id="begin_time" v-model="modelValue.begin_time" type="time" />
           </div>
         </div>
         <div class="flex flex-col gap-0.5">
@@ -127,19 +106,8 @@ const handleSubmit = validateSubmit((value) => {
           </div>
 
           <div class="flex flex-row gap-2">
-            <input
-              id="limit_date"
-              v-model="modelValue.limit_date"
-              type="date"
-              max="9999-12-31"
-              class="rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
-            />
-            <input
-              id="limit_time"
-              v-model="modelValue.limit_time"
-              type="time"
-              class="rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
-            />
+            <MyInput id="limit_date" v-model="modelValue.limit_date" type="date" max="9999-12-31" />
+            <MyInput id="limit_time" v-model="modelValue.limit_time" type="time" />
           </div>
         </div>
       </div>
@@ -150,12 +118,12 @@ const handleSubmit = validateSubmit((value) => {
         </div>
 
         <div>
-          <textarea
+          <MyTextarea
             id="description"
             v-model="modelValue.description"
-            class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
+            class="w-full"
             rows="4"
-          ></textarea>
+          ></MyTextarea>
         </div>
 
         <ErrorMessage class="text-xs text-red-600" field="description" />

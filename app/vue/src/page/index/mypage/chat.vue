@@ -46,18 +46,9 @@ const { validateSubmit, ErrorMessage, isDirty, reset } = useVueValidateZod(
     <section class="flex flex-col gap-3">
       <div class="focus-container flex flex-col gap-0.5">
         <div>
-          <label
-            for="aichat_enable"
-            class="inline-flex items-center gap-1 font-medium text-gray-900 sm:text-sm"
-          >
-            <input
-              id="aichat_enable"
-              v-model="modelValue.aichat_enable"
-              type="checkbox"
-              class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600"
-            />
+          <MyCheckbox id="aichat_enable" v-model="modelValue.aichat_enable" type="checkbox">
             <span class="capitalize">enable</span>
-          </label>
+          </MyCheckbox>
         </div>
 
         <ErrorMessage class="text-xs text-red-600" field="aichat_enable" />
@@ -72,12 +63,12 @@ const { validateSubmit, ErrorMessage, isDirty, reset } = useVueValidateZod(
         <!-- TODO 保存されているキーを入力する必要があるので、「編集」ボタンを置いて、有効な場合は入力必須、無効な場合は undefined にして更新を避ける  -->
 
         <div>
-          <input
+          <MyInput
             id="aichat_api_key"
             v-model="modelValue.aichat_api_key"
             :disabled="!modelValue.aichat_enable"
             type="text"
-            class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
+            class="w-full"
           />
         </div>
 
@@ -95,7 +86,7 @@ const { validateSubmit, ErrorMessage, isDirty, reset } = useVueValidateZod(
             id="aichat_model"
             v-model="modelValue.aichat_model"
             :disabled="!modelValue.aichat_enable"
-            class="flex min-w-60 rounded-lg border border-gray-300 bg-white p-2.5 text-sm text-gray-900 transition-colors"
+            class="flex min-w-60"
           >
             <option
               v-for="model in AichatModelList"
