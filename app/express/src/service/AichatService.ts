@@ -1,7 +1,7 @@
 import { z } from '@todo/lib/zod';
 import { TRPCError } from '@trpc/server';
-import OpenAI from 'openai';
 import superjson from 'superjson';
+import { newOpenAI } from '~/external/openai';
 import { ReqCtx } from '~/lib/context';
 import { log } from '~/lib/log4js';
 import { SecretPassword } from '~/lib/secret';
@@ -33,7 +33,7 @@ async function chatAichat(
   log.trace(ReqCtx.reqid, 'createAichat', ctx.operator.user_id, input);
 
   const aichat_api_key = SecretPassword.decrypt(ctx.operator.aichat_api_key);
-  const openai = new OpenAI({ apiKey: aichat_api_key });
+  const openai = newOpenAI({ apiKey: aichat_api_key });
 
   const prompt = {
     role: 'system',

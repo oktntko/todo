@@ -6,14 +6,14 @@ import { message } from '~/lib/message';
 import { ExtendsPrismaClient, PrismaClient } from '~/middleware/prisma';
 import { FileRepository } from '~/repository/FileRepository';
 import { FileRouterSchema } from '~/schema/FileRouterSchema';
-import { TEST_USER_ID, transactionRollbackExpress, transactionRollbackTrpc } from '../helper';
+import { transactionRollbackExpress, transactionRollbackTrpc } from '../helper';
 
 const prisma = ExtendsPrismaClient;
 
 describe(`FileRouter`, () => {
   describe(`/api/file/download/single`, () => {
     test(`success`, async () => {
-      return transactionRollbackExpress(prisma, async ({ tx }) => {
+      return transactionRollbackExpress(prisma, async ({ tx, operator }) => {
         // arrange
         const input: z.infer<typeof FileRouterSchema.getInput> = {
           file_id: crypto.randomUUID(),
@@ -28,8 +28,8 @@ describe(`FileRouter`, () => {
               filesize: 1024,
               created_at: new Date(2001, 2, 3),
               updated_at: new Date(2001, 2, 3),
-              created_by: TEST_USER_ID,
-              updated_by: TEST_USER_ID,
+              created_by: operator.user_id,
+              updated_by: operator.user_id,
             },
           ],
         });
@@ -50,7 +50,7 @@ describe(`FileRouter`, () => {
       });
     });
     test(`file not found in storage`, async () => {
-      return transactionRollbackExpress(prisma, async ({ tx }) => {
+      return transactionRollbackExpress(prisma, async ({ tx, operator }) => {
         // arrange
         const input: z.infer<typeof FileRouterSchema.getInput> = {
           file_id: crypto.randomUUID(),
@@ -65,8 +65,8 @@ describe(`FileRouter`, () => {
               filesize: 1024,
               created_at: new Date(2001, 2, 3),
               updated_at: new Date(2001, 2, 3),
-              created_by: TEST_USER_ID,
-              updated_by: TEST_USER_ID,
+              created_by: operator.user_id,
+              updated_by: operator.user_id,
             },
           ],
         });
@@ -143,7 +143,7 @@ describe(`FileRouter`, () => {
 
   describe(`/api/file/download/many`, () => {
     test(`success`, async () => {
-      return transactionRollbackExpress(prisma, async ({ tx }) => {
+      return transactionRollbackExpress(prisma, async ({ tx, operator }) => {
         // arrange
         const input: z.infer<typeof FileRouterSchema.getManyInput> = {
           file_id_list: [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()],
@@ -158,8 +158,8 @@ describe(`FileRouter`, () => {
               filesize: 1024,
               created_at: new Date(2001, 2, 3),
               updated_at: new Date(2001, 2, 3),
-              created_by: TEST_USER_ID,
-              updated_by: TEST_USER_ID,
+              created_by: operator.user_id,
+              updated_by: operator.user_id,
             },
             {
               file_id: input.file_id_list[1],
@@ -168,8 +168,8 @@ describe(`FileRouter`, () => {
               filesize: 1024,
               created_at: new Date(2001, 2, 3),
               updated_at: new Date(2001, 2, 3),
-              created_by: TEST_USER_ID,
-              updated_by: TEST_USER_ID,
+              created_by: operator.user_id,
+              updated_by: operator.user_id,
             },
             {
               file_id: input.file_id_list[2],
@@ -178,8 +178,8 @@ describe(`FileRouter`, () => {
               filesize: 1024,
               created_at: new Date(2001, 2, 3),
               updated_at: new Date(2001, 2, 3),
-              created_by: TEST_USER_ID,
-              updated_by: TEST_USER_ID,
+              created_by: operator.user_id,
+              updated_by: operator.user_id,
             },
           ],
         });
@@ -203,7 +203,7 @@ describe(`FileRouter`, () => {
       });
     });
     test(`file not found in storage`, async () => {
-      return transactionRollbackExpress(prisma, async ({ tx }) => {
+      return transactionRollbackExpress(prisma, async ({ tx, operator }) => {
         // arrange
         const input: z.infer<typeof FileRouterSchema.getManyInput> = {
           file_id_list: [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()],
@@ -218,8 +218,8 @@ describe(`FileRouter`, () => {
               filesize: 1024,
               created_at: new Date(2001, 2, 3),
               updated_at: new Date(2001, 2, 3),
-              created_by: TEST_USER_ID,
-              updated_by: TEST_USER_ID,
+              created_by: operator.user_id,
+              updated_by: operator.user_id,
             },
             {
               file_id: input.file_id_list[1],
@@ -228,8 +228,8 @@ describe(`FileRouter`, () => {
               filesize: 1024,
               created_at: new Date(2001, 2, 3),
               updated_at: new Date(2001, 2, 3),
-              created_by: TEST_USER_ID,
-              updated_by: TEST_USER_ID,
+              created_by: operator.user_id,
+              updated_by: operator.user_id,
             },
             {
               file_id: input.file_id_list[2],
@@ -238,8 +238,8 @@ describe(`FileRouter`, () => {
               filesize: 1024,
               created_at: new Date(2001, 2, 3),
               updated_at: new Date(2001, 2, 3),
-              created_by: TEST_USER_ID,
-              updated_by: TEST_USER_ID,
+              created_by: operator.user_id,
+              updated_by: operator.user_id,
             },
           ],
         });
@@ -316,7 +316,7 @@ describe(`FileRouter`, () => {
 
   describe(`/api/file/upload/single`, () => {
     test(`success`, async () => {
-      return transactionRollbackExpress(prisma, async () => {
+      return transactionRollbackExpress(prisma, async ({ operator }) => {
         // arrange
         const mockWriteFile = vi.spyOn(FileRepository, 'writeFile');
         mockWriteFile.mockResolvedValueOnce();
@@ -337,8 +337,8 @@ describe(`FileRouter`, () => {
           mimetype: 'text/plain',
           created_at: expect.anything(),
           updated_at: expect.anything(),
-          created_by: TEST_USER_ID,
-          updated_by: TEST_USER_ID,
+          created_by: operator.user_id,
+          updated_by: operator.user_id,
         });
       });
     });
@@ -387,7 +387,7 @@ describe(`FileRouter`, () => {
 
   describe(`/api/file/upload/many`, () => {
     test(`success`, async () => {
-      return transactionRollbackExpress(prisma, async () => {
+      return transactionRollbackExpress(prisma, async ({ operator }) => {
         // arrange
         const mockWriteFile = vi.spyOn(FileRepository, 'writeFile');
         mockWriteFile.mockResolvedValue();
@@ -413,8 +413,8 @@ describe(`FileRouter`, () => {
             mimetype: 'text/plain',
             created_at: expect.anything(),
             updated_at: expect.anything(),
-            created_by: TEST_USER_ID,
-            updated_by: TEST_USER_ID,
+            created_by: operator.user_id,
+            updated_by: operator.user_id,
           },
           {
             file_id: expect.anything(),
@@ -423,8 +423,8 @@ describe(`FileRouter`, () => {
             mimetype: 'text/plain',
             created_at: expect.anything(),
             updated_at: expect.anything(),
-            created_by: TEST_USER_ID,
-            updated_by: TEST_USER_ID,
+            created_by: operator.user_id,
+            updated_by: operator.user_id,
           },
           {
             file_id: expect.anything(),
@@ -433,8 +433,8 @@ describe(`FileRouter`, () => {
             mimetype: 'text/plain',
             created_at: expect.anything(),
             updated_at: expect.anything(),
-            created_by: TEST_USER_ID,
-            updated_by: TEST_USER_ID,
+            created_by: operator.user_id,
+            updated_by: operator.user_id,
           },
         ]);
 
@@ -484,7 +484,7 @@ describe(`FileRouter`, () => {
     });
   });
 
-  async function createFile(prisma: PrismaClient) {
+  async function createFile(prisma: PrismaClient, { user_id }: { user_id: string }) {
     return prisma.file.create({
       data: {
         file_id: 'c30e3b6c-aaa5-438d-902a-2f816111ab40',
@@ -493,8 +493,8 @@ describe(`FileRouter`, () => {
         filesize: 1024,
         created_at: new Date(2001, 2, 3),
         updated_at: new Date(2001, 2, 3),
-        created_by: TEST_USER_ID,
-        updated_by: TEST_USER_ID,
+        created_by: user_id,
+        updated_by: user_id,
       },
     });
   }
@@ -502,8 +502,8 @@ describe(`FileRouter`, () => {
   describe(`file.delete`, () => {
     describe(`test decision table`, () => {
       test(`success`, async () => {
-        return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
-          const file = await createFile(tx);
+        return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+          const file = await createFile(tx, operator);
 
           const input: z.infer<typeof FileRouterSchema.deleteInput> = {
             ...file,
@@ -517,8 +517,8 @@ describe(`FileRouter`, () => {
         });
       });
       test(`fail. previous is updated.`, async () => {
-        return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
-          const { file_id } = await createFile(tx);
+        return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+          const { file_id } = await createFile(tx, operator);
 
           const input: z.infer<typeof FileRouterSchema.deleteInput> = {
             file_id,
@@ -553,8 +553,8 @@ describe(`FileRouter`, () => {
     });
     describe(`test data access`, () => {
       test(`FileRepository.deleteFile single`, async () => {
-        return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
-          const file = await createFile(tx);
+        return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+          const file = await createFile(tx, operator);
 
           const input: z.infer<typeof FileRouterSchema.deleteInput> = {
             ...file,
@@ -574,8 +574,8 @@ describe(`FileRouter`, () => {
   describe(`file.deleteMany`, () => {
     describe(`test decision table`, () => {
       test(`success`, async () => {
-        return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
-          const file = await createFile(tx);
+        return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+          const file = await createFile(tx, operator);
 
           const input: z.infer<typeof FileRouterSchema.deleteInput>[] = [{ ...file }];
 
@@ -587,8 +587,8 @@ describe(`FileRouter`, () => {
         });
       });
       test(`fail. previous is updated.`, async () => {
-        return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
-          const { file_id } = await createFile(tx);
+        return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+          const { file_id } = await createFile(tx, operator);
 
           const input: z.infer<typeof FileRouterSchema.deleteInput>[] = [
             {
@@ -627,8 +627,8 @@ describe(`FileRouter`, () => {
     });
     describe(`test data access`, () => {
       test(`FileRepository.deleteFile many`, async () => {
-        return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
-          const file = await createFile(tx);
+        return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+          const file = await createFile(tx, operator);
 
           const input: z.infer<typeof FileRouterSchema.deleteInput>[] = [{ ...file }];
 
@@ -648,8 +648,8 @@ describe(`FileRouter`, () => {
   describe(`file.search`, () => {
     describe(`test decision table`, () => {
       test(`success`, async () => {
-        return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
-          const file = await createFile(tx);
+        return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+          const file = await createFile(tx, operator);
 
           // Add user_list relation
           await tx.file.update({
@@ -657,7 +657,7 @@ describe(`FileRouter`, () => {
             data: {
               user_list: {
                 connect: {
-                  user_id: TEST_USER_ID,
+                  user_id: operator.user_id,
                 },
               },
             },
@@ -690,8 +690,8 @@ describe(`FileRouter`, () => {
         });
       });
       test(`success with no keyword`, async () => {
-        return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
-          const file = await createFile(tx);
+        return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+          const file = await createFile(tx, operator);
 
           // Add user_list relation
           await tx.file.update({
@@ -699,7 +699,7 @@ describe(`FileRouter`, () => {
             data: {
               user_list: {
                 connect: {
-                  user_id: TEST_USER_ID,
+                  user_id: operator.user_id,
                 },
               },
             },
@@ -729,7 +729,7 @@ describe(`FileRouter`, () => {
         });
       });
       test(`success with pagination`, async () => {
-        return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
+        return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
           // Create multiple files
           const files = await Promise.all([
             tx.file.create({
@@ -740,8 +740,8 @@ describe(`FileRouter`, () => {
                 filesize: 1024,
                 created_at: new Date(2001, 2, 3),
                 updated_at: new Date(2001, 2, 3),
-                created_by: TEST_USER_ID,
-                updated_by: TEST_USER_ID,
+                created_by: operator.user_id,
+                updated_by: operator.user_id,
               },
             }),
             tx.file.create({
@@ -752,8 +752,8 @@ describe(`FileRouter`, () => {
                 filesize: 1024,
                 created_at: new Date(2001, 2, 4),
                 updated_at: new Date(2001, 2, 4),
-                created_by: TEST_USER_ID,
-                updated_by: TEST_USER_ID,
+                created_by: operator.user_id,
+                updated_by: operator.user_id,
               },
             }),
             tx.file.create({
@@ -764,8 +764,8 @@ describe(`FileRouter`, () => {
                 filesize: 1024,
                 created_at: new Date(2001, 2, 5),
                 updated_at: new Date(2001, 2, 5),
-                created_by: TEST_USER_ID,
-                updated_by: TEST_USER_ID,
+                created_by: operator.user_id,
+                updated_by: operator.user_id,
               },
             }),
           ]);
@@ -778,7 +778,7 @@ describe(`FileRouter`, () => {
                 data: {
                   user_list: {
                     connect: {
-                      user_id: TEST_USER_ID,
+                      user_id: operator.user_id,
                     },
                   },
                 },
@@ -832,8 +832,8 @@ describe(`FileRouter`, () => {
     });
     describe(`test data access`, () => {
       test(`search by filename`, async () => {
-        return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
-          const file1 = await createFile(tx);
+        return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+          const file1 = await createFile(tx, operator);
           const file2 = await tx.file.create({
             data: {
               file_id: crypto.randomUUID(),
@@ -842,8 +842,8 @@ describe(`FileRouter`, () => {
               filesize: 1024,
               created_at: new Date(2001, 2, 3),
               updated_at: new Date(2001, 2, 3),
-              created_by: TEST_USER_ID,
-              updated_by: TEST_USER_ID,
+              created_by: operator.user_id,
+              updated_by: operator.user_id,
             },
           });
 
@@ -854,7 +854,7 @@ describe(`FileRouter`, () => {
               data: {
                 user_list: {
                   connect: {
-                    user_id: TEST_USER_ID,
+                    user_id: operator.user_id,
                   },
                 },
               },
@@ -864,7 +864,7 @@ describe(`FileRouter`, () => {
               data: {
                 user_list: {
                   connect: {
-                    user_id: TEST_USER_ID,
+                    user_id: operator.user_id,
                   },
                 },
               },

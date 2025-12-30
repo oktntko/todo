@@ -3,7 +3,7 @@ import type { Prisma, User } from '@todo/prisma/client';
 import { UserSchema } from '@todo/prisma/schema';
 import { CreateExpressContextOptions } from '@trpc/server/adapters/express';
 import type { Request, Response } from 'express';
-import session, { SessionData } from 'express-session';
+import { SessionData } from 'express-session';
 import { HashPassword } from '~/lib/secret';
 import {
   ExtendsPrismaClient,
@@ -16,13 +16,12 @@ import { createContext } from '~/middleware/trpc';
 import { createCaller } from '~/router/_router';
 
 // ID固定のテストユーザー
-export const TEST_USER_ID = '019ac0bc-e320-752b-a5cf-6233d23263d5';
-
 async function upsertTestUser(prisma: PrismaClient) {
+  const user_id = crypto.randomUUID();
   return prisma.user.upsert({
     create: {
-      user_id: TEST_USER_ID,
-      email: 'test@example.com',
+      user_id,
+      email: `${user_id}@example.com`,
       password: HashPassword.hash('test@example.com'),
       username: 'test username',
       description: 'test description',
@@ -49,7 +48,7 @@ async function upsertTestUser(prisma: PrismaClient) {
       updated_at: new Date(1997, 7, 17),
     },
     where: {
-      user_id: TEST_USER_ID,
+      user_id,
     },
   });
 }
@@ -154,7 +153,7 @@ export async function transactionRollbackTrpc<R>(
   return prisma.$transaction(async (tx) => {
     const operator = await upsertTestUser(tx);
 
-    const ctx = createContext(mockopts(), tx);
+    const ctx = createContext(mockopts(operator), tx);
     const caller = createCaller(ctx);
 
     const result = await fn({ tx, caller, operator });
@@ -167,10 +166,10 @@ export async function transactionRollbackTrpc<R>(
 /**
  * trpc 用. createContext の引数モック
  */
-export function mockopts(
-  req: {
-    session: session.Session & Partial<session.SessionData>;
-  } = {
+export function mockopts(user: {
+  user_id: string;
+}): Pick<CreateExpressContextOptions, 'req' | 'res'> {
+  const req = {
     session: {
       id: 'mock-session-id',
       destroy: vi.fn(),
@@ -184,11 +183,10 @@ export function mockopts(
         expires: new Date(9999, 12, 31),
       },
       // session data
-      user_id: TEST_USER_ID,
+      user_id: user.user_id,
       data: {},
     },
-  },
-): Pick<CreateExpressContextOptions, 'req' | 'res'> {
+  };
   return {
     req: mockreq(req),
     res: mockres(),

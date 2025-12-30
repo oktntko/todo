@@ -1,7 +1,8 @@
 import { dayjs } from '@todo/lib/dayjs';
 import type { z } from '@todo/lib/zod';
 import { TRPCError } from '@trpc/server';
-import OpenAI, { APIError } from 'openai';
+import { APIError } from 'openai';
+import { newOpenAI } from '~/external/openai';
 import { ReqCtx } from '~/lib/context';
 import { log } from '~/lib/log4js';
 import { HashPassword, OnetimePassword, SecretPassword } from '~/lib/secret';
@@ -152,7 +153,7 @@ async function patchAichat(
   if (input.aichat_enable) {
     // OpenAI には「APIキーを検証する専用API」は存在しないため、軽い API コールを 1 回実行して、成功/失敗で判断する
     try {
-      const openai = new OpenAI({ apiKey: input.aichat_api_key });
+      const openai = newOpenAI({ apiKey: input.aichat_api_key });
       await openai.models.list();
     } catch (e) {
       if (e instanceof APIError && (e.status === 401 || e.status === 403)) {

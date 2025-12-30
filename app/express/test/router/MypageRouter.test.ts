@@ -1,6 +1,9 @@
 import { z } from '@todo/lib/zod';
 import { TRPCError } from '@trpc/server';
+import { APIError } from 'openai';
+import * as externalOpenai from '~/external/openai';
 import { message } from '~/lib/message';
+import { OnetimePassword } from '~/lib/secret';
 import { ExtendsPrismaClient } from '~/middleware/prisma';
 import { createContext } from '~/middleware/trpc';
 import { createCaller } from '~/router/_router';
@@ -26,7 +29,7 @@ describe(`MypageRouter`, () => {
       });
       test(`fail. user is not login.`, async () => {
         return transactionRollback(prisma, async ({ tx }) => {
-          const ctx = createContext(mockopts(), tx);
+          const ctx = createContext(mockopts({ user_id: crypto.randomUUID() }), tx);
           const caller = createCaller(ctx);
           // arrange
           const input = void 0;
@@ -279,6 +282,44 @@ describe(`MypageRouter`, () => {
           );
         });
       });
+
+      test(`success.`, async () => {
+        return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+          // arrange
+          // Disable 2FA first
+          const current = await tx.user.update({
+            where: { user_id: operator.user_id },
+            data: {
+              twofa_enable: false,
+              twofa_secret: '',
+            },
+          });
+
+          // Generate secret first
+          await caller.mypage.generateSecret();
+
+          const mockOnetimePassword = vi.spyOn(OnetimePassword, 'verifyToken');
+          mockOnetimePassword.mockResolvedValueOnce(true);
+
+          const input: z.infer<typeof MypageRouterSchema.enableSecretInput> = {
+            token: '000000',
+          };
+
+          // act
+          await caller.mypage.enableSecret(input);
+
+          // assert
+          const updated = await tx.user.findUniqueOrThrow({
+            where: { user_id: operator.user_id },
+          });
+          expect(updated).toMatchObject({
+            ...current,
+            twofa_enable: true,
+            twofa_secret: expect.any(String),
+            updated_at: expect.any(Date),
+          });
+        });
+      });
     });
   });
 
@@ -336,9 +377,44 @@ describe(`MypageRouter`, () => {
         });
       });
 
-      test(`fail. invalid api key`, async () => {
+      test(`success - enable aichat`, async () => {
         return transactionRollbackTrpc(prisma, async ({ caller }) => {
           // arrange
+          // @ts-expect-error mocking
+          const mockOpenAI = vi.spyOn(externalOpenai, 'newOpenAI').mockImplementationOnce(() => {
+            return {
+              models: {
+                list: vi.fn().mockResolvedValueOnce({}),
+              },
+            };
+          });
+
+          const input: z.infer<typeof MypageRouterSchema.patchAichatInput> = {
+            aichat_enable: true,
+            aichat_api_key: 'invalid-key',
+            aichat_model: 'gpt-4.1',
+          };
+
+          // act
+          const output = await caller.mypage.patchAichat(input);
+
+          // assert
+          expect(output).toMatchObject({
+            aichat_enable: true,
+            aichat_model: 'gpt-4.1',
+          });
+
+          mockOpenAI.mockRestore();
+        });
+      });
+
+      test(`fail. invalid api key 401`, async () => {
+        return transactionRollbackTrpc(prisma, async ({ caller }) => {
+          // arrange
+          const mockOpenAI = vi.spyOn(externalOpenai, 'newOpenAI').mockImplementationOnce(() => {
+            throw new APIError(401, undefined, 'Unauthorized', undefined);
+          });
+
           const input: z.infer<typeof MypageRouterSchema.patchAichatInput> = {
             aichat_enable: true,
             aichat_api_key: 'invalid-key',
@@ -352,6 +428,58 @@ describe(`MypageRouter`, () => {
               message: 'The AI chat API key is invalid. Please check and try again.',
             }),
           );
+
+          mockOpenAI.mockRestore();
+        });
+      });
+
+      test(`fail. invalid api key 403`, async () => {
+        return transactionRollbackTrpc(prisma, async ({ caller }) => {
+          // arrange
+          const mockOpenAI = vi.spyOn(externalOpenai, 'newOpenAI').mockImplementationOnce(() => {
+            throw new APIError(403, undefined, 'Forbidden', undefined);
+          });
+
+          const input: z.infer<typeof MypageRouterSchema.patchAichatInput> = {
+            aichat_enable: true,
+            aichat_api_key: 'invalid-key',
+            aichat_model: 'gpt-4.1',
+          };
+
+          // act & assert
+          await expect(caller.mypage.patchAichat(input)).rejects.toThrow(
+            new TRPCError({
+              code: 'BAD_REQUEST',
+              message: 'The AI chat API key is invalid. Please check and try again.',
+            }),
+          );
+
+          mockOpenAI.mockRestore();
+        });
+      });
+
+      test(`fail. invalid api key 500`, async () => {
+        return transactionRollbackTrpc(prisma, async ({ caller }) => {
+          // arrange
+          const mockOpenAI = vi.spyOn(externalOpenai, 'newOpenAI').mockImplementationOnce(() => {
+            throw new Error('Internal Server Error');
+          });
+
+          const input: z.infer<typeof MypageRouterSchema.patchAichatInput> = {
+            aichat_enable: true,
+            aichat_api_key: 'invalid-key',
+            aichat_model: 'gpt-4.1',
+          };
+
+          // act & assert
+          await expect(caller.mypage.patchAichat(input)).rejects.toThrow(
+            new TRPCError({
+              code: 'BAD_REQUEST',
+              message: 'The service is temporarily unavailable. Please try again in a moment.',
+            }),
+          );
+
+          mockOpenAI.mockRestore();
         });
       });
     });
