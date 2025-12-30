@@ -1,12 +1,11 @@
 import { z } from '@todo/lib/zod';
 import { TRPCError } from '@trpc/server';
-import { mockopts } from 't/helper/express';
-import { transactionRollback, transactionRollbackUseCaller } from 't/helper/prisma';
 import { message } from '~/lib/message';
 import { ExtendsPrismaClient } from '~/middleware/prisma';
 import { createContext } from '~/middleware/trpc';
 import { createCaller } from '~/router/_router';
-import { MypageRouterSchema, ProfileSchema } from '~/schema/MypageRouterSchema';
+import { MypageRouterSchema } from '~/schema/MypageRouterSchema';
+import { mockopts, transactionRollback, transactionRollbackTrpc } from '../helper';
 
 const prisma = ExtendsPrismaClient;
 
@@ -14,7 +13,7 @@ describe(`MypageRouter`, () => {
   describe(`mypage.get`, () => {
     describe(`test decision table`, () => {
       test(`success`, async () => {
-        return transactionRollbackUseCaller(prisma, async ({ caller, operator }) => {
+        return transactionRollbackTrpc(prisma, async ({ caller, operator }) => {
           // arrange
           const input = void 0;
 
@@ -22,7 +21,7 @@ describe(`MypageRouter`, () => {
           const output = await caller.mypage.get(input);
 
           // assert
-          expect(output).toMatchObject(ProfileSchema.parse(operator));
+          expect(output).toMatchObject(MypageRouterSchema.getOutput.parse(operator));
         });
       });
       test(`fail. user is not login.`, async () => {
@@ -49,7 +48,7 @@ describe(`MypageRouter`, () => {
   describe(`mypage.delete`, () => {
     describe(`test decision table`, () => {
       test(`success`, async () => {
-        return transactionRollbackUseCaller(prisma, async ({ caller, operator, tx }) => {
+        return transactionRollbackTrpc(prisma, async ({ caller, operator, tx }) => {
           // arrange
           const input = void 0;
 
@@ -64,7 +63,7 @@ describe(`MypageRouter`, () => {
         });
       });
       test(`fail. user not found in database.`, async () => {
-        return transactionRollbackUseCaller(prisma, async ({ caller, operator, tx }) => {
+        return transactionRollbackTrpc(prisma, async ({ caller, operator, tx }) => {
           // arrange
           const input = void 0;
 
@@ -89,7 +88,7 @@ describe(`MypageRouter`, () => {
   describe(`mypage.patchPassword`, () => {
     describe(`test decision table`, () => {
       test(`success`, async () => {
-        return transactionRollbackUseCaller(prisma, async ({ caller, operator }) => {
+        return transactionRollbackTrpc(prisma, async ({ caller, operator }) => {
           // arrange
           const input: z.infer<typeof MypageRouterSchema.patchPasswordInput> = {
             current_password: 'test@example.com',
@@ -109,7 +108,7 @@ describe(`MypageRouter`, () => {
       });
 
       test(`fail. current password incorrect`, async () => {
-        return transactionRollbackUseCaller(prisma, async ({ caller }) => {
+        return transactionRollbackTrpc(prisma, async ({ caller }) => {
           // arrange
           const input: z.infer<typeof MypageRouterSchema.patchPasswordInput> = {
             current_password: 'wrong_password',
@@ -130,7 +129,7 @@ describe(`MypageRouter`, () => {
       });
 
       test(`fail. passwords do not match`, async () => {
-        return transactionRollbackUseCaller(prisma, async ({ caller }) => {
+        return transactionRollbackTrpc(prisma, async ({ caller }) => {
           // arrange
           const input = {
             current_password: 'password123',
@@ -165,7 +164,7 @@ describe(`MypageRouter`, () => {
   describe(`mypage.patchProfile`, () => {
     describe(`test decision table`, () => {
       test(`success`, async () => {
-        return transactionRollbackUseCaller(prisma, async ({ caller, operator }) => {
+        return transactionRollbackTrpc(prisma, async ({ caller, operator }) => {
           // arrange
           const input: z.infer<typeof MypageRouterSchema.patchProfileInput> = {
             email: operator.email,
@@ -188,7 +187,7 @@ describe(`MypageRouter`, () => {
       });
 
       test(`fail. email already exists`, async () => {
-        return transactionRollbackUseCaller(prisma, async ({ caller, tx }) => {
+        return transactionRollbackTrpc(prisma, async ({ caller, tx }) => {
           // arrange
           const anotherUser = await tx.user.create({
             data: {
@@ -229,7 +228,7 @@ describe(`MypageRouter`, () => {
   describe(`mypage.generateSecret`, () => {
     describe(`test decision table`, () => {
       test(`success`, async () => {
-        return transactionRollbackUseCaller(prisma, async ({ caller }) => {
+        return transactionRollbackTrpc(prisma, async ({ caller }) => {
           // act
           const output = await caller.mypage.generateSecret();
 
@@ -244,7 +243,7 @@ describe(`MypageRouter`, () => {
   describe(`mypage.enableSecret`, () => {
     describe(`test decision table`, () => {
       test(`fail. setting_twofa not found`, async () => {
-        return transactionRollbackUseCaller(prisma, async ({ caller }) => {
+        return transactionRollbackTrpc(prisma, async ({ caller }) => {
           // arrange
           const input: z.infer<typeof MypageRouterSchema.enableSecretInput> = {
             token: '000000',
@@ -262,7 +261,7 @@ describe(`MypageRouter`, () => {
       });
 
       test(`fail. invalid token`, async () => {
-        return transactionRollbackUseCaller(prisma, async ({ caller }) => {
+        return transactionRollbackTrpc(prisma, async ({ caller }) => {
           // arrange
           // Generate secret first
           await caller.mypage.generateSecret();
@@ -286,7 +285,7 @@ describe(`MypageRouter`, () => {
   describe(`mypage.disableSecret`, () => {
     describe(`test decision table`, () => {
       test(`success`, async () => {
-        return transactionRollbackUseCaller(prisma, async ({ caller, tx, operator }) => {
+        return transactionRollbackTrpc(prisma, async ({ caller, tx, operator }) => {
           // arrange
           // Enable 2FA first
           const current = await tx.user.update({
@@ -318,7 +317,7 @@ describe(`MypageRouter`, () => {
   describe(`mypage.patchAichat`, () => {
     describe(`test decision table`, () => {
       test(`success - disable aichat`, async () => {
-        return transactionRollbackUseCaller(prisma, async ({ caller }) => {
+        return transactionRollbackTrpc(prisma, async ({ caller }) => {
           // arrange
           const input: z.infer<typeof MypageRouterSchema.patchAichatInput> = {
             aichat_enable: false,
@@ -338,7 +337,7 @@ describe(`MypageRouter`, () => {
       });
 
       test(`fail. invalid api key`, async () => {
-        return transactionRollbackUseCaller(prisma, async ({ caller }) => {
+        return transactionRollbackTrpc(prisma, async ({ caller }) => {
           // arrange
           const input: z.infer<typeof MypageRouterSchema.patchAichatInput> = {
             aichat_enable: true,

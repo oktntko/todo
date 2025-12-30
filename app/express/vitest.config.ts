@@ -6,7 +6,6 @@ export default defineConfig({
     globals: true,
     alias: {
       '~': fileURLToPath(new URL('./src', import.meta.url)),
-      t: fileURLToPath(new URL('./test', import.meta.url)),
     },
     reporters: ['default', 'html'],
     outputFile: {
@@ -16,7 +15,7 @@ export default defineConfig({
       provider: 'v8',
       enabled: true,
       include: ['src/**'],
-      exclude: ['src/schema/zod/**', '**/*.d.ts'],
+      exclude: ['**/*.d.ts'],
       reportsDirectory: '.report/coverage',
     },
   },

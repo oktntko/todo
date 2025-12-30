@@ -1,20 +1,19 @@
 import { z } from '@todo/lib/zod';
 import { TRPCError } from '@trpc/server';
 import supertest from 'supertest';
-import { TEST_USER_ID } from 't/helper/express';
-import { transactionRollbackUseCaller, transactionRollbackUseMockSession } from 't/helper/prisma';
 import { app } from '~/app';
 import { message } from '~/lib/message';
 import { ExtendsPrismaClient, PrismaClient } from '~/middleware/prisma';
 import { FileRepository } from '~/repository/FileRepository';
 import { FileRouterSchema } from '~/schema/FileRouterSchema';
+import { TEST_USER_ID, transactionRollbackExpress, transactionRollbackTrpc } from '../helper';
 
 const prisma = ExtendsPrismaClient;
 
 describe(`FileRouter`, () => {
   describe(`/api/file/download/single`, () => {
     test(`success`, async () => {
-      return transactionRollbackUseMockSession(prisma, async ({ tx }) => {
+      return transactionRollbackExpress(prisma, async ({ tx }) => {
         // arrange
         const input: z.infer<typeof FileRouterSchema.getInput> = {
           file_id: crypto.randomUUID(),
@@ -51,7 +50,7 @@ describe(`FileRouter`, () => {
       });
     });
     test(`file not found in storage`, async () => {
-      return transactionRollbackUseMockSession(prisma, async ({ tx }) => {
+      return transactionRollbackExpress(prisma, async ({ tx }) => {
         // arrange
         const input: z.infer<typeof FileRouterSchema.getInput> = {
           file_id: crypto.randomUUID(),
@@ -84,7 +83,7 @@ describe(`FileRouter`, () => {
       });
     });
     test(`file not found in database`, async () => {
-      return transactionRollbackUseMockSession(prisma, async () => {
+      return transactionRollbackExpress(prisma, async () => {
         // arrange
         const input: z.infer<typeof FileRouterSchema.getInput> = {
           file_id: crypto.randomUUID(),
@@ -102,7 +101,7 @@ describe(`FileRouter`, () => {
       });
     });
     test(`input error`, async () => {
-      return transactionRollbackUseMockSession(prisma, async () => {
+      return transactionRollbackExpress(prisma, async () => {
         // arrange
         const input: z.infer<typeof FileRouterSchema.getInput> = {
           file_id: 'crypto.randomUUID()',
@@ -120,7 +119,7 @@ describe(`FileRouter`, () => {
       });
     });
     test(`system error`, async () => {
-      return transactionRollbackUseMockSession(prisma, async () => {
+      return transactionRollbackExpress(prisma, async () => {
         // arrange
         const input: z.infer<typeof FileRouterSchema.getInput> = {
           file_id: crypto.randomUUID(),
@@ -144,7 +143,7 @@ describe(`FileRouter`, () => {
 
   describe(`/api/file/download/many`, () => {
     test(`success`, async () => {
-      return transactionRollbackUseMockSession(prisma, async ({ tx }) => {
+      return transactionRollbackExpress(prisma, async ({ tx }) => {
         // arrange
         const input: z.infer<typeof FileRouterSchema.getManyInput> = {
           file_id_list: [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()],
@@ -204,7 +203,7 @@ describe(`FileRouter`, () => {
       });
     });
     test(`file not found in storage`, async () => {
-      return transactionRollbackUseMockSession(prisma, async ({ tx }) => {
+      return transactionRollbackExpress(prisma, async ({ tx }) => {
         // arrange
         const input: z.infer<typeof FileRouterSchema.getManyInput> = {
           file_id_list: [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()],
@@ -257,7 +256,7 @@ describe(`FileRouter`, () => {
       });
     });
     test(`file not found in database`, async () => {
-      return transactionRollbackUseMockSession(prisma, async () => {
+      return transactionRollbackExpress(prisma, async () => {
         // arrange
         const input: z.infer<typeof FileRouterSchema.getManyInput> = {
           file_id_list: [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()],
@@ -275,7 +274,7 @@ describe(`FileRouter`, () => {
       });
     });
     test(`input error`, async () => {
-      return transactionRollbackUseMockSession(prisma, async () => {
+      return transactionRollbackExpress(prisma, async () => {
         // arrange
         const input: z.infer<typeof FileRouterSchema.getManyInput> = {
           file_id_list: ['crypto.randomUUID()', crypto.randomUUID(), crypto.randomUUID()],
@@ -293,7 +292,7 @@ describe(`FileRouter`, () => {
       });
     });
     test(`system error`, async () => {
-      return transactionRollbackUseMockSession(prisma, async () => {
+      return transactionRollbackExpress(prisma, async () => {
         // arrange
         const input: z.infer<typeof FileRouterSchema.getManyInput> = {
           file_id_list: [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()],
@@ -317,7 +316,7 @@ describe(`FileRouter`, () => {
 
   describe(`/api/file/upload/single`, () => {
     test(`success`, async () => {
-      return transactionRollbackUseMockSession(prisma, async () => {
+      return transactionRollbackExpress(prisma, async () => {
         // arrange
         const mockWriteFile = vi.spyOn(FileRepository, 'writeFile');
         mockWriteFile.mockResolvedValueOnce();
@@ -344,7 +343,7 @@ describe(`FileRouter`, () => {
       });
     });
     test(`input error`, async () => {
-      return transactionRollbackUseMockSession(prisma, async () => {
+      return transactionRollbackExpress(prisma, async () => {
         // arrange
         const mockReadFile = vi.spyOn(FileRepository, 'writeFile');
         mockReadFile.mockResolvedValueOnce();
@@ -361,7 +360,7 @@ describe(`FileRouter`, () => {
       });
     });
     test(`system error`, async () => {
-      return transactionRollbackUseMockSession(prisma, async () => {
+      return transactionRollbackExpress(prisma, async () => {
         // arrange
         const mockFindCreateFile = vi.spyOn(FileRepository, 'createFile');
         mockFindCreateFile.mockRejectedValueOnce('test');
@@ -388,7 +387,7 @@ describe(`FileRouter`, () => {
 
   describe(`/api/file/upload/many`, () => {
     test(`success`, async () => {
-      return transactionRollbackUseMockSession(prisma, async () => {
+      return transactionRollbackExpress(prisma, async () => {
         // arrange
         const mockWriteFile = vi.spyOn(FileRepository, 'writeFile');
         mockWriteFile.mockResolvedValue();
@@ -444,7 +443,7 @@ describe(`FileRouter`, () => {
       });
     });
     test(`input error`, async () => {
-      return transactionRollbackUseMockSession(prisma, async () => {
+      return transactionRollbackExpress(prisma, async () => {
         // arrange
         const mockReadFile = vi.spyOn(FileRepository, 'writeFile');
         mockReadFile.mockResolvedValueOnce();
@@ -461,7 +460,7 @@ describe(`FileRouter`, () => {
       });
     });
     test(`system error`, async () => {
-      return transactionRollbackUseMockSession(prisma, async () => {
+      return transactionRollbackExpress(prisma, async () => {
         // arrange
         const mockFindCreateFile = vi.spyOn(FileRepository, 'createFile');
         mockFindCreateFile.mockRejectedValueOnce('test');
@@ -503,7 +502,7 @@ describe(`FileRouter`, () => {
   describe(`file.delete`, () => {
     describe(`test decision table`, () => {
       test(`success`, async () => {
-        return transactionRollbackUseCaller(prisma, async ({ tx, caller }) => {
+        return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
           const file = await createFile(tx);
 
           const input: z.infer<typeof FileRouterSchema.deleteInput> = {
@@ -514,11 +513,11 @@ describe(`FileRouter`, () => {
           const output = await caller.file.delete(input);
 
           //
-          expect(output).toEqual(file);
+          expect(output).toEqual({ file_id: input.file_id });
         });
       });
       test(`fail. previous is updated.`, async () => {
-        return transactionRollbackUseCaller(prisma, async ({ tx, caller }) => {
+        return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
           const { file_id } = await createFile(tx);
 
           const input: z.infer<typeof FileRouterSchema.deleteInput> = {
@@ -536,7 +535,7 @@ describe(`FileRouter`, () => {
         });
       });
       test(`fail. data is not exist.`, async () => {
-        return transactionRollbackUseCaller(prisma, async ({ caller }) => {
+        return transactionRollbackTrpc(prisma, async ({ caller }) => {
           const input: z.infer<typeof FileRouterSchema.deleteInput> = {
             file_id: '82ecb7c5-97db-4bf9-b647-48bb5d56822e', // not found
             updated_at: new Date(2001, 2, 4),
@@ -554,7 +553,7 @@ describe(`FileRouter`, () => {
     });
     describe(`test data access`, () => {
       test(`FileRepository.deleteFile single`, async () => {
-        return transactionRollbackUseCaller(prisma, async ({ tx, caller }) => {
+        return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
           const file = await createFile(tx);
 
           const input: z.infer<typeof FileRouterSchema.deleteInput> = {
@@ -565,7 +564,7 @@ describe(`FileRouter`, () => {
           const output = await caller.file.delete(input);
 
           //
-          expect(output).toEqual(file);
+          expect(output).toEqual({ file_id: input.file_id });
           expect(await tx.file.findUnique({ where: { file_id: output.file_id } })).toBeNull();
         });
       });
@@ -575,7 +574,7 @@ describe(`FileRouter`, () => {
   describe(`file.deleteMany`, () => {
     describe(`test decision table`, () => {
       test(`success`, async () => {
-        return transactionRollbackUseCaller(prisma, async ({ tx, caller }) => {
+        return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
           const file = await createFile(tx);
 
           const input: z.infer<typeof FileRouterSchema.deleteInput>[] = [{ ...file }];
@@ -584,11 +583,11 @@ describe(`FileRouter`, () => {
           const output = await caller.file.deleteMany(input);
 
           //
-          expect(output).toEqual([file]);
+          expect(output).toEqual({ ok: true });
         });
       });
       test(`fail. previous is updated.`, async () => {
-        return transactionRollbackUseCaller(prisma, async ({ tx, caller }) => {
+        return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
           const { file_id } = await createFile(tx);
 
           const input: z.infer<typeof FileRouterSchema.deleteInput>[] = [
@@ -608,7 +607,7 @@ describe(`FileRouter`, () => {
         });
       });
       test(`fail. data is not exist.`, async () => {
-        return transactionRollbackUseCaller(prisma, async ({ caller }) => {
+        return transactionRollbackTrpc(prisma, async ({ caller }) => {
           const input: z.infer<typeof FileRouterSchema.deleteInput>[] = [
             {
               file_id: '82ecb7c5-97db-4bf9-b647-48bb5d56822e', // not found
@@ -628,7 +627,7 @@ describe(`FileRouter`, () => {
     });
     describe(`test data access`, () => {
       test(`FileRepository.deleteFile many`, async () => {
-        return transactionRollbackUseCaller(prisma, async ({ tx, caller }) => {
+        return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
           const file = await createFile(tx);
 
           const input: z.infer<typeof FileRouterSchema.deleteInput>[] = [{ ...file }];
@@ -637,10 +636,259 @@ describe(`FileRouter`, () => {
           const output = await caller.file.deleteMany(input);
 
           //
-          expect(output).toEqual([file]);
+          expect(output).toEqual({ ok: true });
           expect(
-            await prisma.file.findUnique({ where: { file_id: output[0]?.file_id } }),
-          ).toBeNull();
+            await tx.file.count({ where: { file_id: { in: input.map((x) => x.file_id) } } }),
+          ).toBe(0);
+        });
+      });
+    });
+  });
+
+  describe(`file.search`, () => {
+    describe(`test decision table`, () => {
+      test(`success`, async () => {
+        return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
+          const file = await createFile(tx);
+
+          // Add user_list relation
+          await tx.file.update({
+            where: { file_id: file.file_id },
+            data: {
+              user_list: {
+                connect: {
+                  user_id: TEST_USER_ID,
+                },
+              },
+            },
+          });
+
+          const input: z.infer<typeof FileRouterSchema.searchInput> = {
+            where: {
+              file_keyword: file.filename,
+            },
+            sort: {
+              field: 'created_at',
+              order: 'desc',
+            },
+            limit: 10,
+            page: 1,
+          };
+
+          //
+          const output = await caller.file.search(input);
+
+          //
+          expect(output).toEqual({
+            total: expect.any(Number),
+            file_list: expect.any(Array),
+          });
+          expect(output.total).toBeGreaterThan(0);
+          expect(output.file_list).toContainEqual(
+            expect.objectContaining({ file_id: file.file_id }),
+          );
+        });
+      });
+      test(`success with no keyword`, async () => {
+        return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
+          const file = await createFile(tx);
+
+          // Add user_list relation
+          await tx.file.update({
+            where: { file_id: file.file_id },
+            data: {
+              user_list: {
+                connect: {
+                  user_id: TEST_USER_ID,
+                },
+              },
+            },
+          });
+
+          const input: z.infer<typeof FileRouterSchema.searchInput> = {
+            where: {
+              file_keyword: '',
+            },
+            sort: {
+              field: 'created_at',
+              order: 'desc',
+            },
+            limit: 10,
+            page: 1,
+          };
+
+          //
+          const output = await caller.file.search(input);
+
+          //
+          expect(output).toEqual({
+            total: expect.any(Number),
+            file_list: expect.any(Array),
+          });
+          expect(output.total).toBeGreaterThan(0);
+        });
+      });
+      test(`success with pagination`, async () => {
+        return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
+          // Create multiple files
+          const files = await Promise.all([
+            tx.file.create({
+              data: {
+                file_id: crypto.randomUUID(),
+                filename: 'test1.txt',
+                mimetype: 'text/plain',
+                filesize: 1024,
+                created_at: new Date(2001, 2, 3),
+                updated_at: new Date(2001, 2, 3),
+                created_by: TEST_USER_ID,
+                updated_by: TEST_USER_ID,
+              },
+            }),
+            tx.file.create({
+              data: {
+                file_id: crypto.randomUUID(),
+                filename: 'test2.txt',
+                mimetype: 'text/plain',
+                filesize: 1024,
+                created_at: new Date(2001, 2, 4),
+                updated_at: new Date(2001, 2, 4),
+                created_by: TEST_USER_ID,
+                updated_by: TEST_USER_ID,
+              },
+            }),
+            tx.file.create({
+              data: {
+                file_id: crypto.randomUUID(),
+                filename: 'test3.txt',
+                mimetype: 'text/plain',
+                filesize: 1024,
+                created_at: new Date(2001, 2, 5),
+                updated_at: new Date(2001, 2, 5),
+                created_by: TEST_USER_ID,
+                updated_by: TEST_USER_ID,
+              },
+            }),
+          ]);
+
+          // Add user_list relation for all files
+          await Promise.all(
+            files.map((file) =>
+              tx.file.update({
+                where: { file_id: file.file_id },
+                data: {
+                  user_list: {
+                    connect: {
+                      user_id: TEST_USER_ID,
+                    },
+                  },
+                },
+              }),
+            ),
+          );
+
+          const input: z.infer<typeof FileRouterSchema.searchInput> = {
+            where: {
+              file_keyword: '',
+            },
+            sort: {
+              field: 'created_at',
+              order: 'desc',
+            },
+            limit: 2,
+            page: 1,
+          };
+
+          //
+          const output = await caller.file.search(input);
+
+          //
+          expect(output.file_list.length).toBeLessThanOrEqual(2);
+        });
+      });
+      test(`fail. no files for user`, async () => {
+        return transactionRollbackTrpc(prisma, async ({ caller }) => {
+          const input: z.infer<typeof FileRouterSchema.searchInput> = {
+            where: {
+              file_keyword: 'not-exist',
+            },
+            sort: {
+              field: 'created_at',
+              order: 'desc',
+            },
+            limit: 10,
+            page: 1,
+          };
+
+          //
+          const output = await caller.file.search(input);
+
+          //
+          expect(output).toEqual({
+            total: 0,
+            file_list: [],
+          });
+        });
+      });
+    });
+    describe(`test data access`, () => {
+      test(`search by filename`, async () => {
+        return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
+          const file1 = await createFile(tx);
+          const file2 = await tx.file.create({
+            data: {
+              file_id: crypto.randomUUID(),
+              filename: 'different-name.txt',
+              mimetype: 'text/plain',
+              filesize: 1024,
+              created_at: new Date(2001, 2, 3),
+              updated_at: new Date(2001, 2, 3),
+              created_by: TEST_USER_ID,
+              updated_by: TEST_USER_ID,
+            },
+          });
+
+          // Add user_list relation
+          await Promise.all([
+            tx.file.update({
+              where: { file_id: file1.file_id },
+              data: {
+                user_list: {
+                  connect: {
+                    user_id: TEST_USER_ID,
+                  },
+                },
+              },
+            }),
+            tx.file.update({
+              where: { file_id: file2.file_id },
+              data: {
+                user_list: {
+                  connect: {
+                    user_id: TEST_USER_ID,
+                  },
+                },
+              },
+            }),
+          ]);
+
+          const input: z.infer<typeof FileRouterSchema.searchInput> = {
+            where: {
+              file_keyword: 'test',
+            },
+            sort: {
+              field: 'created_at',
+              order: 'desc',
+            },
+            limit: 10,
+            page: 1,
+          };
+
+          //
+          const output = await caller.file.search(input);
+
+          //
+          expect(output.file_list.map((f) => f.file_id)).toContain(file1.file_id);
+          expect(output.file_list.map((f) => f.file_id)).not.toContain(file2.file_id);
         });
       });
     });
