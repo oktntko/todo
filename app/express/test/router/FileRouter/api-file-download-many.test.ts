@@ -9,176 +9,178 @@ import { transactionRollbackExpress } from '../../helper';
 
 const prisma = ExtendsPrismaClient;
 
-describe(`FileRouter`, () => {
-  describe(`/api/file/download/many`, () => {
-    test(`success`, async () => {
-      return transactionRollbackExpress(prisma, async ({ tx, operator }) => {
-        // arrange
-        const input: z.infer<typeof FileRouterSchema.getManyInput> = {
-          file_id_list: [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()],
-        };
+describe(`FileRouter /api/file/download/many`, () => {
+  test(`success`, async () => {
+    return transactionRollbackExpress(prisma, async ({ tx, operator }) => {
+      // arrange
+      const input: z.infer<typeof FileRouterSchema.getManyInput> = {
+        file_id_list: [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()],
+      };
 
-        await tx.file.createMany({
-          data: [
-            {
-              file_id: input.file_id_list[0],
-              filename: `${input.file_id_list[0]}.txt`,
-              mimetype: 'text/plain',
-              filesize: 1024,
-              created_at: new Date(2001, 2, 3),
-              updated_at: new Date(2001, 2, 3),
-              created_by: operator.user_id,
-              updated_by: operator.user_id,
-            },
-            {
-              file_id: input.file_id_list[1],
-              filename: `${input.file_id_list[1]}.txt`,
-              mimetype: 'text/plain',
-              filesize: 1024,
-              created_at: new Date(2001, 2, 3),
-              updated_at: new Date(2001, 2, 3),
-              created_by: operator.user_id,
-              updated_by: operator.user_id,
-            },
-            {
-              file_id: input.file_id_list[2],
-              filename: `${input.file_id_list[2]}.txt`,
-              mimetype: 'text/plain',
-              filesize: 1024,
-              created_at: new Date(2001, 2, 3),
-              updated_at: new Date(2001, 2, 3),
-              created_by: operator.user_id,
-              updated_by: operator.user_id,
-            },
-          ],
-        });
+      await tx.file.createMany({
+        data: [
+          {
+            file_id: input.file_id_list[0],
+            filename: `${input.file_id_list[0]}.txt`,
+            mimetype: 'text/plain',
+            filesize: 1024,
+            created_at: new Date(2001, 2, 3),
+            updated_at: new Date(2001, 2, 3),
+            created_by: operator.user_id,
+            updated_by: operator.user_id,
+          },
+          {
+            file_id: input.file_id_list[1],
+            filename: `${input.file_id_list[1]}.txt`,
+            mimetype: 'text/plain',
+            filesize: 1024,
+            created_at: new Date(2001, 2, 3),
+            updated_at: new Date(2001, 2, 3),
+            created_by: operator.user_id,
+            updated_by: operator.user_id,
+          },
+          {
+            file_id: input.file_id_list[2],
+            filename: `${input.file_id_list[2]}.txt`,
+            mimetype: 'text/plain',
+            filesize: 1024,
+            created_at: new Date(2001, 2, 3),
+            updated_at: new Date(2001, 2, 3),
+            created_by: operator.user_id,
+            updated_by: operator.user_id,
+          },
+        ],
+      });
 
-        const output = Buffer.from('test');
-        const mockReadFile = vi.spyOn(FileRepository, 'readFile');
-        mockReadFile.mockResolvedValue(output);
+      const output = Buffer.from('test');
+      const mockReadFile = vi.spyOn(FileRepository, 'readFile');
+      mockReadFile.mockResolvedValue(output);
 
-        // act
-        const res = await supertest(app).get(`/api/file/download/many`).query(input);
+      // act
+      const res = await supertest(app).get(`/api/file/download/many`).query(input);
 
-        // assert
-        expect(res.statusCode).toBe(200);
-        expect(res.header).toMatchObject({
-          'content-disposition': `attachment; filename=download.zip`,
-        });
-        expect(res.body).toEqual(expect.anything());
+      // assert
+      expect(res.statusCode).toBe(200);
+      expect(res.header).toMatchObject({
+        'content-disposition': `attachment; filename=download.zip`,
+      });
+      expect(res.body).toEqual(expect.anything());
 
-        // after
-        mockReadFile.mockRestore();
+      // after
+      mockReadFile.mockRestore();
+    });
+  });
+
+  test(`file not found in storage`, async () => {
+    return transactionRollbackExpress(prisma, async ({ tx, operator }) => {
+      // arrange
+      const input: z.infer<typeof FileRouterSchema.getManyInput> = {
+        file_id_list: [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()],
+      };
+
+      await tx.file.createMany({
+        data: [
+          {
+            file_id: input.file_id_list[0],
+            filename: `${input.file_id_list[0]}.txt`,
+            mimetype: 'text/plain',
+            filesize: 1024,
+            created_at: new Date(2001, 2, 3),
+            updated_at: new Date(2001, 2, 3),
+            created_by: operator.user_id,
+            updated_by: operator.user_id,
+          },
+          {
+            file_id: input.file_id_list[1],
+            filename: `${input.file_id_list[1]}.txt`,
+            mimetype: 'text/plain',
+            filesize: 1024,
+            created_at: new Date(2001, 2, 3),
+            updated_at: new Date(2001, 2, 3),
+            created_by: operator.user_id,
+            updated_by: operator.user_id,
+          },
+          {
+            file_id: input.file_id_list[2],
+            filename: `${input.file_id_list[2]}.txt`,
+            mimetype: 'text/plain',
+            filesize: 1024,
+            created_at: new Date(2001, 2, 3),
+            updated_at: new Date(2001, 2, 3),
+            created_by: operator.user_id,
+            updated_by: operator.user_id,
+          },
+        ],
+      });
+
+      // act
+      const res = await supertest(app).get(`/api/file/download/many`).query(input);
+
+      // assert
+      expect(res.statusCode).toBe(404);
+      expect(res.body).toEqual({
+        code: 'NOT_FOUND',
+        message: message.error.NOT_FOUND,
       });
     });
-    test(`file not found in storage`, async () => {
-      return transactionRollbackExpress(prisma, async ({ tx, operator }) => {
-        // arrange
-        const input: z.infer<typeof FileRouterSchema.getManyInput> = {
-          file_id_list: [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()],
-        };
+  });
 
-        await tx.file.createMany({
-          data: [
-            {
-              file_id: input.file_id_list[0],
-              filename: `${input.file_id_list[0]}.txt`,
-              mimetype: 'text/plain',
-              filesize: 1024,
-              created_at: new Date(2001, 2, 3),
-              updated_at: new Date(2001, 2, 3),
-              created_by: operator.user_id,
-              updated_by: operator.user_id,
-            },
-            {
-              file_id: input.file_id_list[1],
-              filename: `${input.file_id_list[1]}.txt`,
-              mimetype: 'text/plain',
-              filesize: 1024,
-              created_at: new Date(2001, 2, 3),
-              updated_at: new Date(2001, 2, 3),
-              created_by: operator.user_id,
-              updated_by: operator.user_id,
-            },
-            {
-              file_id: input.file_id_list[2],
-              filename: `${input.file_id_list[2]}.txt`,
-              mimetype: 'text/plain',
-              filesize: 1024,
-              created_at: new Date(2001, 2, 3),
-              updated_at: new Date(2001, 2, 3),
-              created_by: operator.user_id,
-              updated_by: operator.user_id,
-            },
-          ],
-        });
+  test(`file not found in database`, async () => {
+    return transactionRollbackExpress(prisma, async () => {
+      // arrange
+      const input: z.infer<typeof FileRouterSchema.getManyInput> = {
+        file_id_list: [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()],
+      };
 
-        // act
-        const res = await supertest(app).get(`/api/file/download/many`).query(input);
+      // act
+      const res = await supertest(app).get(`/api/file/download/many`).query(input);
 
-        // assert
-        expect(res.statusCode).toBe(404);
-        expect(res.body).toEqual({
-          code: 'NOT_FOUND',
-          message: message.error.NOT_FOUND,
-        });
+      // assert
+      expect(res.statusCode).toBe(404);
+      expect(res.body).toEqual({
+        code: 'NOT_FOUND',
+        message: message.error.NOT_FOUND,
       });
     });
-    test(`file not found in database`, async () => {
-      return transactionRollbackExpress(prisma, async () => {
-        // arrange
-        const input: z.infer<typeof FileRouterSchema.getManyInput> = {
-          file_id_list: [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()],
-        };
+  });
 
-        // act
-        const res = await supertest(app).get(`/api/file/download/many`).query(input);
+  test(`input error`, async () => {
+    return transactionRollbackExpress(prisma, async () => {
+      // arrange
+      const input: z.infer<typeof FileRouterSchema.getManyInput> = {
+        file_id_list: ['crypto.randomUUID()', crypto.randomUUID(), crypto.randomUUID()],
+      };
 
-        // assert
-        expect(res.statusCode).toBe(404);
-        expect(res.body).toEqual({
-          code: 'NOT_FOUND',
-          message: message.error.NOT_FOUND,
-        });
+      // act
+      const res = await supertest(app).get(`/api/file/download/many`).query(input);
+
+      // assert
+      expect(res.statusCode).toBe(400);
+      expect(res.body).toEqual({
+        code: 'BAD_REQUEST',
+        message: message.error.BAD_REQUEST,
       });
     });
-    test(`input error`, async () => {
-      return transactionRollbackExpress(prisma, async () => {
-        // arrange
-        const input: z.infer<typeof FileRouterSchema.getManyInput> = {
-          file_id_list: ['crypto.randomUUID()', crypto.randomUUID(), crypto.randomUUID()],
-        };
+  });
 
-        // act
-        const res = await supertest(app).get(`/api/file/download/many`).query(input);
+  test(`system error`, async () => {
+    return transactionRollbackExpress(prisma, async () => {
+      // arrange
+      const input: z.infer<typeof FileRouterSchema.getManyInput> = {
+        file_id_list: [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()],
+      };
 
-        // assert
-        expect(res.statusCode).toBe(400);
-        expect(res.body).toEqual({
-          code: 'BAD_REQUEST',
-          message: message.error.BAD_REQUEST,
-        });
-      });
-    });
-    test(`system error`, async () => {
-      return transactionRollbackExpress(prisma, async () => {
-        // arrange
-        const input: z.infer<typeof FileRouterSchema.getManyInput> = {
-          file_id_list: [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()],
-        };
+      const mockFindUniqueFile = vi.spyOn(FileRepository, 'findUniqueFile');
+      mockFindUniqueFile.mockRejectedValueOnce('test');
 
-        const mockFindUniqueFile = vi.spyOn(FileRepository, 'findUniqueFile');
-        mockFindUniqueFile.mockRejectedValueOnce('test');
+      // act
+      const res = await supertest(app).get(`/api/file/download/many`).query(input);
 
-        // act
-        const res = await supertest(app).get(`/api/file/download/many`).query(input);
-
-        // assert
-        expect(res.statusCode).toBe(500);
-        expect(res.body).toEqual({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: message.error.INTERNAL_SERVER_ERROR,
-        });
+      // assert
+      expect(res.statusCode).toBe(500);
+      expect(res.body).toEqual({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: message.error.INTERNAL_SERVER_ERROR,
       });
     });
   });
