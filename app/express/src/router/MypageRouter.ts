@@ -97,13 +97,23 @@ export const mypage = router({
       });
     }),
 
-  // mypage.patchAichat
-  patchAichat: protectedProcedure
-    .input(MypageRouterSchema.patchAichatInput)
+  // mypage.enableAichat
+  enableAichat: protectedProcedure
+    .input(MypageRouterSchema.enableAichatInput)
     .output(MypageRouterSchema.getOutput)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return MypageService.patchAichat({ ...ctx, prisma }, input);
+        return MypageService.enableAichat({ ...ctx, prisma }, input);
+      });
+    }),
+
+  // mypage.disableAichat
+  disableAichat: protectedProcedure
+    .input(z.void())
+    .output(MypageRouterSchema.getOutput)
+    .mutation(async ({ ctx }) => {
+      return $transaction(ctx.prisma, async (prisma) => {
+        return MypageService.disableAichat({ ...ctx, prisma });
       });
     }),
 });

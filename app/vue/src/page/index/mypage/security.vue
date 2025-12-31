@@ -25,7 +25,6 @@ const refInputToken = ref<HTMLInputElement>();
 
 <template>
   <div class="flex flex-col gap-6">
-    <!-- お知らせ -->
     <section>
       <div
         class="flex flex-col gap-4 border-t-2 p-4"
@@ -79,7 +78,7 @@ const refInputToken = ref<HTMLInputElement>();
               "
             >
               <span class="icon-[fluent-emoji-flat--light-bulb] mr-2 -ml-1 h-4 w-4"></span>
-              disable
+              <span class="capitalize">disable</span>
             </button>
             <button
               v-else

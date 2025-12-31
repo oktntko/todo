@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { MypageRouterSchema } from '@todo/express/schema';
 import type { z } from '@todo/lib/zod';
+import { AichatModelList } from '@todo/prisma/schema';
 import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import { bytesToBase64 } from '~/lib/file';
 import { trpc } from '~/lib/trpc';
@@ -109,6 +110,33 @@ async function handleFileInput(files?: FileList | null) {
           </div>
 
           <ErrorMessage class="text-xs text-red-600" field="description" />
+        </div>
+
+        <!-- model -->
+        <div class="focus-container flex flex-col gap-0.5">
+          <div>
+            <label for="aichat_model" class="text-sm capitalize"> model </label>
+          </div>
+
+          <div>
+            <MySelect id="aichat_model" v-model="modelValue.aichat_model" class="flex min-w-60">
+              <option
+                v-for="model in AichatModelList"
+                :key="model"
+                :value="model"
+                class="border border-gray-300 p-2 transition-colors"
+                :class="[
+                  'not-first-of-type:border-t-0 not-last-of-type:border-b-0 first-of-type:rounded-t-lg last-of-type:rounded-b-lg',
+                  'hover:bg-gray-100',
+                  'checked:bg-blue-100 checked:font-bold',
+                ]"
+              >
+                <span class="ms-1">{{ model }}</span>
+              </option>
+            </MySelect>
+          </div>
+
+          <ErrorMessage class="text-xs text-red-600" field="aichat_model" />
         </div>
       </div>
 
