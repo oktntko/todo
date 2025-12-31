@@ -4,7 +4,8 @@ import { transactionRollbackTrpc } from '../../helper';
 const prisma = ExtendsPrismaClient;
 
 describe(`MypageRouter mypage.generateSecret`, () => {
-  test(`success`, async () => {
+  test(`✅ success - generate secret.
+    - it return generated QR code.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ caller }) => {
       // act
       const output = await caller.mypage.generateSecret();

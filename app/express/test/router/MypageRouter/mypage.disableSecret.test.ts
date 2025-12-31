@@ -4,7 +4,8 @@ import { transactionRollbackTrpc } from '../../helper';
 const prisma = ExtendsPrismaClient;
 
 describe(`MypageRouter mypage.disableSecret`, () => {
-  test(`success`, async () => {
+  test(`✅ success - disable 2FA
+    - it update the record in the database.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ caller, tx, operator }) => {
       // arrange
       // Enable 2FA first

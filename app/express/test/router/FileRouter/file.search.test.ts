@@ -7,61 +7,31 @@ import { createFile } from './testFileRouterHelper';
 const prisma = ExtendsPrismaClient;
 
 describe(`FileRouter file.search`, () => {
-  test(`success`, async () => {
+  test(`filter by login user.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
-      const file = await createFile(tx, operator);
-
-      // Add user_list relation
-      await tx.file.update({
-        where: { file_id: file.file_id },
+      // arrange
+      const other = await tx.user.create({
         data: {
-          user_list: {
-            connect: {
-              user_id: operator.user_id,
-            },
-          },
+          user_id: '019b7403-f2c4-73ee-92c7-045f7a9b842e',
+          username: 'other.user',
+          email: 'other.user@example.com',
+          password: 'password.other.user@example.com',
+          created_at: new Date(),
+          updated_at: new Date(),
         },
       });
+      /* fileNoUser */ await createFile(tx, operator);
+      const fileOtherUser = await createFile(tx, operator);
+      const fileOperator = await createFile(tx, operator);
 
-      const input: z.infer<typeof FileRouterSchema.searchInput> = {
-        where: {
-          file_keyword: file.filename,
-        },
-        sort: {
-          field: 'created_at',
-          order: 'desc',
-        },
-        limit: 10,
-        page: 1,
-      };
-
-      //
-      const output = await caller.file.search(input);
-
-      //
-      expect(output).toEqual({
-        total: expect.any(Number),
-        file_list: expect.any(Array),
-      });
-      expect(output.total).toBeGreaterThan(0);
-      expect(output.file_list).toContainEqual(expect.objectContaining({ file_id: file.file_id }));
-    });
-  });
-
-  test(`success with no keyword`, async () => {
-    return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
-      const file = await createFile(tx, operator);
-
-      // Add user_list relation
       await tx.file.update({
-        where: { file_id: file.file_id },
-        data: {
-          user_list: {
-            connect: {
-              user_id: operator.user_id,
-            },
-          },
-        },
+        where: { file_id: fileOtherUser.file_id },
+        data: { user_list: { connect: { user_id: other.user_id } } },
+      });
+
+      await tx.file.update({
+        where: { file_id: fileOperator.file_id },
+        data: { user_list: { connect: { user_id: operator.user_id } } },
       });
 
       const input: z.infer<typeof FileRouterSchema.searchInput> = {
@@ -76,158 +46,46 @@ describe(`FileRouter file.search`, () => {
         page: 1,
       };
 
-      //
+      // act
       const output = await caller.file.search(input);
 
-      //
-      expect(output).toEqual({
-        total: expect.any(Number),
-        file_list: expect.any(Array),
-      });
-      expect(output.total).toBeGreaterThan(0);
-    });
-  });
-
-  test(`success with pagination`, async () => {
-    return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
-      // Create multiple files
-      const files = await Promise.all([
-        tx.file.create({
-          data: {
-            file_id: crypto.randomUUID(),
-            filename: 'test1.txt',
-            mimetype: 'text/plain',
-            filesize: 1024,
-            created_at: new Date(2001, 2, 3),
-            updated_at: new Date(2001, 2, 3),
-            created_by: operator.user_id,
-            updated_by: operator.user_id,
-          },
-        }),
-        tx.file.create({
-          data: {
-            file_id: crypto.randomUUID(),
-            filename: 'test2.txt',
-            mimetype: 'text/plain',
-            filesize: 1024,
-            created_at: new Date(2001, 2, 4),
-            updated_at: new Date(2001, 2, 4),
-            created_by: operator.user_id,
-            updated_by: operator.user_id,
-          },
-        }),
-        tx.file.create({
-          data: {
-            file_id: crypto.randomUUID(),
-            filename: 'test3.txt',
-            mimetype: 'text/plain',
-            filesize: 1024,
-            created_at: new Date(2001, 2, 5),
-            updated_at: new Date(2001, 2, 5),
-            created_by: operator.user_id,
-            updated_by: operator.user_id,
-          },
-        }),
-      ]);
-
-      // Add user_list relation for all files
-      await Promise.all(
-        files.map((file) =>
-          tx.file.update({
-            where: { file_id: file.file_id },
-            data: {
-              user_list: {
-                connect: {
-                  user_id: operator.user_id,
-                },
-              },
-            },
-          }),
-        ),
+      // assert
+      expect(output.total).toBe(1);
+      expect(output.file_list).toContainEqual(
+        expect.objectContaining({ file_id: fileOperator.file_id }),
       );
-
-      const input: z.infer<typeof FileRouterSchema.searchInput> = {
-        where: {
-          file_keyword: '',
-        },
-        sort: {
-          field: 'created_at',
-          order: 'desc',
-        },
-        limit: 2,
-        page: 1,
-      };
-
-      //
-      const output = await caller.file.search(input);
-
-      //
-      expect(output.file_list.length).toBeLessThanOrEqual(2);
     });
   });
 
-  test(`fail. no files for user`, async () => {
-    return transactionRollbackTrpc(prisma, async ({ caller }) => {
-      const input: z.infer<typeof FileRouterSchema.searchInput> = {
-        where: {
-          file_keyword: 'not-exist',
-        },
-        sort: {
-          field: 'created_at',
-          order: 'desc',
-        },
-        limit: 10,
-        page: 1,
-      };
-
-      //
-      const output = await caller.file.search(input);
-
-      //
-      expect(output).toEqual({
-        total: 0,
-        file_list: [],
-      });
-    });
-  });
-
-  describe(`test data access`, () => {
+  describe(`search by where condition.`, () => {
     test(`search by filename`, async () => {
       return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+        // arrange
         const file1 = await createFile(tx, operator);
-        const file2 = await tx.file.create({
-          data: {
-            file_id: crypto.randomUUID(),
-            filename: 'different-name.txt',
-            mimetype: 'text/plain',
-            filesize: 1024,
-            created_at: new Date(2001, 2, 3),
-            updated_at: new Date(2001, 2, 3),
-            created_by: operator.user_id,
-            updated_by: operator.user_id,
-          },
-        });
+        const file2 = await createFile(tx, operator);
+        const file3 = await createFile(tx, operator);
 
-        // Add user_list relation
+        // update. add user_list relation and different filenames
         await Promise.all([
           tx.file.update({
             where: { file_id: file1.file_id },
             data: {
-              user_list: {
-                connect: {
-                  user_id: operator.user_id,
-                },
-              },
+              filename: 'test-file.txt',
+              user_list: { connect: { user_id: operator.user_id } },
             },
           }),
           tx.file.update({
             where: { file_id: file2.file_id },
             data: {
-              user_list: {
-                connect: {
-                  user_id: operator.user_id,
-                },
-              },
+              filename: 'another-name.txt',
+              user_list: { connect: { user_id: operator.user_id } },
+            },
+          }),
+          tx.file.update({
+            where: { file_id: file3.file_id },
+            data: {
+              filename: 'sample-file.txt',
+              user_list: { connect: { user_id: operator.user_id } },
             },
           }),
         ]);
@@ -244,13 +102,68 @@ describe(`FileRouter file.search`, () => {
           page: 1,
         };
 
-        //
+        // act
         const output = await caller.file.search(input);
 
-        //
-        expect(output.file_list.map((f) => f.file_id)).toContain(file1.file_id);
-        expect(output.file_list.map((f) => f.file_id)).not.toContain(file2.file_id);
+        // assert
+        expect(output.total).toBe(1);
+        expect(output.file_list).toContainEqual(
+          expect.objectContaining({ file_id: file1.file_id }),
+        );
       });
+    });
+  });
+
+  test(`pagination`, async () => {
+    return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+      // arrange
+      const file1 = await createFile(tx, operator);
+      const file2 = await createFile(tx, operator);
+      const file3 = await createFile(tx, operator);
+
+      // update. add user_list relation and different filenames
+      await Promise.all([
+        tx.file.update({
+          where: { file_id: file1.file_id },
+          data: {
+            filename: 'test-file.txt',
+            user_list: { connect: { user_id: operator.user_id } },
+          },
+        }),
+        tx.file.update({
+          where: { file_id: file2.file_id },
+          data: {
+            filename: 'another-name.txt',
+            user_list: { connect: { user_id: operator.user_id } },
+          },
+        }),
+        tx.file.update({
+          where: { file_id: file3.file_id },
+          data: {
+            filename: 'sample-file.txt',
+            user_list: { connect: { user_id: operator.user_id } },
+          },
+        }),
+      ]);
+
+      const input: z.infer<typeof FileRouterSchema.searchInput> = {
+        where: {
+          file_keyword: '',
+        },
+        sort: {
+          field: 'created_at',
+          order: 'asc',
+        },
+        limit: 3,
+        page: 1,
+      };
+
+      // act
+      const output = await caller.file.search(input);
+
+      // assert
+      expect(output.total).toBe(3);
+      expect(output.file_list).toContainEqual(expect.objectContaining({ file_id: file3.file_id }));
     });
   });
 });

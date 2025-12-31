@@ -8,11 +8,13 @@ import { transactionRollbackTrpc } from '../../helper';
 const prisma = ExtendsPrismaClient;
 
 describe(`MypageRouter mypage.patchProfile`, () => {
-  test(`success`, async () => {
-    return transactionRollbackTrpc(prisma, async ({ caller, operator }) => {
+  test(`✅ success - change profile.
+    - it return the updated value.
+    - it update the record in the database.`, async () => {
+    return transactionRollbackTrpc(prisma, async ({ caller, operator, tx }) => {
       // arrange
       const input: z.infer<typeof MypageRouterSchema.patchProfileInput> = {
-        email: operator.email,
+        email: 'change' + operator.email,
         username: 'new_username',
         avatar_image: 'https://example.com/avatar.jpg',
         description: 'New description',
@@ -23,16 +25,21 @@ describe(`MypageRouter mypage.patchProfile`, () => {
       const output = await caller.mypage.patchProfile(input);
 
       // assert
-      expect(output).toMatchObject({
-        email: operator.email,
-        username: 'new_username',
-        avatar_image: 'https://example.com/avatar.jpg',
-        description: 'New description',
+      expect(output).toMatchObject(input);
+
+      const updated = await tx.user.findUniqueOrThrow({
+        where: { user_id: operator.user_id },
+      });
+      expect(updated).toMatchObject({
+        ...operator,
+        ...input,
+        updated_at: expect.any(Date),
       });
     });
   });
 
-  test(`fail. email already exists`, async () => {
+  test(`⚠️ business rule violation - input email already exist.
+    - it throw CONFLICT error.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ caller, tx }) => {
       // arrange
       const anotherUser = await tx.user.create({
@@ -58,15 +65,13 @@ describe(`MypageRouter mypage.patchProfile`, () => {
         aichat_model: '',
       };
 
-      // act
-      await expect(caller.mypage.patchProfile(input))
-        // assert
-        .rejects.toThrow(
-          new TRPCError({
-            code: 'CONFLICT',
-            message: message.error.CONFLICT_DUPLICATE_WHEN_UPDATE,
-          }),
-        );
+      // act & assert
+      await expect(caller.mypage.patchProfile(input)).rejects.toThrow(
+        new TRPCError({
+          code: 'CONFLICT',
+          message: message.error.CONFLICT_DUPLICATE_WHEN_UPDATE,
+        }),
+      );
     });
   });
 });

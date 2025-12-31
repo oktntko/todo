@@ -35,7 +35,7 @@ async function upsertTestUser(prisma: PrismaClient) {
       updated_at: new Date(1997, 7, 17),
     },
     update: {
-      email: 'test@example.com',
+      email: `${user_id}@example.com`,
       password: HashPassword.hash('test@example.com'),
       username: 'test username',
       description: 'test description',

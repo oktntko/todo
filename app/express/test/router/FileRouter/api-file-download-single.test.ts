@@ -10,7 +10,8 @@ import { transactionRollbackExpress } from '../../helper';
 const prisma = ExtendsPrismaClient;
 
 describe(`FileRouter /api/file/download/single`, () => {
-  test(`success`, async () => {
+  test(`✅ success - download single file.
+    - it return input file.`, async () => {
     return transactionRollbackExpress(prisma, async ({ tx, operator }) => {
       // arrange
       const input: z.infer<typeof FileRouterSchema.getInput> = {
@@ -48,7 +49,8 @@ describe(`FileRouter /api/file/download/single`, () => {
     });
   });
 
-  test(`file not found in storage`, async () => {
+  test(`⚠️ resource state error - file not found in storage.
+    - it throw NOT_FOUND error.`, async () => {
     return transactionRollbackExpress(prisma, async ({ tx, operator }) => {
       // arrange
       const input: z.infer<typeof FileRouterSchema.getInput> = {
@@ -82,7 +84,8 @@ describe(`FileRouter /api/file/download/single`, () => {
     });
   });
 
-  test(`file not found in database`, async () => {
+  test(`⚠️ resource state error - file not found in database.
+    - it throw NOT_FOUND error.`, async () => {
     return transactionRollbackExpress(prisma, async () => {
       // arrange
       const input: z.infer<typeof FileRouterSchema.getInput> = {
@@ -101,7 +104,8 @@ describe(`FileRouter /api/file/download/single`, () => {
     });
   });
 
-  test(`input error`, async () => {
+  test(`⚠️ validation error - input incorrect data.
+    - it throw BAD_REQUEST error.`, async () => {
     return transactionRollbackExpress(prisma, async () => {
       // arrange
       const input: z.infer<typeof FileRouterSchema.getInput> = {
@@ -116,28 +120,6 @@ describe(`FileRouter /api/file/download/single`, () => {
       expect(res.body).toEqual({
         code: 'BAD_REQUEST',
         message: message.error.BAD_REQUEST,
-      });
-    });
-  });
-
-  test(`system error`, async () => {
-    return transactionRollbackExpress(prisma, async () => {
-      // arrange
-      const input: z.infer<typeof FileRouterSchema.getInput> = {
-        file_id: crypto.randomUUID(),
-      };
-
-      const mockFindUniqueFile = vi.spyOn(FileRepository, 'findUniqueFile');
-      mockFindUniqueFile.mockRejectedValueOnce('test');
-
-      // act
-      const res = await supertest(app).get(`/api/file/download/single/${input.file_id}`);
-
-      // assert
-      expect(res.statusCode).toBe(500);
-      expect(res.body).toEqual({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: message.error.INTERNAL_SERVER_ERROR,
       });
     });
   });

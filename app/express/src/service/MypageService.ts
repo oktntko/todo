@@ -165,7 +165,7 @@ async function enableAichat(
 
     log.error(ReqCtx.reqid, 'patchAichat', 'OpenAI API key validation failed', e);
     throw new TRPCError({
-      code: 'BAD_REQUEST',
+      code: 'BAD_GATEWAY',
       message: 'The service is temporarily unavailable. Please try again in a moment.',
     });
   }

@@ -9,7 +9,8 @@ import { mockopts, transactionRollback, transactionRollbackTrpc } from '../../he
 const prisma = ExtendsPrismaClient;
 
 describe(`MypageRouter mypage.get`, () => {
-  test(`success`, async () => {
+  test(`✅ success - get user info.
+    - it return login user info.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ caller, operator }) => {
       // arrange
       const input = void 0;
@@ -22,22 +23,22 @@ describe(`MypageRouter mypage.get`, () => {
     });
   });
 
-  test(`fail. user is not login.`, async () => {
+  test(`⚠️ authentication failure - user is not login.
+    - it throw UNAUTHORIZED error.`, async () => {
     return transactionRollback(prisma, async ({ tx }) => {
+      // arrange
       const ctx = createContext(mockopts({ user_id: crypto.randomUUID() }), tx);
       const caller = createCaller(ctx);
-      // arrange
+
       const input = void 0;
 
-      // act
-      await expect(caller.mypage.get(input))
-        // assert
-        .rejects.toThrow(
-          new TRPCError({
-            code: 'UNAUTHORIZED',
-            message: message.error.UNAUTHORIZED,
-          }),
-        );
+      // act & assert
+      await expect(caller.mypage.get(input)).rejects.toThrow(
+        new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: message.error.UNAUTHORIZED,
+        }),
+      );
     });
   });
 });
