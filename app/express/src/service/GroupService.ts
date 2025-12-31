@@ -56,12 +56,9 @@ async function createGroup(
 
   return GroupRepository.createGroup(ctx.prisma, {
     data: {
+      ...input,
       owner_id: ctx.operator.user_id,
-      group_name: input.group_name,
-      group_description: input.group_description,
       group_order: count,
-      group_image: input.group_image,
-      group_color: input.group_color,
     },
     operator_id: ctx.operator.user_id,
   });
@@ -74,7 +71,7 @@ async function updateGroup(
 ) {
   log.trace(ReqCtx.reqid, 'updateGroup', ctx.operator.user_id, input);
 
-  const previous = await _repository.checkPreviousVersion({
+  await _repository.checkPreviousVersion({
     previous: GroupRepository.findUniqueGroup(ctx.prisma, {
       where: { group_id: input.group_id },
     }),
@@ -83,14 +80,7 @@ async function updateGroup(
 
   return GroupRepository.updateGroup(ctx.prisma, {
     where: { group_id: input.group_id },
-    data: {
-      owner_id: ctx.operator.user_id,
-      group_name: input.group_name,
-      group_description: input.group_description,
-      group_order: previous.group_order,
-      group_image: input.group_image,
-      group_color: input.group_color,
-    },
+    data: input,
     operator_id: ctx.operator.user_id,
   });
 }

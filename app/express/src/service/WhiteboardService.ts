@@ -61,11 +61,9 @@ async function createWhiteboard(
 
   return WhiteboardRepository.createWhiteboard(ctx.prisma, {
     data: {
+      ...input,
       owner_id: ctx.operator.user_id,
-      whiteboard_name: input.whiteboard_name,
-      whiteboard_description: input.whiteboard_description,
       whiteboard_order: count,
-      whiteboard_content: input.whiteboard_content,
     },
     operator_id: ctx.operator.user_id,
   });
@@ -78,7 +76,7 @@ async function updateWhiteboard(
 ) {
   log.trace(ReqCtx.reqid, 'updateWhiteboard', ctx.operator.user_id, input);
 
-  const previous = await _repository.checkPreviousVersion({
+  await _repository.checkPreviousVersion({
     previous: WhiteboardRepository.findUniqueWhiteboard(ctx.prisma, {
       where: { whiteboard_id: input.whiteboard_id },
     }),
@@ -87,13 +85,7 @@ async function updateWhiteboard(
 
   return WhiteboardRepository.updateWhiteboard(ctx.prisma, {
     where: { whiteboard_id: input.whiteboard_id },
-    data: {
-      owner_id: ctx.operator.user_id,
-      whiteboard_name: input.whiteboard_name,
-      whiteboard_description: input.whiteboard_description,
-      whiteboard_order: previous.whiteboard_order,
-      whiteboard_content: input.whiteboard_content,
-    },
+    data: input,
     operator_id: ctx.operator.user_id,
   });
 }

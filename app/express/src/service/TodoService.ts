@@ -186,18 +186,7 @@ async function createTodo(
   });
 
   return TodoRepository.createTodo(ctx.prisma, {
-    data: {
-      group_id: input.group_id,
-
-      title: input.title,
-      description: input.description,
-      begin_date: input.begin_date,
-      begin_time: input.begin_time,
-      limit_date: input.limit_date,
-      limit_time: input.limit_time,
-      order: input.order,
-      done_at: input.done_at,
-    },
+    data: input,
     operator_id: ctx.operator.user_id,
   });
 }
@@ -228,18 +217,7 @@ async function updateTodo(
   }
 
   return TodoRepository.updateTodo(ctx.prisma, {
-    data: {
-      group_id: input.group_id,
-
-      title: input.title,
-      description: input.description,
-      begin_date: input.begin_date,
-      begin_time: input.begin_time,
-      limit_date: input.limit_date,
-      limit_time: input.limit_time,
-      order: input.order,
-      done_at: input.done_at,
-    },
+    data: input,
     where: {
       todo_id: input.todo_id,
     },
@@ -261,34 +239,21 @@ async function updateManyTodo(
     });
   }
 
-  await Promise.all(
-    input.list.map(async (input) => {
-      const previous = await _repository.checkPreviousVersion({
-        previous: TodoRepository.findUniqueTodo(ctx.prisma, { where: { todo_id: input.todo_id } }),
-        updated_at: input.updated_at,
+  for (const todo of input.list) {
+    const previous = await _repository.checkPreviousVersion({
+      previous: TodoRepository.findUniqueTodo(ctx.prisma, { where: { todo_id: todo.todo_id } }),
+      updated_at: todo.updated_at,
+    });
+    if (previous.group.owner_id !== ctx.operator.user_id) {
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: message.error.FORBIDDEN,
       });
-      if (previous.group.owner_id !== ctx.operator.user_id) {
-        throw new TRPCError({
-          code: 'FORBIDDEN',
-          message: message.error.FORBIDDEN,
-        });
-      }
-    }),
-  );
+    }
+  }
 
   await TodoRepository.updateManyTodo(ctx.prisma, {
-    data: {
-      group_id: input.group_id,
-
-      title: input.title,
-      description: input.description,
-      begin_date: input.begin_date,
-      begin_time: input.begin_time,
-      limit_date: input.limit_date,
-      limit_time: input.limit_time,
-      order: input.order,
-      done_at: input.done_at,
-    },
+    data: input,
     where: {
       todo_id: { in: input.list.map((x) => x.todo_id) },
     },
@@ -328,21 +293,19 @@ async function deleteManyTodo(
 ) {
   log.trace(ReqCtx.reqid, 'deleteManyTodo', ctx.operator.user_id, inputList);
 
-  await Promise.all(
-    inputList.map(async (input) => {
-      const previous = await _repository.checkDataExist({
-        data: TodoRepository.findUniqueTodo(ctx.prisma, {
-          where: { todo_id: input.todo_id },
-        }),
+  for (const input of inputList) {
+    const previous = await _repository.checkDataExist({
+      data: TodoRepository.findUniqueTodo(ctx.prisma, {
+        where: { todo_id: input.todo_id },
+      }),
+    });
+    if (previous.group.owner_id !== ctx.operator.user_id) {
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: message.error.FORBIDDEN,
       });
-      if (previous.group.owner_id !== ctx.operator.user_id) {
-        throw new TRPCError({
-          code: 'FORBIDDEN',
-          message: message.error.FORBIDDEN,
-        });
-      }
-    }),
-  );
+    }
+  }
 
   await TodoRepository.deleteManyTodo(ctx.prisma, {
     where: {
