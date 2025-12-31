@@ -23,6 +23,9 @@ importers:
       '@tsconfig/node24':
         specifier: ^24.0.3
         version: 24.0.3
+      '@tsconfig/strictest':
+        specifier: ^2.0.8
+        version: 2.0.8
       '@types/node':
         specifier: ^24.10.1
         version: 24.10.1
@@ -1790,6 +1793,9 @@ packages:
 
   '@tsconfig/node24@24.0.3':
     resolution: {integrity: sha512-vcERKtKQKHgzt/vfS3Gjasd8SUI2a0WZXpgJURdJsMySpS5+ctgbPfuLj2z/W+w4lAfTWxoN4upKfu2WzIRYnw==}
+
+  '@tsconfig/strictest@2.0.8':
+    resolution: {integrity: sha512-XnQ7vNz5HRN0r88GYf1J9JJjqtZPiHt2woGJOo2dYqyHGGcd6OLGqSlBB6p1j9mpzja6Oe5BoPqWmeDx6X9rLw==}
 
   '@tybys/wasm-util@0.10.1':
     resolution: {integrity: sha512-9tTaPJLSiejZKx+Bmog4uSubteqTvFrVrURwkmHixBo0G4seD0zUxp98E1DzUBJxLQ3NPwXrGKDiVjwx/DpPsg==}
@@ -6800,6 +6806,8 @@ snapshots:
       typescript: 5.9.3
 
   '@tsconfig/node24@24.0.3': {}
+
+  '@tsconfig/strictest@2.0.8': {}
 
   '@tybys/wasm-util@0.10.1':
     dependencies:
