@@ -1,9 +1,8 @@
 import { dayjs } from '@todo/lib/dayjs';
-import { prisma } from '@todo/prisma/client';
 import { SessionData, Store } from 'express-session';
 import superjson from 'superjson';
 import { log } from '~/lib/log4js';
-import { PrismaClient } from '~/middleware/prisma';
+import { ExtendsPrismaClient, PrismaClient } from '~/middleware/prisma';
 
 /**
  * https://github.com/microsoft/TypeScript-Node-Starter/blob/master/src/types/express-session-types.d.ts
@@ -85,7 +84,7 @@ async function findUserBySession(params: {
 async function getSession(session_key: string): Promise<SessionData | null> {
   log.debug('getSession', session_key);
 
-  const foundSession = await prisma.session.findUnique({
+  const foundSession = await ExtendsPrismaClient.session.findUnique({
     where: { session_key },
   });
 
@@ -113,7 +112,7 @@ async function getSession(session_key: string): Promise<SessionData | null> {
 async function setSession(session_key: string, session: SessionData) {
   log.debug('setSession', session_key);
 
-  return prisma.session.upsert({
+  return ExtendsPrismaClient.session.upsert({
     where: { session_key },
     create: {
       session_key,
@@ -138,7 +137,7 @@ async function setSession(session_key: string, session: SessionData) {
 async function destroySession(session_key: string) {
   log.debug('destroySession', session_key);
 
-  await prisma.session.deleteMany({
+  await ExtendsPrismaClient.session.deleteMany({
     where: { session_key },
   });
 

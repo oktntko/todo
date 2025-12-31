@@ -30,15 +30,9 @@
     "zod": "^4.2.1"
   },
   "devDependencies": {
-    "@tsconfig/node24": "^24.0.3",
-    "@tsconfig/strictest": "^2.0.8",
-    "@types/node": "^24.10.1",
     "@vitest/coverage-v8": "^4.0.16",
     "@vitest/ui": "^4.0.16",
-    "npm-run-all2": "^8.0.4",
     "tsdown": "^0.18.2",
-    "tsx": "4.21.0",
-    "typescript": "5.9.3",
     "vitest": "^4.0.16"
   },
   "packageManager": "pnpm@10.26.1"

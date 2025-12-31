@@ -24,6 +24,8 @@
     "@cspell/eslint-plugin": "^9.4.0",
     "@eslint/js": "^9.39.2",
     "@rushstack/eslint-patch": "^1.15.0",
+    "@tsconfig/node24": "^24.0.3",
+    "@types/node": "^24.10.1",
     "@typescript-eslint/eslint-plugin": "^8.50.1",
     "@typescript-eslint/parser": "^8.50.1",
     "@vue/eslint-config-prettier": "^10.2.0",
@@ -32,10 +34,13 @@
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-vue": "^10.6.2",
+    "npm-run-all2": "^8.0.4",
     "prettier": "^3.7.4",
     "prettier-plugin-organize-imports": "^4.3.0",
     "prettier-plugin-tailwindcss": "^0.7.2",
+    "tsx": "^4.21.0",
     "turbo": "^2.6.3",
+    "typescript": "^5.9.3",
     "typescript-eslint": "^8.50.1"
   },
   "packageManager": "pnpm@10.24.0"

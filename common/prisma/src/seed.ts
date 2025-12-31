@@ -1,4 +1,9 @@
-import { prisma } from './client';
+import { adapter, PrismaClient } from './client';
+
+const prisma = new PrismaClient({
+  adapter,
+  log: ['warn', 'error', { emit: 'event', level: 'query' }],
+});
 
 async function main() {
   await prisma.user.deleteMany();

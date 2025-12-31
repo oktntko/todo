@@ -30,15 +30,9 @@
     "@todo/lib": "workspace:*"
   },
   "devDependencies": {
-    "@tsconfig/node24": "^24.0.3",
-    "@tsconfig/strictest": "^2.0.8",
-    "@types/node": "^24.10.1",
-    "npm-run-all2": "^8.0.4",
     "prisma": "^7.2.0",
     "prisma-zod-generator": "^2.1.2",
-    "tsdown": "^0.18.2",
-    "tsx": "4.21.0",
-    "typescript": "5.9.3"
+    "tsdown": "^0.18.2"
   },
   "packageManager": "pnpm@10.26.1"
 }

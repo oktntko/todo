@@ -1,5 +1,10 @@
 import { ColorSchema, DateSchema, TimeSchema, z } from '@todo/lib/zod';
-import { Prisma, prisma, type ITXClientDenyList } from '@todo/prisma/client';
+import {
+  adapter,
+  PrismaClient as OriginPrismaClient,
+  Prisma,
+  type ITXClientDenyList,
+} from '@todo/prisma/client';
 import { AichatModelSchema } from '@todo/prisma/schema';
 import log4js from 'log4js';
 import util from 'node:util';
@@ -10,101 +15,104 @@ import { MessageSchema } from '~/schema/AichatRouterSchema';
 
 const log = log4js.getLogger('database');
 
-prisma.$on('query', (event) => {
-  log.mark(
-    ReqCtx.reqid,
-    `QUERY::[${event.query};]`,
-    event.params !== '[]' ? `PARAMS::${event.params}` : '',
-  );
-});
+export const ExtendsPrismaClient = new OriginPrismaClient({
+  adapter,
+  log: ['warn', 'error', { emit: 'event', level: 'query' }],
+})
+  .$on('query', (event) => {
+    log.mark(
+      ReqCtx.reqid,
+      `QUERY::[${event.query};]`,
+      event.params !== '[]' ? `PARAMS::${event.params}` : '',
+    );
+  })
+  .$extends({
+    query: {
+      async $allOperations(params) {
+        log.mark(ReqCtx.reqid, `${params.operation}.${params.model} BEGIN`);
+        const start = performance.now();
 
-export const ExtendsPrismaClient = prisma.$extends({
-  query: {
-    async $allOperations(params) {
-      log.mark(ReqCtx.reqid, `${params.operation}.${params.model} BEGIN`);
-      const start = performance.now();
+        const result = await params.query(params.args);
 
-      const result = await params.query(params.args);
-
-      const end = performance.now();
-      log.mark(ReqCtx.reqid, `${params.operation}.${params.model} END`, `took::${end - start}ms`);
-      if (!env.PROD) {
-        log.mark(
-          ReqCtx.reqid,
-          'RESULT::',
-          util.inspect(result, { showHidden: false, depth: null, colors: true }),
-        );
-      }
-      return result;
-    },
-  },
-  result: {
-    user: {
-      aichat_model: {
-        needs: {
-          aichat_model: true,
-        },
-        compute({ aichat_model }) {
-          return AichatModelSchema.or(z.literal('')).parse(aichat_model);
-        },
+        const end = performance.now();
+        log.mark(ReqCtx.reqid, `${params.operation}.${params.model} END`, `took::${end - start}ms`);
+        if (!env.PROD) {
+          log.mark(
+            ReqCtx.reqid,
+            'RESULT::',
+            util.inspect(result, { showHidden: false, depth: null, colors: true }),
+          );
+        }
+        return result;
       },
     },
-    space: {
-      space_color: {
-        needs: {
-          space_color: true,
+    result: {
+      user: {
+        aichat_model: {
+          needs: {
+            aichat_model: true,
+          },
+          compute({ aichat_model }) {
+            return AichatModelSchema.or(z.literal('')).parse(aichat_model);
+          },
         },
-        compute({ space_color }) {
-          return ColorSchema.or(z.literal('')).parse(space_color);
+      },
+      space: {
+        space_color: {
+          needs: {
+            space_color: true,
+          },
+          compute({ space_color }) {
+            return ColorSchema.or(z.literal('')).parse(space_color);
+          },
+        },
+      },
+      todo: {
+        begin_date: {
+          needs: {
+            begin_date: true,
+          },
+          compute({ begin_date }) {
+            return DateSchema.or(z.literal('')).parse(begin_date);
+          },
+        },
+        begin_time: {
+          needs: {
+            begin_time: true,
+          },
+          compute({ begin_time }) {
+            return TimeSchema.or(z.literal('')).parse(begin_time);
+          },
+        },
+        limit_date: {
+          needs: {
+            limit_date: true,
+          },
+          compute({ limit_date }) {
+            return DateSchema.or(z.literal('')).parse(limit_date);
+          },
+        },
+        limit_time: {
+          needs: {
+            limit_time: true,
+          },
+          compute({ limit_time }) {
+            return TimeSchema.or(z.literal('')).parse(limit_time);
+          },
+        },
+      },
+      aichat: {
+        message: {
+          needs: {
+            message: true,
+          },
+          compute({ message }) {
+            return superjson.parse<z.infer<typeof MessageSchema>>(message);
+          },
         },
       },
     },
-    todo: {
-      begin_date: {
-        needs: {
-          begin_date: true,
-        },
-        compute({ begin_date }) {
-          return DateSchema.or(z.literal('')).parse(begin_date);
-        },
-      },
-      begin_time: {
-        needs: {
-          begin_time: true,
-        },
-        compute({ begin_time }) {
-          return TimeSchema.or(z.literal('')).parse(begin_time);
-        },
-      },
-      limit_date: {
-        needs: {
-          limit_date: true,
-        },
-        compute({ limit_date }) {
-          return DateSchema.or(z.literal('')).parse(limit_date);
-        },
-      },
-      limit_time: {
-        needs: {
-          limit_time: true,
-        },
-        compute({ limit_time }) {
-          return TimeSchema.or(z.literal('')).parse(limit_time);
-        },
-      },
-    },
-    aichat: {
-      message: {
-        needs: {
-          message: true,
-        },
-        compute({ message }) {
-          return superjson.parse<z.infer<typeof MessageSchema>>(message);
-        },
-      },
-    },
-  },
-});
+  });
 
 export type TransactionExtendsPrismaClient = Omit<typeof ExtendsPrismaClient, ITXClientDenyList>;
 

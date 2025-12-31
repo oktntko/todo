@@ -21,7 +21,7 @@ const { validateSubmit, ErrorMessage } = useVueValidateZod(
 </script>
 
 <template>
-  <div class="bg-gray-100">
+  <div class="bg-gray-50">
     <div class="mx-auto flex h-screen flex-col items-center justify-center px-6 py-8 lg:py-0">
       <!-- タイトル -->
       <h1 class="mx-auto mb-6 flex items-center gap-1 text-2xl font-semibold">
@@ -31,7 +31,7 @@ const { validateSubmit, ErrorMessage } = useVueValidateZod(
 
       <!-- ボックス -->
       <div
-        class="w-full rounded-lg border border-gray-200 bg-gray-50 p-6 shadow-md sm:max-w-md sm:p-8 md:mt-0"
+        class="w-full rounded-lg border border-gray-200 bg-gray-100 p-6 shadow-md sm:max-w-md sm:p-8 md:mt-0"
       >
         <form
           class="flex flex-col gap-6"

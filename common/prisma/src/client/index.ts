@@ -10,14 +10,10 @@ const adapter = new PrismaMariaDb({
   database: process.env['DATABASE_NAME'],
   connectTimeout: 5000,
 });
-const prisma = new PrismaClient({
-  adapter,
-  log: ['warn', 'error', { emit: 'event', level: 'query' }],
-});
 
 type TransactionOriginPrismaClient = Omit<PrismaClient, ITXClientDenyList>;
 
 export type OriginPrismaClient = PrismaClient | TransactionOriginPrismaClient;
 
 export * from './generated/client';
-export { adapter, prisma, PrismaMariaDb, type ITXClientDenyList };
+export { adapter, PrismaMariaDb, type ITXClientDenyList };
