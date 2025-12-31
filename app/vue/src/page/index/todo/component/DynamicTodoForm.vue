@@ -23,7 +23,7 @@ defineEmits<{
 }>();
 
 const props = defineProps<{
-  space_id: number;
+  group_id: number;
   order: number;
 }>();
 
@@ -43,7 +43,7 @@ const debounceResetStatus = R.funnel(() => (status.value.save = ''), { minQuietP
 const handleSubmit = validateSubmit(async (value) => {
   try {
     status.value.save = 'saving...';
-    await trpc.todo.upsert.mutate({ ...value, space_id: props.space_id, order: props.order });
+    await trpc.todo.upsert.mutate({ ...value, group_id: props.group_id, order: props.order });
 
     modelValue.value.is_new = false;
 
@@ -65,7 +65,7 @@ async function handleInput() {
 watch(
   () => [
     props.order, // 順番が変わったとき
-    modelValue.value.space_id, // ほかのスペースに移動したとき
+    modelValue.value.group_id, // ほかのグループに移動したとき
   ],
   () => {
     debounceHandleSubmit.call();

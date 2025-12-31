@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { SpaceRouterSchema } from '@todo/express/schema';
+import { GroupRouterSchema } from '@todo/express/schema';
 import type { z } from '@todo/lib/zod';
 import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import { bytesToBase64 } from '~/lib/file';
 import { useDialog } from '~/plugin/DialogPlugin';
 
-export type ModelValue = z.infer<typeof SpaceRouterSchema.createInput>;
+export type ModelValue = z.infer<typeof GroupRouterSchema.createInput>;
 export type Reset = (modelValue: ModelValue) => void;
 
 const $dialog = useDialog();
@@ -17,7 +17,7 @@ const $emit = defineEmits<{
 const modelValue = defineModel<ModelValue>({ required: true });
 
 const { validateSubmit, ErrorMessage, reset, isDirty } = useVueValidateZod(
-  SpaceRouterSchema.createInput,
+  GroupRouterSchema.createInput,
   modelValue,
 );
 
@@ -44,7 +44,7 @@ async function handleFileInput(files?: FileList | null) {
     return $dialog.alert.info('The upper limit is 15kb.');
   }
 
-  modelValue.value.space_image = await bytesToBase64(file);
+  modelValue.value.group_image = await bytesToBase64(file);
 }
 </script>
 
@@ -54,20 +54,20 @@ async function handleFileInput(files?: FileList | null) {
       <div class="flex gap-6">
         <div class="flex items-start">
           <!-- 画像があるとき -->
-          <div v-if="modelValue.space_image" class="relative h-16 w-16">
+          <div v-if="modelValue.group_image" class="relative h-16 w-16">
             <img
-              :src="modelValue.space_image"
+              :src="modelValue.group_image"
               width="64"
               height="64"
               decoding="async"
               class="h-16 w-16 rounded-sm object-cover object-center"
-              alt="space image"
+              alt="group image"
             />
             <button
               type="button"
               class="absolute -top-2 -right-2 flex h-4 w-4 cursor-pointer items-center justify-center rounded-full border border-gray-300 bg-white text-gray-900 transition-colors hover:bg-gray-200"
               aria-label="Close"
-              @click="modelValue.space_image = ''"
+              @click="modelValue.group_image = ''"
             >
               <span class="icon-[bi--x] h-4 w-4" />
             </button>
@@ -104,7 +104,7 @@ async function handleFileInput(files?: FileList | null) {
               }
             "
           >
-            <span class="sr-only capitalize">space image</span>
+            <span class="sr-only capitalize">group image</span>
             <span class="icon-[ri--image-circle-fill] h-4 w-4"> </span>
             <span class="text-xs capitalize">limit: 15kb</span>
             <input
@@ -118,13 +118,13 @@ async function handleFileInput(files?: FileList | null) {
 
         <div class="focus-container flex flex-col gap-0.5">
           <div>
-            <label for="space_name" class="required text-sm capitalize"> name </label>
+            <label for="group_name" class="required text-sm capitalize"> name </label>
           </div>
 
           <div>
             <MyInput
-              id="space_name"
-              v-model.lazy="modelValue.space_name"
+              id="group_name"
+              v-model.lazy="modelValue.group_name"
               type="text"
               class="w-full"
               maxlength="100"
@@ -132,44 +132,44 @@ async function handleFileInput(files?: FileList | null) {
             />
           </div>
 
-          <ErrorMessage class="text-xs text-red-600" field="space_name" />
+          <ErrorMessage class="text-xs text-red-600" field="group_name" />
         </div>
 
         <div class="focus-container flex flex-col gap-0.5">
           <div>
-            <label for="space_color" class="text-sm capitalize"> color </label>
+            <label for="group_color" class="text-sm capitalize"> color </label>
           </div>
 
           <div class="grow">
             <MyInput
-              id="space_color"
-              v-model.lazy="modelValue.space_color"
+              id="group_color"
+              v-model.lazy="modelValue.group_color"
               list="color-picker"
               type="color"
               class="h-full w-16 p-1!"
             />
           </div>
 
-          <ErrorMessage class="text-xs text-red-600" field="space_color" />
+          <ErrorMessage class="text-xs text-red-600" field="group_color" />
         </div>
       </div>
 
       <div class="focus-container flex flex-col gap-0.5">
         <div>
-          <label for="space_description" class="optional text-sm capitalize"> description </label>
+          <label for="group_description" class="optional text-sm capitalize"> description </label>
         </div>
 
         <div>
           <MyTextarea
-            id="space_description"
-            v-model.lazy="modelValue.space_description"
+            id="group_description"
+            v-model.lazy="modelValue.group_description"
             class="w-full"
             rows="4"
             maxlength="400"
           ></MyTextarea>
         </div>
 
-        <ErrorMessage class="text-xs text-red-600" field="space_description" />
+        <ErrorMessage class="text-xs text-red-600" field="group_description" />
       </div>
     </section>
 

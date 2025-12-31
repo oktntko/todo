@@ -12,7 +12,7 @@ const { downloadManyFiles } = useFile();
 
 const modelValue = ref<z.infer<typeof TodoRouterSchema.searchInput>>({
   where: {
-    space_id_list: [],
+    group_id_list: [],
     todo_keyword: '',
     todo_status: [TodoStatusList[0]],
   },
@@ -263,11 +263,11 @@ const headerCheckbox = computed(() => {
               :class="['sticky -top-px z-10 resize-x overflow-x-hidden bg-gray-300 p-2 capitalize']"
             >
               <div class="flex items-center justify-center">
-                space
+                group
                 <MySortButton
                   :sort="modelValue.sort"
-                  field="space"
-                  @click="changeSortOrder('space')"
+                  field="group"
+                  @click="changeSortOrder('group')"
                 ></MySortButton>
               </div>
             </th>
@@ -402,18 +402,18 @@ const headerCheckbox = computed(() => {
             <td class="max-w-48">
               <div
                 class="line-clamp-1 flex min-w-28 items-center gap-0.5 px-2 py-1"
-                :title="todo.space.space_name"
+                :title="todo.group.group_name"
               >
                 <img
-                  v-if="todo.space.space_image"
-                  :src="todo.space.space_image"
+                  v-if="todo.group.group_image"
+                  :src="todo.group.group_image"
                   width="16"
                   height="16"
                   decoding="async"
                   class="h-4 w-4 rounded-sm object-cover object-center"
                 />
                 <span v-else class="icon-[ri--image-circle-fill] h-4 w-4"></span>
-                <span> {{ todo.space.space_name }} </span>
+                <span> {{ todo.group.group_name }} </span>
               </div>
             </td>
             <td class="max-w-48">

@@ -7,9 +7,9 @@ import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import { trpc, type RouterOutput } from '~/lib/trpc';
 import DynamicTodoForm from '~/page/index/todo/component/DynamicTodoForm.vue';
 
-const props = defineProps<{ space: RouterOutput['space']['list'][number] }>();
+const props = defineProps<{ group: RouterOutput['group']['list'][number] }>();
 const modelValue = ref<z.infer<typeof TodoRouterSchema.listInput>>({
-  space_id_list: [props.space.space_id],
+  group_id_list: [props.group.group_id],
   todo_status: 'active',
 });
 
@@ -37,8 +37,8 @@ function createNewEmptyTodo(): TodoWithStatus {
   return {
     todo_id: window.crypto.randomUUID(),
 
-    space: props.space,
-    space_id: props.space.space_id,
+    group: props.group,
+    group_id: props.group.group_id,
 
     title: '',
     description: '',
@@ -73,7 +73,7 @@ onMounted(async () => {
 
   await handleSubmit();
 
-  const el = document.getElementById(`space-${props.space.space_id}-sortable-container`)!;
+  const el = document.getElementById(`group-${props.group.group_id}-sortable-container`)!;
 
   sortable.value = Sortable.create(el, {
     animation: 150,
@@ -96,7 +96,7 @@ onMounted(async () => {
         await nextTick(() => {
           // watch で submitを実行するために書き換え
           todo_list.value.forEach((x) => {
-            x.space_id = modelValue.value.space_id_list[0]!;
+            x.group_id = modelValue.value.group_id_list[0]!;
           });
         });
       });
@@ -141,28 +141,28 @@ onMounted(async () => {
   <div
     class="rounded-sm border border-l-[6px] border-gray-300 bg-white pb-4 text-sm shadow-sm"
     :style="{
-      'border-left-color': space.space_color,
+      'border-left-color': group.group_color,
     }"
   >
     <div class="sticky top-0 z-10 bg-white pt-4 pb-2">
       <div class="px-4">
         <div class="flex items-center text-lg font-bold">
           <img
-            v-if="space.space_image"
-            :src="space.space_image"
+            v-if="group.group_image"
+            :src="group.group_image"
             width="24"
             height="24"
             decoding="async"
             class="h-6 w-6 rounded-sm object-cover object-center"
           />
           <span v-else class="icon-[ri--image-circle-fill] h-6 w-6"></span>
-          <span class="ms-1">{{ space.space_name }}</span>
+          <span class="ms-1">{{ group.group_name }}</span>
         </div>
         <div
-          v-if="space.space_description"
+          v-if="group.group_description"
           class="inline-block max-w-full text-xs wrap-break-word whitespace-pre-wrap text-gray-500"
         >
-          {{ space.space_description }}
+          {{ group.group_description }}
         </div>
       </div>
 
@@ -182,11 +182,11 @@ onMounted(async () => {
 
         <form class="flex flex-row items-center gap-2 text-sm" @submit.prevent="handleSubmit">
           <label
-            :for="`${props.space.space_id}-status-active`"
+            :for="`${props.group.group_id}-status-active`"
             class="flex items-center font-medium text-gray-900 capitalize"
           >
             <input
-              :id="`${props.space.space_id}-status-active`"
+              :id="`${props.group.group_id}-status-active`"
               v-model="modelValue.todo_status"
               type="radio"
               value="active"
@@ -196,11 +196,11 @@ onMounted(async () => {
             active
           </label>
           <label
-            :for="`${props.space.space_id}-status-done`"
+            :for="`${props.group.group_id}-status-done`"
             class="flex items-center font-medium text-gray-900 capitalize"
           >
             <input
-              :id="`${props.space.space_id}-status-done`"
+              :id="`${props.group.group_id}-status-done`"
               v-model="modelValue.todo_status"
               type="radio"
               value="done"
@@ -218,7 +218,7 @@ onMounted(async () => {
       </div>
     </div>
 
-    <ul :id="`space-${props.space.space_id}-sortable-container`">
+    <ul :id="`group-${props.group.group_id}-sortable-container`">
       <li
         v-for="(todo, i) of todo_list"
         :key="todo.todo_id"
@@ -229,7 +229,7 @@ onMounted(async () => {
           v-model="todo_list[i]!"
           class="px-4 pt-2 pb-4"
           :file_list="todo_list[i]!.file_list"
-          :space_id="props.space.space_id"
+          :group_id="props.group.group_id"
           :order="i"
           @change="
             () => {

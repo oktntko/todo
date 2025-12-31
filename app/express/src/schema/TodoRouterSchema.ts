@@ -1,8 +1,8 @@
 import { z } from '@todo/lib/zod';
 import {
   FileSchema,
+  GroupSchema,
   SortOrderSchema,
-  SpaceSchema,
   TodoScalarFieldEnumSchema,
   TodoSchema,
   TodoStatusSchema,
@@ -44,25 +44,25 @@ const getInput = TodoSchema.pick({
 });
 
 const getOutput = TodoSchema.extend({
-  space: z.lazy(() => SpaceSchema),
+  group: z.lazy(() => GroupSchema),
   file_list: z.lazy(() => FileSchema).array(),
 });
 
 const deleteManyInput = getInput.array().min(1);
 
 const listInput = z.object({
-  space_id_list: z.number().array().default([]),
+  group_id_list: z.number().array().default([]),
   todo_status: TodoStatusSchema.default('active'),
 });
 
 const searchInput = z.object({
   where: z.object({
-    space_id_list: z.number().array().default([]),
+    group_id_list: z.number().array().default([]),
     todo_keyword: z.string().trim().max(255),
     todo_status: TodoStatusSchema.array(),
   }),
   sort: z.object({
-    field: z.enum([...TodoScalarFieldEnumSchema.options, 'space']),
+    field: z.enum([...TodoScalarFieldEnumSchema.options, 'group']),
     order: SortOrderSchema,
   }),
   limit: z.number().int().positive(),

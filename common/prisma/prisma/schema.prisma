@@ -19,17 +19,17 @@ datasource db {
 }
 
 /// @zod.import(["import { ColorSchema, StringRelationIdSchema } from '@todo/lib/zod'"]);
-model Space {
-  space_id Int @id @default(autoincrement())
+model Group {
+  group_id Int @id @default(autoincrement())
 
   owner_id String /// @zod.custom.use(StringRelationIdSchema)
   owner    User   @relation(fields: [owner_id], references: [user_id], onDelete: Cascade)
 
-  space_name        String @db.VarChar(100) /// @zod.trim().min(1).max(100)
-  space_description String @default("") @db.VarChar(400) /// @zod.max(400)
-  space_order       Int    @default(0)
-  space_image       String @default(dbgenerated("('')")) @db.Text
-  space_color       String @default("") @db.VarChar(100) /// @zod.custom.use(ColorSchema.or(z.literal('')))
+  group_name        String @db.VarChar(100) /// @zod.trim().min(1).max(100)
+  group_description String @default("") @db.VarChar(400) /// @zod.max(400)
+  group_order       Int    @default(0)
+  group_image       String @default(dbgenerated("('')")) @db.Text
+  group_color       String @default("") @db.VarChar(100) /// @zod.custom.use(ColorSchema.or(z.literal('')))
 
   todo_list Todo[]
 
@@ -38,16 +38,16 @@ model Space {
   updated_at DateTime @updatedAt @db.DateTime(3)
   updated_by String
 
-  @@index([space_name])
-  @@map("space")
+  @@index([group_name])
+  @@map("group")
 }
 
 /// @zod.import(["import { DateSchema, TimeSchema, NumberRelationIdSchema } from '@todo/lib/zod'"]);
 model Todo {
   todo_id String @id @default(uuid(7)) @db.VarChar(36) /// @zod.length(36)
 
-  space_id Int   @db.Int /// @zod.custom.use(NumberRelationIdSchema)
-  space    Space @relation(fields: [space_id], references: [space_id], onDelete: Cascade)
+  group_id Int   @db.Int /// @zod.custom.use(NumberRelationIdSchema)
+  group    Group @relation(fields: [group_id], references: [group_id], onDelete: Cascade)
 
   title       String    @default("") @db.VarChar(100) /// @zod.trim().max(100)
   description String    @default(dbgenerated("('')")) @db.Text
@@ -133,7 +133,7 @@ model User {
 
   session_list    Session[]
   file_list       File[]
-  space_list      Space[]
+  group_list      Group[]
   whiteboard_list Whiteboard[]
 
   @@index([username], name: "index_username")

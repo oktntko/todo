@@ -2,67 +2,67 @@ import { z } from '@todo/lib/zod';
 import { $transaction } from '~/middleware/prisma';
 import { protectedProcedure, router } from '~/middleware/trpc';
 import { OkSchema } from '~/schema';
-import { SpaceRouterSchema } from '~/schema/SpaceRouterSchema';
-import { SpaceService } from '~/service/SpaceService';
+import { GroupRouterSchema } from '~/schema/GroupRouterSchema';
+import { GroupService } from '~/service/GroupService';
 
-export const space = router({
-  // space.list
+export const group = router({
+  // group.list
   list: protectedProcedure
     .input(z.void())
-    .output(SpaceRouterSchema.getOutput.array())
+    .output(GroupRouterSchema.getOutput.array())
     .query(async ({ ctx }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return SpaceService.listSpace({ ...ctx, prisma });
+        return GroupService.listGroup({ ...ctx, prisma });
       });
     }),
 
-  // space.get
+  // group.get
   get: protectedProcedure
-    .input(SpaceRouterSchema.getInput)
-    .output(SpaceRouterSchema.getOutput)
+    .input(GroupRouterSchema.getInput)
+    .output(GroupRouterSchema.getOutput)
     .query(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return SpaceService.getSpace({ ...ctx, prisma }, input);
+        return GroupService.getGroup({ ...ctx, prisma }, input);
       });
     }),
 
-  // space.create
+  // group.create
   create: protectedProcedure
-    .input(SpaceRouterSchema.createInput)
-    .output(SpaceRouterSchema.getOutput)
+    .input(GroupRouterSchema.createInput)
+    .output(GroupRouterSchema.getOutput)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return SpaceService.createSpace({ ...ctx, prisma }, input);
+        return GroupService.createGroup({ ...ctx, prisma }, input);
       });
     }),
 
-  // space.update
+  // group.update
   update: protectedProcedure
-    .input(SpaceRouterSchema.updateInput)
-    .output(SpaceRouterSchema.getOutput)
+    .input(GroupRouterSchema.updateInput)
+    .output(GroupRouterSchema.getOutput)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return SpaceService.updateSpace({ ...ctx, prisma }, input);
+        return GroupService.updateGroup({ ...ctx, prisma }, input);
       });
     }),
 
-  // space.delete
+  // group.delete
   delete: protectedProcedure
-    .input(SpaceRouterSchema.deleteInput)
-    .output(SpaceRouterSchema.getInput)
+    .input(GroupRouterSchema.deleteInput)
+    .output(GroupRouterSchema.getInput)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return SpaceService.deleteSpace({ ...ctx, prisma }, input);
+        return GroupService.deleteGroup({ ...ctx, prisma }, input);
       });
     }),
 
-  // space.reorder
+  // group.reorder
   reorder: protectedProcedure
-    .input(SpaceRouterSchema.reorderInputList)
+    .input(GroupRouterSchema.reorderInputList)
     .output(OkSchema)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return SpaceService.reorderSpace({ ...ctx, prisma }, input);
+        return GroupService.reorderGroup({ ...ctx, prisma }, input);
       });
     }),
 });

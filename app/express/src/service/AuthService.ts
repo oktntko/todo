@@ -5,7 +5,7 @@ import { ReqCtx } from '~/lib/context';
 import { log } from '~/lib/log4js';
 import { HashPassword, OnetimePassword, SecretPassword } from '~/lib/secret';
 import { PublicContext } from '~/middleware/trpc';
-import { SpaceRepository } from '~/repository/SpaceRepository';
+import { GroupRepository } from '~/repository/GroupRepository';
 import { UserRepository } from '~/repository/UserRepository';
 import { _repository } from '~/repository/_repository';
 import { AuthRouterSchema } from '~/schema/AuthRouterSchema';
@@ -40,13 +40,13 @@ async function signup(ctx: PublicContext, input: z.infer<typeof AuthRouterSchema
     },
   });
 
-  await SpaceRepository.createSpace(ctx.prisma, {
+  await GroupRepository.createGroup(ctx.prisma, {
     data: {
       owner_id: user.user_id,
-      space_name: 'MyTodo',
-      space_description: 'This is the default workspace.',
-      space_order: 0,
-      space_image: '',
+      group_name: 'MyTodo',
+      group_description: 'This is the default workgroup.',
+      group_order: 0,
+      group_image: '',
     },
     operator_id: user.user_id,
   });

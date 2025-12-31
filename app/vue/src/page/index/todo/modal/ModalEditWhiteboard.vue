@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import type { RouterOutput } from '~/lib/trpc';
 import { trpc } from '~/lib/trpc';
-import WhiteboardSpaceForm, {
-  type ModelValue,
-} from '~/page/index/todo/component/WhiteboardSpaceForm.vue';
+import WhiteboardForm, { type ModelValue } from '~/page/index/todo/component/WhiteboardForm.vue';
 import { useDialog } from '~/plugin/DialogPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
 
@@ -48,7 +46,7 @@ async function handleSubmit(input: ModelValue) {
 <template>
   <div class="w-sm rounded-lg bg-gray-100 p-8 text-gray-900 shadow-xl">
     <header class="mb-4 text-lg font-bold capitalize">edit whiteboard</header>
-    <WhiteboardSpaceForm v-model="modelValue" @submit="handleSubmit">
+    <WhiteboardForm v-model="modelValue" @submit="handleSubmit">
       <template #buttons>
         <MyButton
           type="button"
@@ -77,6 +75,6 @@ async function handleSubmit(input: ModelValue) {
           <span class="capitalize">delete</span>
         </MyButton>
       </template>
-    </WhiteboardSpaceForm>
+    </WhiteboardForm>
   </div>
 </template>

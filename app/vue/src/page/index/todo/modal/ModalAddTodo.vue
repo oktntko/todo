@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { TodoRouterSchema } from '@todo/express/schema';
 import { type z } from '@todo/lib/zod';
-import type { SpaceSchema } from '@todo/prisma/schema';
+import type { GroupSchema } from '@todo/prisma/schema';
 import type { DownloadFile } from '~/component/MyDownloadFileList.vue';
 import { trpc } from '~/lib/trpc';
 import TodoForm, { type ModelValue } from '~/page/index/todo/table/component/TodoForm.vue';
 import { useDialog } from '~/plugin/DialogPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
-import { useSpaceStore } from '~/store/SpaceStore';
+import { useGroupStore } from '~/store/GroupStore';
 
 export type ModalAddTodoResult = { todo: z.infer<typeof TodoRouterSchema.getOutput> };
 
@@ -18,10 +18,10 @@ const $emit = defineEmits<{
   done: [ModalAddTodoResult];
 }>();
 
-const { storedSpaceList } = storeToRefs(useSpaceStore());
+const { storedGroupList } = storeToRefs(useGroupStore());
 
 const props = defineProps<{
-  space_id?: number;
+  group_id?: number;
   begin_date: '' | `${number}-${number}-${number}`;
   begin_time: '' | `${number}:${number}`;
   limit_date: '' | `${number}-${number}-${number}`;
@@ -29,7 +29,7 @@ const props = defineProps<{
 }>();
 
 const modelValue = ref<ModelValue>({
-  space_id: props.space_id ?? 0,
+  group_id: props.group_id ?? 0,
   title: '',
   description: '',
   begin_date: props.begin_date,
@@ -40,8 +40,8 @@ const modelValue = ref<ModelValue>({
   done_at: null,
 });
 const modelValueFileList = ref<DownloadFile[]>([]);
-const modelValueSpace = ref<z.infer<typeof SpaceSchema> | undefined>(
-  storedSpaceList.value.find((x) => x.space_id === props.space_id),
+const modelValueGroup = ref<z.infer<typeof GroupSchema> | undefined>(
+  storedGroupList.value.find((x) => x.group_id === props.group_id),
 );
 
 async function handleSubmit(value: ModelValue) {
@@ -64,7 +64,7 @@ async function handleSubmit(value: ModelValue) {
     <TodoForm
       v-model="modelValue"
       v-model:file_list="modelValueFileList"
-      v-model:space="modelValueSpace"
+      v-model:group="modelValueGroup"
       @submit="handleSubmit"
     >
     </TodoForm>

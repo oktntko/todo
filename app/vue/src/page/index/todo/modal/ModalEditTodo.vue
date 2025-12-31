@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { R } from '@todo/lib/remeda';
 import type { z } from '@todo/lib/zod';
-import type { SpaceSchema } from '@todo/prisma/schema';
+import type { GroupSchema } from '@todo/prisma/schema';
 import type { DownloadFile } from '~/component/MyDownloadFileList.vue';
 import { trpc, type RouterOutput } from '~/lib/trpc';
 import TodoForm, { type ModelValue } from '~/page/index/todo/table/component/TodoForm.vue';
@@ -25,9 +25,9 @@ const props = defineProps<{
 
 const todo = await trpc.todo.get.query({ todo_id: props.todo_id });
 
-const modelValue = ref<ModelValue>(R.omit(todo, ['file_list', 'space']));
+const modelValue = ref<ModelValue>(R.omit(todo, ['file_list', 'group']));
 const modelValueFileList = ref<DownloadFile[]>(todo.file_list);
-const modelValueSpace = ref<z.infer<typeof SpaceSchema>>(todo.space);
+const modelValueGroup = ref<z.infer<typeof GroupSchema>>(todo.group);
 const updated_at = todo.updated_at;
 
 async function handleSubmit(input: ModelValue) {
@@ -54,7 +54,7 @@ async function handleSubmit(input: ModelValue) {
     <TodoForm
       v-model="modelValue"
       v-model:file_list="modelValueFileList"
-      v-model:space="modelValueSpace"
+      v-model:group="modelValueGroup"
       :todo_id="todo_id"
       @submit="handleSubmit"
     >

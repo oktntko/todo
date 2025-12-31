@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useSpaceStore } from '~/store/SpaceStore';
+import { useGroupStore } from '~/store/GroupStore';
 
-const { fetchSpace } = useSpaceStore();
+const { fetchGroup } = useGroupStore();
 
-await fetchSpace();
+await fetchGroup();
 </script>
 
 <template>

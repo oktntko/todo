@@ -7,7 +7,7 @@ import { log } from '~/lib/log4js';
 import { message } from '~/lib/message';
 import { ProtectedContext } from '~/middleware/trpc';
 import { _repository } from '~/repository/_repository';
-import { SpaceRepository } from '~/repository/SpaceRepository';
+import { GroupRepository } from '~/repository/GroupRepository';
 import { TodoRepository } from '~/repository/TodoRepository';
 import { TodoRouterSchema } from '~/schema/TodoRouterSchema';
 
@@ -28,13 +28,13 @@ async function listTodo(ctx: ProtectedContext, input: z.infer<typeof TodoRouterS
   log.trace(ReqCtx.reqid, 'listTodo', ctx.operator.user_id, input);
 
   const AND: Prisma.TodoWhereInput[] = [];
-  if (input.space_id_list.length > 0) {
-    AND.push({ space_id: { in: input.space_id_list } });
+  if (input.group_id_list.length > 0) {
+    AND.push({ group_id: { in: input.group_id_list } });
   }
   AND.push({ done_at: input.todo_status === 'active' ? { equals: null } : { not: null } });
 
   const where: Prisma.TodoWhereInput = {
-    space: { owner_id: ctx.operator.user_id },
+    group: { owner_id: ctx.operator.user_id },
     AND,
   };
   log.debug(ReqCtx.reqid, 'where', where);
@@ -54,8 +54,8 @@ async function searchTodo(
 
   const AND: Prisma.TodoWhereInput[] = [];
 
-  if (input.where.space_id_list.length > 0) {
-    AND.push({ space_id: { in: input.where.space_id_list } });
+  if (input.where.group_id_list.length > 0) {
+    AND.push({ group_id: { in: input.where.group_id_list } });
   }
   if (input.where.todo_keyword) {
     AND.push({
@@ -84,16 +84,16 @@ async function searchTodo(
   }
 
   const where: Prisma.TodoWhereInput = {
-    space: { owner_id: ctx.operator.user_id },
+    group: { owner_id: ctx.operator.user_id },
     AND,
   };
   log.debug(ReqCtx.reqid, 'where', where);
 
   const orderBy: Prisma.TodoOrderByWithRelationInput =
-    input.sort.field === 'space'
+    input.sort.field === 'group'
       ? {
-          space: {
-            space_order: input.sort.order,
+          group: {
+            group_order: input.sort.order,
           },
         }
       : { [input.sort.field]: input.sort.order };
@@ -123,7 +123,7 @@ async function getTodo(ctx: ProtectedContext, input: z.infer<typeof TodoRouterSc
     data: TodoRepository.findUniqueTodo(ctx.prisma, {
       where: {
         todo_id: input.todo_id,
-        space: { owner_id: ctx.operator.user_id },
+        group: { owner_id: ctx.operator.user_id },
       },
     }),
   });
@@ -137,14 +137,14 @@ async function upsertTodo(
   log.trace(ReqCtx.reqid, 'upsertTodo', ctx.operator.user_id, input);
 
   await checkRelation(ctx, {
-    space_id: input.space_id,
+    group_id: input.group_id,
     user_id: ctx.operator.user_id,
   });
 
   const previous = await TodoRepository.findUniqueTodo(ctx.prisma, {
     where: { todo_id: input.todo_id },
   });
-  if (previous && previous.space.owner_id !== ctx.operator.user_id) {
+  if (previous && previous.group.owner_id !== ctx.operator.user_id) {
     throw new TRPCError({
       code: 'FORBIDDEN',
       message: message.error.FORBIDDEN,
@@ -158,7 +158,7 @@ async function upsertTodo(
     data: {
       todo_id: input.todo_id,
 
-      space_id: input.space_id,
+      group_id: input.group_id,
 
       title: input.title,
       description: input.description,
@@ -181,13 +181,13 @@ async function createTodo(
   log.trace(ReqCtx.reqid, 'createTodo', ctx.operator.user_id, input);
 
   await checkRelation(ctx, {
-    space_id: input.space_id,
+    group_id: input.group_id,
     user_id: ctx.operator.user_id,
   });
 
   return TodoRepository.createTodo(ctx.prisma, {
     data: {
-      space_id: input.space_id,
+      group_id: input.group_id,
 
       title: input.title,
       description: input.description,
@@ -209,9 +209,9 @@ async function updateTodo(
 ) {
   log.trace(ReqCtx.reqid, 'updateTodo', ctx.operator.user_id, input);
 
-  if (input.space_id) {
+  if (input.group_id) {
     await checkRelation(ctx, {
-      space_id: input.space_id,
+      group_id: input.group_id,
       user_id: ctx.operator.user_id,
     });
   }
@@ -220,7 +220,7 @@ async function updateTodo(
     previous: TodoRepository.findUniqueTodo(ctx.prisma, { where: { todo_id: input.todo_id } }),
     updated_at: input.updated_at,
   });
-  if (previous.space.owner_id !== ctx.operator.user_id) {
+  if (previous.group.owner_id !== ctx.operator.user_id) {
     throw new TRPCError({
       code: 'FORBIDDEN',
       message: message.error.FORBIDDEN,
@@ -229,7 +229,7 @@ async function updateTodo(
 
   return TodoRepository.updateTodo(ctx.prisma, {
     data: {
-      space_id: input.space_id,
+      group_id: input.group_id,
 
       title: input.title,
       description: input.description,
@@ -254,9 +254,9 @@ async function updateManyTodo(
 ) {
   log.trace(ReqCtx.reqid, 'updateManyTodo', ctx.operator.user_id, input);
 
-  if (input.space_id) {
+  if (input.group_id) {
     await checkRelation(ctx, {
-      space_id: input.space_id,
+      group_id: input.group_id,
       user_id: ctx.operator.user_id,
     });
   }
@@ -267,7 +267,7 @@ async function updateManyTodo(
         previous: TodoRepository.findUniqueTodo(ctx.prisma, { where: { todo_id: input.todo_id } }),
         updated_at: input.updated_at,
       });
-      if (previous.space.owner_id !== ctx.operator.user_id) {
+      if (previous.group.owner_id !== ctx.operator.user_id) {
         throw new TRPCError({
           code: 'FORBIDDEN',
           message: message.error.FORBIDDEN,
@@ -278,7 +278,7 @@ async function updateManyTodo(
 
   await TodoRepository.updateManyTodo(ctx.prisma, {
     data: {
-      space_id: input.space_id,
+      group_id: input.group_id,
 
       title: input.title,
       description: input.description,
@@ -307,7 +307,7 @@ async function deleteTodo(ctx: ProtectedContext, input: z.infer<typeof TodoRoute
       where: { todo_id: input.todo_id },
     }),
   });
-  if (previous.space.owner_id !== ctx.operator.user_id) {
+  if (previous.group.owner_id !== ctx.operator.user_id) {
     throw new TRPCError({
       code: 'FORBIDDEN',
       message: message.error.FORBIDDEN,
@@ -335,7 +335,7 @@ async function deleteManyTodo(
           where: { todo_id: input.todo_id },
         }),
       });
-      if (previous.space.owner_id !== ctx.operator.user_id) {
+      if (previous.group.owner_id !== ctx.operator.user_id) {
         throw new TRPCError({
           code: 'FORBIDDEN',
           message: message.error.FORBIDDEN,
@@ -354,22 +354,22 @@ async function deleteManyTodo(
 }
 
 // ================================================================ //
-async function checkRelation(ctx: ProtectedContext, params: { space_id: number; user_id: string }) {
-  const space = await SpaceRepository.findUniqueSpace(ctx.prisma, {
-    where: { space_id: params.space_id },
+async function checkRelation(ctx: ProtectedContext, params: { group_id: number; user_id: string }) {
+  const group = await GroupRepository.findUniqueGroup(ctx.prisma, {
+    where: { group_id: params.group_id },
   });
-  if (space == null) {
+  if (group == null) {
     throw new TRPCError({
       code: 'BAD_REQUEST',
       message: message.error.NOT_FOUND,
     });
   }
-  if (space.owner_id !== params.user_id) {
+  if (group.owner_id !== params.user_id) {
     throw new TRPCError({
       code: 'FORBIDDEN',
       message: message.error.FORBIDDEN,
     });
   }
 
-  return space;
+  return group;
 }

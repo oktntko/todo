@@ -31,17 +31,17 @@ export const pgUser = pgSchemaTodo.table('user', {
   updated_at: timestamp('updated_at', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
 });
 
-// Space
-export const pgSpace = pgSchemaTodo.table('space', {
-  space_id: serial('space_id').primaryKey(),
+// Group
+export const pgGroup = pgSchemaTodo.table('group', {
+  group_id: serial('group_id').primaryKey(),
   owner_id: uuid('owner_id')
     .notNull()
     .references(() => pgUser.user_id, { onDelete: 'cascade' }),
-  space_name: varchar('space_name', { length: 100 }).notNull(),
-  space_description: varchar('space_description', { length: 400 }).default('').notNull(),
-  space_order: integer('space_order').default(0).notNull(),
-  space_image: text('space_image').default('').notNull(),
-  space_color: varchar('space_color', { length: 100 }).default('').notNull(),
+  group_name: varchar('group_name', { length: 100 }).notNull(),
+  group_description: varchar('group_description', { length: 400 }).default('').notNull(),
+  group_order: integer('group_order').default(0).notNull(),
+  group_image: text('group_image').default('').notNull(),
+  group_color: varchar('group_color', { length: 100 }).default('').notNull(),
   created_at: timestamp('created_at', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
   created_by: varchar('created_by', { length: 36 }).notNull(),
   updated_at: timestamp('updated_at', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
@@ -51,9 +51,9 @@ export const pgSpace = pgSchemaTodo.table('space', {
 // Todo
 export const pgTodo = pgSchemaTodo.table('todo', {
   todo_id: uuid('todo_id').primaryKey().defaultRandom(),
-  space_id: integer('space_id')
+  group_id: integer('group_id')
     .notNull()
-    .references(() => pgSpace.space_id, { onDelete: 'cascade' }),
+    .references(() => pgGroup.group_id, { onDelete: 'cascade' }),
   title: varchar('title', { length: 100 }).default('').notNull(),
   description: text('description').default('').notNull(),
   begin_date: varchar('begin_date', { length: 10 }).default('').notNull(),
@@ -149,22 +149,22 @@ export const pgTodoToFile = pgSchemaTodo.table(
 export const pgUserRelations = relations(pgUser, ({ many }) => ({
   session_list: many(pgSession),
   file_list: many(pgUserToFile),
-  space_list: many(pgSpace),
+  group_list: many(pgGroup),
   whiteboard_list: many(pgWhiteboard),
 }));
 
-export const pgSpaceRelations = relations(pgSpace, ({ one, many }) => ({
+export const pgGroupRelations = relations(pgGroup, ({ one, many }) => ({
   owner: one(pgUser, {
-    fields: [pgSpace.owner_id],
+    fields: [pgGroup.owner_id],
     references: [pgUser.user_id],
   }),
   todo_list: many(pgTodo),
 }));
 
 export const pgTodoRelations = relations(pgTodo, ({ one, many }) => ({
-  space: one(pgSpace, {
-    fields: [pgTodo.space_id],
-    references: [pgSpace.space_id],
+  group: one(pgGroup, {
+    fields: [pgTodo.group_id],
+    references: [pgGroup.group_id],
   }),
   file_list: many(pgTodoToFile),
 }));
@@ -205,7 +205,7 @@ export const pgTodoToFileRelations = relations(pgTodoToFile, ({ one }) => ({
 
 export const schema = {
   pgUser,
-  pgSpace,
+  pgGroup,
   pgTodo,
   pgWhiteboard,
   pgAichat,
@@ -215,7 +215,7 @@ export const schema = {
   pgTodoToFile,
   // relations
   pgUserRelations,
-  pgSpaceRelations,
+  pgGroupRelations,
   pgTodoRelations,
   pgWhiteboardRelations,
   pgFileRelations,

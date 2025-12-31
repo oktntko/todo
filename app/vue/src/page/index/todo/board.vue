@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import Space, { type TodoWithStatus } from '~/page/index/todo/component/Space.vue';
-import SpaceList from '~/page/index/todo/component/SpaceList.vue';
-import { useSpaceStore } from '~/store/SpaceStore';
+import Group, { type TodoWithStatus } from '~/page/index/todo/component/Group.vue';
+import GroupList from '~/page/index/todo/component/GroupList.vue';
+import { useGroupStore } from '~/store/GroupStore';
 
-const { storedSpaceList } = storeToRefs(useSpaceStore());
-const checkedSpaceList = ref(storedSpaceList.value);
+const { storedGroupList } = storeToRefs(useGroupStore());
+const checkedGroupList = ref(storedGroupList.value);
 
 const { handleAdd, handleRemove } = (function () {
   const movingTodo = ref<(todo: TodoWithStatus) => void>();
@@ -26,17 +26,17 @@ const { handleAdd, handleRemove } = (function () {
 
 <template>
   <div class="flex flex-row">
-    <SpaceList
-      v-model="checkedSpaceList"
+    <GroupList
+      v-model="checkedGroupList"
       class="h-[calc(100vh-64px)] w-56 shrink-0 overflow-y-auto px-2"
       type="checkbox"
     >
-    </SpaceList>
+    </GroupList>
 
     <!--
       w-[calc(100vw-224px-224px-10px)]
       224px: グローバルメニュー
-      224px: SpaceList
+      224px: GroupList
        10px: 縦スクロールバーを常時表示しているため
     -->
     <div
@@ -44,17 +44,17 @@ const { handleAdd, handleRemove } = (function () {
     >
       <div class="flex h-full w-full flex-row gap-2">
         <div
-          v-for="space of checkedSpaceList"
-          :key="space.space_id"
+          v-for="group of checkedGroupList"
+          :key="group.group_id"
           class="shrink-0 break-inside-avoid"
           :class="['w-2xl']"
         >
-          <Space
-            :space="space"
+          <Group
+            :group="group"
             class="max-h-full overflow-y-auto"
             @add="handleAdd"
             @remove="handleRemove"
-          ></Space>
+          ></Group>
         </div>
       </div>
     </div>

@@ -2,8 +2,8 @@ import { createCallerFactory, router } from '~/middleware/trpc';
 import { aichat } from '~/router/AiChatRouter';
 import { auth } from '~/router/AuthRouter';
 import { file, FileRouter } from '~/router/FileRouter';
+import { group } from '~/router/GroupRouter';
 import { mypage } from '~/router/MypageRouter';
-import { space } from '~/router/SpaceRouter';
 import { todo } from '~/router/TodoRouter';
 import { whiteboard } from '~/router/WhiteboardRouter';
 
@@ -12,7 +12,7 @@ export const TrpcRouter = router({
   auth,
   file,
   mypage,
-  space,
+  group,
   todo,
   whiteboard,
 });

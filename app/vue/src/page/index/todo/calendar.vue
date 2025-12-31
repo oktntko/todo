@@ -3,24 +3,24 @@ import { DayPilot } from '@daypilot/daypilot-lite-javascript';
 import { dayjs } from '@todo/lib/dayjs';
 import DOMPurify from 'dompurify';
 import { trpc } from '~/lib/trpc';
-import SpaceList from '~/page/index/todo/component/SpaceList.vue';
+import GroupList from '~/page/index/todo/component/GroupList.vue';
 import { useDialog } from '~/plugin/DialogPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
-import { useSpaceStore } from '~/store/SpaceStore';
+import { useGroupStore } from '~/store/GroupStore';
 import ModalAddTodo, { type ModalAddTodoResult } from './modal/ModalAddTodo.vue';
 import ModalEditTodo, { type ModalEditTodoResult } from './modal/ModalEditTodo.vue';
 
 const $dialog = useDialog();
 const $toast = useToast();
 
-const { storedSpaceList } = storeToRefs(useSpaceStore());
-const checkedSpaceList = ref(storedSpaceList.value);
+const { storedGroupList } = storeToRefs(useGroupStore());
+const checkedGroupList = ref(storedGroupList.value);
 
 const resources = computed(() => {
-  return checkedSpaceList.value.map((space) => {
+  return checkedGroupList.value.map((group) => {
     return {
-      name: space.space_name,
-      id: space.space_id,
+      name: group.group_name,
+      id: group.group_id,
     } satisfies DayPilot.ResourceData;
   });
 });
@@ -28,7 +28,7 @@ const resources = computed(() => {
 const todo_list = ref(await trpc.todo.list.query({}));
 const events = computed(() => {
   return todo_list.value
-    .filter((todo) => checkedSpaceList.value.find((space) => space.space_id === todo.space_id))
+    .filter((todo) => checkedGroupList.value.find((group) => group.group_id === todo.group_id))
     .map((todo) => {
       // All-Day Events は Pro版のみのため、 Business Hours で埋める
       // 開始 ＞ 終了の場合、カレンダーに表示されない
@@ -37,14 +37,13 @@ const events = computed(() => {
       const endDate = todo.limit_date ? todo.limit_date : dayjs().format('YYYY-MM-DD');
       const endTime = todo.limit_time ? `${todo.limit_time}:00` : dayjs().format('HH:mm:ss');
       return {
-        resource: todo.space.space_id,
+        resource: todo.group.group_id,
         id: todo.todo_id,
         text: todo.title,
         start: /*  */ `${startDate} ${startTime}`,
         end: /*    */ `${endDate} ${endTime}`,
 
-        // TODO borderColor: todo 自体に色を付ける？
-        barColor: todo.space.space_color,
+        barColor: todo.group.group_color,
 
         html: `
       <div>
@@ -56,7 +55,7 @@ const events = computed(() => {
     });
 });
 
-watch(checkedSpaceList, () => {
+watch(checkedGroupList, () => {
   if (calendar) {
     calendar.update({ columns: resources.value, events: events.value });
   }
@@ -280,7 +279,7 @@ async function onTimeRangeSelected(args: TimeRangeArgs) {
   const end = dayjs(args.end.toString());
 
   const result: ModalAddTodoResult = await $dialog.showModal(ModalAddTodo, (resolve) => ({
-    space_id: args.resource ? Number(args.resource) : undefined,
+    group_id: args.resource ? Number(args.resource) : undefined,
     begin_date: start.format('YYYY-MM-DD') as `${number}-${number}-${number}`,
     begin_time: start.format('HH:mm') as `${number}:${number}`,
     limit_date: end.format('YYYY-MM-DD') as `${number}-${number}-${number}`,
@@ -326,7 +325,7 @@ async function onEventChanged(args: EventChangedArgs) {
     const newEnd = dayjs(args.newEnd.toString());
 
     const todo = await trpc.todo.update.mutate({
-      space_id: args.newResource ? Number(args.newResource) : undefined,
+      group_id: args.newResource ? Number(args.newResource) : undefined,
       todo_id: current.todo_id,
       updated_at: current.updated_at,
       begin_date: newStart.format('YYYY-MM-DD'),
@@ -358,7 +357,7 @@ async function onEventChanged(args: EventChangedArgs) {
           <MyDropdown inner-class="w-full">
             <template #button="{ toggle }">
               <button
-                id="space_id"
+                id="group_id"
                 type="button"
                 class="flex w-full flex-row items-center rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 sm:text-sm"
                 @click="toggle"
@@ -392,7 +391,7 @@ async function onEventChanged(args: EventChangedArgs) {
         </div>
         <!-- filter -->
         <div class="overflow-y-auto">
-          <SpaceList v-model="checkedSpaceList" type="checkbox"> </SpaceList>
+          <GroupList v-model="checkedGroupList" type="checkbox"> </GroupList>
         </div>
       </div>
 

@@ -18,7 +18,7 @@ import { http, HttpResponse, type RequestHandler, type WebSocketHandler } from '
 import { createTRPCMsw, httpLink } from 'msw-trpc';
 import superjson from 'superjson';
 import { drizzle, migrate } from './drizzle';
-import { pgSpace, pgTodo, pgUser, pgWhiteboard } from './schema';
+import { pgGroup, pgTodo, pgUser, pgWhiteboard } from './schema';
 
 await migrate();
 
@@ -191,123 +191,127 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
     console.trace('mypage.disableSecret');
     // void
   }),
-  trpcMsw.mypage.patchAichat.mutation(() => {
-    console.trace('mypage.patchAichat');
+  trpcMsw.mypage.enableAichat.mutation(() => {
+    console.trace('mypage.enableAichat');
+    return ctx.user;
+  }),
+  trpcMsw.mypage.disableAichat.mutation(() => {
+    console.trace('mypage.disableAichat');
     return ctx.user;
   }),
 
-  // space
-  // @ts-expect-error space_color
-  trpcMsw.space.list.query(async () => {
-    console.trace('space.list');
-    return drizzle.select().from(pgSpace).orderBy(asc(pgSpace.space_order));
+  // group
+  // @ts-expect-error group_color
+  trpcMsw.group.list.query(async () => {
+    console.trace('group.list');
+    return drizzle.select().from(pgGroup).orderBy(asc(pgGroup.group_order));
   }),
-  // @ts-expect-error space_color
-  trpcMsw.space.get.query(async ({ input }) => {
-    console.trace('space.get', input);
+  // @ts-expect-error group_color
+  trpcMsw.group.get.query(async ({ input }) => {
+    console.trace('group.get', input);
 
-    const space = await drizzle.query.pgSpace.findFirst({
-      where: and(eq(pgSpace.space_id, input.space_id)),
+    const group = await drizzle.query.pgGroup.findFirst({
+      where: and(eq(pgGroup.group_id, input.group_id)),
     });
 
-    if (!space) {
+    if (!group) {
       throw new TRPCError({
         code: 'NOT_FOUND',
-        message: 'スペースが存在しません',
+        message: 'グループが存在しません',
       });
     }
 
-    return space;
+    return group;
   }),
-  // @ts-expect-error space_color
-  trpcMsw.space.create.mutation(async ({ input }) => {
-    console.trace('space.create', input);
-    // space_orderは自動採番
+  // @ts-expect-error group_color
+  trpcMsw.group.create.mutation(async ({ input }) => {
+    console.trace('group.create', input);
+    // group_orderは自動採番
     const count = await drizzle
       .select()
-      .from(pgSpace)
+      .from(pgGroup)
       .then((rows) => rows.length);
 
-    const [space] = await drizzle
-      .insert(pgSpace)
+    const [group] = await drizzle
+      .insert(pgGroup)
       .values({
         owner_id: ctx.user.user_id,
-        space_name: input.space_name,
-        space_description: input.space_description,
-        space_order: count,
-        space_image: input.space_image,
-        space_color: input.space_color,
+        group_name: input.group_name,
+        group_description: input.group_description,
+        group_order: count,
+        group_image: input.group_image,
+        group_color: input.group_color,
         created_by: ctx.user.user_id,
         updated_by: ctx.user.user_id,
       })
       .returning();
 
-    return space!;
+    return group!;
   }),
-  // @ts-expect-error space_color
-  trpcMsw.space.update.mutation(async ({ input }) => {
-    console.trace('space.update', input);
+  // @ts-expect-error group_color
+  trpcMsw.group.update.mutation(async ({ input }) => {
+    console.trace('group.update', input);
     // 楽観ロックやバージョンチェックは省略
-    const [space] = await drizzle
-      .update(pgSpace)
+    const [group] = await drizzle
+      .update(pgGroup)
       .set({
-        space_name: input.space_name,
-        space_description: input.space_description,
-        space_image: input.space_image,
-        space_color: input.space_color,
+        group_name: input.group_name,
+        group_description: input.group_description,
+        group_image: input.group_image,
+        group_color: input.group_color,
         updated_by: ctx.user.user_id,
         updated_at: new Date(),
       })
-      .where(and(eq(pgSpace.space_id, input.space_id)))
+      .where(and(eq(pgGroup.group_id, input.group_id)))
       .returning();
 
-    if (!space) {
-      throw new TRPCError({ code: 'NOT_FOUND', message: 'スペースが存在しません' });
+    if (!group) {
+      throw new TRPCError({ code: 'NOT_FOUND', message: 'グループが存在しません' });
     }
 
-    return space;
+    return group;
   }),
-  trpcMsw.space.delete.mutation(async ({ input }) => {
-    console.trace('space.delete', input);
+  trpcMsw.group.delete.mutation(async ({ input }) => {
+    console.trace('group.delete', input);
     // 楽観ロックやバージョンチェックは省略
-    await drizzle.delete(pgSpace).where(and(eq(pgSpace.space_id, input.space_id)));
+    await drizzle.delete(pgGroup).where(and(eq(pgGroup.group_id, input.group_id)));
 
-    return { space_id: input.space_id };
+    return { group_id: input.group_id };
   }),
-  // @ts-expect-error space_color
-  trpcMsw.space.reorder.mutation(async ({ input }) => {
-    console.trace('space.reorder', input);
-    const updated: InferSelectModel<typeof pgSpace>[] = [];
+  // @ts-expect-error group_color
+  trpcMsw.group.reorder.mutation(async ({ input }) => {
+    console.trace('group.reorder', input);
+    const updated: InferSelectModel<typeof pgGroup>[] = [];
     for (const x of input) {
-      const [space] = await drizzle
-        .update(pgSpace)
+      const [group] = await drizzle
+        .update(pgGroup)
         .set({
-          space_order: x.space_order,
+          group_order: x.group_order,
           updated_by: ctx.user.user_id,
           updated_at: new Date(),
         })
-        .where(and(eq(pgSpace.space_id, x.space_id)))
+        .where(and(eq(pgGroup.group_id, x.group_id)))
         .returning();
-      if (space) {
-        updated.push(space);
+      if (group) {
+        updated.push(group);
       }
     }
     return updated;
   }),
 
   // todo
-  // @ts-expect-error space_color begin_date begin_time limit_date limit_time
+  // @ts-expect-error group_color begin_date begin_time limit_date limit_time
   trpcMsw.todo.list.query(async (args) => {
     console.trace('todo.list', args?.input);
     return findManyTodo(args);
   }),
 
-  // @ts-expect-error space_color begin_date begin_time limit_date limit_time
+  // @ts-expect-error group_color begin_date begin_time limit_date limit_time
   trpcMsw.todo.search.query(async ({ input }) => {
     console.trace('todo.search', input);
     const where = [];
-    if (input.where.space_id_list!.length > 0) {
-      where.push(or(...input.where.space_id_list!.map((id) => eq(pgTodo.space_id, id))));
+    if (input.where.group_id_list!.length > 0) {
+      where.push(or(...input.where.group_id_list!.map((id) => eq(pgTodo.group_id, id))));
     }
     if (input.where.todo_keyword) {
       where.push(
@@ -331,7 +335,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
     }
 
     const orderBy =
-      input.sort.field === 'space'
+      input.sort.field === 'group'
         ? asc(pgTodo.order)
         : input.sort.order === 'desc'
           ? desc(pgTodo[input.sort.field])
@@ -351,7 +355,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
               file: true,
             },
           },
-          space: true,
+          group: true,
         },
         where: and(...where),
         orderBy,
@@ -371,13 +375,13 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
     };
   }),
 
-  // @ts-expect-error space_color begin_date begin_time limit_date limit_time
+  // @ts-expect-error group_color begin_date begin_time limit_date limit_time
   trpcMsw.todo.get.query(async (args) => {
     console.trace('todo.get', args.input);
     return findUniqueTodo(args);
   }),
 
-  // @ts-expect-error space_color begin_date begin_time limit_date limit_time
+  // @ts-expect-error group_color begin_date begin_time limit_date limit_time
   trpcMsw.todo.upsert.mutation(async ({ input }) => {
     console.trace('todo.upsert', input);
     // upsert: 存在すればupdate、なければinsert
@@ -386,11 +390,11 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
     });
 
     const [todo] =
-      current && input.space_id
+      current && input.group_id
         ? await drizzle
             .update(pgTodo)
             .set({
-              space_id: input.space_id,
+              group_id: input.group_id,
               title: input.title,
               description: input.description,
               begin_date: input.begin_date,
@@ -408,7 +412,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
             .insert(pgTodo)
             .values({
               // @ts-expect-error zod が働いていないので nullable になる
-              space_id: input.space_id,
+              group_id: input.group_id,
               title: input.title,
               description: input.description,
               begin_date: input.begin_date,
@@ -427,14 +431,14 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
     return findUniqueTodo({ input: todo! });
   }),
 
-  // @ts-expect-error space_color begin_date begin_time limit_date limit_time
+  // @ts-expect-error group_color begin_date begin_time limit_date limit_time
   trpcMsw.todo.create.mutation(async ({ input }) => {
     console.trace('todo.create', input);
     const [todo] = await drizzle
       .insert(pgTodo)
       .values({
         // @ts-expect-error zod が働いていないので nullable になる
-        space_id: input.space_id,
+        group_id: input.group_id,
         title: input.title,
         description: input.description,
         begin_date: input.begin_date,
@@ -453,14 +457,14 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
     return findUniqueTodo({ input: todo! });
   }),
 
-  // @ts-expect-error space_color begin_date begin_time limit_date limit_time
+  // @ts-expect-error group_color begin_date begin_time limit_date limit_time
   trpcMsw.todo.update.mutation(async ({ input }) => {
     console.trace('todo.update', input);
     const [todo] = await drizzle
       .update(pgTodo)
       .set({
         // @ts-expect-error zod が働いていないので nullable になる
-        space_id: input.space_id,
+        group_id: input.group_id,
         title: input.title,
         description: input.description,
         begin_date: input.begin_date,
@@ -490,7 +494,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
         .update(pgTodo)
         .set({
           // @ts-expect-error zod が働いていないので nullable になる
-          space_id: input.space_id,
+          group_id: input.group_id,
           title: input.title,
           description: input.description,
           begin_date: input.begin_date,
@@ -670,7 +674,7 @@ async function findUniqueTodo({ input }: { input: { todo_id: string } }) {
           file: true,
         },
       },
-      space: true,
+      group: true,
     },
     where: eq(pgTodo.todo_id, input.todo_id),
   });
@@ -688,11 +692,11 @@ async function findUniqueTodo({ input }: { input: { todo_id: string } }) {
 async function findManyTodo({
   input,
 }: {
-  input: { space_id_list?: number[]; todo_status?: string };
+  input: { group_id_list?: number[]; todo_status?: string };
 }) {
   const where = [];
-  if ((input.space_id_list?.length ?? 0) > 0) {
-    where.push(or(...input.space_id_list!.map((id) => eq(pgTodo.space_id, id))));
+  if ((input.group_id_list?.length ?? 0) > 0) {
+    where.push(or(...input.group_id_list!.map((id) => eq(pgTodo.group_id, id))));
   }
   if (input.todo_status === 'active') {
     where.push(isNull(pgTodo.done_at));
@@ -708,7 +712,7 @@ async function findManyTodo({
             file: true,
           },
         },
-        space: true,
+        group: true,
       },
       where: and(...where),
       orderBy: asc(pgTodo.order),

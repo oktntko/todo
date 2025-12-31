@@ -6,14 +6,14 @@ import type { RouterOutput } from '~/lib/trpc';
 test.describe('scenario.test /todo/table', () => {
   test('ttt.', async ({ page }, testInfo) => {
     // mock API
-    await page.route('**/api/trpc/' + ('space.list' satisfies TrpcPaths) + '?**', async (route) => {
+    await page.route('**/api/trpc/' + ('group.list' satisfies TrpcPaths) + '?**', async (route) => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
         body: jsonStringifyTrpcSuccessResponse({
-          space_list: [space1, space2, space3],
+          group_list: [group1, group2, group3],
           total: 3,
-        } satisfies RouterOutput['space']['list']),
+        } satisfies RouterOutput['group']['list']),
       });
     });
 
@@ -69,8 +69,8 @@ test.describe('scenario.test /todo/table', () => {
 
     // #region 登録画面を表示する
     // #region 必須項目を入力する
-    await page.locator('#space_id').click();
-    await page.locator('ul li').filter({ hasText: 'space_name-1' }).click();
+    await page.locator('#group_id').click();
+    await page.locator('ul li').filter({ hasText: 'group_name-1' }).click();
     await page.locator('#title').fill('title');
     await page.locator('#begin_date').fill('2025-01-01');
     await page.locator('#begin_time').fill('12:00');
@@ -113,8 +113,8 @@ test.describe('scenario.test /todo/table', () => {
 
     // #region 変更画面を表示する
     // #region 必須項目を入力する
-    await page.locator('#space_id').click();
-    await page.locator('ul li').filter({ hasText: 'space_name-1' }).click();
+    await page.locator('#group_id').click();
+    await page.locator('ul li').filter({ hasText: 'group_name-1' }).click();
     await page.locator('#title').fill('title');
     await page.locator('#begin_date').fill('2025-01-01');
     await page.locator('#begin_time').fill('12:00');
@@ -185,15 +185,15 @@ const [todo1, todo2, todo3] = [1, 2, 3].map(
       created_by: 0,
       updated_at: new Date(),
       updated_by: 0,
-      space_id: i,
-      space: {
+      group_id: i,
+      group: {
         owner_id: i,
-        space_id: i,
-        space_name: `space_name-${i}`,
-        space_description: `space_description-${i}`,
-        space_color: `#12456${i}`,
-        space_image: `https://dummyimage.com/${i * 10}x${i * 100}`,
-        space_order: 0,
+        group_id: i,
+        group_name: `group_name-${i}`,
+        group_description: `group_description-${i}`,
+        group_color: `#12456${i}`,
+        group_image: `https://dummyimage.com/${i * 10}x${i * 100}`,
+        group_order: 0,
         created_at: new Date(),
         created_by: 0,
         updated_at: new Date(),
@@ -214,19 +214,19 @@ const [todo1, todo2, todo3] = [1, 2, 3].map(
     }) satisfies RouterOutput['todo']['create'],
 );
 
-const [space1, space2, space3] = [1, 2, 3].map(
+const [group1, group2, group3] = [1, 2, 3].map(
   (i) =>
     ({
-      space_id: i,
-      space_name: `space_name-${i}`,
-      space_description: `space_description-${i}`,
-      space_image: `space_image-${i}`,
-      space_color: `space_color-${i}`,
-      space_order: i,
+      group_id: i,
+      group_name: `group_name-${i}`,
+      group_description: `group_description-${i}`,
+      group_image: `group_image-${i}`,
+      group_color: `group_color-${i}`,
+      group_order: i,
       owner_id: i,
       created_at: new Date(),
       created_by: 0,
       updated_at: new Date(),
       updated_by: 0,
-    }) satisfies RouterOutput['space']['get'],
+    }) satisfies RouterOutput['group']['get'],
 );

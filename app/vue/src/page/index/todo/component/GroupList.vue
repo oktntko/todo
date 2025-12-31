@@ -2,17 +2,17 @@
 import { R } from '@todo/lib/remeda';
 import Sortable from 'sortablejs';
 import { trpc, type RouterOutput } from '~/lib/trpc';
-import ModalAddSpace from '~/page/index/todo/modal/ModalAddSpace.vue';
+import ModalAddGroup from '~/page/index/todo/modal/ModalAddGroup.vue';
 import { useToast } from '~/plugin/ToastPlugin';
-import { useSpaceStore } from '~/store/SpaceStore';
-import ModalEditSpace from '../modal/ModalEditSpace.vue';
+import { useGroupStore } from '~/store/GroupStore';
+import ModalEditGroup from '../modal/ModalEditGroup.vue';
 
-const { storedSpaceList } = storeToRefs(useSpaceStore());
+const { storedGroupList } = storeToRefs(useGroupStore());
 
 defineProps<{
   type: 'checkbox' | 'radio';
 }>();
-const checkedSpaceList = defineModel<RouterOutput['space']['list']>({
+const checkedGroupList = defineModel<RouterOutput['group']['list']>({
   required: true,
 });
 
@@ -22,10 +22,10 @@ let sortable: Sortable | null = null;
 onMounted(async () => {
   sortable?.destroy();
 
-  const el = document.getElementById(`space-sortable-container`)!;
+  const el = document.getElementById(`group-sortable-container`)!;
   sortable = Sortable.create(el, {
     animation: 150,
-    group: 'space',
+    group: 'group',
 
     onEnd(e) {
       if (e.from !== e.to) {
@@ -35,24 +35,24 @@ onMounted(async () => {
         return;
       }
 
-      const space = storedSpaceList.value[e.oldIndex]!;
-      const tail = storedSpaceList.value.slice(e.oldIndex + 1);
+      const group = storedGroupList.value[e.oldIndex]!;
+      const tail = storedGroupList.value.slice(e.oldIndex + 1);
 
-      storedSpaceList.value.splice(e.oldIndex);
-      storedSpaceList.value.push(...tail);
-      storedSpaceList.value.splice(e.newIndex, 0, space);
+      storedGroupList.value.splice(e.oldIndex);
+      storedGroupList.value.push(...tail);
+      storedGroupList.value.splice(e.newIndex, 0, group);
 
-      storedSpaceList.value = storedSpaceList.value.map((x, i) => ({
+      storedGroupList.value = storedGroupList.value.map((x, i) => ({
         ...x,
-        space_order: i,
+        group_order: i,
       }));
-      // space_list と同一インスタンスを参照することで v-model にバインドできているので、
-      // checked_space_list も更新する
-      checkedSpaceList.value = storedSpaceList.value.filter((x) =>
-        checkedSpaceList.value.find((y) => y.space_id === x.space_id),
+      // group_list と同一インスタンスを参照することで v-model にバインドできているので、
+      // checked_group_list も更新する
+      checkedGroupList.value = storedGroupList.value.filter((x) =>
+        checkedGroupList.value.find((y) => y.group_id === x.group_id),
       );
 
-      trpc.space.reorder.mutate(storedSpaceList.value).then(() => {
+      trpc.group.reorder.mutate(storedGroupList.value).then(() => {
         $toast.success('Reordered successfully');
       });
     },
@@ -63,60 +63,60 @@ onMounted(async () => {
 <template>
   <aside class="flex flex-col gap-2">
     <h1 class="flex items-center gap-1 text-xs text-gray-500">
-      <span class="capitalize">space</span>
+      <span class="capitalize">group</span>
     </h1>
 
     <div>
-      <ul id="space-sortable-container" class="text-sm">
-        <li v-for="space of storedSpaceList" :key="space.space_id" class="rounded-e-full py-px">
+      <ul id="group-sortable-container" class="text-sm">
+        <li v-for="group of storedGroupList" :key="group.group_id" class="rounded-e-full py-px">
           <label
             class="group/item relative flex w-full cursor-pointer items-center justify-start rounded-e-full p-1 transition duration-75 hover:bg-gray-200"
             :class="[
-              { 'bg-gray-300': ~checkedSpaceList.findIndex((x) => x.space_id === space.space_id) },
+              { 'bg-gray-300': ~checkedGroupList.findIndex((x) => x.group_id === group.group_id) },
               `border-l-[6px]`,
             ]"
             :style="{
-              'border-left-color': space.space_color,
+              'border-left-color': group.group_color,
             }"
           >
             <input
-              v-model="checkedSpaceList"
-              name="space"
+              v-model="checkedGroupList"
+              name="group"
               :type="type"
-              :value="type === 'checkbox' ? space : [space]"
+              :value="type === 'checkbox' ? group : [group]"
               class="sr-only"
               @change="
                 () => {
-                  // checkbox だと後ろに追加されるので space_order で並び替える
-                  checkedSpaceList = R.sortBy(checkedSpaceList, (x) => x.space_order);
+                  // checkbox だと後ろに追加されるので group_order で並び替える
+                  checkedGroupList = R.sortBy(checkedGroupList, (x) => x.group_order);
                 }
               "
             />
             <img
-              v-if="space.space_image"
-              :src="space.space_image"
+              v-if="group.group_image"
+              :src="group.group_image"
               width="16"
               height="16"
               decoding="async"
               class="h-4 w-4 shrink-0 rounded-sm object-cover object-center"
             />
             <span v-else class="icon-[ri--image-circle-fill] h-4 w-4 shrink-0"></span>
-            <span class="mx-1 shrink grow truncate">{{ space.space_name }}</span>
+            <span class="mx-1 shrink grow truncate">{{ group.group_name }}</span>
             <button
               type="button"
               class="group/edit inline-flex justify-center rounded-full p-1 transition-all"
               :class="['invisible group-hover/item:visible', 'hover:bg-gray-300']"
               @click.prevent="
                 async () => {
-                  await $dialog.showModal(ModalEditSpace, (resolve) => ({
-                    space_id: space.space_id,
+                  await $dialog.showModal(ModalEditGroup, (resolve) => ({
+                    group_id: group.group_id,
                     onDone: resolve,
                   }));
 
-                  // space_list と同一インスタンスを参照することで v-model にバインドできているので、
-                  // checked_space_list も更新する
-                  checkedSpaceList = storedSpaceList.filter((x) =>
-                    checkedSpaceList.find((y) => y.space_id === x.space_id),
+                  // group_list と同一インスタンスを参照することで v-model にバインドできているので、
+                  // checked_group_list も更新する
+                  checkedGroupList = storedGroupList.filter((x) =>
+                    checkedGroupList.find((y) => y.group_id === x.group_id),
                   );
                 }
               "
@@ -135,14 +135,14 @@ onMounted(async () => {
         class="group sticky bottom-0 flex w-full cursor-pointer items-center rounded-e-full bg-gray-200/10 p-2 text-blue-600 backdrop-blur transition duration-75 hover:bg-gray-200"
         @click="
           async () => {
-            await $dialog.showModal(ModalAddSpace, (resolve) => ({
+            await $dialog.showModal(ModalAddGroup, (resolve) => ({
               onDone: resolve,
             }));
           }
         "
       >
         <span class="icon-[icon-park-solid--add-one] h-4 w-4"></span>
-        <span class="ms-1 capitalize">create new space</span>
+        <span class="ms-1 capitalize">create new group</span>
       </button>
     </div>
   </aside>

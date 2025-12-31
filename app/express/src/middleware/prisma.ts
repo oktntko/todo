@@ -57,13 +57,13 @@ export const ExtendsPrismaClient = new OriginPrismaClient({
           },
         },
       },
-      space: {
-        space_color: {
+      group: {
+        group_color: {
           needs: {
-            space_color: true,
+            group_color: true,
           },
-          compute({ space_color }) {
-            return ColorSchema.or(z.literal('')).parse(space_color);
+          compute({ group_color }) {
+            return ColorSchema.or(z.literal('')).parse(group_color);
           },
         },
       },

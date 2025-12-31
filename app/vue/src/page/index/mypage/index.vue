@@ -192,7 +192,7 @@ async function handleFileInput(files?: FileList | null) {
             }
           "
         >
-          <span class="sr-only capitalize">space image</span>
+          <span class="sr-only capitalize">group image</span>
           <span class="icon-[ri--image-circle-fill] h-32 w-32"> </span>
           <span class="text-xs capitalize">limit: 15kb</span>
           <input

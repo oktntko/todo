@@ -10,7 +10,7 @@ const $toast = useToast();
 const $dialog = useDialog();
 
 const modelValue = ref<ModelValue>({
-  space_id: null,
+  group_id: null,
   title: '',
   description: '',
   begin_date: '',

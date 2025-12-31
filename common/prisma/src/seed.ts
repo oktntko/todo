@@ -19,13 +19,13 @@ async function main() {
     },
   });
 
-  await prisma.space.create({
+  await prisma.group.create({
     data: {
       owner_id: example.user_id,
-      space_name: 'MyTodo',
-      space_description: 'This is the default workspace.',
-      space_order: 0,
-      space_image: '',
+      group_name: 'MyTodo',
+      group_description: 'This is the default workgroup.',
+      group_order: 0,
+      group_image: '',
       created_by: example.user_id,
       updated_by: example.user_id,
     },

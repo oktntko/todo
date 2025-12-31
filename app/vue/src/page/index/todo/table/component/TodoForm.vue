@@ -5,12 +5,12 @@ import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import type { DownloadFile } from '~/component/MyDownloadFileList.vue';
 import MyModalInputFile from '~/component/input/MyModalInputFile.vue';
 import { useFile } from '~/composable/useFile';
-import { useSpaceStore } from '~/store/SpaceStore';
+import { useGroupStore } from '~/store/GroupStore';
 
 export type ModelValue = z.input<typeof TodoRouterSchema.createInput>;
 export type Reset = (modelValue: ModelValue) => void;
 
-const { storedSpaceList } = storeToRefs(useSpaceStore());
+const { storedGroupList } = storeToRefs(useGroupStore());
 
 const modelValue = defineModel<ModelValue>({ required: true });
 const modelValueFileList = defineModel<DownloadFile[]>('file_list', { required: true });
@@ -38,15 +38,15 @@ const handleSubmit = validateSubmit((value) => {
     <section class="flex flex-col gap-3">
       <div class="focus-container flex flex-col gap-0.5">
         <div>
-          <label for="space_id" class="required text-sm capitalize"> space </label>
+          <label for="group_id" class="required text-sm capitalize"> group </label>
         </div>
 
         <div>
-          <MySelect id="space_id" v-model="modelValue.space_id" class="flex min-w-60">
+          <MySelect id="group_id" v-model="modelValue.group_id" class="flex min-w-60">
             <option
-              v-for="space of storedSpaceList"
-              :key="space.space_id"
-              :value="space.space_id"
+              v-for="group of storedGroupList"
+              :key="group.group_id"
+              :value="group.group_id"
               class="border border-gray-300 p-2 transition-colors"
               :class="[
                 'not-first-of-type:border-t-0 not-last-of-type:border-b-0 first-of-type:rounded-t-lg last-of-type:rounded-b-lg',
@@ -56,21 +56,21 @@ const handleSubmit = validateSubmit((value) => {
             >
               <div class="flex items-center text-sm text-gray-900">
                 <img
-                  v-if="space.space_image"
-                  :src="space.space_image"
+                  v-if="group.group_image"
+                  :src="group.group_image"
                   width="16"
                   height="16"
                   decoding="async"
                   class="h-4 w-4 rounded-sm object-cover object-center"
                 />
                 <span v-else class="icon-[ri--image-circle-fill] h-4 w-4"></span>
-                <span class="ms-1">{{ space.space_name }}</span>
+                <span class="ms-1">{{ group.group_name }}</span>
               </div>
             </option>
           </MySelect>
         </div>
 
-        <ErrorMessage class="text-xs text-red-600" field="space_id" />
+        <ErrorMessage class="text-xs text-red-600" field="group_id" />
       </div>
 
       <div class="focus-container flex flex-col gap-0.5">

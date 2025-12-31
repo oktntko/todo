@@ -1,49 +1,49 @@
 <script setup lang="ts">
 import type { RouterOutput } from '~/lib/trpc';
 import { trpc } from '~/lib/trpc';
-import SpaceForm, { type ModelValue } from '~/page/index/todo/component/SpaceForm.vue';
+import GroupForm, { type ModelValue } from '~/page/index/todo/component/GroupForm.vue';
 import { useDialog } from '~/plugin/DialogPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
-import { useSpaceStore } from '~/store/SpaceStore';
+import { useGroupStore } from '~/store/GroupStore';
 
-export type ModalEditSpaceResult =
-  | { event: 'update'; space: RouterOutput['space']['update'] }
-  | { event: 'delete'; space: RouterOutput['space']['delete'] };
+export type ModalEditGroupResult =
+  | { event: 'update'; group: RouterOutput['group']['update'] }
+  | { event: 'delete'; group: RouterOutput['group']['delete'] };
 
 const $toast = useToast();
 const $dialog = useDialog();
 
 const $emit = defineEmits<{
-  done: [ModalEditSpaceResult];
+  done: [ModalEditGroupResult];
 }>();
 
-const { storedSpaceList } = storeToRefs(useSpaceStore());
+const { storedGroupList } = storeToRefs(useGroupStore());
 
 const props = defineProps<{
-  space_id: number;
+  group_id: number;
 }>();
 
-const space = await trpc.space.get.query({ space_id: props.space_id });
+const group = await trpc.group.get.query({ group_id: props.group_id });
 
-const modelValue = ref<ModelValue>(space);
-const updated_at = space.updated_at;
+const modelValue = ref<ModelValue>(group);
+const updated_at = group.updated_at;
 
 async function handleSubmit(input: ModelValue) {
   const loading = $dialog.loading();
   try {
-    const space = await trpc.space.update.mutate({
+    const group = await trpc.group.update.mutate({
       ...input,
-      space_id: props.space_id,
+      group_id: props.group_id,
       updated_at,
     });
 
-    storedSpaceList.value = storedSpaceList.value.map((origin) =>
-      origin.space_id === space.space_id ? { ...origin, ...space } : origin,
+    storedGroupList.value = storedGroupList.value.map((origin) =>
+      origin.group_id === group.group_id ? { ...origin, ...group } : origin,
     );
 
     $toast.success('Data has been saved.');
 
-    $emit('done', { event: 'update', space });
+    $emit('done', { event: 'update', group });
   } finally {
     loading.close();
   }
@@ -52,8 +52,8 @@ async function handleSubmit(input: ModelValue) {
 
 <template>
   <div class="rounded-lg bg-gray-100 p-8 text-gray-900 shadow-xl">
-    <header class="mb-4 text-lg font-bold capitalize">edit space</header>
-    <SpaceForm v-model="modelValue" @submit="handleSubmit">
+    <header class="mb-4 text-lg font-bold capitalize">edit group</header>
+    <GroupForm v-model="modelValue" @submit="handleSubmit">
       <template #buttons>
         <MyButton
           type="button"
@@ -65,15 +65,15 @@ async function handleSubmit(input: ModelValue) {
 
               const loading = $dialog.loading();
               try {
-                const space = await trpc.space.delete.mutate({ space_id, updated_at });
+                const group = await trpc.group.delete.mutate({ group_id, updated_at });
 
-                storedSpaceList = storedSpaceList.filter((origin) => {
-                  return origin.space_id !== space.space_id;
+                storedGroupList = storedGroupList.filter((origin) => {
+                  return origin.group_id !== group.group_id;
                 });
 
                 $toast.success('Data has been deleted.');
 
-                $emit('done', { event: 'delete', space });
+                $emit('done', { event: 'delete', group });
               } finally {
                 loading.close();
               }
@@ -83,6 +83,6 @@ async function handleSubmit(input: ModelValue) {
           <span class="capitalize">delete</span>
         </MyButton>
       </template>
-    </SpaceForm>
+    </GroupForm>
   </div>
 </template>

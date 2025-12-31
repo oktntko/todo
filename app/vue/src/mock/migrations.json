@@ -23,5 +23,24 @@
     "bps": true,
     "folderMillis": 1764942772259,
     "hash": "b7cbb4fa35a1009177df2ca9267aa2bc2bae83fd3b47aec458022390cf5a90b9"
+  },
+  {
+    "sql": [
+      "ALTER TABLE \"todo\".\"space\" RENAME TO \"group\";",
+      "\nALTER TABLE \"todo\".\"group\" RENAME COLUMN \"space_id\" TO \"group_id\";",
+      "\nALTER TABLE \"todo\".\"group\" RENAME COLUMN \"space_name\" TO \"group_name\";",
+      "\nALTER TABLE \"todo\".\"group\" RENAME COLUMN \"space_description\" TO \"group_description\";",
+      "\nALTER TABLE \"todo\".\"group\" RENAME COLUMN \"space_order\" TO \"group_order\";",
+      "\nALTER TABLE \"todo\".\"group\" RENAME COLUMN \"space_image\" TO \"group_image\";",
+      "\nALTER TABLE \"todo\".\"group\" RENAME COLUMN \"space_color\" TO \"group_color\";",
+      "\nALTER TABLE \"todo\".\"todo\" RENAME COLUMN \"space_id\" TO \"group_id\";",
+      "\nALTER TABLE \"todo\".\"group\" DROP CONSTRAINT \"space_owner_id_user_user_id_fk\";\n",
+      "\nALTER TABLE \"todo\".\"todo\" DROP CONSTRAINT \"todo_space_id_space_space_id_fk\";\n",
+      "\nALTER TABLE \"todo\".\"group\" ADD CONSTRAINT \"group_owner_id_user_user_id_fk\" FOREIGN KEY (\"owner_id\") REFERENCES \"todo\".\"user\"(\"user_id\") ON DELETE cascade ON UPDATE no action;",
+      "\nALTER TABLE \"todo\".\"todo\" ADD CONSTRAINT \"todo_group_id_group_group_id_fk\" FOREIGN KEY (\"group_id\") REFERENCES \"todo\".\"group\"(\"group_id\") ON DELETE cascade ON UPDATE no action;"
+    ],
+    "bps": true,
+    "folderMillis": 1767158995358,
+    "hash": "2f62a64dcae8521e76e9fa0712553bc24dff95badc75bb0d4cfbd7ffc4497976"
   }
 ]

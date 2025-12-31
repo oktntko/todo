@@ -35,7 +35,7 @@ async function findManyTodo(
 ) {
   return prisma.todo.findMany({
     include: {
-      space: true,
+      group: true,
       file_list: { orderBy: { created_at: 'asc' } },
     },
     where: params.where,
@@ -53,7 +53,7 @@ async function findUniqueTodo(
 ) {
   return prisma.todo.findUnique({
     include: {
-      space: true,
+      group: true,
       file_list: { orderBy: { created_at: 'asc' } },
     },
     where: params.where,
@@ -70,13 +70,13 @@ async function upsertTodo(
 ) {
   return prisma.todo.upsert({
     include: {
-      space: true,
+      group: true,
       file_list: { orderBy: { created_at: 'asc' } },
     },
     create: {
       todo_id: params.data.todo_id,
 
-      space_id: params.data.space_id,
+      group_id: params.data.group_id,
 
       title: params.data.title,
       description: params.data.description,
@@ -91,7 +91,7 @@ async function upsertTodo(
       updated_by: params.operator_id,
     },
     update: {
-      space_id: params.data.space_id,
+      group_id: params.data.group_id,
 
       title: params.data.title,
       description: params.data.description,
@@ -117,11 +117,11 @@ async function createTodo(
 ) {
   return prisma.todo.create({
     include: {
-      space: true,
+      group: true,
       file_list: { orderBy: { created_at: 'asc' } },
     },
     data: {
-      space_id: params.data.space_id,
+      group_id: params.data.group_id,
 
       title: params.data.title,
       description: params.data.description,
@@ -148,11 +148,11 @@ async function updateTodo(
 ) {
   return prisma.todo.update({
     include: {
-      space: true,
+      group: true,
       file_list: { orderBy: { created_at: 'asc' } },
     },
     data: {
-      space_id: params.data.space_id,
+      group_id: params.data.group_id,
 
       title: params.data.title,
       description: params.data.description,
@@ -180,7 +180,7 @@ async function updateManyTodo(
 ) {
   return prisma.todo.updateMany({
     data: {
-      space_id: params.data.space_id,
+      group_id: params.data.group_id,
 
       title: params.data.title,
       description: params.data.description,
@@ -206,7 +206,7 @@ async function deleteTodo(
 ) {
   return prisma.todo.delete({
     include: {
-      space: true,
+      group: true,
       file_list: { orderBy: { created_at: 'asc' } },
     },
     where: params.where,
