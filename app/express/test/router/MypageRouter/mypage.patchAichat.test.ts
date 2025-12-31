@@ -9,9 +9,20 @@ import { transactionRollbackTrpc } from '../../helper';
 const prisma = ExtendsPrismaClient;
 
 describe(`MypageRouter mypage.patchAichat`, () => {
-  test(`success - disable aichat`, async () => {
-    return transactionRollbackTrpc(prisma, async ({ caller }) => {
+  test(`✅ success - disable aichat.
+    - it returns the updated value.
+    - it updates the record in the database. `, async () => {
+    return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
+      const current = await tx.user.update({
+        where: { user_id: operator.user_id },
+        data: {
+          aichat_enable: true,
+          aichat_api_key: 'valid-key',
+          aichat_model: 'gpt-4.1',
+        },
+      });
+
       const input: z.infer<typeof MypageRouterSchema.patchAichatInput> = {
         aichat_enable: false,
         aichat_api_key: '',
@@ -26,12 +37,34 @@ describe(`MypageRouter mypage.patchAichat`, () => {
         aichat_enable: false,
         aichat_model: '',
       });
+
+      const updated = await tx.user.findUniqueOrThrow({
+        where: { user_id: operator.user_id },
+      });
+      expect(updated).toMatchObject({
+        ...current,
+        aichat_enable: false,
+        aichat_api_key: '',
+        aichat_model: '',
+        updated_at: expect.any(Date),
+      });
     });
   });
 
-  test(`success - enable aichat`, async () => {
-    return transactionRollbackTrpc(prisma, async ({ caller }) => {
+  test(`✅ success - enable aichat.
+    - it returns the updated value.
+    - it updates the record in the database. `, async () => {
+    return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
+      const current = await tx.user.update({
+        where: { user_id: operator.user_id },
+        data: {
+          aichat_enable: false,
+          aichat_api_key: '',
+          aichat_model: '',
+        },
+      });
+
       // @ts-expect-error mocking
       const mockOpenAI = vi.spyOn(externalOpenai, 'newOpenAI').mockImplementationOnce(() => {
         return {
@@ -43,7 +76,7 @@ describe(`MypageRouter mypage.patchAichat`, () => {
 
       const input: z.infer<typeof MypageRouterSchema.patchAichatInput> = {
         aichat_enable: true,
-        aichat_api_key: 'invalid-key',
+        aichat_api_key: 'valid-key',
         aichat_model: 'gpt-4.1',
       };
 
@@ -56,11 +89,23 @@ describe(`MypageRouter mypage.patchAichat`, () => {
         aichat_model: 'gpt-4.1',
       });
 
+      const updated = await tx.user.findUniqueOrThrow({
+        where: { user_id: operator.user_id },
+      });
+      expect(updated).toMatchObject({
+        ...current,
+        aichat_enable: true,
+        aichat_api_key: expect.any(String), //
+        aichat_model: 'gpt-4.1',
+        updated_at: expect.any(Date),
+      });
+
       mockOpenAI.mockRestore();
     });
   });
 
-  test(`fail. invalid api key 401`, async () => {
+  test(`❗ fail - input invalid api key. openai throw 401 error.
+    - it throw BAD_REQUEST error.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ caller }) => {
       // arrange
       const mockOpenAI = vi.spyOn(externalOpenai, 'newOpenAI').mockImplementationOnce(() => {
@@ -85,7 +130,8 @@ describe(`MypageRouter mypage.patchAichat`, () => {
     });
   });
 
-  test(`fail. invalid api key 403`, async () => {
+  test(`❗ fail - input invalid api key. openai throw 403 error.
+    - it throw BAD_REQUEST error.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ caller }) => {
       // arrange
       const mockOpenAI = vi.spyOn(externalOpenai, 'newOpenAI').mockImplementationOnce(() => {
@@ -110,7 +156,8 @@ describe(`MypageRouter mypage.patchAichat`, () => {
     });
   });
 
-  test(`fail. invalid api key 500`, async () => {
+  test(`❗ fail - happened unexpected error when verify openai api key.
+    - it throw BAD_REQUEST error.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ caller }) => {
       // arrange
       const mockOpenAI = vi.spyOn(externalOpenai, 'newOpenAI').mockImplementationOnce(() => {
