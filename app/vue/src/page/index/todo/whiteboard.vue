@@ -40,10 +40,8 @@ const refstate = ref<{
   pointerY: 0,
 });
 const state: {
-  drawingObject: fabric.FabricObject | null;
   smartEraseTargetObjectList: fabric.FabricObject[];
 } = {
-  drawingObject: null,
   smartEraseTargetObjectList: [],
 };
 
@@ -163,9 +161,9 @@ onMounted(() => {
         refstate.value.mode = 'smart-erasing';
         state.smartEraseTargetObjectList = [];
         const target = canvas.findTarget(opt.e);
-        if (target) {
-          target.opacity = 0.3;
-          state.smartEraseTargetObjectList.push(target);
+        if (target.target) {
+          target.target.opacity = 0.3;
+          state.smartEraseTargetObjectList.push(target.target);
           canvas.requestRenderAll();
         }
         break;
@@ -180,7 +178,8 @@ onMounted(() => {
       case 'object:draw:rectangle':
       case 'object:draw:circle':
       case 'object:draw:triangle':
-      case 'object:draw:line': {
+      case 'object:draw:line':
+      case 'object:draw:text': {
         // pointer を参照する
         const object = (function () {
           switch (refstate.value.mode) {
@@ -189,8 +188,8 @@ onMounted(() => {
                 canvas,
                 left: refstate.value.pointerX,
                 top: refstate.value.pointerY,
-                width: 0,
-                height: 0,
+                width: 120,
+                height: 120,
                 fill: R.rgba(control.value.background, control.value.backgroundAlpha),
                 stroke: control.value.stroke,
                 strokeWidth: control.value.strokeWidth,
@@ -200,10 +199,8 @@ onMounted(() => {
                 canvas,
                 left: refstate.value.pointerX,
                 top: refstate.value.pointerY,
-                originX: 'left',
-                originY: 'top',
-                rx: 0,
-                ry: 0,
+                rx: 120,
+                ry: 120,
                 fill: R.rgba(control.value.background, control.value.backgroundAlpha),
                 stroke: control.value.stroke,
                 strokeWidth: control.value.strokeWidth,
@@ -213,27 +210,33 @@ onMounted(() => {
                 canvas,
                 left: refstate.value.pointerX,
                 top: refstate.value.pointerY,
-                width: 0,
-                height: 0,
+                width: 120,
+                height: 120,
                 fill: R.rgba(control.value.background, control.value.backgroundAlpha),
                 stroke: control.value.stroke,
                 strokeWidth: control.value.strokeWidth,
               });
             case 'object:draw:line':
-              return new fabric.Line(
+              return new fabric.Polyline(
                 [
-                  refstate.value.pointerX,
-                  refstate.value.pointerY,
-                  refstate.value.pointerX,
-                  refstate.value.pointerY,
+                  { x: 0, y: 0 },
+                  { x: 120, y: 120 },
                 ],
                 {
                   canvas,
                   fill: R.rgba(control.value.background, control.value.backgroundAlpha),
                   stroke: control.value.stroke,
                   strokeWidth: control.value.strokeWidth,
+                  left: refstate.value.pointerX,
+                  top: refstate.value.pointerY,
                 },
               );
+            case 'object:draw:text':
+              return new fabric.IText('text', {
+                left: refstate.value.pointerX,
+                top: refstate.value.pointerY,
+                fontFamily: 'Noto Sans JP',
+              });
             // TODO arrow はいろいろ試したが無理だった
             // case 'object:draw:arrow':
             // TODO diamond はいろいろ試したが無理だった
@@ -241,18 +244,6 @@ onMounted(() => {
           }
         })();
 
-        state.drawingObject = object;
-        canvas.add(object);
-        break;
-      }
-
-      case 'object:draw:text': {
-        // pointer を参照する
-        const object = new fabric.IText('text', {
-          left: refstate.value.pointerX,
-          top: refstate.value.pointerY,
-          fontFamily: 'Noto Sans JP',
-        });
         canvas.add(object);
         canvas.setActiveObject(object);
         refstate.value.mode = 'select';
@@ -283,63 +274,11 @@ onMounted(() => {
 
     if (refstate.value.mode === 'smart-erasing') {
       const target = canvas.findTarget(opt.e);
-      if (target) {
-        target.opacity = 0.3;
-        state.smartEraseTargetObjectList.push(target);
+      if (target.target) {
+        target.target.opacity = 0.3;
+        state.smartEraseTargetObjectList.push(target.target);
         canvas.requestRenderAll();
       }
-    }
-
-    if (refstate.value.mode.startsWith('object:draw:') && state.drawingObject != null) {
-      const pointer = canvas.getScenePoint(opt.e);
-      let w = pointer.x - refstate.value.pointerX;
-      let h = pointer.y - refstate.value.pointerY;
-
-      if (opt.e.shiftKey) {
-        // shift キー押下中は 幅と高さを同じにする
-        const size = Math.max(Math.abs(w), Math.abs(h));
-        w = w < 0 ? -size : size;
-        h = h < 0 ? -size : size;
-      }
-
-      switch (state.drawingObject.type) {
-        case 'textbox':
-          break;
-
-        case 'rect':
-        case 'triangle': {
-          state.drawingObject.set({ width: Math.abs(w), height: Math.abs(h) });
-          if (w < 0) {
-            state.drawingObject.set({ left: pointer.x });
-          }
-          if (h < 0) {
-            state.drawingObject.set({ top: pointer.y });
-          }
-          break;
-        }
-
-        case 'ellipse': {
-          // circle
-          state.drawingObject.set({ rx: Math.abs(w) / 2, ry: Math.abs(h) / 2 });
-          state.drawingObject.set({
-            left: refstate.value.pointerX + (w < 0 ? w : 0),
-            top: refstate.value.pointerY + (h < 0 ? h : 0),
-          });
-          break;
-        }
-
-        case 'line': {
-          state.drawingObject.set({
-            x2: pointer.x,
-            y2: pointer.y,
-          });
-          break;
-        }
-        default:
-          break;
-      }
-
-      canvas.requestRenderAll();
     }
   });
 
@@ -351,21 +290,9 @@ onMounted(() => {
     if (refstate.value.mode === 'smart-erasing') {
       refstate.value.mode = 'smart-eraser';
       canvas.discardActiveObject(); // 解除してからじゃないと render しても反映されない
-      state.smartEraseTargetObjectList.forEach((obj) => canvas.remove(obj as fabric.FabricObject));
+      state.smartEraseTargetObjectList.forEach((obj) => canvas.remove(obj));
       state.smartEraseTargetObjectList = [];
     }
-
-    if (refstate.value.mode.startsWith('object:draw:') && state.drawingObject != null) {
-      if (state.drawingObject.width > 5 || state.drawingObject.height > 5) {
-        // 図形の描画が完了したので、選択状態にする
-        const drawingObject = state.drawingObject as fabric.FabricObject;
-        canvas.setActiveObject(drawingObject);
-      } else {
-        // 図形が小さすぎる場合は削除する
-        canvas.remove(state.drawingObject as fabric.FabricObject);
-      }
-    }
-    state.drawingObject = null;
 
     saveState();
   });
@@ -486,7 +413,7 @@ function setActiveObjectsProperty(key: string, value: string | number) {
 function setActiveObjectsLayer(
   key: 'sendObjectToBack' | 'sendObjectBackwards' | 'bringObjectForward' | 'bringObjectToFront',
 ) {
-  canvas.getActiveObjects().forEach((obj) => canvas[key](obj as fabric.FabricObject));
+  canvas.getActiveObjects().forEach((obj) => canvas[key](obj));
   canvas.requestRenderAll();
   saveState();
 }
@@ -506,7 +433,7 @@ async function copyActiveObjects() {
 function removeActiveObjects() {
   const activeObjects = canvas.getActiveObjects();
   canvas.discardActiveObject(); // 解除してからじゃないと render しても反映されない
-  activeObjects.forEach((obj) => canvas.remove(obj as fabric.FabricObject));
+  activeObjects.forEach((obj) => canvas.remove(obj));
   saveState();
 }
 
@@ -967,7 +894,7 @@ onMounted(async () => {
           title="object:draw:line"
           @click.prevent="refstate.mode = 'object:draw:line'"
         >
-          <span class="icon-[fluent--line-20-filled] h-5 w-5"></span>
+          <span class="icon-[fluent--line-20-filled] h-5 w-5 rotate-90"></span>
           <span class="sr-only">object:draw:line</span>
         </button>
         <button

@@ -26,14 +26,14 @@
   },
   "dependencies": {
     "dayjs": "^1.11.19",
-    "remeda": "^2.32.0",
-    "zod": "^4.2.1"
+    "remeda": "^2.33.0",
+    "zod": "^4.3.2"
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^4.0.16",
     "@vitest/ui": "^4.0.16",
-    "tsdown": "^0.18.2",
+    "tsdown": "^0.18.4",
     "vitest": "^4.0.16"
   },
-  "packageManager": "pnpm@10.26.1"
+  "packageManager": "pnpm@10.27.0"
 }

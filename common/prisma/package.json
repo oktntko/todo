@@ -32,7 +32,7 @@
   "devDependencies": {
     "prisma": "^7.2.0",
     "prisma-zod-generator": "^2.1.2",
-    "tsdown": "^0.18.2"
+    "tsdown": "^0.18.4"
   },
-  "packageManager": "pnpm@10.26.1"
+  "packageManager": "pnpm@10.27.0"
 }
