@@ -1,4 +1,5 @@
 import { dayjs } from '@todo/lib/dayjs';
+import * as express from 'express';
 import { SessionData, Store } from 'express-session';
 import superjson from 'superjson';
 import { log } from '~/lib/log4js';
@@ -14,6 +15,7 @@ declare module 'express-session' {
   interface SessionData {
     user_id?: string | null;
     data?: {
+      csrfToken?: unknown;
       // 二要素認証 設定
       setting_twofa?: {
         expires: Date;
@@ -62,6 +64,7 @@ export const SessionService = {
   setSession,
   destroySession,
   findUserBySession,
+  regenerateSession,
 };
 
 async function findUserBySession(params: {
@@ -142,4 +145,66 @@ async function destroySession(session_key: string) {
   });
 
   return { ok: true };
+}
+
+// session.regenerate
+async function regenerateSession(req: express.Request, res: express.Response) {
+  await new Promise((resolve, reject) => {
+    req.session.regenerate((err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve({ ok: true });
+      }
+    });
+  });
+
+  // csrf protection
+  // ＜前提＞
+  // CSRFとは、ログイン中のセッションを悪用して、
+  // 悪意のあるWebサイトやメールに不正なリンクから、
+  // ユーザーが意図しない操作をさせる攻撃手法である。
+  //
+  // ＜問題＞
+  // - cookie でセッションIDを管理している
+  // - cookie は自動送信される
+  // - 外部サイトからの不正なリクエストに、正規の cookie が送信される
+  // - サーバー側では、正規の cookie が送信されてきたら認証成功と見なしてしまう
+  //   => 攻撃成功
+  //
+  // ＜対策＞
+  // １． バックエンド）認証成功時に、CSRFトークンを発行し、 cookie と session の両方に保存する。
+  // ２． フロント）フロントでレスポンス cookie を読み取ってリクエストヘッダに詰める。
+  //   - リクエストヘッダは cookie と異なり、自動送信されない。
+  //   - 外部サイトでは cookie が読めない。
+  //    => 外部サイトからの不正なリクエストには、CSRFトークンが含まれない。
+  // ３． バックエンド）リクエストヘッダの CSRFトークン と session の CSRFトークン を検証して、正規の送信元であることを確認する。
+  //    session の CSRFトークンと比較しているのは、攻撃者が同一オリジンで一度 token を取得できたら別セッションでも通るのを防ぐため。
+  //
+  // ＜その他＞
+  // - CSRFは、ログイン中のセッションを悪用する攻撃なので、認証が必要ないAPIには CSRF対策をしない。
+  // - 認証が必要なAPIでも、GET/HEAD/OPTIONSメソッドには CSRF対策をしない。
+  //   - <a> で開けないため（ファイルダウンロードなど）
+  //   - prefetch / browser restore で壊れるため
+  //   - キャッシュが効かないため
+  //    ↑ ただし、前提として、 GET系メソッドでは副作用を起こさないよう設計- テストしていることが必要。
+  // - フロントで cookie を読み取る必要があるため、"httpOnly: false"にする必要がある。
+  //
+  // ＜関連箇所＞
+  // - バックエンド
+  //   - app/express/src/middleware/session.ts (CSRFトークン発行)
+  //   - app/express/src/middleware/express.ts (CSRFトークン検証)
+  //   - app/express/src/middleware/trpc.ts (CSRFトークン検証)
+  // - フロント
+  //   - app/vue/src/lib/axios.ts (リクエストヘッダにCSRFトークンを詰める)
+  //   - app/vue/src/lib/trpc.ts (リクエストヘッダにCSRFトークンを詰める)
+  //
+  const token = crypto.randomUUID();
+
+  req.session.data ??= {};
+  req.session.data.csrfToken = token;
+  res.cookie('csrf-token', token, {
+    httpOnly: false, // フロントで読むため
+    // TODO 他はデフォルトを引き継ぐのか？
+  });
 }

@@ -2,6 +2,17 @@ import AxiosStatic, { type AxiosResponse } from 'axios';
 
 export const axios = AxiosStatic.create({ timeout: 5000, baseURL: import.meta.env.BASE_URL });
 
+axios.interceptors.request.use((config) => {
+  const token = document.cookie
+    .split('; ')
+    .find((row) => row.startsWith('csrf-token='))
+    ?.split('=')[1];
+
+  config.headers['x-csrf-token'] = token ?? undefined;
+
+  return config;
+});
+
 axios.interceptors.response.use(
   (response) => response,
   async (error) => {

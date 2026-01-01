@@ -1,3 +1,4 @@
+import cookieParser from 'cookie-parser';
 import express from 'express';
 import session from 'express-session';
 import helmet from 'helmet';
@@ -28,6 +29,7 @@ app.set('trust proxy', 1); // trust first proxy
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 const SessionMiddleware = session({
   secret: env.session.SESSION_SECRET,
@@ -39,9 +41,10 @@ const SessionMiddleware = session({
     domain: env.session.SESSION_DOMAIN,
     path: env.session.SESSION_PATH,
     secure: env.PROD,
+    sameSite: 'strict',
   },
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
 });
 app.use(SessionMiddleware);
 

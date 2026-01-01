@@ -1,6 +1,5 @@
 import { dayjs } from '@todo/lib/dayjs';
 import { z } from '@todo/lib/zod';
-import type { Session, SessionData } from 'express-session';
 import { $transaction } from '~/middleware/prisma';
 import { SessionService } from '~/middleware/session';
 import { publicProcedure, router } from '~/middleware/trpc';
@@ -14,10 +13,9 @@ export const auth = router({
     .output(z.void())
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        // セッションの再生成
-        await regenerate(ctx.req.session);
-
         const user = await AuthService.signup({ ...ctx, prisma }, input);
+
+        await SessionService.regenerateSession(ctx.req, ctx.res);
 
         // session のプロパティに代入することで、 SessionStore#set が呼ばれる. (非同期)
         ctx.req.session.user_id = user.user_id;
@@ -30,10 +28,9 @@ export const auth = router({
     .output(AuthSchema)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        // セッションの再生成
-        await regenerate(ctx.req.session);
-
         const user = await AuthService.signin({ ...ctx, prisma }, input);
+
+        await SessionService.regenerateSession(ctx.req, ctx.res);
 
         if (user.twofa_enable) {
           // 二要素認証が有効 => ID/パスワード認証が成功したことをセッションに保存 => 二要素認証へ
@@ -65,8 +62,7 @@ export const auth = router({
 
         const user = await AuthService.signinTwofa({ ...ctx, prisma }, { ...input, auth_twofa });
 
-        // セッションの再生成
-        await regenerate(ctx.req.session);
+        await SessionService.regenerateSession(ctx.req, ctx.res);
 
         ctx.req.session.user_id = user.user_id;
 
@@ -92,17 +88,3 @@ export const auth = router({
     });
   }),
 });
-
-async function regenerate(
-  session: Session & Partial<SessionData>,
-): Promise<(Session & Partial<SessionData>) | void> {
-  return new Promise((resolve, reject) => {
-    const oldSession = session.regenerate((err) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(oldSession);
-      }
-    });
-  });
-}

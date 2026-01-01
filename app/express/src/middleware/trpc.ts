@@ -65,23 +65,40 @@ export const publicProcedure = procedure;
  * Reusable middleware that checks if users are authenticated.
  **/
 const isAuthed = middleware(async ({ next, ctx }) => {
-  const user = await SessionService.findUserBySession({
+  const operator = await SessionService.findUserBySession({
     prisma: ctx.prisma,
     expires: ctx.req.session.cookie.expires,
     user_id: ctx.req.session.user_id,
   });
 
-  if (user == null) {
+  if (operator == null) {
     throw new TRPCError({
       code: 'UNAUTHORIZED',
       message: message.error.UNAUTHORIZED,
     });
   }
 
+  if (!['GET', 'HEAD', 'OPTIONS'].includes(ctx.req.method)) {
+    const csrfTokenFromCookie = ctx.req.cookies?.['csrf-token'];
+    const csrfTokenFromHeader = ctx.req.headers['x-csrf-token'];
+    const csrfTokenFromSession = ctx.req.session?.data?.csrfToken;
+
+    if (
+      !csrfTokenFromCookie ||
+      csrfTokenFromCookie !== csrfTokenFromHeader ||
+      csrfTokenFromCookie !== csrfTokenFromSession
+    ) {
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: 'Invalid CSRF token',
+      });
+    }
+  }
+
   return next({
     ctx: {
       ...ctx,
-      operator: user,
+      operator,
     },
   });
 });

@@ -16,6 +16,16 @@ export const trpc = createTRPCClient<typeof TrpcRouter>({
     httpLink({
       url: `${import.meta.env.BASE_URL}api/trpc`,
       transformer: superjson, // Date to Date
+      headers() {
+        const token = document.cookie
+          .split('; ')
+          .find((row) => row.startsWith('csrf-token='))
+          ?.split('=')[1];
+
+        return {
+          'x-csrf-token': token ?? undefined,
+        };
+      },
     }),
   ],
 });

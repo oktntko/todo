@@ -191,6 +191,25 @@ export function createProtectHandler<T extends z.ZodRawShape>(
         });
       }
 
+      if (!['GET', 'HEAD', 'OPTIONS'].includes(ctx.req.method)) {
+        const csrfTokenFromCookie = ctx.req.cookies?.['csrf-token'];
+        const csrfTokenFromHeader = ctx.req.headers['x-csrf-token'];
+        const csrfTokenFromSession = ctx.req.session?.data?.csrfToken;
+
+        if (
+          !csrfTokenFromCookie ||
+          csrfTokenFromCookie !== csrfTokenFromHeader ||
+          csrfTokenFromCookie !== csrfTokenFromSession
+        ) {
+          return next(
+            new TRPCError({
+              code: 'FORBIDDEN',
+              message: 'Invalid CSRF token',
+            }),
+          );
+        }
+      }
+
       const result = schema.safeParse(req);
       if (result.error) {
         return next(
