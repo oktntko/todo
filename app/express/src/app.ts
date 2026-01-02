@@ -24,9 +24,32 @@ app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
+        // nginxでリバースプロキシするときは効果なし
         // xss prevention
         // https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/require-trusted-types-for
         'require-trusted-types-for': ["'script'"],
+
+        // ● Clickjacking
+        // Clickjacking  ： iframe を使って「見えない / 偽装された正規サイト」をクリックさせる攻撃。 「iframe」前提
+        // iframe による埋め込み禁止
+        // https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/frame-ancestors
+        // frame-ancestors 'self' でも安全ではあるが、同一オリジンが絶対安全とする場合のみ。
+        // /public などの軽いページを悪用されたり、 XSS で iframe を埋め込まれる可能性がある。
+
+        // ● UI Redressing
+        // UI Redressing ： ユーザーが見ているUIと、実際に操作している対象がズレている攻撃全般。 「UIの誤誘導」
+        // Clickjacking の上位概念
+        // ＜対策＞
+        // ① 重要操作は「1クリックで完結」しない。確認などの操作を挟む。
+        // 例）削除、送金、権限変更、外部連携など
+        // ② 危険操作は「視覚的に孤立」させて、オーバーレイで誤誘導させにくくする。
+        //
+        // ③ 重要操作には「抽象的・汎用的な文言」を使わず、「具体的な内容」を示す。
+        // 例）OK、実行、確定→削除する、退会する、連携を解除する
+        // ④ 重要操作にはユーザー入力を要求する。（ｘｘｘと入力してくださいなど）
+        //
+        // ⑤ サーバ側でパラメータを必須にする、再認証を必要とするなど、フロントに頼らない。
+        'frame-ancestors': ["'none'"],
       },
     },
   }),

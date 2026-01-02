@@ -12,6 +12,7 @@
     "aichat",
     "appenders",
     "autoincrement",
+    "Clickjacking",
     "closedby",
     "closerequest",
     "Dataless",
@@ -65,6 +66,8 @@
     "vue-components.d.ts",
     "vue-auto-import.d.ts"
   ],
-  "ignoreRegExpList": ["icon-\\[[^\\]]+\\]"],
+  "ignoreRegExpList": [
+    "icon-\\[[^\\]]+\\]"
+  ],
   "import": []
 }
