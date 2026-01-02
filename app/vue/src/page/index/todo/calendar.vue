@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { DayPilot } from '@daypilot/daypilot-lite-javascript';
 import { dayjs } from '@todo/lib/dayjs';
-import DOMPurify from 'dompurify';
 import { trpc } from '~/lib/trpc';
 import GroupList from '~/page/index/todo/component/GroupList.vue';
 import { useDialog } from '~/plugin/DialogPlugin';
@@ -45,11 +44,6 @@ const events = computed(() => {
 
         barColor: todo.group.group_color,
 
-        html: `
-      <div>
-        <div class="line-clamp-1 font-bold">${DOMPurify.sanitize(todo.title)}</div>
-        <div class="line-clamp-4 text-xs">${DOMPurify.sanitize(todo.description)}</div>
-      </div>`,
         toolTip: todo.description || '',
       } satisfies DayPilot.EventData;
     });
