@@ -18,7 +18,7 @@
     "drizzle:generate": "drizzle-kit generate && tsx ./drizzle.generate-migrations.ts && prettier --write src/mock/migrations.json"
   },
   "dependencies": {
-    "@daypilot/daypilot-lite-javascript": "^5.1.0",
+    "@daypilot/daypilot-lite-javascript": "^5.2.0",
     "@todo/express": "workspace:*",
     "@todo/lib": "workspace:*",
     "@todo/prisma": "workspace:*",
@@ -26,17 +26,17 @@
     "@vueuse/components": "^14.1.0",
     "@vueuse/core": "^14.1.0",
     "axios": "^1.13.2",
-    "fabric": "^7.0.0",
+    "fabric": "^7.1.0",
     "pinia": "^3.0.4",
     "sortablejs": "^1.15.6",
     "superjson": "^2.2.6",
-    "use-vue-validate-schema": "^0.0.7",
+    "use-vue-validate-schema": "^1.0.0",
     "vue": "^3.5.26",
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.3.14",
-    "@iconify/json": "^2.2.423",
+    "@iconify/json": "^2.2.424",
     "@iconify/tailwind4": "^1.2.0",
     "@playwright/test": "^1.57.0",
     "@tailwindcss/vite": "^4.1.18",
