@@ -44,15 +44,14 @@ function handleError(error: unknown) {
     console.warn('http error', error);
     const { status, message } = (function () {
       if (isAxiosError(error)) {
-        return { status: error.status ?? 0, message: error.message };
+        return {
+          status: error.status ?? 0,
+          message: error.response?.data?.message ?? error.message,
+        };
       } else {
         return { status: error.data?.httpStatus ?? 0, message: error.message };
       }
     })();
-
-    if (status === 401 /*UNAUTHORIZED*/ || status === 403 /*FORBIDDEN*/) {
-      router.replace({ name: '/(auth)/signin' });
-    }
 
     const color =
       0 < status && status < 400 ? 'blue' : 400 <= status && status < 500 ? 'yellow' : 'red';

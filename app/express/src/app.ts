@@ -10,7 +10,7 @@ import {
   InjectRequestIdHandler,
   LogHandler,
   NotFoundHandler,
-  UnexpectedErrorHandler,
+  UnhandledErrorHandler,
 } from '~/middleware/express';
 import { SessionStore } from '~/middleware/session';
 import { createExpressMiddleware } from '~/middleware/trpc';
@@ -114,7 +114,7 @@ app.use(...ExpressRouter);
 
 app.use(ErrorHandler);
 app.use(NotFoundHandler);
-app.use(UnexpectedErrorHandler);
+app.use(UnhandledErrorHandler);
 
 server.on('error', (err) => {
   log.error('Error opening server', err);

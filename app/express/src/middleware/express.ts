@@ -92,7 +92,7 @@ export const NotFoundHandler: RequestHandler = (_, res, next) => {
 };
 
 // UNEXPECTED ERROR
-export const UnexpectedErrorHandler: ErrorRequestHandler = (err, _, res, next) => {
+export const UnhandledErrorHandler: ErrorRequestHandler = (err, _, res, next) => {
   log.error(err);
   if (res.headersSent) {
     return next(err);
@@ -136,26 +136,20 @@ export function createHandler<T extends z.ZodRawShape>(
   }) => Promise<void> | void,
 ): RequestHandler {
   const handler: RequestHandler = async (req, res, next) => {
-    try {
-      const ctx = createContext({ req, res });
+    const ctx = createContext({ req, res });
 
-      const result = schema.safeParse(req);
-      if (result.error) {
-        return next(
-          new TRPCError({
-            code: 'BAD_REQUEST',
-            message: message.error.BAD_REQUEST,
-          }),
-        );
-      }
-
-      return await resolver({
-        ctx: { ...ctx, next },
-        input: result.data,
+    const result = schema.safeParse(req);
+    if (result.error) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: message.error.BAD_REQUEST,
       });
-    } catch (e) {
-      return next(e);
     }
+
+    return await resolver({
+      ctx: { ...ctx, next },
+      input: result.data,
+    });
   };
 
   return handler;
@@ -175,58 +169,50 @@ export function createProtectHandler<T extends z.ZodRawShape>(
   }) => Promise<void> | void,
 ): RequestHandler {
   const handler: RequestHandler = async (req, res, next) => {
-    try {
-      const ctx = createContext({ req, res });
+    const ctx = createContext({ req, res });
 
-      const operator = await SessionService.findUserBySession({
-        prisma: ctx.prisma,
-        expires: ctx.req.session.cookie.expires,
-        user_id: ctx.req.session.user_id,
+    const operator = await SessionService.findUserBySession({
+      prisma: ctx.prisma,
+      expires: ctx.req.session.cookie.expires,
+      user_id: ctx.req.session.user_id,
+    });
+
+    if (operator == null) {
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: message.error.UNAUTHORIZED,
       });
+    }
 
-      if (operator == null) {
+    if (!['GET', 'HEAD', 'OPTIONS'].includes(ctx.req.method)) {
+      const csrfTokenFromCookie = ctx.req.cookies?.['csrf-token'];
+      const csrfTokenFromHeader = ctx.req.headers['x-csrf-token'];
+      const csrfTokenFromSession = ctx.req.session?.data?.csrfToken;
+
+      if (
+        !csrfTokenFromCookie ||
+        csrfTokenFromCookie !== csrfTokenFromHeader ||
+        csrfTokenFromCookie !== csrfTokenFromSession
+      ) {
         throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: message.error.UNAUTHORIZED,
+          code: 'FORBIDDEN',
+          message: 'Invalid CSRF token',
         });
       }
-
-      if (!['GET', 'HEAD', 'OPTIONS'].includes(ctx.req.method)) {
-        const csrfTokenFromCookie = ctx.req.cookies?.['csrf-token'];
-        const csrfTokenFromHeader = ctx.req.headers['x-csrf-token'];
-        const csrfTokenFromSession = ctx.req.session?.data?.csrfToken;
-
-        if (
-          !csrfTokenFromCookie ||
-          csrfTokenFromCookie !== csrfTokenFromHeader ||
-          csrfTokenFromCookie !== csrfTokenFromSession
-        ) {
-          return next(
-            new TRPCError({
-              code: 'FORBIDDEN',
-              message: 'Invalid CSRF token',
-            }),
-          );
-        }
-      }
-
-      const result = schema.safeParse(req);
-      if (result.error) {
-        return next(
-          new TRPCError({
-            code: 'BAD_REQUEST',
-            message: message.error.BAD_REQUEST,
-          }),
-        );
-      }
-
-      return resolver({
-        ctx: { ...ctx, operator, next },
-        input: result.data,
-      });
-    } catch (e) {
-      return next(e);
     }
+
+    const result = schema.safeParse(req);
+    if (result.error) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: message.error.BAD_REQUEST,
+      });
+    }
+
+    return resolver({
+      ctx: { ...ctx, operator, next },
+      input: result.data,
+    });
   };
 
   return handler;

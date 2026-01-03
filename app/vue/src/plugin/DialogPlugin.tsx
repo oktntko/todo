@@ -3,6 +3,7 @@ import {
   createApp,
   defineComponent,
   inject,
+  onErrorCaptured,
   ref,
   Suspense,
   Transition,
@@ -10,7 +11,6 @@ import {
   type Component,
   type InjectionKey,
   type InputHTMLAttributes,
-  type PropType,
 } from 'vue';
 import type { ComponentProps } from 'vue-component-type-helpers';
 import MyButton from '~/component/button/MyButton';
@@ -113,7 +113,7 @@ function installDialogPlugin(parentApp: App) {
       // vue アプリを作る
       app = createApp(DialogApp, {
         component,
-        ...props?.(
+        componentProps: props?.(
           function trapResolve(value: T | PromiseLike<T>) {
             dialog.close('cancel');
             return resolve(value);
@@ -123,6 +123,7 @@ function installDialogPlugin(parentApp: App) {
             return reject(reason);
           },
         ),
+        close: () => dialog.close('cancel'),
       });
 
       // dialog 標準のクローズが呼ばれたときに promise が解決しないので処理する
@@ -168,13 +169,6 @@ function installDialogPlugin(parentApp: App) {
       // https://github.com/quasarframework/quasar/blob/4ebebf02ab0cc7c049d2697544210115ed89e491/ui/src/install-quasar.js#L33
       app.config.globalProperties = parentApp.config.globalProperties;
       Object.assign(app._context, parentApp._context);
-
-      // Suspense で解決されなかった場合、ダイアログを閉じて親アプリに伝える
-      // ダイアログにダイアログを重ねていると、2層目以降のダイアログのリジェクトは大元のアプリに伝わらない
-      app.config.errorHandler = (error) => {
-        dialog.close('cancel');
-        reject(error);
-      };
 
       // HTML Node上に追加する
       document.body.appendChild(dialog);
@@ -336,40 +330,64 @@ function installDialogPlugin(parentApp: App) {
   };
 }
 
-function DialogApp<C extends Component>(props: { component: C } & ComponentProps<C>) {
-  const { component: Component, ...$attrs } = props;
+const DialogApp = defineComponent(
+  <C extends Component>(props: {
+    component: C;
+    componentProps: ComponentProps<C>;
+    close: () => void;
+  }) => {
+    const { component: Component, componentProps, close } = props;
 
-  return (
-    <div>
-      {/* dialog 本体のアニメーションと合わせる */}
-      <Transition
-        mode="out-in"
-        enterFromClass="scale-95 opacity-0"
-        enterActiveClass="transition transition-discrete duration-200 ease-out"
-        enterToClass="scale-100 opacity-100"
-      >
-        <Suspense
-          v-slots={{
-            default: () => <Component {...$attrs}></Component>,
-            fallback: () => (
-              <div class="flex flex-col items-center bg-transparent p-8">
-                <span class="icon-[eos-icons--bubble-loading] text-opacity-60 h-16 w-16 text-gray-600"></span>
-                <span class="sr-only">Loading...</span>
-                <input
-                  autofocus
-                  name="loading"
-                  class="h-0 w-0 border-none bg-transparent caret-transparent outline-hidden"
-                />
-              </div>
-            ),
-          }}
-        ></Suspense>
-      </Transition>
-    </div>
-  );
-}
+    const state = ref<'' | 'pending' | 'fallback' | 'resolve'>('');
+    onErrorCaptured(() => {
+      if (state.value !== 'resolve') {
+        // pending 中にエラーが起きると空のダイアログが表示され続けるのでダイアログを閉じる
+        close();
+      }
+      // resolve になってからは validation error など発生しうるのでコンポーネントに任せる
+    });
 
-// defineComponent((props) => () => (<div></div>)) だとプロパティが受け取れない
+    return () => (
+      <div>
+        {/* dialog 本体のアニメーションと合わせる */}
+        <Transition
+          mode="out-in"
+          enterFromClass="scale-95 opacity-0"
+          enterActiveClass="transition transition-discrete duration-200 ease-out"
+          enterToClass="scale-100 opacity-100"
+        >
+          <Suspense
+            v-slots={{
+              // JSX element type 'Component' does not have any construct or call signatures
+              // @ts-expect-error renderできるが、Component が FunctionalComponent/defineComponent/SFC 全てを含むため、JSXとして型を認識できない。
+              default: () => <Component {...componentProps}></Component>,
+              fallback: () => {
+                return (
+                  <div class="flex flex-col items-center bg-transparent p-8">
+                    <span class="icon-[eos-icons--bubble-loading] text-opacity-60 h-16 w-16 text-gray-600"></span>
+                    <span class="sr-only">Loading...</span>
+                    <input
+                      autofocus
+                      name="loading"
+                      class="h-0 w-0 border-none bg-transparent caret-transparent outline-hidden"
+                    />
+                  </div>
+                );
+              },
+            }}
+            onPending={() => (state.value = 'pending')}
+            onFallback={() => (state.value = 'fallback')}
+            onResolve={() => (state.value = 'resolve')}
+          ></Suspense>
+        </Transition>
+      </div>
+    );
+  },
+  {
+    props: ['component', 'componentProps', 'close'],
+  },
+);
+
 // function コンポーネントだと ref が使えない（リアクティブじゃない）
 type ColorType = 'white' | 'gray' | 'green' | 'red' | 'blue' | 'yellow';
 type WindowDialogOptions = {
@@ -380,38 +398,28 @@ type WindowDialogOptions = {
   prompt?: InputHTMLAttributes;
 };
 
-const WindowDialog = defineComponent({
-  props: {
-    message: {
-      type: String,
-      required: true,
+const WindowDialog = defineComponent(
+  (
+    props: {
+      message: string;
+      color?: ColorType;
+      confirmText?: string;
+      confirmValue?: string;
+      cancelText?: string;
+      prompt?: InputHTMLAttributes;
     },
-    color: {
-      type: String as PropType<ColorType>,
-      default: 'white',
-    },
-    confirmText: {
-      type: String,
-      default: 'confirm',
-    },
-    confirmValue: {
-      type: String,
-      default: 'confirm',
-    },
-    cancelText: {
-      type: String,
-    },
-    prompt: {
-      type: Object as PropType<InputHTMLAttributes>,
-    },
-  },
-  emits: {
-    confirm: (_: string) => true,
-    cancel: () => true,
-  },
-  setup(props, { emit: $emit }) {
+    { emit: $emit },
+  ) => {
+    const {
+      message,
+      color = 'white',
+      confirmText = 'confirm',
+      confirmValue = 'confirm',
+      ...$props
+    } = props;
+
     const icon = computed(() => {
-      switch (props.color) {
+      switch (color) {
         case 'green':
           return 'icon-[qlementine-icons--success-12]';
         case 'blue':
@@ -435,31 +443,31 @@ const WindowDialog = defineComponent({
           class="flex flex-col gap-6"
           onSubmit={(e) => {
             e.preventDefault();
-            $emit('confirm', props.prompt ? `confirm:${modelValue.value}` : props.confirmValue);
+            $emit('confirm', $props.prompt ? `confirm:${modelValue.value}` : confirmValue);
           }}
         >
           <main class="flex items-center gap-4">
             <div
               class={[
                 'flex h-10 w-10 shrink-0 items-center justify-center rounded-full',
-                props.color === 'white' /*   */ && 'bg-gray-100 text-gray-400',
-                props.color === 'gray' /*    */ && 'bg-gray-100 text-gray-800',
-                props.color === 'green' /*   */ && 'bg-green-100 text-green-800',
-                props.color === 'red' /*     */ && 'bg-red-100 text-red-800',
-                props.color === 'blue' /*    */ && 'bg-blue-100 text-blue-800',
-                props.color === 'yellow' /*  */ && 'bg-yellow-100 text-yellow-800',
+                color === 'white' /*   */ && 'bg-gray-100 text-gray-400',
+                color === 'gray' /*    */ && 'bg-gray-100 text-gray-800',
+                color === 'green' /*   */ && 'bg-green-100 text-green-800',
+                color === 'red' /*     */ && 'bg-red-100 text-red-800',
+                color === 'blue' /*    */ && 'bg-blue-100 text-blue-800',
+                color === 'yellow' /*  */ && 'bg-yellow-100 text-yellow-800',
               ]}
             >
               <span class={[icon.value, 'h-6 w-6']}></span>
             </div>
 
             <div class="flex flex-col gap-2">
-              <p class="text-sm whitespace-pre-wrap">{props.message}</p>
-              {props.prompt && (
+              <p class="text-sm whitespace-pre-wrap">{message}</p>
+              {$props.prompt && (
                 <MyInput
                   v-model={modelValue.value}
                   class="w-full"
-                  {...props.prompt}
+                  {...$props.prompt}
                   autofocus
                   required
                 />
@@ -468,12 +476,12 @@ const WindowDialog = defineComponent({
           </main>
 
           <footer class="flex items-center justify-center gap-4">
-            <MyButton type="submit" autofocus color={props.color}>
-              <span class="capitalize">{props.confirmText}</span>
+            <MyButton type="submit" autofocus color={color ?? 'white'}>
+              <span class="capitalize">{confirmText}</span>
             </MyButton>
-            {props.cancelText && (
+            {$props.cancelText && (
               <MyButton type="button" color="white" onClick={() => $emit('cancel')}>
-                <span class="capitalize">{props.cancelText}</span>
+                <span class="capitalize">{$props.cancelText}</span>
               </MyButton>
             )}
           </footer>
@@ -481,4 +489,11 @@ const WindowDialog = defineComponent({
       </div>
     );
   },
-});
+  {
+    props: ['message', 'color', 'confirmText', 'confirmValue', 'cancelText', 'prompt'],
+    emits: {
+      confirm: (_: string) => true,
+      cancel: () => true,
+    },
+  },
+);

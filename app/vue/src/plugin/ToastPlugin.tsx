@@ -1,4 +1,11 @@
-import { inject, type App, type InjectionKey, type PropType } from 'vue';
+import {
+  defineComponent,
+  inject,
+  onMounted,
+  useTemplateRef,
+  type App,
+  type InjectionKey,
+} from 'vue';
 
 type ToastPlugin = ReturnType<typeof installToastPlugin>;
 
@@ -78,21 +85,8 @@ function installToastPlugin() {
   };
 }
 
-const ToastContentApp = defineComponent({
-  props: {
-    message: {
-      type: String,
-      required: true,
-    },
-    color: {
-      type: String as PropType<ColorType>,
-      required: true,
-    },
-  },
-  emits: {
-    close: () => true,
-  },
-  setup(props, { emit: $emit }) {
+const ToastContentApp = defineComponent(
+  (props: { message: string; color: ColorType }, { emit: $emit }) => {
     const contentColor = (() => {
       switch (props.color) {
         case 'green':
@@ -216,4 +210,10 @@ const ToastContentApp = defineComponent({
       </div>
     );
   },
-});
+  {
+    props: ['message', 'color'],
+    emits: {
+      close: () => true,
+    },
+  },
+);
