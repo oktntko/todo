@@ -48,6 +48,9 @@ ARG DATABASE_URL
 RUN --mount=type=cache,target=/.turbo \
     pnpm build
 
+COPY ./docker/application/.npmrc ./
+RUN pnpm --filter @todo/express --prod deploy /@todo/deploy
+
 # # -------- runtime stage --------
 FROM node:${NODE_TAG}
 
@@ -78,23 +81,12 @@ RUN useradd -r -u 1001 todo \
     /etc/nginx/certs
 
 # # ---- app ----
-COPY --from=build /@todo/package.json /@todo/pnpm-lock.yaml /@todo/pnpm-workspace.yaml ./
-COPY --from=build /@todo/app/express/package.json                                      ./app/express/
-COPY --from=build /@todo/common/lib/package.json                                       ./common/lib/
-COPY --from=build /@todo/common/prisma/package.json                                    ./common/prisma/
-
-RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
-    pnpm install --prod --frozen-lockfile
-
-# # ---- app ----
-COPY --from=build /@todo/app/vue/dist                                                  /usr/share/nginx/html
-COPY --from=build /@todo/app/express/dist                                              ./app/express/dist
-COPY --from=build /@todo/common/lib/dist                                               ./common/lib/dist
-COPY --from=build /@todo/common/prisma/dist                                            ./common/prisma/dist
+COPY --from=build /@todo/app/vue/dist       /usr/share/nginx/html
+COPY --from=build /@todo/deploy             /@todo
 
 USER todo
 
 EXPOSE 5173
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
-CMD ["sh", "-c", "node --enable-source-maps app/express/dist/index.mjs & nginx -g 'daemon off;'"]
+CMD ["sh", "-c", "node --enable-source-maps dist/index.mjs & nginx -g 'daemon off;'"]

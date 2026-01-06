@@ -12,6 +12,10 @@
       "default": "./dist/schema/index.mjs"
     }
   },
+  "files": [
+    "dist",
+    "package.json"
+  ],
   "scripts": {
     "build": "tsdown",
     "type-check": "tsc --project tsconfig.base.json --noEmit",

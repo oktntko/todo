@@ -10,6 +10,10 @@
   "exports": {
     "./schema": "./src/schema/index.ts"
   },
+  "files": [
+    "dist",
+    "package.json"
+  ],
   "scripts": {
     "dev": "run-p dev:*",
     "dev:serve": "tsx watch --tsconfig tsconfig.base.json src/index.ts",
