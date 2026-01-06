@@ -1,33 +1,57 @@
-# -------- build stage (node) --------
-FROM node:24.12.0-trixie AS build
+# -------- base args --------
+ARG NODE_TAG="24.12.0-trixie-slim"
+ARG PNPM_VERSION="10.27.0"
 
-RUN corepack enable
-
-WORKDIR /@todo
-COPY . .
-
-ARG DATABASE_URL
-RUN pnpm i && pnpm build
+# -------- envsubst stage --------
+FROM debian:13.2-slim AS envsubst
 
 # 環境変数を nginx.conf に埋め込む
 ARG EXPRESS_PORT
 RUN apt-get update -y \
   && apt-get install -y gettext-base
-COPY ./docker/application/nginx.conf ./nginx.conf.template
-RUN envsubst '$$EXPRESS_PORT' < ./nginx.conf.template > ./nginx.conf
+COPY ./docker/application/nginx.conf /envsubst/nginx.conf.template
+RUN envsubst '$$EXPRESS_PORT' < /envsubst/nginx.conf.template > /envsubst/nginx.conf
 
-# 自己署名証明書
-RUN mkdir certs \
+# -------- certs stage --------
+FROM debian:13.2-slim AS certs
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends openssl \
+  && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir /certs \
   && openssl req -x509 -newkey rsa:2048 -nodes \
-    -keyout certs/dev.key \
-    -out certs/dev.crt \
+    -keyout /certs/dev.key \
+    -out /certs/dev.crt \
     -days 365 \
     -subj "/CN=localhost"
 
-# # -------- runtime stage --------
-FROM node:24.12.0-trixie-slim
+# -------- build stage (node) --------
+FROM node:${NODE_TAG} AS build
 
-RUN corepack enable
+RUN corepack enable pnpm
+
+WORKDIR /@todo
+
+COPY ./package.json ./pnpm-lock.yaml ./pnpm-workspace.yaml ./turbo.json ./
+COPY ./app/vue/package.json                                             ./app/vue/
+COPY ./app/express/package.json                                         ./app/express/
+COPY ./common/lib/package.json                                          ./common/lib/
+COPY ./common/prisma/package.json                                       ./common/prisma/
+RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
+    pnpm install --frozen-lockfile
+
+COPY ./script   ./script
+COPY ./app      ./app
+COPY ./common   ./common
+
+ARG DATABASE_URL
+RUN --mount=type=cache,target=/.turbo \
+    pnpm build
+
+# # -------- runtime stage --------
+FROM node:${NODE_TAG}
+
+RUN corepack enable pnpm
 
 RUN apt-get update -y \
   # slim を活かして余計な依存を入れない
@@ -40,21 +64,10 @@ RUN apt-get update -y \
   && rm -rf /var/lib/apt/lists/*
 
 # # nginx
-COPY --from=build /@todo/certs            /etc/nginx/certs
-COPY --from=build /@todo/nginx.conf       /etc/nginx/nginx.conf
-COPY --from=build /@todo/app/vue/dist     /usr/share/nginx/html
+COPY --from=certs    /certs                  /etc/nginx/certs
+COPY --from=envsubst /envsubst/nginx.conf    /etc/nginx/nginx.conf
 
-# # ---- app ----
 WORKDIR /@todo
-COPY --from=build /@todo/package.json /@todo/pnpm-lock.yaml /@todo/pnpm-workspace.yaml ./
-COPY --from=build /@todo/app/express/package.json                                      ./app/express/
-COPY --from=build /@todo/app/express/dist                                              ./app/express/dist
-COPY --from=build /@todo/common/lib/package.json                                       ./common/lib/
-COPY --from=build /@todo/common/lib/dist                                               ./common/lib/dist
-COPY --from=build /@todo/common/prisma/package.json                                    ./common/prisma/
-COPY --from=build /@todo/common/prisma/dist                                            ./common/prisma/dist
-
-RUN pnpm i --production
 
 # ---- non-root user ----
 RUN useradd -r -u 1001 todo \
@@ -63,6 +76,21 @@ RUN useradd -r -u 1001 todo \
     /var/log/nginx \
     /var/lib/nginx \
     /etc/nginx/certs
+
+# # ---- app ----
+COPY --from=build /@todo/package.json /@todo/pnpm-lock.yaml /@todo/pnpm-workspace.yaml ./
+COPY --from=build /@todo/app/express/package.json                                      ./app/express/
+COPY --from=build /@todo/common/lib/package.json                                       ./common/lib/
+COPY --from=build /@todo/common/prisma/package.json                                    ./common/prisma/
+
+RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
+    pnpm install --prod --frozen-lockfile
+
+# # ---- app ----
+COPY --from=build /@todo/app/vue/dist                                                  /usr/share/nginx/html
+COPY --from=build /@todo/app/express/dist                                              ./app/express/dist
+COPY --from=build /@todo/common/lib/dist                                               ./common/lib/dist
+COPY --from=build /@todo/common/prisma/dist                                            ./common/prisma/dist
 
 USER todo
 
