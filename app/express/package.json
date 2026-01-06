@@ -16,7 +16,7 @@
     "dev:barrel": "tsx watch --include='src/schema' --exclude='src/schema/index.ts' ../../script/generateBarrelFile.ts src/schema",
     "build": "tsdown",
     "type-check": "rm -rf types && tsc --project tsconfig.base.json && tsc-alias --project tsconfig.base.json",
-    "preview": "node --enable-source-maps --disable-warning=ExperimentalWarning dist/index.mjs",
+    "preview": "node --enable-source-maps dist/index.mjs",
     "lint": "eslint src/ --fix",
     "format": "prettier src/ --write",
     "test": "vitest run",

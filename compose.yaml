@@ -1,6 +1,31 @@
 services:
+  application:
+    container_name: todo-application
+    profiles: ['stg']
+    build:
+      context: ./
+      dockerfile: ./docker/application/Dockerfile
+      args:
+        DATABASE_URL: ${DATABASE_URL}
+        EXPRESS_PORT: ${EXPRESS_PORT}
+    environment:
+      EXPRESS_PORT: ${EXPRESS_PORT}
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_HOST: database # サービス名
+      DATABASE_PORT: 3306 #     コンテナ内ポート
+      DATABASE_NAME: ${DATABASE_NAME}
+      TZ: 'Asia/Tokyo'
+      LANG: 'en_US.UTF-8'
+    ports:
+      - 443:5173
+
   database:
-    image: mysql:9.5.0
+    container_name: todo-database
+    profiles: ['dev', 'stg']
+    build:
+      context: ./
+      dockerfile: ./docker/database/Dockerfile
     restart: on-failure
     environment:
       MYSQL_ROOT_PASSWORD: root

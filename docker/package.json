@@ -7,7 +7,8 @@
   "author": "",
   "main": "index.js",
   "scripts": {
-    "compose": "docker compose up --detach database"
+    "dev": "docker compose --profile dev up --detach",
+    "stg": "docker compose --profile stg up --detach"
   },
-  "packageManager": "pnpm@10.12.2"
+  "packageManager": "pnpm@10.27.0"
 }

@@ -1,0 +1,12 @@
+.git*
+.github
+.vscode
+**/.turbo
+**/.report
+**/.userstorage
+**/dist
+**/logs
+**/test
+**/test:e2e
+**/node_modules
+mise*
