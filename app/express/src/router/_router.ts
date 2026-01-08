@@ -1,3 +1,5 @@
+import express from 'express';
+import { log } from '~/lib/log4js';
 import { createCallerFactory, router } from '~/middleware/trpc';
 import { aichat } from '~/router/AiChatRouter';
 import { auth } from '~/router/AuthRouter';
@@ -17,7 +19,19 @@ export const TrpcRouter = router({
   whiteboard,
 });
 
-export const ExpressRouter = [FileRouter];
+export const ExpressRouter = [
+  FileRouter,
+  express.Router().post(
+    '/api/csp-report',
+    express.json({
+      type: ['application/json', 'application/csp-report', 'application/reports+json'],
+    }),
+    (req, res) => {
+      log.warn('/api/csp-report', req.body?.['csp-report']);
+      res.sendStatus(204);
+    },
+  ),
+];
 
 export const createCaller = createCallerFactory(TrpcRouter);
 
