@@ -188,6 +188,12 @@ importers:
       '@daypilot/daypilot-lite-javascript':
         specifier: ^5.2.0
         version: 5.2.0
+      '@fontsource-variable/m-plus-1-code':
+        specifier: ^5.2.9
+        version: 5.2.9
+      '@fontsource/noto-sans-jp':
+        specifier: ^5.2.8
+        version: 5.2.8
       '@todo/express':
         specifier: workspace:*
         version: link:../express
@@ -1335,6 +1341,12 @@ packages:
     peerDependenciesMeta:
       '@exodus/crypto':
         optional: true
+
+  '@fontsource-variable/m-plus-1-code@5.2.9':
+    resolution: {integrity: sha512-7dk5Rjy6cY8fdoas4y5dkBQf0lCZDaahIcBf70+0B5zgqSf/vy0y7wr9KbE4iOVkSBPzzwGOtdlZLEQUH9GwrQ==}
+
+  '@fontsource/noto-sans-jp@5.2.8':
+    resolution: {integrity: sha512-ngWXPtSV3XH8ZmNX9hnfeQ+x/3mCoaAOA3BVDcyS5jQdh4FYqKjf/S9tEUEYDPwGa2pULJVXTO2+oFg42gWvSw==}
 
   '@hono/node-server@1.19.6':
     resolution: {integrity: sha512-Shz/KjlIeAhfiuE93NDKVdZ7HdBVLQAfdbaXEaoAVO3ic9ibRSLGIQGkcBbFyuLr+7/1D5ZCINM8B+6IvXeMtw==}
@@ -6203,6 +6215,10 @@ snapshots:
       levn: 0.4.1
 
   '@exodus/bytes@1.7.0': {}
+
+  '@fontsource-variable/m-plus-1-code@5.2.9': {}
+
+  '@fontsource/noto-sans-jp@5.2.8': {}
 
   '@hono/node-server@1.19.6(hono@4.10.6)':
     dependencies:

@@ -30,10 +30,9 @@ export default defineConfig({
     }),
     VueJsx(),
     Unfonts({
-      // https://fonts.google.com/
-      google: {
-        // cSpell:ignore Noto Murecho
-        families: ['Noto Sans JP', 'M PLUS 1', 'M PLUS 2', 'Murecho', 'M PLUS 1 Code'],
+      // https://fontsource.org/
+      fontsource: {
+        families: ['Noto Sans JP Variable', 'M PLUS 1 Code Variable'],
       },
     }),
     AutoImport({

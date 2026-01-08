@@ -19,6 +19,8 @@
   },
   "dependencies": {
     "@daypilot/daypilot-lite-javascript": "^5.2.0",
+    "@fontsource-variable/m-plus-1-code": "^5.2.9",
+    "@fontsource/noto-sans-jp": "^5.2.8",
     "@todo/express": "workspace:*",
     "@todo/lib": "workspace:*",
     "@todo/prisma": "workspace:*",

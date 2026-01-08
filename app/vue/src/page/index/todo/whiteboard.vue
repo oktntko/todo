@@ -235,7 +235,7 @@ onMounted(() => {
               return new fabric.IText('text', {
                 left: refstate.value.pointerX,
                 top: refstate.value.pointerY,
-                fontFamily: 'Noto Sans JP',
+                fontFamily: 'Noto Sans JP Variable',
               });
             // TODO arrow はいろいろ試したが無理だった
             // case 'object:draw:arrow':
