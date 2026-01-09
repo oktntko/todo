@@ -2,6 +2,7 @@ import { dayjs } from '@todo/lib/dayjs';
 import * as express from 'express';
 import { SessionData, Store } from 'express-session';
 import superjson from 'superjson';
+import { env } from '~/lib/env';
 import { log } from '~/lib/log4js';
 import { ExtendsPrismaClient, PrismaClient } from '~/middleware/prisma';
 
@@ -205,6 +206,9 @@ async function regenerateSession(req: express.Request, res: express.Response) {
   req.session.data.csrfToken = token;
   res.cookie('csrf-token', token, {
     httpOnly: false, // フロントで読むため
-    // TODO 他はデフォルトを引き継ぐのか？
+    domain: env.session.SESSION_DOMAIN,
+    path: env.session.SESSION_PATH,
+    secure: env.PROD,
+    sameSite: 'strict',
   });
 }

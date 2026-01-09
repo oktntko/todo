@@ -1,4 +1,10 @@
 [env]
+APP_NAME = "MyTodo"
+SESSION_SECRET = "3hGYGCoh6KExDpqeoApa97cS3ZeLRZku10rn3jx6eaA="
+SESSION_NAME = "40e84fba-8ed6-4ed7-bf95-200c094cd301"
+SESSION_DOMAIN = "localhost"
+SESSION_PATH = "/"
+SECRET_KEY = "p+hUfdXvvOvO1lCodh2SExI2Xgpb3AiXx54YqJFPg0A=" # openssl rand -base64 32
 EXPRESS_PORT = 8081
 DATABASE_USER = "todo"
 DATABASE_PASSWORD = "todo"

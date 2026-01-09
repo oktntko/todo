@@ -25,28 +25,32 @@ export const HashPassword = {
 ////////////////////////////////
 // 暗号化・複合化
 ////////////////////////////////
-const ALGORITHM = 'aes-256-ctr';
-const IV_LENGTH = 16;
+const ALGORITHM = 'aes-256-gcm';
+const IV_LENGTH = 12; // GCM 推奨
+const TAG_LENGTH = 16; // auth tag
 
-// const KEY_LENGTH = 23;
-// const KEY = crypto.randomBytes(KEY_LENGTH).toString('base64');
-
-function encrypt(text: string, key = env.secret.SECRET_KEY) {
+function encrypt(text: string, key = Buffer.from(env.secret.SECRET_KEY, 'base64')) {
   const iv = crypto.randomBytes(IV_LENGTH);
   const cipher = crypto.createCipheriv(ALGORITHM, key, iv);
 
-  return Buffer.concat([iv, cipher.update(Buffer.from(text)), cipher.final()]).toString('base64');
+  const encrypted = Buffer.concat([cipher.update(text, 'utf8'), cipher.final()]);
+
+  const tag = cipher.getAuthTag();
+
+  return Buffer.concat([iv, tag, encrypted]).toString('base64');
 }
 
-function decrypt(data: string, key = env.secret.SECRET_KEY) {
-  const buff = Buffer.from(data, 'base64');
+function decrypt(data: string, key = Buffer.from(env.secret.SECRET_KEY, 'base64')) {
+  const buf = Buffer.from(data, 'base64');
 
-  const iv = buff.subarray(0, IV_LENGTH);
-  const encData = buff.subarray(IV_LENGTH);
+  const iv = buf.subarray(0, IV_LENGTH);
+  const tag = buf.subarray(IV_LENGTH, IV_LENGTH + TAG_LENGTH);
+  const encrypted = buf.subarray(IV_LENGTH + TAG_LENGTH);
 
   const decipher = crypto.createDecipheriv(ALGORITHM, key, iv);
+  decipher.setAuthTag(tag);
 
-  return Buffer.concat([decipher.update(encData), decipher.final()]).toString('utf8');
+  return decipher.update(encrypted, undefined, 'utf8') + decipher.final('utf8');
 }
 
 export const SecretPassword = {

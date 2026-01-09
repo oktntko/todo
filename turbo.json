@@ -5,6 +5,12 @@
       "cache": false,
       "persistent": true,
       "env": [
+        "APP_NAME",
+        "SESSION_SECRET",
+        "SESSION_NAME",
+        "SESSION_DOMAIN",
+        "SESSION_PATH",
+        "SECRET_KEY",
         "EXPRESS_PORT",
         "DATABASE_USER",
         "DATABASE_PASSWORD",
@@ -28,6 +34,12 @@
       "persistent": true,
       "dependsOn": ["build"],
       "env": [
+        "APP_NAME",
+        "SESSION_SECRET",
+        "SESSION_NAME",
+        "SESSION_DOMAIN",
+        "SESSION_PATH",
+        "SECRET_KEY",
         "EXPRESS_PORT",
         "DATABASE_USER",
         "DATABASE_PASSWORD",
@@ -45,6 +57,12 @@
     "format": {},
     "test": {
       "env": [
+        "APP_NAME",
+        "SESSION_SECRET",
+        "SESSION_NAME",
+        "SESSION_DOMAIN",
+        "SESSION_PATH",
+        "SECRET_KEY",
         "EXPRESS_PORT",
         "DATABASE_USER",
         "DATABASE_PASSWORD",

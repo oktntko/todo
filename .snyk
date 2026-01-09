@@ -1,0 +1,13 @@
+# Snyk (https://snyk.io) policy file
+---
+exclude:
+  code:
+    - "**/test/**"
+    - "**/__tests__/**"
+    - "**/mock/**"
+    - "**/mocks/**"
+    - "**/mockServiceWorker.js"
+    - "**/*.spec.*"
+    - "**/*.test.*"
+    - "**/seed.ts"
+
