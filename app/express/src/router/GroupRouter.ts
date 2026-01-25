@@ -1,4 +1,3 @@
-import { z } from '@todo/lib/zod';
 import { $transaction } from '~/middleware/prisma';
 import { protectedProcedure, router } from '~/middleware/trpc';
 import { OkSchema } from '~/schema';
@@ -8,11 +7,11 @@ import { GroupService } from '~/service/GroupService';
 export const group = router({
   // group.list
   list: protectedProcedure
-    .input(z.void())
+    .input(GroupRouterSchema.listInput)
     .output(GroupRouterSchema.getOutput.array())
-    .query(async ({ ctx }) => {
+    .query(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return GroupService.listGroup({ ...ctx, prisma });
+        return GroupService.listGroup({ ...ctx, prisma }, input);
       });
     }),
 
@@ -58,7 +57,7 @@ export const group = router({
 
   // group.reorder
   reorder: protectedProcedure
-    .input(GroupRouterSchema.reorderInputList)
+    .input(GroupRouterSchema.reorderInput)
     .output(OkSchema)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {

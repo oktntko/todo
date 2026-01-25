@@ -48,7 +48,7 @@ describe(`FileRouter file.delete`, () => {
       await expect(caller.file.delete(input)).rejects.toThrow(
         new TRPCError({
           code: 'CONFLICT',
-          message: message.error.CONFLICT_PREVIOUS_UPDATED,
+          message: message.error.CONFLICT_CURRENT_UPDATED,
         }),
       );
     });

@@ -9,7 +9,7 @@ export const message = {
     CONFLICT: `A conflict occurred. Please try again.`, // 409
     CONFLICT_DUPLICATE_WHEN_CREATE: `This value is already in use. Please use a different one.`, // 409
     CONFLICT_DUPLICATE_WHEN_UPDATE: `This value is already in use by another record.`, // 409
-    CONFLICT_PREVIOUS_UPDATED:
+    CONFLICT_CURRENT_UPDATED:
       'The item has been changed by another update. Please reload the latest data and try again.', // 409
     INTERNAL_SERVER_ERROR: `An internal server error occurred.`, // 500
     BAD_GATEWAY: `The server is temporarily unavailable. Please try again later.`, // 502

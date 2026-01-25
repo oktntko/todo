@@ -105,7 +105,7 @@ export const file = router({
 
   // file.deleteMany
   deleteMany: protectedProcedure
-    .input(FileRouterSchema.deleteInput.array())
+    .input(FileRouterSchema.deleteManyInput)
     .output(OkSchema)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {

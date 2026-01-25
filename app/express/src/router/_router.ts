@@ -6,6 +6,7 @@ import { auth } from '~/router/AuthRouter';
 import { file, FileRouter } from '~/router/FileRouter';
 import { group } from '~/router/GroupRouter';
 import { mypage } from '~/router/MypageRouter';
+import { space } from '~/router/SpaceRouter';
 import { todo } from '~/router/TodoRouter';
 import { whiteboard } from '~/router/WhiteboardRouter';
 
@@ -15,6 +16,7 @@ export const TrpcRouter = router({
   file,
   mypage,
   group,
+  space,
   todo,
   whiteboard,
 });

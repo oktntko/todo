@@ -93,7 +93,7 @@ describe(`TodoRouter todo.update`, () => {
       await expect(caller.todo.update(input)).rejects.toThrow(
         new TRPCError({
           code: 'CONFLICT',
-          message: message.error.CONFLICT_PREVIOUS_UPDATED,
+          message: message.error.CONFLICT_CURRENT_UPDATED,
         }),
       );
     });

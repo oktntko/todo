@@ -41,7 +41,7 @@ const { validateSubmit, ErrorMessage } = useVueValidateZod(
               try {
                 await trpc.auth.signup.mutate(modelValue);
 
-                router.push({ name: '//todo/list' });
+                router.push({ name: '//space/' });
               } finally {
                 loading.close();
               }

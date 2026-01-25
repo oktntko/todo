@@ -1,9 +1,19 @@
+import { z } from '@todo/lib/zod';
 import { GroupSchema } from '@todo/prisma/schema';
+
+const getInput = GroupSchema.pick({
+  group_id: true,
+});
+
+const getOutput = GroupSchema;
+
+const listInput = GroupSchema.pick({
+  space_id: true,
+});
 
 const createInput = GroupSchema.omit({
   group_id: true,
 
-  owner_id: true,
   group_order: true,
 
   created_by: true,
@@ -17,26 +27,25 @@ const deleteInput = GroupSchema.pick({
   updated_at: true,
 });
 
-const updateInput = createInput.extend(deleteInput.shape);
-
-const getInput = GroupSchema.pick({
-  group_id: true,
+const updateInput = createInput.extend(deleteInput.shape).omit({
+  space_id: true,
 });
 
-const getOutput = GroupSchema;
-
-const reorderInput = GroupSchema.pick({
+const orderInput = GroupSchema.pick({
   group_id: true,
   group_order: true,
 });
-const reorderInputList = reorderInput.array();
+const reorderInput = z.object({
+  space_id: GroupSchema.shape.space_id,
+  order: orderInput.array().min(1),
+});
 
 export const GroupRouterSchema = {
+  getInput,
+  getOutput,
+  listInput,
   createInput,
   deleteInput,
   updateInput,
-  getInput,
-  getOutput,
   reorderInput,
-  reorderInputList,
 };

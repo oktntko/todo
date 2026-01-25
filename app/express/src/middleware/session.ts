@@ -145,7 +145,7 @@ async function destroySession(session_key: string) {
     where: { session_key },
   });
 
-  return { ok: true };
+  return { ok: true } as const;
 }
 
 // session.regenerate

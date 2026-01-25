@@ -42,9 +42,21 @@ async function findUniqueGroup(
   prisma: PrismaClient,
   params: {
     where: Prisma.GroupWhereUniqueInput;
+    operator_id: string;
   },
 ) {
   return prisma.group.findUnique({
+    include: {
+      space: {
+        include: {
+          space_user_list: {
+            where: {
+              user_id: params.operator_id,
+            },
+          },
+        },
+      },
+    },
     where: params.where,
   });
 }
@@ -58,7 +70,7 @@ async function createGroup(
 ) {
   return prisma.group.create({
     data: {
-      owner_id: params.data.owner_id,
+      space_id: params.data.space_id,
 
       group_name: params.data.group_name,
       group_description: params.data.group_description,

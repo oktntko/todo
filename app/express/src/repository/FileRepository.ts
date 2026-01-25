@@ -13,6 +13,7 @@ export const FileRepository = {
   findUniqueFile,
   createFile,
   deleteFile,
+  deleteManyFile,
   // file system
   readFile,
   writeFile,
@@ -57,9 +58,21 @@ async function findUniqueFile(
   prisma: PrismaClient,
   params: {
     where: Prisma.FileWhereUniqueInput;
+    operator_id: string;
   },
 ) {
   return prisma.file.findUnique({
+    include: {
+      space: {
+        include: {
+          space_user_list: {
+            where: {
+              user_id: params.operator_id,
+            },
+          },
+        },
+      },
+    },
     where: params.where,
   });
 }
@@ -71,12 +84,12 @@ async function createFile(
 ) {
   return prisma.file.create({
     data: {
+      space_id: params.data.space_id,
       filename: params.data.filename,
       mimetype: params.data.mimetype,
       filesize: params.data.filesize,
 
       todo_list: params.data.todo_list,
-      user_list: params.data.user_list,
 
       created_by: operator_id,
       updated_by: operator_id,
@@ -92,6 +105,19 @@ async function deleteFile(
 ) {
   return prisma.file.delete({
     where: params.where,
+  });
+}
+
+async function deleteManyFile(
+  prisma: PrismaClient,
+  params: {
+    where: Prisma.FileWhereInput;
+    limit?: number;
+  },
+) {
+  return prisma.file.deleteMany({
+    where: params.where,
+    limit: params.limit,
   });
 }
 
@@ -119,7 +145,7 @@ async function writeFile(params: { file_id: string; filename: string }, buffer: 
   return fsPromises.writeFile(filepath, buffer);
 }
 
-function removeFile(params: { file_id: string; filename: string }) {
+function removeFile(params: { file_id: string }) {
   log.debug('removeFile', params);
 
   const dirpath = path.resolve(STORAGE, params.file_id);

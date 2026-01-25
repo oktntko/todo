@@ -1,11 +1,12 @@
 import { dayjs } from '@todo/lib/dayjs';
 import type { z } from '@todo/lib/zod';
+import { SpaceUserRole } from '@todo/prisma/client';
 import { TRPCError } from '@trpc/server';
 import { ReqCtx } from '~/lib/context';
 import { log } from '~/lib/log4js';
 import { HashPassword, OnetimePassword, SecretPassword } from '~/lib/secret';
 import { PublicContext } from '~/middleware/trpc';
-import { GroupRepository } from '~/repository/GroupRepository';
+import { SpaceRepository } from '~/repository/SpaceRepository';
 import { UserRepository } from '~/repository/UserRepository';
 import { _repository } from '~/repository/_repository';
 import { AuthRouterSchema } from '~/schema/AuthRouterSchema';
@@ -40,15 +41,43 @@ async function signup(ctx: PublicContext, input: z.infer<typeof AuthRouterSchema
     },
   });
 
-  await GroupRepository.createGroup(ctx.prisma, {
-    data: {
-      owner_id: user.user_id,
-      group_name: 'MyTodo',
-      group_description: 'This is the default workgroup.',
-      group_order: 0,
-      group_image: '',
-    },
+  await SpaceRepository.createSpace(ctx.prisma, {
     operator_id: user.user_id,
+    data: {
+      space_name: 'MySpace',
+      space_description: 'This is the default workspace.',
+      space_image: '',
+      space_color: '',
+
+      space_user_list: {
+        create: {
+          role: SpaceUserRole.OWNER,
+          user_id: user.user_id,
+        },
+      },
+
+      group_list: {
+        create: {
+          group_name: 'MyGroup',
+          group_description: 'This is the default group.',
+          group_order: 0,
+          group_image: '',
+          group_color: '',
+          created_by: user.user_id,
+          updated_by: user.user_id,
+
+          todo_list: {
+            create: {
+              title: 'MyTodo',
+              description: 'This is the default todo.',
+              order: 0,
+              created_by: user.user_id,
+              updated_by: user.user_id,
+            },
+          },
+        },
+      },
+    },
   });
 
   return user;

@@ -69,7 +69,6 @@ async function createUser(
       aichat_api_key: params.data.aichat_api_key,
 
       session_list: params.data.session_list,
-      file_list: params.data.file_list,
     },
   });
 }
@@ -95,7 +94,6 @@ async function updateUser(
       aichat_api_key: params.data.aichat_api_key,
 
       session_list: params.data.session_list,
-      file_list: params.data.file_list,
     },
     where: params.where,
   });

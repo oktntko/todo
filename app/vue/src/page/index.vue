@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import { trpc } from '~/lib/trpc';
+import { useSpaceStore } from '~/store/SpaceStore';
 
 const $router = useRouter();
+
+const SpaceStore = useSpaceStore();
+
+onMounted(async () => {
+  await SpaceStore.fetchSpace();
+});
 </script>
 
 <template>
@@ -13,17 +20,20 @@ const $router = useRouter();
       </h1>
       <div class="h-full">
         <ul class="font-medium">
-          <li>
+          <li v-for="space of SpaceStore.storedSpaceList" :key="space.space_id">
             <div class="flex w-full items-center rounded-lg p-2 text-sm text-gray-500">
               <span class="icon-[quill--todo] h-4 w-4 text-gray-500"> </span>
-              <span class="ms-2 capitalize">todo</span>
+              <span class="ms-2 capitalize">{{ space.space_name }}</span>
             </div>
 
             <ul class="ml-3 border-l border-gray-600">
               <li>
                 <RouterLink
                   :to="{
-                    name: '//todo/list',
+                    name: '//space/[space_id]/todo/list',
+                    params: {
+                      space_id: space.space_id,
+                    },
                   }"
                   class="group flex w-full items-center rounded-e-full p-2 pl-3 text-base text-gray-200 transition duration-75 hover:bg-gray-800 hover:text-white"
                   active-class="bg-gray-700"
@@ -38,7 +48,10 @@ const $router = useRouter();
               <li>
                 <RouterLink
                   :to="{
-                    name: '//todo/table/',
+                    name: '//space/[space_id]/todo/table/',
+                    params: {
+                      space_id: space.space_id,
+                    },
                   }"
                   class="group flex w-full items-center rounded-e-full p-2 pl-3 text-base text-gray-200 transition duration-75 hover:bg-gray-800 hover:text-white"
                   active-class="bg-gray-700"
@@ -53,7 +66,10 @@ const $router = useRouter();
               <li>
                 <RouterLink
                   :to="{
-                    name: '//todo/board',
+                    name: '//space/[space_id]/todo/board',
+                    params: {
+                      space_id: space.space_id,
+                    },
                   }"
                   class="group flex w-full items-center rounded-e-full p-2 pl-3 text-base text-gray-200 transition duration-75 hover:bg-gray-800 hover:text-white"
                   active-class="bg-gray-700"
@@ -68,7 +84,10 @@ const $router = useRouter();
               <li>
                 <RouterLink
                   :to="{
-                    name: '//todo/calendar',
+                    name: '//space/[space_id]/todo/calendar',
+                    params: {
+                      space_id: space.space_id,
+                    },
                   }"
                   class="group flex w-full items-center rounded-e-full p-2 pl-3 text-base text-gray-200 transition duration-75 hover:bg-gray-800 hover:text-white"
                   active-class="bg-gray-700"
@@ -83,7 +102,10 @@ const $router = useRouter();
               <li>
                 <RouterLink
                   :to="{
-                    name: '//todo/whiteboard',
+                    name: '//space/[space_id]/whiteboard',
+                    params: {
+                      space_id: space.space_id,
+                    },
                   }"
                   class="group flex w-full items-center rounded-e-full p-2 pl-3 text-base text-gray-200 transition duration-75 hover:bg-gray-800 hover:text-white"
                   active-class="bg-gray-700"
@@ -95,38 +117,45 @@ const $router = useRouter();
                   <span class="ms-2 capitalize">whiteboard</span>
                 </RouterLink>
               </li>
+              <li>
+                <RouterLink
+                  :to="{
+                    name: '//space/[space_id]/drive/',
+                    params: {
+                      space_id: space.space_id,
+                    },
+                  }"
+                  class="group flex w-full items-center rounded-e-full p-2 pl-3 text-base text-gray-200 transition duration-75 hover:bg-gray-800 hover:text-white"
+                  active-class="bg-gray-700"
+                >
+                  <span
+                    class="icon-[vaadin--folder-open] h-5 w-5 text-gray-200 transition duration-75 group-hover:text-white"
+                  >
+                  </span>
+                  <span class="ms-2 capitalize">drive</span>
+                </RouterLink>
+              </li>
+              <li>
+                <RouterLink
+                  :to="{
+                    name: '//space/[space_id]/chat',
+                    params: {
+                      space_id: space.space_id,
+                    },
+                  }"
+                  class="group flex w-full items-center rounded-e-full p-2 pl-3 text-base text-gray-200 transition duration-75 hover:bg-gray-800 hover:text-white"
+                  active-class="bg-gray-700"
+                >
+                  <span
+                    class="icon-[vaadin--chat] h-5 w-5 text-gray-200 transition duration-75 group-hover:text-white"
+                  >
+                  </span>
+                  <span class="ms-2 capitalize">chat</span>
+                </RouterLink>
+              </li>
             </ul>
           </li>
-          <li>
-            <RouterLink
-              :to="{
-                name: '//drive/',
-              }"
-              class="group flex w-full items-center rounded-e-full p-2 pl-3 text-base text-gray-200 transition duration-75 hover:bg-gray-800 hover:text-white"
-              active-class="bg-gray-700"
-            >
-              <span
-                class="icon-[vaadin--folder-open] h-5 w-5 text-gray-200 transition duration-75 group-hover:text-white"
-              >
-              </span>
-              <span class="ms-2 capitalize">drive</span>
-            </RouterLink>
-          </li>
-          <li>
-            <RouterLink
-              :to="{
-                name: '//chat',
-              }"
-              class="group flex w-full items-center rounded-e-full p-2 pl-3 text-base text-gray-200 transition duration-75 hover:bg-gray-800 hover:text-white"
-              active-class="bg-gray-700"
-            >
-              <span
-                class="icon-[vaadin--chat] h-5 w-5 text-gray-200 transition duration-75 group-hover:text-white"
-              >
-              </span>
-              <span class="ms-2 capitalize">chat</span>
-            </RouterLink>
-          </li>
+
           <li>
             <RouterLink
               :to="{

@@ -41,7 +41,7 @@ const { validateSubmit, ErrorMessage } = useVueValidateZod(
               try {
                 const { auth } = await trpc.auth.signin.mutate(modelValue);
                 if (auth) {
-                  router.push({ name: '//todo/list' });
+                  router.push({ name: '//space/' });
                   return;
                 }
               } finally {
@@ -53,7 +53,7 @@ const { validateSubmit, ErrorMessage } = useVueValidateZod(
                 onSuccess: resolve,
               }));
 
-              router.push({ name: '//todo/list' });
+              router.push({ name: '//space/' });
             })()
           "
         >

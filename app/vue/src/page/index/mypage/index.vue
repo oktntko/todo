@@ -121,7 +121,7 @@ async function handleFileInput(files?: FileList | null) {
           <div>
             <MySelect id="aichat_model" v-model="modelValue.aichat_model" class="flex min-w-60">
               <option
-                v-for="model in AichatModelList"
+                v-for="model of AichatModelList"
                 :key="model"
                 :value="model"
                 class="border border-gray-300 p-2 transition-colors"

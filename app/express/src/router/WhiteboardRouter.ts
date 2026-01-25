@@ -46,16 +46,6 @@ export const whiteboard = router({
       });
     }),
 
-  // whiteboard.upsert
-  upsert: protectedProcedure
-    .input(WhiteboardRouterSchema.upsertInput)
-    .output(WhiteboardRouterSchema.getOutput)
-    .mutation(async ({ ctx, input }) => {
-      return $transaction(ctx.prisma, async (prisma) => {
-        return WhiteboardService.upsertWhiteboard({ ...ctx, prisma }, input);
-      });
-    }),
-
   // whiteboard.delete
   delete: protectedProcedure
     .input(WhiteboardRouterSchema.deleteInput)
@@ -66,9 +56,19 @@ export const whiteboard = router({
       });
     }),
 
+  // whiteboard.applyChange
+  applyChange: protectedProcedure
+    .input(WhiteboardRouterSchema.applyChangeInput)
+    .output(WhiteboardRouterSchema.getOutput)
+    .mutation(async ({ ctx, input }) => {
+      return $transaction(ctx.prisma, async (prisma) => {
+        return WhiteboardService.applyChangeWhiteboard({ ...ctx, prisma }, input);
+      });
+    }),
+
   // whiteboard.reorder
   reorder: protectedProcedure
-    .input(WhiteboardRouterSchema.reorderInputList)
+    .input(WhiteboardRouterSchema.reorderInput)
     .output(OkSchema)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {

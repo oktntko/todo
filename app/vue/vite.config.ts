@@ -16,7 +16,7 @@ export default defineConfig({
   base: `${process.env['MODE'] === 'msw' ? '/todo' : ''}/`, // for GitHub Pages
   plugins: [
     VueRouter({
-      extensions: ['.vue'],
+      extensions: ['.vue', '.tsx'],
       routesFolder: 'src/page',
       exclude: ['**/component', '**/modal'],
       dts: 'src/vue-router.d.ts',
