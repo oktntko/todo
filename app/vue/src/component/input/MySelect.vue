@@ -7,7 +7,7 @@ interface Props extends /* @vue-ignore */ SelectHTMLAttributes {}
 defineProps<Props>();
 
 const modelValue = defineModel<string | number | null>({
-  required: true,
+  default: '',
 });
 </script>
 

@@ -40,6 +40,7 @@ declare module 'vue-router/auto-routes' {
       | '//space/[space_id]/chat'
       | '//space/[space_id]/drive/'
       | '//space/[space_id]/todo'
+      | '//space/[space_id]/todo/'
       | '//space/[space_id]/todo/board'
       | '//space/[space_id]/todo/calendar'
       | '//space/[space_id]/todo/list'
@@ -105,6 +106,7 @@ declare module 'vue-router/auto-routes' {
       | '//space/[space_id]/chat'
       | '//space/[space_id]/drive/'
       | '//space/[space_id]/todo'
+      | '//space/[space_id]/todo/'
       | '//space/[space_id]/todo/board'
       | '//space/[space_id]/todo/calendar'
       | '//space/[space_id]/todo/list'
@@ -129,6 +131,7 @@ declare module 'vue-router/auto-routes' {
       | '//space/[space_id]/chat'
       | '//space/[space_id]/drive/'
       | '//space/[space_id]/todo'
+      | '//space/[space_id]/todo/'
       | '//space/[space_id]/todo/board'
       | '//space/[space_id]/todo/calendar'
       | '//space/[space_id]/todo/list'
@@ -157,6 +160,7 @@ declare module 'vue-router/auto-routes' {
       '/space/:space_id/todo',
       { space_id: ParamValue<true> },
       { space_id: ParamValue<false> },
+      | '//space/[space_id]/todo/'
       | '//space/[space_id]/todo/board'
       | '//space/[space_id]/todo/calendar'
       | '//space/[space_id]/todo/list'
@@ -164,6 +168,13 @@ declare module 'vue-router/auto-routes' {
       | '//space/[space_id]/todo/table/'
       | '//space/[space_id]/todo/table/[todo_id]'
       | '//space/[space_id]/todo/table/add'
+    >,
+    '//space/[space_id]/todo/': RouteRecordInfo<
+      '//space/[space_id]/todo/',
+      '/space/:space_id/todo',
+      { space_id: ParamValue<true> },
+      { space_id: ParamValue<false> },
+      | never
     >,
     '//space/[space_id]/todo/board': RouteRecordInfo<
       '//space/[space_id]/todo/board',
@@ -257,7 +268,7 @@ declare module 'vue-router/auto-routes' {
    * @internal
    */
   export interface _RouteFileInfoMap {
-    'src/page/index.vue': {
+    'src/page/index.tsx': {
       routes:
         | '/'
         | '//mypage'
@@ -272,6 +283,7 @@ declare module 'vue-router/auto-routes' {
         | '//space/[space_id]/chat'
         | '//space/[space_id]/drive/'
         | '//space/[space_id]/todo'
+        | '//space/[space_id]/todo/'
         | '//space/[space_id]/todo/board'
         | '//space/[space_id]/todo/calendar'
         | '//space/[space_id]/todo/list'
@@ -283,7 +295,7 @@ declare module 'vue-router/auto-routes' {
       views:
         | 'default'
     }
-    'src/page/index/mypage.vue': {
+    'src/page/index/mypage.tsx': {
       routes:
         | '//mypage'
         | '//mypage/'
@@ -294,31 +306,31 @@ declare module 'vue-router/auto-routes' {
       views:
         | 'default'
     }
-    'src/page/index/mypage/index.vue': {
+    'src/page/index/mypage/index.tsx': {
       routes:
         | '//mypage/'
       views:
         | never
     }
-    'src/page/index/mypage/account.vue': {
+    'src/page/index/mypage/account.tsx': {
       routes:
         | '//mypage/account'
       views:
         | never
     }
-    'src/page/index/mypage/change-password.vue': {
+    'src/page/index/mypage/change-password.tsx': {
       routes:
         | '//mypage/change-password'
       views:
         | never
     }
-    'src/page/index/mypage/chat.vue': {
+    'src/page/index/mypage/chat.tsx': {
       routes:
         | '//mypage/chat'
       views:
         | never
     }
-    'src/page/index/mypage/security.vue': {
+    'src/page/index/mypage/security.tsx': {
       routes:
         | '//mypage/security'
       views:
@@ -332,6 +344,7 @@ declare module 'vue-router/auto-routes' {
         | '//space/[space_id]/chat'
         | '//space/[space_id]/drive/'
         | '//space/[space_id]/todo'
+        | '//space/[space_id]/todo/'
         | '//space/[space_id]/todo/board'
         | '//space/[space_id]/todo/calendar'
         | '//space/[space_id]/todo/list'
@@ -355,6 +368,7 @@ declare module 'vue-router/auto-routes' {
         | '//space/[space_id]/chat'
         | '//space/[space_id]/drive/'
         | '//space/[space_id]/todo'
+        | '//space/[space_id]/todo/'
         | '//space/[space_id]/todo/board'
         | '//space/[space_id]/todo/calendar'
         | '//space/[space_id]/todo/list'
@@ -366,21 +380,22 @@ declare module 'vue-router/auto-routes' {
       views:
         | 'default'
     }
-    'src/page/index/space/[space_id]/chat.vue': {
+    'src/page/index/space/[space_id]/chat.tsx': {
       routes:
         | '//space/[space_id]/chat'
       views:
         | never
     }
-    'src/page/index/space/[space_id]/drive/index.vue': {
+    'src/page/index/space/[space_id]/drive/index.tsx': {
       routes:
         | '//space/[space_id]/drive/'
       views:
         | never
     }
-    'src/page/index/space/[space_id]/todo.vue': {
+    'src/page/index/space/[space_id]/todo.tsx': {
       routes:
         | '//space/[space_id]/todo'
+        | '//space/[space_id]/todo/'
         | '//space/[space_id]/todo/board'
         | '//space/[space_id]/todo/calendar'
         | '//space/[space_id]/todo/list'
@@ -391,25 +406,31 @@ declare module 'vue-router/auto-routes' {
       views:
         | 'default'
     }
-    'src/page/index/space/[space_id]/todo/board.vue': {
+    'src/page/index/space/[space_id]/todo/index.tsx': {
+      routes:
+        | '//space/[space_id]/todo/'
+      views:
+        | never
+    }
+    'src/page/index/space/[space_id]/todo/board.tsx': {
       routes:
         | '//space/[space_id]/todo/board'
       views:
         | never
     }
-    'src/page/index/space/[space_id]/todo/calendar.vue': {
+    'src/page/index/space/[space_id]/todo/calendar.tsx': {
       routes:
         | '//space/[space_id]/todo/calendar'
       views:
         | never
     }
-    'src/page/index/space/[space_id]/todo/list.vue': {
+    'src/page/index/space/[space_id]/todo/list.tsx': {
       routes:
         | '//space/[space_id]/todo/list'
       views:
         | never
     }
-    'src/page/index/space/[space_id]/todo/table.vue': {
+    'src/page/index/space/[space_id]/todo/table.tsx': {
       routes:
         | '//space/[space_id]/todo/table'
         | '//space/[space_id]/todo/table/'
@@ -418,43 +439,43 @@ declare module 'vue-router/auto-routes' {
       views:
         | 'default'
     }
-    'src/page/index/space/[space_id]/todo/table/index.vue': {
+    'src/page/index/space/[space_id]/todo/table/index.tsx': {
       routes:
         | '//space/[space_id]/todo/table/'
       views:
         | never
     }
-    'src/page/index/space/[space_id]/todo/table/[todo_id].vue': {
+    'src/page/index/space/[space_id]/todo/table/[todo_id].tsx': {
       routes:
         | '//space/[space_id]/todo/table/[todo_id]'
       views:
         | never
     }
-    'src/page/index/space/[space_id]/todo/table/add.vue': {
+    'src/page/index/space/[space_id]/todo/table/add.tsx': {
       routes:
         | '//space/[space_id]/todo/table/add'
       views:
         | never
     }
-    'src/page/index/space/[space_id]/whiteboard.vue': {
+    'src/page/index/space/[space_id]/whiteboard.tsx': {
       routes:
         | '//space/[space_id]/whiteboard'
       views:
         | never
     }
-    'src/page/(auth)/signin.vue': {
+    'src/page/(auth)/signin.tsx': {
       routes:
         | '/(auth)/signin'
       views:
         | never
     }
-    'src/page/(auth)/signup.vue': {
+    'src/page/(auth)/signup.tsx': {
       routes:
         | '/(auth)/signup'
       views:
         | never
     }
-    'src/page/[...404].vue': {
+    'src/page/[...404].tsx': {
       routes:
         | '/[...404]'
       views:

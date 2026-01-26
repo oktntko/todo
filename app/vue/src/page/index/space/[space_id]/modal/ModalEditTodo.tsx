@@ -1,71 +1,75 @@
 import { R } from '@todo/lib/remeda';
+import { defineComponent, ref } from 'vue';
+import MyButton from '~/component/button/MyButton.tsx';
 import type { DownloadFile } from '~/component/MyDownloadFileList.vue';
 import { trpc, type RouterOutput } from '~/lib/trpc';
+import { satisfiesKeys, type EmitsType } from '~/lib/vue.ts';
 import { useDialog } from '~/plugin/DialogPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
-import TodoForm, { type ModelValue } from '../component/TodoForm.vue';
+import TodoForm, { type ModelValue } from '../component/TodoForm.tsx';
+
+type Props = {
+  space_id: string;
+  todo_id: string;
+};
+const props = satisfiesKeys<Props>()('space_id', 'todo_id');
 
 export type ModalEditTodoResult =
   | { event: 'update'; todo: RouterOutput['todo']['update'] }
   | { event: 'delete'; todo: RouterOutput['todo']['delete'] };
+const emits = {
+  done: (_: ModalEditTodoResult) => true,
+} satisfies EmitsType;
 
-const $emit = defineEmits<{
-  done: [ModalEditTodoResult];
-}>();
+export default defineComponent(
+  async ($props: Props, { emit: $emit }) => {
+    const $toast = useToast();
+    const $dialog = useDialog();
 
-const $toast = useToast();
-const $dialog = useDialog();
+    const todo = await trpc.todo.get.query({ todo_id: $props.todo_id });
 
-const props = defineProps<{
-  space_id: string;
-  todo_id: string;
-}>();
+    const modelValue = ref<ModelValue>(R.omit(todo, ['file_list', 'group']));
+    const modelValueFileList = ref<DownloadFile[]>(todo.file_list);
+    const updated_at = todo.updated_at;
 
-const todo = await trpc.todo.get.query({ todo_id: props.todo_id });
+    async function handleSubmit(input: ModelValue) {
+      const loading = $dialog.loading();
+      try {
+        const todo = await trpc.todo.update.mutate({
+          ...input,
+          todo_id: $props.todo_id,
+          updated_at,
+        });
 
-const modelValue = ref<ModelValue>(R.omit(todo, ['file_list', 'group']));
-const modelValueFileList = ref<DownloadFile[]>(todo.file_list);
-const updated_at = todo.updated_at;
+        $toast.success('Todo has been saved.');
 
-async function handleSubmit(input: ModelValue) {
-  const loading = $dialog.loading();
-  try {
-    const todo = await trpc.todo.update.mutate({
-      ...input,
-      todo_id: props.todo_id,
-      updated_at,
-    });
-
-    $toast.success('Todo has been saved.');
-
-    $emit('done', { event: 'update', todo });
-  } finally {
-    loading.close();
-  }
-}
-
-(
-  <div class="rounded-lg bg-gray-100 p-8 text-gray-900 shadow-xl">
-    <header class="mb-4 text-lg font-bold capitalize">edit todo</header>
-    <TodoForm
-      v-model="modelValue"
-      v-model:file_list="modelValueFileList"
-      :space_id="space_id"
-      :todo_id="todo_id"
-      @submit="handleSubmit"
-    >
-      <template #buttons>
-        <MyButton
-          type="button"
-          color="yellow"
-          variant="outlined"
-          @click="
-            async () => {
+        $emit('done', { event: 'update', todo });
+      } finally {
+        loading.close();
+      }
+    }
+    return () => (
+      <div class="rounded-lg bg-gray-100 p-8 text-gray-900 shadow-xl">
+        <header class="mb-4 text-lg font-bold capitalize">edit todo</header>
+        <TodoForm
+          modelValue={modelValue.value}
+          onUpdate:modelValue={(v) => (modelValue.value = v)}
+          modelValueFileList={modelValueFileList.value}
+          onUpdate:modelValueFileList={(v) => (modelValueFileList.value = v)}
+          space_id={$props.space_id}
+          todo_id={$props.todo_id}
+          onSubmit={handleSubmit}
+        >
+          <MyButton
+            type="button"
+            color="yellow"
+            variant="outlined"
+            onClick={async () => {
               await $dialog.confirm.warn(`Do you really want to delete this data?`);
 
               const loading = $dialog.loading();
               try {
-                const todo = await trpc.todo.delete.mutate({ todo_id, updated_at });
+                const todo = await trpc.todo.delete.mutate({ todo_id: $props.todo_id, updated_at });
 
                 $toast.success('Todo have been deleted.');
 
@@ -73,12 +77,16 @@ async function handleSubmit(input: ModelValue) {
               } finally {
                 loading.close();
               }
-            }
-          "
-        >
-          <span class="capitalize">delete</span>
-        </MyButton>
-      </template>
-    </TodoForm>
-  </div>
-)
+            }}
+          >
+            <span class="capitalize">delete</span>
+          </MyButton>
+        </TodoForm>
+      </div>
+    );
+  },
+  {
+    props,
+    emits,
+  },
+);

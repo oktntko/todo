@@ -1,8 +1,11 @@
 <script setup lang="ts">
+import { useAttrs } from 'vue';
+
 // https://ja.vuejs.org/guide/components/attrs.html#disabling-attribute-inheritance
 defineOptions({ inheritAttrs: false });
 
 defineProps<{
+  id?: string;
   type: 'checkbox' | 'radio';
   value?: boolean | string | number;
 }>();
@@ -13,12 +16,9 @@ const modelValue = defineModel<boolean | string | number | (string | number)[]>(
 </script>
 
 <template>
-  <label
-    :for="($attrs.id as string) ?? undefined"
-    class="flex items-center gap-1 text-sm font-medium text-gray-900"
-  >
+  <label :for="id" class="flex items-center gap-1 text-sm font-medium text-gray-900">
     <input
-      v-bind="$attrs"
+      v-bind="{ ...$attrs, id }"
       v-model="modelValue"
       :type="type"
       :value="value"

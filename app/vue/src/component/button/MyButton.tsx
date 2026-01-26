@@ -8,18 +8,18 @@ type Props<T extends Tag> = T extends keyof IntrinsicElementAttributes
   : RouterLinkProps;
 
 export default function MyButton<T extends Tag = 'button'>(
-  props: {
+  $props: {
     tag?: T;
     color?: 'white' | 'gray' | 'green' | 'red' | 'blue' | 'yellow';
     variant?: 'outlined' | 'contained';
   } & Props<T>,
-  { slots }: { slots: { default?: () => VNode[] } },
+  { slots: $slots }: { slots: { default?: () => VNode[] } },
 ) {
-  const { tag: Tag = 'button', color = 'white', variant = 'outlined', ...rest } = props;
+  const { tag: Tag = 'button', color = 'white', variant = 'outlined', ...restProps } = $props;
 
   return (
     <Tag
-      {...rest}
+      {...restProps}
       class={[
         'inline-flex items-center justify-center gap-0.5 transition',
         'min-w-28 rounded-md border px-4 py-2 text-sm hover:ring-2 focus:ring-2 focus:outline-none',
@@ -50,7 +50,7 @@ export default function MyButton<T extends Tag = 'button'>(
             : 'border-transparent bg-yellow-600 text-white hover:bg-yellow-700 hover:ring-yellow-800 focus:ring-yellow-800'),
       ]}
     >
-      {slots.default?.()}
+      {$slots.default?.()}
     </Tag>
   );
 }

@@ -12,7 +12,7 @@ defineEmits<{
   deleted: [number];
 }>();
 
-const file_list = defineModel<DownloadFile[]>('file_list', {
+const modelValueFileList = defineModel<DownloadFile[]>('modelValueFileList', {
   required: false,
   default: () => [],
 });
@@ -23,7 +23,7 @@ const { downloadSingleFile } = useFile();
 <template>
   <ul class="flex flex-wrap" :class="['flex-col gap-1 lg:flex-row lg:gap-2']" @click.stop>
     <li
-      v-for="(file, i) of file_list"
+      v-for="(file, i) of modelValueFileList"
       :key="file.file_id"
       class="inline-flex flex-row items-center gap-0.5 text-sm"
     >
@@ -49,7 +49,7 @@ const { downloadSingleFile } = useFile();
             try {
               await trpc.file.delete.mutate(file);
 
-              file_list = file_list.filter((x) => x.file_id !== file.file_id);
+              modelValueFileList = modelValueFileList.filter((x) => x.file_id !== file.file_id);
 
               $emit('deleted', i);
               $toast.success('Data has been deleted.');

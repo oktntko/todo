@@ -1,8 +1,5 @@
-export default defineComponent(
-  async () => {
-    return () => <div>space index</div>;
-  },
-  {
-    props: [],
-  },
-);
+import { defineComponent } from 'vue';
+
+export default defineComponent(() => {
+  return () => <div />;
+});

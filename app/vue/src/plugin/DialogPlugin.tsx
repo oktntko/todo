@@ -15,6 +15,7 @@ import {
 import type { ComponentProps } from 'vue-component-type-helpers';
 import MyButton from '~/component/button/MyButton';
 import MyInput from '~/component/input/MyInput.vue';
+import { satisfiesKeys, type EmitsType } from '~/lib/vue';
 
 type DialogPlugin = ReturnType<typeof installDialogPlugin>;
 
@@ -77,7 +78,7 @@ function installDialogPlugin(parentApp: App) {
 
   async function showModal<T, C extends Component>(
     component: C,
-    props?: (
+    $props?: (
       resolve: (value: T | PromiseLike<T>) => void,
       reject: (reason?: unknown) => void,
     ) => ComponentProps<C>,
@@ -113,7 +114,7 @@ function installDialogPlugin(parentApp: App) {
       // vue アプリを作る
       app = createApp(DialogApp, {
         component,
-        componentProps: props?.(
+        componentProps: $props?.(
           function trapResolve(value: T | PromiseLike<T>) {
             dialog.close('cancel');
             return resolve(value);
@@ -137,7 +138,7 @@ function installDialogPlugin(parentApp: App) {
            * | dialog.close("foo")    | "foo"                      |
            * | Esc                    | "cancel"                   |
            * | <form method="dialog"> | button.value               |
-           * | 外側クリック           | "cancel"（多くのブラウザ） |
+           * | 外側クリック           | ""（多くのブラウザ）       |
            */
 
           // 開いてから素早く閉じると transitionend が発火しないことがある
@@ -161,7 +162,7 @@ function installDialogPlugin(parentApp: App) {
             { once: true },
           );
 
-          return reject(dialog.returnValue);
+          return reject(dialog.returnValue || 'cancel');
         },
         { once: true },
       );
@@ -330,13 +331,20 @@ function installDialogPlugin(parentApp: App) {
   };
 }
 
+type DialogAppProps<C extends Component> = {
+  component: C;
+  componentProps: ComponentProps<C>;
+  close: () => void;
+};
+const dialogAppProps = satisfiesKeys<DialogAppProps<Component>>()(
+  'component',
+  'componentProps',
+  'close',
+);
+
 const DialogApp = defineComponent(
-  <C extends Component>(props: {
-    component: C;
-    componentProps: ComponentProps<C>;
-    close: () => void;
-  }) => {
-    const { component: Component, componentProps, close } = props;
+  <C extends Component>($props: DialogAppProps<C>) => {
+    const { component: Component, componentProps, close } = $props;
 
     const state = ref<'' | 'pending' | 'fallback' | 'resolve'>('');
     onErrorCaptured(() => {
@@ -352,9 +360,9 @@ const DialogApp = defineComponent(
         {/* dialog 本体のアニメーションと合わせる */}
         <Transition
           mode="out-in"
-          enterFromClass="scale-95 opacity-0"
-          enterActiveClass="transition transition-discrete duration-200 ease-out"
-          enterToClass="scale-100 opacity-100"
+          enter-from-class="scale-95 opacity-0"
+          enter-active-class="transition transition-discrete duration-200 ease-out"
+          enter-to-class="scale-100 opacity-100"
         >
           <Suspense
             v-slots={{
@@ -384,7 +392,7 @@ const DialogApp = defineComponent(
     );
   },
   {
-    props: ['component', 'componentProps', 'close'],
+    props: dialogAppProps,
   },
 );
 
@@ -398,25 +406,37 @@ type WindowDialogOptions = {
   prompt?: InputHTMLAttributes;
 };
 
+type WindowDialogProps = {
+  message: string;
+  color?: ColorType;
+  confirmText?: string;
+  confirmValue?: string;
+  cancelText?: string;
+  prompt?: InputHTMLAttributes;
+};
+const windowDialogProps = satisfiesKeys<WindowDialogProps>()(
+  'message',
+  'color',
+  'confirmText',
+  'confirmValue',
+  'cancelText',
+  'prompt',
+);
+
+const emits = {
+  confirm: (_: string) => true,
+  cancel: () => true,
+} satisfies EmitsType;
+
 const WindowDialog = defineComponent(
-  (
-    props: {
-      message: string;
-      color?: ColorType;
-      confirmText?: string;
-      confirmValue?: string;
-      cancelText?: string;
-      prompt?: InputHTMLAttributes;
-    },
-    { emit: $emit },
-  ) => {
+  ($props: WindowDialogProps, { emit: $emit }) => {
     const {
       message,
       color = 'white',
       confirmText = 'confirm',
       confirmValue = 'confirm',
-      ...$props
-    } = props;
+      ...restProps
+    } = $props;
 
     const icon = computed(() => {
       switch (color) {
@@ -443,7 +463,7 @@ const WindowDialog = defineComponent(
           class="flex flex-col gap-6"
           onSubmit={(e) => {
             e.preventDefault();
-            $emit('confirm', $props.prompt ? `confirm:${modelValue.value}` : confirmValue);
+            $emit('confirm', restProps.prompt ? `confirm:${modelValue.value}` : confirmValue);
           }}
         >
           <main class="flex items-center gap-4">
@@ -463,11 +483,11 @@ const WindowDialog = defineComponent(
 
             <div class="flex flex-col gap-2">
               <p class="text-sm whitespace-pre-wrap">{message}</p>
-              {$props.prompt && (
+              {restProps.prompt && (
                 <MyInput
                   v-model={modelValue.value}
                   class="w-full"
-                  {...$props.prompt}
+                  {...restProps.prompt}
                   autofocus
                   required
                 />
@@ -479,9 +499,9 @@ const WindowDialog = defineComponent(
             <MyButton type="submit" autofocus color={color ?? 'white'}>
               <span class="capitalize">{confirmText}</span>
             </MyButton>
-            {$props.cancelText && (
+            {restProps.cancelText && (
               <MyButton type="button" color="white" onClick={() => $emit('cancel')}>
-                <span class="capitalize">{$props.cancelText}</span>
+                <span class="capitalize">{restProps.cancelText}</span>
               </MyButton>
             )}
           </footer>
@@ -490,10 +510,7 @@ const WindowDialog = defineComponent(
     );
   },
   {
-    props: ['message', 'color', 'confirmText', 'confirmValue', 'cancelText', 'prompt'],
-    emits: {
-      confirm: (_: string) => true,
-      cancel: () => true,
-    },
+    props: windowDialogProps,
+    emits,
   },
 );

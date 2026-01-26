@@ -1,3 +1,5 @@
+import { defineStore } from 'pinia';
+import { ref } from 'vue';
 import { trpc, type RouterOutput } from '~/lib/trpc';
 
 export const useMypageStore = defineStore('mypage', () => {

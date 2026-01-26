@@ -4,11 +4,7 @@ import { defineConfig } from 'vitest/config';
 import tailwindcss from '@tailwindcss/vite';
 import Vue from '@vitejs/plugin-vue';
 import VueJsx from '@vitejs/plugin-vue-jsx';
-import AutoImport from 'unplugin-auto-import/vite';
 import Unfonts from 'unplugin-fonts/vite';
-import { VueUseComponentsResolver } from 'unplugin-vue-components/resolvers';
-import VueComponents from 'unplugin-vue-components/vite';
-import { VueRouterAutoImports } from 'unplugin-vue-router';
 import VueRouter from 'unplugin-vue-router/vite';
 
 // https://vitejs.dev/config/
@@ -34,17 +30,6 @@ export default defineConfig({
       fontsource: {
         families: ['Noto Sans JP Variable', 'M PLUS 1 Code Variable'],
       },
-    }),
-    AutoImport({
-      imports: ['vue', VueRouterAutoImports, 'pinia', '@vueuse/core'],
-      vueTemplate: true,
-      dts: 'src/vue-auto-import.d.ts',
-    }),
-    VueComponents({
-      dirs: ['src/component', 'src/plugin/component'],
-      extensions: ['vue', 'tsx'],
-      resolvers: [VueUseComponentsResolver()],
-      dts: 'src/vue-components.d.ts',
     }),
     tailwindcss(),
   ],

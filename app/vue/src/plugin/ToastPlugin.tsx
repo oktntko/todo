@@ -1,11 +1,14 @@
 import {
+  createApp,
   defineComponent,
   inject,
   onMounted,
+  ref,
   useTemplateRef,
   type App,
   type InjectionKey,
 } from 'vue';
+import { satisfiesKeys, type EmitsType } from '~/lib/vue';
 
 type ToastPlugin = ReturnType<typeof installToastPlugin>;
 
@@ -44,11 +47,11 @@ function installToastPlugin() {
 
   document.body.appendChild(container);
 
-  function open(props: { message: string; color: ColorType }) {
+  function open($props: ToastContentAppProps) {
     const parent = document.createElement('div');
 
     const app: App<Element> = createApp(ToastContentApp, {
-      ...props,
+      ...$props,
       onClose() {
         clearTimeout(timerId);
         app.unmount();
@@ -85,10 +88,20 @@ function installToastPlugin() {
   };
 }
 
+type ToastContentAppProps = {
+  message: string;
+  color: ColorType;
+};
+const toastContentAppProps = satisfiesKeys<ToastContentAppProps>()('message', 'color');
+
+const emits = {
+  close: () => true,
+} satisfies EmitsType;
+
 const ToastContentApp = defineComponent(
-  (props: { message: string; color: ColorType }, { emit: $emit }) => {
+  ($props: ToastContentAppProps, { emit: $emit }) => {
     const contentColor = (() => {
-      switch (props.color) {
+      switch ($props.color) {
         case 'green':
           return 'border-green-300 text-green-800';
         case 'blue':
@@ -107,7 +120,7 @@ const ToastContentApp = defineComponent(
     })();
 
     const iconContainerColor = (() => {
-      switch (props.color) {
+      switch ($props.color) {
         case 'green':
           return 'bg-green-100 text-green-800';
         case 'blue':
@@ -126,7 +139,7 @@ const ToastContentApp = defineComponent(
     })();
 
     const icon = (() => {
-      switch (props.color) {
+      switch ($props.color) {
         case 'green':
           return 'icon-[qlementine-icons--success-12]';
         case 'blue':
@@ -194,7 +207,7 @@ const ToastContentApp = defineComponent(
           <span class={['h-4 w-4', icon]}></span>
         </div>
 
-        <span class="text-sm leading-relaxed whitespace-pre-wrap">{props.message}</span>
+        <span class="text-sm leading-relaxed whitespace-pre-wrap">{$props.message}</span>
 
         <button
           type="button"
@@ -211,9 +224,7 @@ const ToastContentApp = defineComponent(
     );
   },
   {
-    props: ['message', 'color'],
-    emits: {
-      close: () => true,
-    },
+    props: toastContentAppProps,
+    emits,
   },
 );

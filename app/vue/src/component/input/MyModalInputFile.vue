@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+
 // https://ja.vuejs.org/guide/components/attrs.html#disabling-attribute-inheritance
 defineOptions({ inheritAttrs: false });
 
