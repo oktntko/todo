@@ -1,11 +1,14 @@
+import type { z } from '@todo/lib/zod';
+
 import { TodoRouterSchema } from '@todo/express/schema';
 import { R } from '@todo/lib/remeda';
-import type { z } from '@todo/lib/zod';
 import Sortable from 'sortablejs';
 import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import { defineComponent, nextTick, onMounted, ref } from 'vue';
+
 import { trpc, type RouterOutput } from '~/lib/trpc';
 import { satisfiesKeys, type EmitsType } from '~/lib/vue.ts';
+
 import DynamicTodoForm, { type DynamicTodoModel } from './DynamicTodoForm.tsx';
 
 type Props = {

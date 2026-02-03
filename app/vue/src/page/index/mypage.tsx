@@ -1,5 +1,6 @@
 import { defineComponent } from 'vue';
 import { RouterLink, RouterView } from 'vue-router';
+
 import { useMypageStore } from '~/store/MypageStore';
 
 export default defineComponent(async () => {

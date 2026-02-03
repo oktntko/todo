@@ -1,5 +1,6 @@
 import type { FileRouterSchema } from '@todo/express/schema';
 import type { z } from '@todo/lib/zod';
+
 import { axios, saveAsFile } from '~/lib/axios';
 import { useDialog } from '~/plugin/DialogPlugin';
 
@@ -20,9 +21,10 @@ export function useFile() {
 
     const loading = $dialog.loading();
     return axios
-      .post<
-        z.infer<typeof FileRouterSchema.getOutput>
-      >('/api/file/upload/single', multipartFormData)
+      .post<z.infer<typeof FileRouterSchema.getOutput>>(
+        '/api/file/upload/single',
+        multipartFormData,
+      )
       .finally(loading.close);
   }
 
@@ -44,9 +46,10 @@ export function useFile() {
 
     const loading = $dialog.loading();
     return axios
-      .post<
-        z.infer<typeof FileRouterSchema.getOutput>[]
-      >('/api/file/upload/many', multipartFormData)
+      .post<z.infer<typeof FileRouterSchema.getOutput>[]>(
+        '/api/file/upload/many',
+        multipartFormData,
+      )
       .finally(loading.close);
   }
 

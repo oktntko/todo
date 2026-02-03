@@ -1,8 +1,11 @@
 import { storeToRefs } from 'pinia';
 import { defineComponent, ref } from 'vue';
 import { useRoute } from 'vue-router';
+
 import type { RouterOutput } from '~/lib/trpc';
+
 import { useGroupStore } from '~/store/GroupStore';
+
 import Group from '../component/Group.tsx';
 import GroupList from '../component/GroupList.tsx';
 
@@ -24,7 +27,7 @@ export default defineComponent(() => {
         type="radio"
       ></GroupList>
 
-      {/* 
+      {/*
       w-[calc(100vw-224px-224px-10px)]
       224px: グローバルメニュー
       224px: GroupList

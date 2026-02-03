@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils';
 import { describe, expect, test, vi } from 'vitest';
+
 import { MimetypeIcon, MimetypePreview } from '~/component/Mimetype';
 
 // cSpell:ignore msword openxmlformats officedocument wordprocessingml spreadsheetml presentationml gltf

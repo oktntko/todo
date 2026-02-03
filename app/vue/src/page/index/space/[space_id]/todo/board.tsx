@@ -1,8 +1,11 @@
 import { storeToRefs } from 'pinia';
 import { defineComponent, ref } from 'vue';
 import { useRoute } from 'vue-router';
+
 import { useGroupStore } from '~/store/GroupStore';
+
 import type { DynamicTodoModel } from '../component/DynamicTodoForm.tsx';
+
 import Group from '../component/Group.tsx';
 import GroupList from '../component/GroupList.tsx';
 
@@ -39,7 +42,7 @@ export default defineComponent(() => {
         type="checkbox"
       ></GroupList>
 
-      {/* 
+      {/*
       w-[calc(100vw-224px-224px-10px)]
       224px: グローバルメニュー
       224px: GroupList

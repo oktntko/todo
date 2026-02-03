@@ -1,3 +1,5 @@
+import type { ComponentProps } from 'vue-component-type-helpers';
+
 import {
   computed,
   createApp,
@@ -12,7 +14,7 @@ import {
   type InjectionKey,
   type InputHTMLAttributes,
 } from 'vue';
-import type { ComponentProps } from 'vue-component-type-helpers';
+
 import MyButton from '~/component/button/MyButton';
 import MyInput from '~/component/input/MyInput.vue';
 import { satisfiesKeys, type EmitsType } from '~/lib/vue';

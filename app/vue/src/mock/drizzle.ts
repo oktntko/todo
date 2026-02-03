@@ -1,6 +1,8 @@
-import { PGlite } from '@electric-sql/pglite';
 import type { MigrationConfig } from 'drizzle-orm/migrator';
+
+import { PGlite } from '@electric-sql/pglite';
 import { drizzle as pglite } from 'drizzle-orm/pglite';
+
 import migrations from './migrations.json';
 import { schema } from './schema';
 

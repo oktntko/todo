@@ -2,9 +2,11 @@ import { dayjs } from '@todo/lib/dayjs';
 import Sortable from 'sortablejs';
 import { defineComponent, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
+
 import { trpc, type RouterOutput } from '~/lib/trpc';
 import { useDialog } from '~/plugin/DialogPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
+
 import WhiteboardCanvas from './component/WhiteboardCanvas.tsx';
 import ModalEditWhiteboard, {
   type ModalEditWhiteboardResult,

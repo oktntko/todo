@@ -1,6 +1,7 @@
 import { useTitle } from '@vueuse/core';
 import { defineComponent } from 'vue';
 import { RouterLink } from 'vue-router';
+
 import MyButton from '~/component/button/MyButton.tsx';
 
 export default defineComponent(() => {

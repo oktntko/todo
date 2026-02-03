@@ -8,6 +8,7 @@ import {
   type App,
   type InjectionKey,
 } from 'vue';
+
 import { satisfiesKeys, type EmitsType } from '~/lib/vue';
 
 type ToastPlugin = ReturnType<typeof installToastPlugin>;

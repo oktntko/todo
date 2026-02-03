@@ -2,6 +2,7 @@ import { R } from '@todo/lib/remeda';
 import { useElementSize, useVModel } from '@vueuse/core';
 import * as fabric from 'fabric';
 import { defineComponent, onMounted, ref, Teleport, useTemplateRef, watch } from 'vue';
+
 import { trpc, type RouterOutput } from '~/lib/trpc';
 import { satisfiesKeys, type EmitsType } from '~/lib/vue';
 

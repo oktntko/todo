@@ -1,5 +1,6 @@
 import { defineComponent, Suspense, Transition, type DefineComponent } from 'vue';
 import { RouterView, useRoute } from 'vue-router';
+
 import { useGroupStore } from '~/store/GroupStore';
 
 export default defineComponent(async () => {

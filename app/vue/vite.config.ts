@@ -1,11 +1,10 @@
-import { fileURLToPath, URL } from 'node:url';
-import { defineConfig } from 'vitest/config';
-
 import tailwindcss from '@tailwindcss/vite';
 import Vue from '@vitejs/plugin-vue';
 import VueJsx from '@vitejs/plugin-vue-jsx';
+import { fileURLToPath, URL } from 'node:url';
 import Unfonts from 'unplugin-fonts/vite';
 import VueRouter from 'unplugin-vue-router/vite';
+import { defineConfig } from 'vitest/config';
 
 // https://vitejs.dev/config/
 export default defineConfig({

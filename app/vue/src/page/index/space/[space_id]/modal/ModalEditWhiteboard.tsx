@@ -1,10 +1,13 @@
 import { defineComponent, ref } from 'vue';
-import MyButton from '~/component/button/MyButton.tsx';
+
 import type { RouterOutput } from '~/lib/trpc';
+
+import MyButton from '~/component/button/MyButton.tsx';
 import { trpc } from '~/lib/trpc';
 import { satisfiesKeys, type EmitsType } from '~/lib/vue.ts';
 import { useDialog } from '~/plugin/DialogPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
+
 import WhiteboardForm, {
   type ModelValue,
   type WhiteboardFormSlots,

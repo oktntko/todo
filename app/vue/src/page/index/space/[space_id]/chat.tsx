@@ -1,6 +1,8 @@
-import { MessageSchema } from '@todo/express/schema';
 import type { z } from '@todo/lib/zod';
+
+import { MessageSchema } from '@todo/express/schema';
 import { defineComponent, onMounted, ref } from 'vue';
+
 import { trpc, type RouterOutput } from '~/lib/trpc';
 import { useDialog } from '~/plugin/DialogPlugin';
 

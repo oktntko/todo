@@ -8,5 +8,5 @@
   "experimentalSortImports": {},
   "experimentalTailwindcss": {},
   "experimentalSortPackageJson": true,
-  "ignorePatterns": []
+  "ignorePatterns": ["app/vue/drizzle/meta/", "mockServiceWorker.js", "vue-router.d.ts"]
 }

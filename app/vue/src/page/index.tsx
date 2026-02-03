@@ -1,5 +1,6 @@
 import { defineComponent, onMounted, Suspense, Transition, type DefineComponent } from 'vue';
 import { RouterLink, RouterView, useRouter } from 'vue-router';
+
 import { trpc } from '~/lib/trpc';
 import { useSpaceStore } from '~/store/SpaceStore';
 

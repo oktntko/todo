@@ -1,9 +1,11 @@
-import { z } from '@todo/lib/zod';
 import type { Prisma, User } from '@todo/prisma/client';
+import type { Request, Response } from 'express';
+
+import { z } from '@todo/lib/zod';
 import { UserSchema } from '@todo/prisma/schema';
 import { CreateExpressContextOptions } from '@trpc/server/adapters/express';
-import type { Request, Response } from 'express';
 import { SessionData } from 'express-session';
+
 import { HashPassword } from '~/lib/secret';
 import {
   ExtendsPrismaClient,

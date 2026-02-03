@@ -1,6 +1,10 @@
 {
   "name": "@todo/prisma",
   "version": "1.0.0",
+  "files": [
+    "dist",
+    "package.json"
+  ],
   "type": "module",
   "exports": {
     "./client": {
@@ -12,10 +16,6 @@
       "default": "./dist/schema/index.mjs"
     }
   },
-  "files": [
-    "dist",
-    "package.json"
-  ],
   "scripts": {
     "build": "tsdown",
     "type-check": "tsc --project tsconfig.base.json --noEmit",

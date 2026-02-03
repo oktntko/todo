@@ -1,12 +1,15 @@
 import { storeToRefs } from 'pinia';
 import { defineComponent, ref } from 'vue';
-import MyButton from '~/component/button/MyButton';
+
 import type { RouterOutput } from '~/lib/trpc';
+
+import MyButton from '~/component/button/MyButton';
 import { trpc } from '~/lib/trpc';
 import { satisfiesKeys, type EmitsType } from '~/lib/vue.ts';
 import { useDialog } from '~/plugin/DialogPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
 import { useGroupStore } from '~/store/GroupStore';
+
 import GroupForm, { type GroupFormSlots, type ModelValue } from '../component/GroupForm.tsx';
 
 type Props = {
