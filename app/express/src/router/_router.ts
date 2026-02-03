@@ -40,7 +40,7 @@ export const createCaller = createCallerFactory(TrpcRouter);
 export type TrpcPaths = DotTrpcKeys<(typeof TrpcRouter)['_def']['record']>;
 
 type IsProcedure<T> = T extends {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   _def: any;
 }
   ? true

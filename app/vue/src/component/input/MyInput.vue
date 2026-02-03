@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { InputHTMLAttributes } from 'vue';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface Props extends /* @vue-ignore */ InputHTMLAttributes {}
 
 defineProps<Props>();

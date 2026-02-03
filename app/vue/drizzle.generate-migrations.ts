@@ -1,3 +1,4 @@
+// oxlint-disable no-console
 import { readMigrationFiles } from 'drizzle-orm/migrator';
 import fs from 'node:fs';
 

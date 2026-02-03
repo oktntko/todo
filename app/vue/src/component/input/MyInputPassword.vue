@@ -4,7 +4,6 @@ import { ref, type InputHTMLAttributes } from 'vue';
 // https://ja.vuejs.org/guide/components/attrs.html#disabling-attribute-inheritance
 defineOptions({ inheritAttrs: false });
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface Props extends /* @vue-ignore */ InputHTMLAttributes {}
 
 defineProps<Props>();

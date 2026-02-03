@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { TextareaHTMLAttributes } from 'vue';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface Props extends /* @vue-ignore */ Omit<TextareaHTMLAttributes, 'value'> {}
 
 defineProps<Props>();

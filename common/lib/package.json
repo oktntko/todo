@@ -23,8 +23,8 @@
   "scripts": {
     "build": "tsdown",
     "type-check": "tsc --project tsconfig.base.json --noEmit",
-    "lint": "eslint src/ --max-warnings 0",
-    "format": "prettier src/ --write",
+    "lint": "oxlint --type-aware --type-check",
+    "format": "oxfmt",
     "test": "vitest run",
     "test:preview": "vitest --ui"
   },
