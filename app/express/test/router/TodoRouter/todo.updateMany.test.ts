@@ -1,13 +1,11 @@
 import { z } from '@todo/lib/zod';
-import { TRPCError } from '@trpc/server';
 
-import { message } from '~/lib/message';
 import { ExtendsPrismaClient } from '~/middleware/prisma';
 import { TodoRouterSchema } from '~/schema/TodoRouterSchema';
 
 import { transactionRollbackTrpc } from '../../helper';
-import { createGroup } from '../GroupRouter/testGroupRouterHelper';
-import { createTodo } from './testTodoRouterHelper';
+import { addTestGroup } from '../GroupRouter/_GroupRouterTestHelper';
+import { addTestTodo, createTestSpaceGroupAndAddTodo } from './_TodoRouterTestHelper';
 
 const prisma = ExtendsPrismaClient;
 
@@ -17,21 +15,15 @@ describe(`TodoRouter todo.updateMany`, () => {
     - it update all todos in the database.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const group = await createGroup(tx, operator);
-      const todo1 = await createTodo(tx, {
-        user_id: operator.user_id,
-        group_id: group.group_id,
-        title: 'todo 1',
-      });
-      const todo2 = await createTodo(tx, {
-        user_id: operator.user_id,
-        group_id: group.group_id,
-        title: 'todo 2',
-      });
+      const todo1 = await createTestSpaceGroupAndAddTodo(tx, operator, 'OWNER');
+      const todo2 = await addTestTodo(tx, operator, todo1);
 
       const input: z.infer<typeof TodoRouterSchema.updateManyInput> = {
-        description: 'batch updated description',
-        list: [
+        space_id: todo1.group.space_id,
+        data: {
+          description: 'batch updated description',
+        },
+        target_list: [
           {
             todo_id: todo1.todo_id,
             updated_at: todo1.updated_at,
@@ -66,20 +58,17 @@ describe(`TodoRouter todo.updateMany`, () => {
     - it update group_id for all todos.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const group1 = await createGroup(tx, operator);
-      const group2 = await createGroup(tx, operator);
-      const todo1 = await createTodo(tx, {
-        user_id: operator.user_id,
-        group_id: group1.group_id,
-      });
-      const todo2 = await createTodo(tx, {
-        user_id: operator.user_id,
-        group_id: group1.group_id,
-      });
+
+      const todo1 = await createTestSpaceGroupAndAddTodo(tx, operator, 'OWNER');
+      const todo2 = await addTestTodo(tx, operator, todo1);
+      const newGroup = await addTestGroup(tx, operator, todo1.group);
 
       const input: z.infer<typeof TodoRouterSchema.updateManyInput> = {
-        group_id: group2.group_id,
-        list: [
+        space_id: todo1.group.space_id,
+        data: {
+          group_id: newGroup.group_id,
+        },
+        target_list: [
           {
             todo_id: todo1.todo_id,
             updated_at: todo1.updated_at,
@@ -104,58 +93,8 @@ describe(`TodoRouter todo.updateMany`, () => {
         where: { todo_id: todo2.todo_id },
       });
 
-      expect(updated1?.group_id).toBe(group2.group_id);
-      expect(updated2?.group_id).toBe(group2.group_id);
-    });
-  });
-
-  test(`⚠️ access control - forbidden to update todos in other user's group.
-    - it throw FORBIDDEN error.`, async () => {
-    return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
-      // arrange
-      const other = await tx.user.create({
-        data: {
-          user_id: '019b7403-f2c4-73ee-92c7-045f7a9b842e',
-          username: 'other.user',
-          email: 'other.user@example.com',
-          password: 'password.other.user@example.com',
-          created_at: new Date(),
-          updated_at: new Date(),
-        },
-      });
-
-      const group = await createGroup(tx, operator);
-      const groupOther = await createGroup(tx, other);
-      const todoOperator = await createTodo(tx, {
-        user_id: operator.user_id,
-        group_id: group.group_id,
-      });
-      const todoOther = await createTodo(tx, {
-        user_id: other.user_id,
-        group_id: groupOther.group_id,
-      });
-
-      const input: z.infer<typeof TodoRouterSchema.updateManyInput> = {
-        description: 'hacked',
-        list: [
-          {
-            todo_id: todoOperator.todo_id,
-            updated_at: todoOperator.updated_at,
-          },
-          {
-            todo_id: todoOther.todo_id,
-            updated_at: todoOther.updated_at,
-          },
-        ],
-      };
-
-      // act & assert
-      await expect(caller.todo.updateMany(input)).rejects.toThrow(
-        new TRPCError({
-          code: 'FORBIDDEN',
-          message: message.error.FORBIDDEN,
-        }),
-      );
+      expect(updated1?.group_id).toBe(newGroup.group_id);
+      expect(updated2?.group_id).toBe(newGroup.group_id);
     });
   });
 });

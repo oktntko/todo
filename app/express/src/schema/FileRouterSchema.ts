@@ -9,7 +9,9 @@ import {
 const getInput = FileSchema.pick({
   file_id: true,
 });
-const getManyInput = z.object({ file_id_list: FileSchema.shape.file_id.array().min(1) });
+const getManyInput = z.object({
+  file_id_list: FileSchema.shape.file_id.array().min(1),
+});
 
 const getOutput = FileSchema;
 
@@ -50,8 +52,8 @@ const deleteManyInput = z.object({
 });
 
 const searchInput = z.object({
+  space_id: FileSchema.shape.space_id,
   where: z.object({
-    space_id: FileSchema.shape.space_id.array(),
     file_keyword: z.string().trim().max(255),
   }),
   sort: z.object({

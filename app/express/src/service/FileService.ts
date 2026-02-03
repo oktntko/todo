@@ -34,6 +34,10 @@ async function searchFile(
 
   const AND: Prisma.FileWhereInput[] = [];
 
+  AND.push({
+    space_id: input.space_id,
+  });
+
   if (input.where.file_keyword) {
     AND.push({
       OR: [

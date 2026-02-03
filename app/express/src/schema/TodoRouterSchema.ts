@@ -24,8 +24,8 @@ const listInput = z.object({
 });
 
 const searchInput = z.object({
+  space_id: GroupSchema.shape.space_id,
   where: z.object({
-    space_id: GroupSchema.shape.space_id,
     group_id_list: GroupSchema.shape.group_id.array().default([]),
     todo_keyword: z.string().trim().max(255),
     todo_status: TodoStatusSchema.array(),

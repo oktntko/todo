@@ -103,8 +103,8 @@ export default defineComponent(() => {
   const { downloadManyFiles, downloadSingleFile, uploadManyFiles } = useFile();
 
   const modelValue = ref<z.infer<typeof FileRouterSchema.searchInput>>({
+    space_id: $route.params.space_id,
     where: {
-      space_id: [$route.params.space_id],
       file_keyword: '',
     },
     sort: {

@@ -7,6 +7,10 @@ const getInput = WhiteboardSchema.pick({
 
 const getOutput = WhiteboardSchema;
 
+const listInput = WhiteboardSchema.pick({
+  space_id: true,
+});
+
 const createInput = WhiteboardSchema.omit({
   whiteboard_id: true,
 
@@ -44,6 +48,7 @@ const reorderInput = z.object({
 export const WhiteboardRouterSchema = {
   getInput,
   getOutput,
+  listInput,
   createInput,
   deleteInput,
   updateInput,

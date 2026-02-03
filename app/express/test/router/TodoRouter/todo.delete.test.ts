@@ -6,8 +6,7 @@ import { ExtendsPrismaClient } from '~/middleware/prisma';
 import { TodoRouterSchema } from '~/schema/TodoRouterSchema';
 
 import { transactionRollbackTrpc } from '../../helper';
-import { createGroup } from '../GroupRouter/testGroupRouterHelper';
-import { createTodo } from './testTodoRouterHelper';
+import { createTestSpaceGroupAndAddTodo } from './_TodoRouterTestHelper';
 
 const prisma = ExtendsPrismaClient;
 
@@ -17,11 +16,11 @@ describe(`TodoRouter todo.delete`, () => {
     - it delete the record in the database.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const group = await createGroup(tx, operator);
-      const todo = await createTodo(tx, { user_id: operator.user_id, group_id: group.group_id });
+      const todo = await createTestSpaceGroupAndAddTodo(tx, operator, 'OWNER');
 
-      const input: z.infer<typeof TodoRouterSchema.getInput> = {
+      const input: z.infer<typeof TodoRouterSchema.deleteInput> = {
         todo_id: todo.todo_id,
+        updated_at: todo.updated_at,
       };
 
       // act
@@ -40,34 +39,20 @@ describe(`TodoRouter todo.delete`, () => {
 
   test(`⚠️ access control - forbidden to delete todo in other user's group.
     - it throw FORBIDDEN error.`, async () => {
-    return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
+    return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const other = await tx.user.create({
-        data: {
-          user_id: '019b7403-f2c4-73ee-92c7-045f7a9b842e',
-          username: 'other.user',
-          email: 'other.user@example.com',
-          password: 'password.other.user@example.com',
-          created_at: new Date(),
-          updated_at: new Date(),
-        },
-      });
+      const todo = await createTestSpaceGroupAndAddTodo(tx, operator, undefined);
 
-      const groupOther = await createGroup(tx, other);
-      const todoOther = await createTodo(tx, {
-        user_id: other.user_id,
-        group_id: groupOther.group_id,
-      });
-
-      const input: z.infer<typeof TodoRouterSchema.getInput> = {
-        todo_id: todoOther.todo_id,
+      const input: z.infer<typeof TodoRouterSchema.deleteInput> = {
+        todo_id: todo.todo_id,
+        updated_at: todo.updated_at,
       };
 
       // act & assert
       await expect(caller.todo.delete(input)).rejects.toThrow(
         new TRPCError({
-          code: 'FORBIDDEN',
-          message: message.error.FORBIDDEN,
+          code: 'NOT_FOUND',
+          message: message.error.NOT_FOUND,
         }),
       );
     });
@@ -77,8 +62,9 @@ describe(`TodoRouter todo.delete`, () => {
     - it throw NOT_FOUND error.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ caller }) => {
       // arrange
-      const input: z.infer<typeof TodoRouterSchema.getInput> = {
-        todo_id: crypto.randomUUID(), // not found
+      const input: z.infer<typeof TodoRouterSchema.deleteInput> = {
+        todo_id: '019c23d1-31db-70ed-bfda-84f64ea77614', // not found
+        updated_at: new Date(2001, 2, 4),
       };
 
       // act & assert

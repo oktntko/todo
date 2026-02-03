@@ -1,5 +1,3 @@
-import { z } from '@todo/lib/zod';
-
 import { $transaction } from '~/middleware/prisma';
 import { protectedProcedure, router } from '~/middleware/trpc';
 import { OkSchema } from '~/schema';
@@ -9,11 +7,11 @@ import { WhiteboardService } from '~/service/WhiteboardService';
 export const whiteboard = router({
   // whiteboard.list
   list: protectedProcedure
-    .input(z.void())
+    .input(WhiteboardRouterSchema.listInput)
     .output(WhiteboardRouterSchema.getOutput.array())
-    .query(async ({ ctx }) => {
+    .query(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return WhiteboardService.listWhiteboard({ ...ctx, prisma });
+        return WhiteboardService.listWhiteboard({ ...ctx, prisma }, input);
       });
     }),
 

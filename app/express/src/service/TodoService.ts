@@ -63,7 +63,9 @@ async function searchTodo(
 
   const AND: Prisma.TodoWhereInput[] = [];
 
-  AND.push({ group: { space_id: input.where.space_id } });
+  AND.push({
+    group: { space_id: input.space_id },
+  });
 
   if (input.where.group_id_list.length > 0) {
     AND.push({ group_id: { in: input.where.group_id_list } });

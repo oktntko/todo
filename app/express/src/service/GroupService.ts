@@ -175,6 +175,8 @@ async function reorderGroup(
   });
 
   if (currentList.length !== input.order.length) {
+    // 入力値の space_id と異なるグループが指定されていたときは、エラーが原因は 'BAD_REQUEST' だが、
+    // 不正なリクエストだった場合、そのグループが存在することを示してしまうため、 'NOT_FOUND' のエラーでまとめる。
     throw new TRPCError({
       code: 'NOT_FOUND',
       message: message.error.NOT_FOUND,

@@ -25,8 +25,8 @@ export default defineComponent(() => {
   const { downloadManyFiles } = useFile();
 
   const modelValue = ref<z.infer<typeof TodoRouterSchema.searchInput>>({
+    space_id: $route.params.space_id,
     where: {
-      space_id: $route.params.space_id,
       group_id_list: [],
       todo_keyword: '',
       todo_status: [TodoStatusList[0]],

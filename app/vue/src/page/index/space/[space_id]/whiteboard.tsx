@@ -61,7 +61,9 @@ export default defineComponent(async () => {
   });
 
   const whiteboard_list = ref<RouterOutput['whiteboard']['list']>(
-    await trpc.whiteboard.list.query(),
+    await trpc.whiteboard.list.query({
+      space_id: $route.params.space_id,
+    }),
   );
 
   const currentWhiteboard = ref<RouterOutput['whiteboard']['get']>();

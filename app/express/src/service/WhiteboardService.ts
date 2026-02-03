@@ -25,14 +25,23 @@ export const WhiteboardService = {
 };
 
 // whiteboard.list
-async function listWhiteboard(ctx: ProtectedContext) {
+async function listWhiteboard(
+  ctx: ProtectedContext,
+  input: z.infer<typeof WhiteboardRouterSchema.listInput>,
+) {
   log.trace(ReqCtx.reqid, 'listWhiteboard', ctx.operator.user_id);
 
+  const AND: Prisma.WhiteboardWhereInput[] = [];
+  AND.push({ space_id: input.space_id });
+
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
+  const where: Prisma.WhiteboardWhereInput = {
+    ...hasAccessAuthorityWhere,
+    AND,
+  };
+
   return WhiteboardRepository.findManyWhiteboard(ctx.prisma, {
-    where: {
-      ...hasAccessAuthorityWhere,
-    },
+    where,
     orderBy: { whiteboard_order: 'asc' },
   });
 }

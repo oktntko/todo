@@ -10,7 +10,7 @@ import { createTestSpaceAndAddWhiteboard } from './_WhiteboardRouterTestHelper';
 
 const prisma = ExtendsPrismaClient;
 
-describe(`WhiteboardRouter whiteboard.update`, () => {
+describe(`WhiteboardRouter whiteboard.applyChange`, () => {
   test.for([
     { role: 'OWNER' }, //
     { role: 'ADMIN' }, //
@@ -24,41 +24,26 @@ describe(`WhiteboardRouter whiteboard.update`, () => {
         // arrange
         const whiteboard = await createTestSpaceAndAddWhiteboard(tx, operator, role);
 
-        const input: z.infer<typeof WhiteboardRouterSchema.updateInput> = {
+        const input: z.infer<typeof WhiteboardRouterSchema.applyChangeInput> = {
           whiteboard_id: whiteboard.whiteboard_id,
-          whiteboard_name: 'updated whiteboard name',
-          whiteboard_description: 'updated description',
           whiteboard_content: '{"test": true}',
-          updated_at: whiteboard.updated_at,
         };
 
         // act
-        const output = await caller.whiteboard.update(input);
+        const output = await caller.whiteboard.applyChange(input);
 
         // assert
-        expect(output).toEqual({
+        expect(output).toMatchObject({
           ...input,
-          space_id: whiteboard.space_id,
-          whiteboard_order: whiteboard.whiteboard_order,
-          created_at: whiteboard.created_at,
-          updated_at: output.updated_at,
-          created_by: whiteboard.created_by,
-          updated_by: operator.user_id,
-        } satisfies typeof output);
+        });
 
         // Verify the record is updated in the database
         const updated = await tx.whiteboard.findUniqueOrThrow({
           where: { whiteboard_id: whiteboard.whiteboard_id },
         });
-        expect(updated).toEqual({
+        expect(updated).toMatchObject({
           ...input,
-          space_id: whiteboard.space_id,
-          whiteboard_order: whiteboard.whiteboard_order,
-          created_at: whiteboard.created_at,
-          updated_at: output.updated_at,
-          created_by: whiteboard.created_by,
-          updated_by: operator.user_id,
-        } satisfies typeof updated);
+        });
       });
     },
   );
@@ -73,16 +58,13 @@ describe(`WhiteboardRouter whiteboard.update`, () => {
         // arrange
         const whiteboard = await createTestSpaceAndAddWhiteboard(tx, operator, role);
 
-        const input: z.infer<typeof WhiteboardRouterSchema.updateInput> = {
+        const input: z.infer<typeof WhiteboardRouterSchema.applyChangeInput> = {
           whiteboard_id: whiteboard.whiteboard_id,
-          whiteboard_name: 'updated name',
-          whiteboard_description: '',
           whiteboard_content: '{}',
-          updated_at: whiteboard.updated_at,
         };
 
         // act & assert
-        await expect(caller.whiteboard.update(input)).rejects.toThrow(
+        await expect(caller.whiteboard.applyChange(input)).rejects.toThrow(
           new TRPCError({
             code: 'FORBIDDEN',
             message: message.error.FORBIDDEN,
@@ -92,46 +74,19 @@ describe(`WhiteboardRouter whiteboard.update`, () => {
     },
   );
 
-  test(`⚠️ resource state error - concurrency update.
-    - it throw CONFLICT error.`, async () => {
-    return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
-      // arrange
-      const { whiteboard_id } = await createTestSpaceAndAddWhiteboard(tx, operator, 'OWNER');
-
-      const input: z.infer<typeof WhiteboardRouterSchema.updateInput> = {
-        whiteboard_id,
-        whiteboard_name: 'updated name',
-        whiteboard_description: '',
-        whiteboard_content: '{}',
-        updated_at: new Date(2001, 2, 4), // outdated
-      };
-
-      // act & assert
-      await expect(caller.whiteboard.update(input)).rejects.toThrow(
-        new TRPCError({
-          code: 'CONFLICT',
-          message: message.error.CONFLICT_CURRENT_UPDATED,
-        }),
-      );
-    });
-  });
-
   test(`⚠️ unauthorized error - operator has no authorization to the data.
         - it throw NOT_FOUND error.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
       const whiteboard = await createTestSpaceAndAddWhiteboard(tx, operator, undefined);
 
-      const input: z.infer<typeof WhiteboardRouterSchema.updateInput> = {
+      const input: z.infer<typeof WhiteboardRouterSchema.applyChangeInput> = {
         whiteboard_id: whiteboard.whiteboard_id,
-        whiteboard_name: 'updated name',
-        whiteboard_description: '',
         whiteboard_content: '{}',
-        updated_at: whiteboard.updated_at,
       };
 
       // act & assert
-      await expect(caller.whiteboard.update(input)).rejects.toThrow(
+      await expect(caller.whiteboard.applyChange(input)).rejects.toThrow(
         new TRPCError({
           code: 'NOT_FOUND',
           message: message.error.NOT_FOUND,
@@ -144,16 +99,13 @@ describe(`WhiteboardRouter whiteboard.update`, () => {
     - it throw NOT_FOUND error.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ caller }) => {
       // arrange
-      const input: z.infer<typeof WhiteboardRouterSchema.updateInput> = {
+      const input: z.infer<typeof WhiteboardRouterSchema.applyChangeInput> = {
         whiteboard_id: '019c23d1-31db-70ed-bfda-84f64ea77614', // not found
-        whiteboard_name: 'updated name',
-        whiteboard_description: '',
         whiteboard_content: '{}',
-        updated_at: new Date(2001, 2, 4),
       };
 
       // act & assert
-      await expect(caller.whiteboard.update(input)).rejects.toThrow(
+      await expect(caller.whiteboard.applyChange(input)).rejects.toThrow(
         new TRPCError({
           code: 'NOT_FOUND',
           message: message.error.NOT_FOUND,

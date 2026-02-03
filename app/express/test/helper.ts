@@ -18,15 +18,15 @@ import { createContext } from '~/middleware/trpc';
 import { createCaller } from '~/router/_router';
 
 // ID固定のテストユーザー
-async function upsertTestUser(prisma: PrismaClient) {
+export async function createTestUser(prisma: PrismaClient) {
   const user_id = crypto.randomUUID();
-  return prisma.user.upsert({
-    create: {
+  return prisma.user.create({
+    data: {
       user_id,
       email: `${user_id}@example.com`,
       password: HashPassword.hash('test@example.com'),
-      username: 'test username',
-      description: 'test description',
+      username: `${user_id} username`,
+      description: `${user_id} description`,
       twofa_enable: false,
       twofa_secret: '',
       aichat_api_key: '',
@@ -35,22 +35,6 @@ async function upsertTestUser(prisma: PrismaClient) {
       avatar_image: '',
       created_at: new Date(1997, 7, 17),
       updated_at: new Date(1997, 7, 17),
-    },
-    update: {
-      email: `${user_id}@example.com`,
-      password: HashPassword.hash('test@example.com'),
-      username: 'test username',
-      description: 'test description',
-      twofa_enable: false,
-      twofa_secret: '',
-      aichat_api_key: '',
-      aichat_enable: false,
-      aichat_model: 'gpt-4.1',
-      avatar_image: '',
-      updated_at: new Date(1997, 7, 17),
-    },
-    where: {
-      user_id,
     },
   });
 }
@@ -91,7 +75,7 @@ export async function transactionRollbackExpress<R>(
   },
 ) {
   return prisma.$transaction(async (tx) => {
-    const operator = await upsertTestUser(tx);
+    const operator = await createTestUser(tx);
 
     const { restoreMockContext } = useMockContext(tx);
     const { restoreMockSession } = useMockSession(operator);
@@ -109,15 +93,28 @@ export async function transactionRollbackExpress<R>(
 
   function useMockContext(prisma: PrismaClient) {
     const mockContext = vi.spyOn(LibTrpc, 'createContext');
-    mockContext.mockImplementationOnce((opts) => ({
-      req: opts.req,
-      res: opts.res,
-      prisma,
-    }));
+    mockContext.mockImplementationOnce((opts) => {
+      const csrfToken = crypto.randomUUID();
+      opts.req.session.data = {
+        csrfToken,
+      };
+      opts.req.cookies = {
+        'csrf-token': csrfToken,
+      };
+      opts.req.headers = {
+        'x-csrf-token': csrfToken,
+      };
+
+      return {
+        req: opts.req,
+        res: opts.res,
+        prisma,
+      };
+    });
 
     return {
       mockContext,
-      restoreMockContext() {
+      restoreMockContext: () => {
         mockContext.mockRestore();
       },
     };
@@ -129,7 +126,7 @@ export async function transactionRollbackExpress<R>(
 
     return {
       mockSession,
-      restoreMockSession() {
+      restoreMockSession: () => {
         mockSession.mockRestore();
       },
     };
@@ -144,7 +141,7 @@ export async function transactionRollbackTrpc<R>(
   fn: (params: {
     tx: TransactionExtendsPrismaClient;
     caller: ReturnType<typeof createCaller>;
-    operator: Awaited<ReturnType<typeof upsertTestUser>>;
+    operator: Awaited<ReturnType<typeof createTestUser>>;
   }) => Promise<R>,
   options?: {
     maxWait?: number;
@@ -153,7 +150,7 @@ export async function transactionRollbackTrpc<R>(
   },
 ) {
   return prisma.$transaction(async (tx) => {
-    const operator = await upsertTestUser(tx);
+    const operator = await createTestUser(tx);
 
     const ctx = createContext(mockopts(operator), tx);
     const caller = createCaller(ctx);
@@ -171,6 +168,7 @@ export async function transactionRollbackTrpc<R>(
 export function mockopts(user: {
   user_id: string;
 }): Pick<CreateExpressContextOptions, 'req' | 'res'> {
+  const csrfToken = crypto.randomUUID();
   const req = {
     session: {
       id: 'mock-session-id',
@@ -186,9 +184,18 @@ export function mockopts(user: {
       },
       // session data
       user_id: user.user_id,
-      data: {},
+      data: {
+        csrfToken,
+      },
+    },
+    cookies: {
+      'csrf-token': csrfToken,
+    },
+    headers: {
+      'x-csrf-token': csrfToken,
     },
   };
+
   return {
     req: mockreq(req),
     res: mockres(),

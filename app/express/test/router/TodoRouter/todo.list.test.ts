@@ -4,8 +4,8 @@ import { ExtendsPrismaClient } from '~/middleware/prisma';
 import { TodoRouterSchema } from '~/schema/TodoRouterSchema';
 
 import { transactionRollbackTrpc } from '../../helper';
-import { createGroup } from '../GroupRouter/testGroupRouterHelper';
-import { createTodo } from './testTodoRouterHelper';
+import { addTestGroup } from '../GroupRouter/_GroupRouterTestHelper';
+import { addTestTodo, createTestSpaceGroupAndAddTodo } from './_TodoRouterTestHelper';
 
 const prisma = ExtendsPrismaClient;
 
@@ -15,19 +15,12 @@ describe(`TodoRouter todo.list`, () => {
     - it filter by todo_status (active).`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const group1 = await createGroup(tx, operator);
-      const group2 = await createGroup(tx, operator);
-
-      const todo1 = await createTodo(tx, { user_id: operator.user_id, group_id: group1.group_id });
-      await createTodo(tx, {
-        user_id: operator.user_id,
-        group_id: group1.group_id,
-        done_at: new Date(),
-      });
-      await createTodo(tx, { user_id: operator.user_id, group_id: group2.group_id });
+      const todo1 = await createTestSpaceGroupAndAddTodo(tx, operator, 'OWNER');
+      const todo2 = await addTestTodo(tx, operator, todo1);
 
       const input: z.infer<typeof TodoRouterSchema.listInput> = {
-        group_id_list: [group1.group_id],
+        space_id: todo1.group.space_id,
+        group_id_list: [todo1.group_id],
         todo_status: 'active',
       };
 
@@ -35,8 +28,9 @@ describe(`TodoRouter todo.list`, () => {
       const output = await caller.todo.list(input);
 
       // assert
-      expect(output).toHaveLength(1);
+      expect(output).toHaveLength(2);
       expect(output[0]).toEqual(expect.objectContaining({ todo_id: todo1.todo_id }));
+      expect(output[1]).toEqual(expect.objectContaining({ todo_id: todo2.todo_id }));
     });
   });
 
@@ -44,17 +38,14 @@ describe(`TodoRouter todo.list`, () => {
     - it return only done todos.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const group = await createGroup(tx, operator);
-
-      await createTodo(tx, { user_id: operator.user_id, group_id: group.group_id });
-      const todo2 = await createTodo(tx, {
-        user_id: operator.user_id,
-        group_id: group.group_id,
+      const todo1 = await createTestSpaceGroupAndAddTodo(tx, operator, 'OWNER');
+      const todo2 = await addTestTodo(tx, operator, todo1, {
         done_at: new Date(),
       });
 
       const input: z.infer<typeof TodoRouterSchema.listInput> = {
-        group_id_list: [group.group_id],
+        space_id: todo1.group.space_id,
+        group_id_list: [todo1.group_id],
         todo_status: 'done',
       };
 
@@ -71,13 +62,12 @@ describe(`TodoRouter todo.list`, () => {
     - it return all todos in user's groups regardless of group.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const group1 = await createGroup(tx, operator);
-      const group2 = await createGroup(tx, operator);
-
-      const todo1 = await createTodo(tx, { user_id: operator.user_id, group_id: group1.group_id });
-      const todo2 = await createTodo(tx, { user_id: operator.user_id, group_id: group2.group_id });
+      const todo1 = await createTestSpaceGroupAndAddTodo(tx, operator, 'OWNER');
+      const group2 = await addTestGroup(tx, operator, todo1.group);
+      const todo2 = await addTestTodo(tx, operator, group2);
 
       const input: z.infer<typeof TodoRouterSchema.listInput> = {
+        space_id: todo1.group.space_id,
         group_id_list: [],
         todo_status: 'active',
       };
@@ -96,30 +86,10 @@ describe(`TodoRouter todo.list`, () => {
     - it only return todos in groups owned by the login user.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const other = await tx.user.create({
-        data: {
-          user_id: '019b7403-f2c4-73ee-92c7-045f7a9b842e',
-          username: 'other.user',
-          email: 'other.user@example.com',
-          password: 'password.other.user@example.com',
-          created_at: new Date(),
-          updated_at: new Date(),
-        },
-      });
-
-      const groupOperator = await createGroup(tx, operator);
-      const groupOther = await createGroup(tx, other);
-
-      const todoOperator = await createTodo(tx, {
-        user_id: operator.user_id,
-        group_id: groupOperator.group_id,
-      });
-      const todoOther = await createTodo(tx, {
-        user_id: other.user_id,
-        group_id: groupOther.group_id,
-      });
+      const todo = await createTestSpaceGroupAndAddTodo(tx, operator, undefined);
 
       const input: z.infer<typeof TodoRouterSchema.listInput> = {
+        space_id: todo.group.space_id,
         group_id_list: [],
         todo_status: 'active',
       };
@@ -128,9 +98,7 @@ describe(`TodoRouter todo.list`, () => {
       const output = await caller.todo.list(input);
 
       // assert
-      expect(output).toHaveLength(1);
-      expect(output[0]).toEqual(expect.objectContaining({ todo_id: todoOperator.todo_id }));
-      expect(output).not.toContainEqual(expect.objectContaining({ todo_id: todoOther.todo_id }));
+      expect(output).toHaveLength(0);
     });
   });
 });

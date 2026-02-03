@@ -165,9 +165,9 @@ model SpaceUser {
   id String @id @default(uuid(7)) @db.VarChar(36) /// @zod.length(36)
 
   user_id  String
-  user     User   @relation(fields: [user_id], references: [user_id])
+  user     User   @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
   space_id String
-  space    Space  @relation(fields: [space_id], references: [space_id])
+  space    Space  @relation(fields: [space_id], references: [space_id], onDelete: Cascade)
 
   role SpaceUserRole
 

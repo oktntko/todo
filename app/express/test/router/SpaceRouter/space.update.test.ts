@@ -3,60 +3,56 @@ import { TRPCError } from '@trpc/server';
 
 import { message } from '~/lib/message';
 import { ExtendsPrismaClient } from '~/middleware/prisma';
-import { GroupRouterSchema } from '~/schema/GroupRouterSchema';
+import { SpaceRouterSchema } from '~/schema/SpaceRouterSchema';
 
 import { transactionRollbackTrpc } from '../../helper';
-import { createTestSpaceAndAddGroup } from './_GroupRouterTestHelper';
+import { createTestSpace } from './_SpaceRouterTestHelper';
 
 const prisma = ExtendsPrismaClient;
 
-describe(`GroupRouter group.update`, () => {
+describe(`SpaceRouter space.update`, () => {
   test.for([
     { role: 'OWNER' }, //
     { role: 'ADMIN' }, //
   ] as const)(
-    `✅ success - update group, when operator has $role role.
-    - it return the updated group.
+    `✅ success - update space, when operator has $role role.
+    - it return the updated space.
     - it update the record in the database.`,
     async ({ role }) => {
       return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
         // arrange
-        const group = await createTestSpaceAndAddGroup(tx, operator, role);
+        const space = await createTestSpace(tx, operator, role);
 
-        const input: z.infer<typeof GroupRouterSchema.updateInput> = {
-          group_id: group.group_id,
-          group_name: 'updated group name',
-          group_description: 'updated description',
-          group_image: 'image.jpg',
-          group_color: '#FF0000',
-          updated_at: group.updated_at,
+        const input: z.infer<typeof SpaceRouterSchema.updateInput> = {
+          space_id: space.space_id,
+          space_name: 'updated space name',
+          space_description: 'updated description',
+          space_image: 'image.jpg',
+          space_color: '#FF0000',
+          updated_at: space.updated_at,
         };
 
         // act
-        const output = await caller.group.update(input);
+        const output = await caller.space.update(input);
 
         // assert
         expect(output).toEqual({
           ...input,
-          space_id: group.space_id,
-          group_order: group.group_order,
-          created_at: group.created_at,
+          created_at: space.created_at,
           updated_at: output.updated_at,
-          created_by: group.created_by,
+          created_by: space.created_by,
           updated_by: operator.user_id,
         } satisfies typeof output);
 
         // Verify the record is updated in the database
-        const updated = await tx.group.findUniqueOrThrow({
-          where: { group_id: group.group_id },
+        const updated = await tx.space.findUniqueOrThrow({
+          where: { space_id: space.space_id },
         });
         expect(updated).toMatchObject({
           ...input,
-          space_id: group.space_id,
-          group_order: group.group_order,
-          created_at: group.created_at,
+          created_at: space.created_at,
           updated_at: output.updated_at,
-          created_by: group.created_by,
+          created_by: space.created_by,
           updated_by: operator.user_id,
         } satisfies typeof updated);
       });
@@ -72,19 +68,19 @@ describe(`GroupRouter group.update`, () => {
     async ({ role }) => {
       return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
         // arrange
-        const group = await createTestSpaceAndAddGroup(tx, operator, role);
+        const space = await createTestSpace(tx, operator, role);
 
-        const input: z.infer<typeof GroupRouterSchema.updateInput> = {
-          group_id: group.group_id,
-          group_name: 'updated group name',
-          group_description: '',
-          group_image: '',
-          group_color: '',
-          updated_at: group.updated_at,
+        const input: z.infer<typeof SpaceRouterSchema.updateInput> = {
+          space_id: space.space_id,
+          space_name: 'updated name',
+          space_description: '',
+          space_image: '',
+          space_color: '#FFFFFF',
+          updated_at: space.updated_at,
         };
 
         // act & assert
-        await expect(caller.group.update(input)).rejects.toThrow(
+        await expect(caller.space.update(input)).rejects.toThrow(
           new TRPCError({
             code: 'FORBIDDEN',
             message: message.error.FORBIDDEN,
@@ -98,19 +94,19 @@ describe(`GroupRouter group.update`, () => {
     - it throw CONFLICT error.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const { group_id } = await createTestSpaceAndAddGroup(tx, operator, 'OWNER');
+      const { space_id } = await createTestSpace(tx, operator, 'OWNER');
 
-      const input: z.infer<typeof GroupRouterSchema.updateInput> = {
-        group_id,
-        group_name: 'updated name',
-        group_description: '',
-        group_image: '',
-        group_color: '#FFFFFF',
+      const input: z.infer<typeof SpaceRouterSchema.updateInput> = {
+        space_id,
+        space_name: 'updated name',
+        space_description: '',
+        space_image: '',
+        space_color: '#FFFFFF',
         updated_at: new Date(2001, 2, 4), // outdated
       };
 
       // act & assert
-      await expect(caller.group.update(input)).rejects.toThrow(
+      await expect(caller.space.update(input)).rejects.toThrow(
         new TRPCError({
           code: 'CONFLICT',
           message: message.error.CONFLICT_CURRENT_UPDATED,
@@ -120,22 +116,22 @@ describe(`GroupRouter group.update`, () => {
   });
 
   test(`⚠️ unauthorized error - operator has no authorization to the data.
-      - it throw NOT_FOUND error.`, async () => {
+    - it throw NOT_FOUND error.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const group = await createTestSpaceAndAddGroup(tx, operator, undefined);
+      const space = await createTestSpace(tx, operator, undefined);
 
-      const input: z.infer<typeof GroupRouterSchema.updateInput> = {
-        group_id: group.group_id,
-        group_name: 'updated name',
-        group_description: '',
-        group_image: '',
-        group_color: '#FFFFFF',
-        updated_at: group.updated_at,
+      const input: z.infer<typeof SpaceRouterSchema.updateInput> = {
+        space_id: space.space_id,
+        space_name: 'updated name',
+        space_description: '',
+        space_image: '',
+        space_color: '#FFFFFF',
+        updated_at: space.updated_at,
       };
 
       // act & assert
-      await expect(caller.group.update(input)).rejects.toThrow(
+      await expect(caller.space.update(input)).rejects.toThrow(
         new TRPCError({
           code: 'NOT_FOUND',
           message: message.error.NOT_FOUND,
@@ -148,17 +144,17 @@ describe(`GroupRouter group.update`, () => {
     - it throw NOT_FOUND error.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ caller }) => {
       // arrange
-      const input: z.infer<typeof GroupRouterSchema.updateInput> = {
-        group_id: '019c23d1-31db-70ed-bfda-84f64ea77614', // not found
-        group_name: 'updated name',
-        group_description: '',
-        group_image: '',
-        group_color: '#FFFFFF',
+      const input: z.infer<typeof SpaceRouterSchema.updateInput> = {
+        space_id: '019c23d1-31db-70ed-bfda-84f64ea77614', // not found
+        space_name: 'updated name',
+        space_description: '',
+        space_image: '',
+        space_color: '#FFFFFF',
         updated_at: new Date(2001, 2, 4),
       };
 
       // act & assert
-      await expect(caller.group.update(input)).rejects.toThrow(
+      await expect(caller.space.update(input)).rejects.toThrow(
         new TRPCError({
           code: 'NOT_FOUND',
           message: message.error.NOT_FOUND,
