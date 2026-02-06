@@ -1,4 +1,3 @@
-import { z } from '@todo/lib/zod';
 import { $transaction } from '~/middleware/prisma';
 import { protectedProcedure, router } from '~/middleware/trpc';
 import { OkSchema } from '~/schema';
@@ -8,11 +7,11 @@ import { WhiteboardService } from '~/service/WhiteboardService';
 export const whiteboard = router({
   // whiteboard.list
   list: protectedProcedure
-    .input(z.void())
+    .input(WhiteboardRouterSchema.listInput)
     .output(WhiteboardRouterSchema.getOutput.array())
-    .query(async ({ ctx }) => {
+    .query(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
-        return WhiteboardService.listWhiteboard({ ...ctx, prisma });
+        return WhiteboardService.listWhiteboard({ ...ctx, prisma }, input);
       });
     }),
 
@@ -46,16 +45,6 @@ export const whiteboard = router({
       });
     }),
 
-  // whiteboard.upsert
-  upsert: protectedProcedure
-    .input(WhiteboardRouterSchema.upsertInput)
-    .output(WhiteboardRouterSchema.getOutput)
-    .mutation(async ({ ctx, input }) => {
-      return $transaction(ctx.prisma, async (prisma) => {
-        return WhiteboardService.upsertWhiteboard({ ...ctx, prisma }, input);
-      });
-    }),
-
   // whiteboard.delete
   delete: protectedProcedure
     .input(WhiteboardRouterSchema.deleteInput)
@@ -66,9 +55,19 @@ export const whiteboard = router({
       });
     }),
 
+  // whiteboard.applyChange
+  applyChange: protectedProcedure
+    .input(WhiteboardRouterSchema.applyChangeInput)
+    .output(WhiteboardRouterSchema.getOutput)
+    .mutation(async ({ ctx, input }) => {
+      return $transaction(ctx.prisma, async (prisma) => {
+        return WhiteboardService.applyChangeWhiteboard({ ...ctx, prisma }, input);
+      });
+    }),
+
   // whiteboard.reorder
   reorder: protectedProcedure
-    .input(WhiteboardRouterSchema.reorderInputList)
+    .input(WhiteboardRouterSchema.reorderInput)
     .output(OkSchema)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {

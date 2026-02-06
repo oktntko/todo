@@ -8,37 +8,6 @@ import {
   TodoStatusSchema,
 } from '@todo/prisma/schema';
 
-const upsertInput = TodoSchema.omit({
-  created_by: true,
-  created_at: true,
-  updated_by: true,
-  updated_at: true,
-});
-
-const createInput = TodoSchema.omit({
-  todo_id: true,
-  created_by: true,
-  created_at: true,
-  updated_by: true,
-  updated_at: true,
-});
-
-const updateInput = createInput.partial().extend(
-  TodoSchema.pick({
-    todo_id: true,
-    updated_at: true,
-  }).shape,
-);
-
-const updateManyInput = createInput.partial().extend({
-  list: TodoSchema.pick({
-    todo_id: true,
-    updated_at: true,
-  })
-    .array()
-    .min(1),
-});
-
 const getInput = TodoSchema.pick({
   todo_id: true,
 });
@@ -48,16 +17,16 @@ const getOutput = TodoSchema.extend({
   file_list: z.lazy(() => FileSchema).array(),
 });
 
-const deleteManyInput = getInput.array().min(1);
-
 const listInput = z.object({
-  group_id_list: z.number().array().default([]),
+  space_id: GroupSchema.shape.space_id,
+  group_id_list: GroupSchema.shape.group_id.array().default([]),
   todo_status: TodoStatusSchema.default('active'),
 });
 
 const searchInput = z.object({
+  space_id: GroupSchema.shape.space_id,
   where: z.object({
-    group_id_list: z.number().array().default([]),
+    group_id_list: GroupSchema.shape.group_id.array().default([]),
     todo_keyword: z.string().trim().max(255),
     todo_status: TodoStatusSchema.array(),
   }),
@@ -74,15 +43,44 @@ const searchOutput = z.object({
   todo_list: z.array(getOutput),
 });
 
+const createInput = TodoSchema.omit({
+  todo_id: true,
+  created_by: true,
+  created_at: true,
+  updated_by: true,
+  updated_at: true,
+});
+
+const deleteInput = TodoSchema.pick({
+  todo_id: true,
+  updated_at: true,
+});
+
+const updateInput = createInput.extend(deleteInput.shape);
+
+const applyChangeInput = createInput.extend(getInput.shape);
+
+const updateManyInput = z.object({
+  space_id: GroupSchema.shape.space_id,
+  data: createInput.partial(),
+  target_list: deleteInput.array().min(1),
+});
+
+const deleteManyInput = z.object({
+  space_id: GroupSchema.shape.space_id,
+  target_list: deleteInput.array().min(1),
+});
+
 export const TodoRouterSchema = {
-  upsertInput,
-  createInput,
-  updateInput,
-  updateManyInput,
   getInput,
   getOutput,
-  deleteManyInput,
   listInput,
   searchInput,
   searchOutput,
+  createInput,
+  deleteInput,
+  updateInput,
+  applyChangeInput,
+  updateManyInput,
+  deleteManyInput,
 };

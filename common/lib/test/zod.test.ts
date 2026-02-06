@@ -1,3 +1,4 @@
+// oxlint-disable jest/no-conditional-expect
 import {
   ColorSchema,
   DateSchema,

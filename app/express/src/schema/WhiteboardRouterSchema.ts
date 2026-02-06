@@ -1,10 +1,19 @@
 import { z } from '@todo/lib/zod';
 import { WhiteboardSchema } from '@todo/prisma/schema';
 
+const getInput = WhiteboardSchema.pick({
+  whiteboard_id: true,
+});
+
+const getOutput = WhiteboardSchema;
+
+const listInput = WhiteboardSchema.pick({
+  space_id: true,
+});
+
 const createInput = WhiteboardSchema.omit({
   whiteboard_id: true,
 
-  owner_id: true,
   whiteboard_order: true,
 
   created_by: true,
@@ -18,32 +27,31 @@ const deleteInput = WhiteboardSchema.pick({
   updated_at: true,
 });
 
-const updateInput = createInput.extend(deleteInput.shape);
-
-const upsertInput = z.object({
-  whiteboard_id: WhiteboardSchema.shape.whiteboard_id.nullish(),
-  whiteboard_content: WhiteboardSchema.shape.whiteboard_content,
+const updateInput = createInput.extend(deleteInput.shape).omit({
+  space_id: true,
 });
 
-const getInput = WhiteboardSchema.pick({
+const applyChangeInput = WhiteboardSchema.pick({
   whiteboard_id: true,
+  whiteboard_content: true,
 });
 
-const getOutput = WhiteboardSchema;
-
-const reorderInput = WhiteboardSchema.pick({
+const orderInput = WhiteboardSchema.pick({
   whiteboard_id: true,
   whiteboard_order: true,
 });
-const reorderInputList = reorderInput.array();
+const reorderInput = z.object({
+  space_id: WhiteboardSchema.shape.space_id,
+  order: orderInput.array().min(1),
+});
 
 export const WhiteboardRouterSchema = {
+  getInput,
+  getOutput,
+  listInput,
   createInput,
   deleteInput,
   updateInput,
-  upsertInput,
-  getInput,
-  getOutput,
+  applyChangeInput,
   reorderInput,
-  reorderInputList,
 };

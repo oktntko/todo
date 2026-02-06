@@ -1,28 +1,37 @@
 import type { FileRouterSchema } from '@todo/express/schema';
 import type { z } from '@todo/lib/zod';
+
 import { axios, saveAsFile } from '~/lib/axios';
 import { useDialog } from '~/plugin/DialogPlugin';
 
 export function useFile() {
   const $dialog = useDialog();
 
-  async function uploadSingleFile(file: File, params?: { todo_id?: string }) {
+  async function uploadSingleFile(
+    file: File,
+    params: z.infer<typeof FileRouterSchema.createInputBody>,
+  ) {
     const multipartFormData = new FormData();
     multipartFormData.append('file', file, encodeURIComponent(`${file.name}`));
 
-    if (params?.todo_id) {
+    multipartFormData.append('space_id', params.space_id);
+    if (params.todo_id) {
       multipartFormData.append('todo_id', params.todo_id);
     }
 
     const loading = $dialog.loading();
     return axios
-      .post<
-        z.infer<typeof FileRouterSchema.getOutput>
-      >('/api/file/upload/single', multipartFormData)
+      .post<z.infer<typeof FileRouterSchema.getOutput>>(
+        '/api/file/upload/single',
+        multipartFormData,
+      )
       .finally(loading.close);
   }
 
-  async function uploadManyFiles(fileList: FileList | File[], params?: { todo_id?: string }) {
+  async function uploadManyFiles(
+    fileList: FileList | File[],
+    params: z.infer<typeof FileRouterSchema.createInputBody>,
+  ) {
     const files = Array.from(fileList);
 
     const multipartFormData = new FormData();
@@ -30,15 +39,17 @@ export function useFile() {
       multipartFormData.append('files', file, encodeURIComponent(`${file.name}`)),
     );
 
-    if (params?.todo_id) {
+    multipartFormData.append('space_id', params.space_id);
+    if (params.todo_id) {
       multipartFormData.append('todo_id', params.todo_id);
     }
 
     const loading = $dialog.loading();
     return axios
-      .post<
-        z.infer<typeof FileRouterSchema.getOutput>[]
-      >('/api/file/upload/many', multipartFormData)
+      .post<z.infer<typeof FileRouterSchema.getOutput>[]>(
+        '/api/file/upload/many',
+        multipartFormData,
+      )
       .finally(loading.close);
   }
 
@@ -58,6 +69,7 @@ export function useFile() {
       .get('/api/file/download/many', {
         responseType: 'blob',
         params,
+        paramsSerializer: { indexes: null },
       })
       .then(saveAsFile)
       .finally(loading.close);

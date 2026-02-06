@@ -4,9 +4,8 @@
     "Vue.volar",
     "antfu.iconify",
     "bradlc.vscode-tailwindcss",
-    "dbaeumer.vscode-eslint",
-    "prettier.prettier-vscode",
     "kingwl.vscode-vitest-runner",
+    "oxc.oxc-vscode",
     "streetsidesoftware.code-spell-checker",
     "vitest.explorer"
   ]

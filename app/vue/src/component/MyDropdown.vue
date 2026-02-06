@@ -1,10 +1,20 @@
 <script setup lang="ts">
+import { OnClickOutside } from '@vueuse/components';
+import { ref } from 'vue';
+import type { JSX } from 'vue/jsx-runtime';
+
+const { innerClass = '' } = defineProps<{ innerClass?: string }>();
+
+export type MyDropdownSlots = {
+  default?: () => JSX.Element;
+  button?: (params: { toggle: () => void }) => JSX.Element;
+};
+defineSlots<MyDropdownSlots>();
+
 const showMenu = ref(false);
 function toggle() {
   showMenu.value = !showMenu.value;
 }
-
-const { innerClass = '' } = defineProps<{ innerClass?: string }>();
 </script>
 
 <template>

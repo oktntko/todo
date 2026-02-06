@@ -1,4 +1,5 @@
 import { type Prisma } from '@todo/prisma/client';
+
 import { type PrismaClient } from '~/middleware/prisma';
 
 export const WhiteboardRepository = {
@@ -44,9 +45,21 @@ async function findUniqueWhiteboard(
   prisma: PrismaClient,
   params: {
     where: Prisma.WhiteboardWhereUniqueInput;
+    operator_id: string;
   },
 ) {
   return prisma.whiteboard.findUnique({
+    include: {
+      space: {
+        include: {
+          space_user_list: {
+            where: {
+              user_id: params.operator_id,
+            },
+          },
+        },
+      },
+    },
     where: params.where,
   });
 }
@@ -60,7 +73,7 @@ async function createWhiteboard(
 ) {
   return prisma.whiteboard.create({
     data: {
-      owner_id: params.data.owner_id,
+      space_id: params.data.space_id,
 
       whiteboard_name: params.data.whiteboard_name,
       whiteboard_description: params.data.whiteboard_description,

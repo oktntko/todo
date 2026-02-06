@@ -26,6 +26,9 @@
     "mockopts",
     "mockreq",
     "mockres",
+    "Noto",
+    "oxlint",
+    "oktntko",
     "pglite",
     "qrcode",
     "refstate",
@@ -34,6 +37,7 @@
     "rgba",
     "selectedcontent",
     "sortablejs",
+    "tailwindcss",
     "treeify",
     "trpc",
     "twofa",
@@ -66,8 +70,6 @@
     "vue-components.d.ts",
     "vue-auto-import.d.ts"
   ],
-  "ignoreRegExpList": [
-    "icon-\\[[^\\]]+\\]"
-  ],
+  "ignoreRegExpList": ["icon-\\[[^\\]]+\\]"],
   "import": []
 }

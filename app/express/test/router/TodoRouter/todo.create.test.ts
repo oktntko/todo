@@ -1,10 +1,12 @@
 import { z } from '@todo/lib/zod';
 import { TRPCError } from '@trpc/server';
+
 import { message } from '~/lib/message';
 import { ExtendsPrismaClient } from '~/middleware/prisma';
 import { TodoRouterSchema } from '~/schema/TodoRouterSchema';
+
 import { transactionRollbackTrpc } from '../../helper';
-import { createGroup } from '../GroupRouter/testGroupRouterHelper';
+import { createTestSpaceAndAddGroup } from '../GroupRouter/_GroupRouterTestHelper';
 
 const prisma = ExtendsPrismaClient;
 
@@ -14,7 +16,7 @@ describe(`TodoRouter todo.create`, () => {
     - it save the record in the database.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const group = await createGroup(tx, operator);
+      const group = await createTestSpaceAndAddGroup(tx, operator, 'OWNER');
 
       const input: z.infer<typeof TodoRouterSchema.createInput> = {
         group_id: group.group_id,
@@ -54,7 +56,7 @@ describe(`TodoRouter todo.create`, () => {
     return transactionRollbackTrpc(prisma, async ({ caller }) => {
       // arrange
       const input: z.infer<typeof TodoRouterSchema.createInput> = {
-        group_id: 999999, // not found
+        group_id: '019c23d1-31db-70ed-bfda-84f64ea77614', // not found
         title: 'test todo',
         description: '',
         begin_date: '',
@@ -68,7 +70,7 @@ describe(`TodoRouter todo.create`, () => {
       // act & assert
       await expect(caller.todo.create(input)).rejects.toThrow(
         new TRPCError({
-          code: 'BAD_REQUEST',
+          code: 'NOT_FOUND',
           message: message.error.NOT_FOUND,
         }),
       );
@@ -77,35 +79,12 @@ describe(`TodoRouter todo.create`, () => {
 
   test(`⚠️ access control - group owned by other user.
     - it throw FORBIDDEN error.`, async () => {
-    return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
+    return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const other = await tx.user.create({
-        data: {
-          user_id: '019b7403-f2c4-73ee-92c7-045f7a9b842e',
-          username: 'other.user',
-          email: 'other.user@example.com',
-          password: 'password.other.user@example.com',
-          created_at: new Date(),
-          updated_at: new Date(),
-        },
-      });
-
-      const groupOther = await tx.group.create({
-        data: {
-          group_id: Math.floor(Math.random() * 1000000),
-          group_name: 'other group',
-          group_description: '',
-          group_order: 0,
-          group_image: '',
-          group_color: '#FFFFFF',
-          owner_id: other.user_id,
-          created_by: other.user_id,
-          updated_by: other.user_id,
-        },
-      });
+      const group = await createTestSpaceAndAddGroup(tx, operator, undefined);
 
       const input: z.infer<typeof TodoRouterSchema.createInput> = {
-        group_id: groupOther.group_id,
+        group_id: group.group_id,
         title: 'test todo',
         description: '',
         begin_date: '',
@@ -119,8 +98,8 @@ describe(`TodoRouter todo.create`, () => {
       // act & assert
       await expect(caller.todo.create(input)).rejects.toThrow(
         new TRPCError({
-          code: 'FORBIDDEN',
-          message: message.error.FORBIDDEN,
+          code: 'NOT_FOUND',
+          message: message.error.NOT_FOUND,
         }),
       );
     });

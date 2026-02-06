@@ -1,6 +1,10 @@
 {
   "name": "@todo/prisma",
   "version": "1.0.0",
+  "files": [
+    "dist",
+    "package.json"
+  ],
   "type": "module",
   "exports": {
     "./client": {
@@ -12,16 +16,12 @@
       "default": "./dist/schema/index.mjs"
     }
   },
-  "files": [
-    "dist",
-    "package.json"
-  ],
   "scripts": {
     "build": "tsdown",
     "type-check": "tsc --project tsconfig.base.json --noEmit",
-    "lint": "eslint src/ --max-warnings 0",
-    "format": "prettier . --write",
-    "prisma:generate": "prisma generate && find src/schema -type f | xargs sed -i -e \"s#from 'zod';#from '@todo/lib/zod';#g\" && tsx ../../script/generateBarrelFile.ts src/schema/generated/schemas/enums src/schema/option && prettier src/schema --write",
+    "lint": "oxlint --type-aware --type-check",
+    "format": "oxfmt",
+    "prisma:generate": "prisma generate && find src/schema -type f | xargs sed -i -e \"s#from 'zod';#from '@todo/lib/zod';#g\" && tsx ../../script/generateBarrelFile.ts src/schema/generated/schemas/enums src/schema/option && oxfmt --write src/schema",
     "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:migrate:dev": "prisma migrate dev",
     "prisma:push": "prisma db push",
@@ -29,14 +29,14 @@
     "prisma:studio": "prisma studio"
   },
   "dependencies": {
-    "@prisma/adapter-mariadb": "^7.2.0",
-    "@prisma/client": "7.2.0",
+    "@prisma/adapter-mariadb": "^7.3.0",
+    "@prisma/client": "7.3.0",
     "@todo/lib": "workspace:*"
   },
   "devDependencies": {
-    "prisma": "^7.2.0",
+    "prisma": "^7.3.0",
     "prisma-zod-generator": "^2.1.2",
-    "tsdown": "^0.18.4"
+    "tsdown": "^0.20.1"
   },
-  "packageManager": "pnpm@10.27.0"
+  "packageManager": "pnpm@10.28.1"
 }

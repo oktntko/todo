@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import type { InputHTMLAttributes } from 'vue';
+import { ref } from 'vue';
 
 // https://ja.vuejs.org/guide/components/attrs.html#disabling-attribute-inheritance
 defineOptions({ inheritAttrs: false });
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-interface Props extends /* @vue-ignore */ InputHTMLAttributes {}
-
-defineProps<Props>();
+defineProps<{
+  multiple?: boolean;
+}>();
 
 defineEmits<{
   done: [File[]];
@@ -57,6 +56,7 @@ const dragging = ref(false);
           v-bind="$attrs"
           type="file"
           class="hidden"
+          :multiple="multiple"
           @change="
             (e) => {
               $emit('done', Array.from((e.target as HTMLInputElement)?.files ?? []));

@@ -3,6 +3,7 @@ export * from './AuthRouterSchema';
 export * from './FileRouterSchema';
 export * from './GroupRouterSchema';
 export * from './MypageRouterSchema';
+export * from './SpaceRouterSchema';
 export * from './TodoRouterSchema';
 export * from './WhiteboardRouterSchema';
 export * from './lib';

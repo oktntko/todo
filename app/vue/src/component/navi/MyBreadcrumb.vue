@@ -1,6 +1,6 @@
 <template>
   <ul>
-    <template v-for="(child, i) in $slots.default?.() ?? []" :key="i">
+    <template v-for="(child, i) of $slots.default?.() ?? []" :key="i">
       <li class="inline-flex items-center">
         <!-- VNode をそのまま描画 -->
         <component :is="child" />

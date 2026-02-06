@@ -5,15 +5,15 @@
   "keywords": [],
   "license": "ISC",
   "author": "",
+  "files": [
+    "dist",
+    "package.json"
+  ],
   "type": "module",
   "main": "dist/index.mjs",
   "exports": {
     "./schema": "./src/schema/index.ts"
   },
-  "files": [
-    "dist",
-    "package.json"
-  ],
   "scripts": {
     "dev": "run-p dev:*",
     "dev:serve": "tsx watch --tsconfig tsconfig.base.json src/index.ts",
@@ -21,8 +21,8 @@
     "build": "tsdown",
     "type-check": "rm -rf types && tsc --project tsconfig.base.json && tsc-alias --project tsconfig.base.json",
     "preview": "node --enable-source-maps dist/index.mjs",
-    "lint": "eslint src/ --fix",
-    "format": "prettier src/ --write",
+    "lint": "oxlint --type-aware --type-check",
+    "format": "oxfmt",
     "test": "vitest run",
     "test:preview": "vitest --ui"
   },
@@ -35,11 +35,11 @@
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
     "express": "^5.2.1",
-    "express-session": "^1.18.2",
+    "express-session": "^1.19.0",
     "helmet": "^8.1.0",
     "log4js": "^6.9.1",
     "multer": "2.0.2",
-    "openai": "^6.15.0",
+    "openai": "^6.16.0",
     "qrcode": "^1.5.4",
     "speakeasy": "^2.0.0",
     "superjson": "^2.2.6"
@@ -49,19 +49,19 @@
     "@types/adm-zip": "^0.5.7",
     "@types/cookie-parser": "^1.4.10",
     "@types/express": "^5.0.6",
-    "@types/express-serve-static-core": "^5.1.0",
+    "@types/express-serve-static-core": "^5.1.1",
     "@types/express-session": "^1.18.2",
     "@types/multer": "^2.0.0",
     "@types/qrcode": "^1.5.6",
     "@types/qs": "^6.14.0",
     "@types/speakeasy": "^2.0.10",
     "@types/supertest": "^6.0.3",
-    "@vitest/coverage-v8": "^4.0.16",
-    "@vitest/ui": "^4.0.16",
-    "supertest": "^7.1.4",
+    "@vitest/coverage-v8": "^4.0.18",
+    "@vitest/ui": "^4.0.18",
+    "supertest": "^7.2.2",
     "tsc-alias": "^1.8.16",
-    "tsdown": "^0.18.4",
-    "vitest": "^4.0.16"
+    "tsdown": "^0.20.1",
+    "vitest": "^4.0.18"
   },
-  "packageManager": "pnpm@10.27.0"
+  "packageManager": "pnpm@10.28.1"
 }

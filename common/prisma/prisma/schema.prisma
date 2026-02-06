@@ -18,12 +18,35 @@ datasource db {
   provider = "mysql"
 }
 
+/// @zod.import(["import { ColorSchema } from '@todo/lib/zod'"]);
+model Space {
+  space_id String @id @default(uuid(7)) @db.VarChar(36) /// @zod.length(36)
+
+  space_name        String @db.VarChar(100) /// @zod.trim().min(1).max(100)
+  space_description String @default("") @db.VarChar(400) /// @zod.max(400)
+  space_image       String @default(dbgenerated("('')")) @db.Text
+  space_color       String @default("") @db.VarChar(100) /// @zod.custom.use(ColorSchema.or(z.literal('')))
+
+  group_list      Group[]
+  whiteboard_list Whiteboard[]
+  file_list       File[]
+  space_user_list SpaceUser[]
+
+  created_at DateTime @default(now()) @db.DateTime(3)
+  created_by String
+  updated_at DateTime @updatedAt @db.DateTime(3)
+  updated_by String
+
+  @@index([space_name])
+  @@map("space")
+}
+
 /// @zod.import(["import { ColorSchema, StringRelationIdSchema } from '@todo/lib/zod'"]);
 model Group {
-  group_id Int @id @default(autoincrement())
+  group_id String @id @default(uuid(7)) @db.VarChar(36) /// @zod.length(36)
 
-  owner_id String /// @zod.custom.use(StringRelationIdSchema)
-  owner    User   @relation(fields: [owner_id], references: [user_id], onDelete: Cascade)
+  space_id String /// @zod.custom.use(StringRelationIdSchema)
+  space    Space  @relation(fields: [space_id], references: [space_id], onDelete: Cascade)
 
   group_name        String @db.VarChar(100) /// @zod.trim().min(1).max(100)
   group_description String @default("") @db.VarChar(400) /// @zod.max(400)
@@ -42,12 +65,12 @@ model Group {
   @@map("group")
 }
 
-/// @zod.import(["import { DateSchema, TimeSchema, NumberRelationIdSchema } from '@todo/lib/zod'"]);
+/// @zod.import(["import { DateSchema, TimeSchema, StringRelationIdSchema } from '@todo/lib/zod'"]);
 model Todo {
   todo_id String @id @default(uuid(7)) @db.VarChar(36) /// @zod.length(36)
 
-  group_id Int   @db.Int /// @zod.custom.use(NumberRelationIdSchema)
-  group    Group @relation(fields: [group_id], references: [group_id], onDelete: Cascade)
+  group_id String /// @zod.custom.use(StringRelationIdSchema)
+  group    Group  @relation(fields: [group_id], references: [group_id], onDelete: Cascade)
 
   title       String    @default("") @db.VarChar(100) /// @zod.trim().max(100)
   description String    @default(dbgenerated("('')")) @db.Text
@@ -73,10 +96,10 @@ model Todo {
 
 /// @zod.import(["import { StringRelationIdSchema } from '@todo/lib/zod'"]);
 model Whiteboard {
-  whiteboard_id Int @id @default(autoincrement())
+  whiteboard_id String @id @default(uuid(7)) @db.VarChar(36) /// @zod.length(36)
 
-  owner_id String /// @zod.custom.use(StringRelationIdSchema)
-  owner    User   @relation(fields: [owner_id], references: [user_id], onDelete: Cascade)
+  space_id String /// @zod.custom.use(StringRelationIdSchema)
+  space    Space  @relation(fields: [space_id], references: [space_id], onDelete: Cascade)
 
   whiteboard_name        String @default("") @db.VarChar(100) /// @zod.trim().max(100)
   whiteboard_description String @default("") @db.VarChar(400) /// @zod.max(400)
@@ -132,16 +155,34 @@ model User {
   updated_at DateTime @updatedAt @db.DateTime(3)
 
   session_list    Session[]
-  file_list       File[]
-  group_list      Group[]
-  whiteboard_list Whiteboard[]
+  space_user_list SpaceUser[]
 
   @@index([username], name: "index_username")
   @@map("user")
 }
 
+model SpaceUser {
+  id String @id @default(uuid(7)) @db.VarChar(36) /// @zod.length(36)
+
+  user_id  String
+  user     User   @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  space_id String
+  space    Space  @relation(fields: [space_id], references: [space_id], onDelete: Cascade)
+
+  role SpaceUserRole
+
+  @@unique([user_id, space_id])
+}
+
+enum SpaceUserRole {
+  OWNER
+  ADMIN
+  EDITOR
+  READER
+}
+
 model Session {
-  session_id Int @id @default(autoincrement())
+  session_id String @id @default(uuid(7)) @db.VarChar(36) /// @zod.length(36)
 
   session_key    String    @unique @db.VarChar(255) /// @zod.trim().min(1).max(255)
   /// express-session
@@ -159,8 +200,13 @@ model Session {
   @@map("session")
 }
 
+/// @zod.import(["import { StringRelationIdSchema } from '@todo/lib/zod'"]);
 model File {
-  file_id  String @id @default(uuid(7)) @db.VarChar(36) /// @zod.length(36)
+  file_id String @id @default(uuid(7)) @db.VarChar(36) /// @zod.length(36) 
+
+  space_id String /// @zod.custom.use(StringRelationIdSchema)
+  space    Space  @relation(fields: [space_id], references: [space_id], onDelete: Cascade)
+
   filename String @db.VarChar(255) /// @zod.trim().min(1).max(255)
   mimetype String @db.VarChar(100) /// @zod.trim().min(1).max(100)
   filesize Int
@@ -170,7 +216,6 @@ model File {
   updated_at DateTime @updatedAt @db.DateTime(3)
   updated_by String
 
-  user_list User[]
   todo_list Todo[]
 
   @@map("file")

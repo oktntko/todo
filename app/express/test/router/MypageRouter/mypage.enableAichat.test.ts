@@ -1,9 +1,11 @@
 import { z } from '@todo/lib/zod';
 import { TRPCError } from '@trpc/server';
 import { APIError } from 'openai';
+
 import * as externalOpenai from '~/external/openai';
 import { ExtendsPrismaClient } from '~/middleware/prisma';
 import { MypageRouterSchema } from '~/schema/MypageRouterSchema';
+
 import { transactionRollbackTrpc } from '../../helper';
 
 const prisma = ExtendsPrismaClient;

@@ -1,5 +1,7 @@
-import { PrismaMariaDb } from '@prisma/adapter-mariadb';
 import type { ITXClientDenyList } from '@prisma/client/runtime/client';
+
+import { PrismaMariaDb } from '@prisma/adapter-mariadb';
+
 import { PrismaClient } from './generated/client';
 
 const adapter = new PrismaMariaDb({

@@ -1,6 +1,7 @@
 import { z } from '@todo/lib/zod';
 import express from 'express';
 import multer from 'multer';
+
 import { createProtectHandler } from '~/middleware/express';
 import { $transaction } from '~/middleware/prisma';
 import { protectedProcedure, router } from '~/middleware/trpc';
@@ -105,7 +106,7 @@ export const file = router({
 
   // file.deleteMany
   deleteMany: protectedProcedure
-    .input(FileRouterSchema.deleteInput.array())
+    .input(FileRouterSchema.deleteManyInput)
     .output(OkSchema)
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {

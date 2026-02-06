@@ -1,43 +1,79 @@
 import { z } from '@todo/lib/zod';
 import { TRPCError } from '@trpc/server';
+
 import { message } from '~/lib/message';
 import { ExtendsPrismaClient } from '~/middleware/prisma';
 import { FileRouterSchema } from '~/schema/FileRouterSchema';
+
 import { transactionRollbackTrpc } from '../../helper';
-import { createFile } from './testFileRouterHelper';
+import { createTestSpaceAndAddFile } from './_FileRouterTestHelper';
 
 const prisma = ExtendsPrismaClient;
 
 describe(`FileRouter file.delete`, () => {
-  test(`✅ success - delete file.
+  test.for([
+    { role: 'OWNER' }, //
+    { role: 'ADMIN' }, //
+    { role: 'EDITOR' }, //
+  ] as const)(
+    `✅ success - delete file, when operator has $role role.
     - it return the deleted ID.
-    - it delete the record in the database.`, async () => {
-    return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
-      // arrange
-      const file = await createFile(tx, operator);
+    - it delete the record in the database.`,
+    async ({ role }) => {
+      return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+        // arrange
+        const file = await createTestSpaceAndAddFile(tx, operator, role);
 
-      const input: z.infer<typeof FileRouterSchema.deleteInput> = {
-        ...file,
-      };
+        const input: z.infer<typeof FileRouterSchema.deleteInput> = {
+          file_id: file.file_id,
+          updated_at: file.updated_at,
+        };
 
-      // act
-      const output = await caller.file.delete(input);
+        // act
+        const output = await caller.file.delete(input);
 
-      // assert
-      expect(output).toEqual({ file_id: input.file_id });
+        // assert
+        expect(output).toEqual({ file_id: input.file_id });
 
-      const deleted = await tx.file.findUnique({
-        where: { file_id: input.file_id },
+        const deleted = await tx.file.findUnique({
+          where: { file_id: input.file_id },
+        });
+        expect(deleted).toBeNull();
       });
-      expect(deleted).toBeNull();
-    });
-  });
+    },
+  );
+
+  test.for([
+    { role: 'READER' }, //
+  ] as const)(
+    `⚠️ unauthorized error - operator does not have changeable authorization to the data, when operator has $role role.
+    - it throw FORBIDDEN error.`,
+    async ({ role }) => {
+      return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+        // arrange
+        const file = await createTestSpaceAndAddFile(tx, operator, role);
+
+        const input: z.infer<typeof FileRouterSchema.deleteInput> = {
+          file_id: file.file_id,
+          updated_at: file.updated_at,
+        };
+
+        // act & assert
+        await expect(caller.file.delete(input)).rejects.toThrow(
+          new TRPCError({
+            code: 'FORBIDDEN',
+            message: message.error.FORBIDDEN,
+          }),
+        );
+      });
+    },
+  );
 
   test(`⚠️ resource state error - concurrency update.
     - it throw CONFLICT error.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const { file_id } = await createFile(tx, operator);
+      const { file_id } = await createTestSpaceAndAddFile(tx, operator, 'OWNER');
 
       const input: z.infer<typeof FileRouterSchema.deleteInput> = {
         file_id,
@@ -48,7 +84,28 @@ describe(`FileRouter file.delete`, () => {
       await expect(caller.file.delete(input)).rejects.toThrow(
         new TRPCError({
           code: 'CONFLICT',
-          message: message.error.CONFLICT_PREVIOUS_UPDATED,
+          message: message.error.CONFLICT_CURRENT_UPDATED,
+        }),
+      );
+    });
+  });
+
+  test(`⚠️ unauthorized error - operator has no authorization to the data.
+        - it throw NOT_FOUND error.`, async () => {
+    return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+      // arrange
+      const file = await createTestSpaceAndAddFile(tx, operator, undefined);
+
+      const input: z.infer<typeof FileRouterSchema.deleteInput> = {
+        file_id: file.file_id,
+        updated_at: file.updated_at,
+      };
+
+      // act & assert
+      await expect(caller.file.delete(input)).rejects.toThrow(
+        new TRPCError({
+          code: 'NOT_FOUND',
+          message: message.error.NOT_FOUND,
         }),
       );
     });
@@ -59,7 +116,7 @@ describe(`FileRouter file.delete`, () => {
     return transactionRollbackTrpc(prisma, async ({ caller }) => {
       // arrange
       const input: z.infer<typeof FileRouterSchema.deleteInput> = {
-        file_id: '82ecb7c5-97db-4bf9-b647-48bb5d56822e', // not found
+        file_id: '019c23d1-31db-70ed-bfda-84f64ea77614', // not found
         updated_at: new Date(2001, 2, 4),
       };
 

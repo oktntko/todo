@@ -1,4 +1,5 @@
 import express from 'express';
+
 import { log } from '~/lib/log4js';
 import { createCallerFactory, router } from '~/middleware/trpc';
 import { aichat } from '~/router/AiChatRouter';
@@ -6,6 +7,7 @@ import { auth } from '~/router/AuthRouter';
 import { file, FileRouter } from '~/router/FileRouter';
 import { group } from '~/router/GroupRouter';
 import { mypage } from '~/router/MypageRouter';
+import { space } from '~/router/SpaceRouter';
 import { todo } from '~/router/TodoRouter';
 import { whiteboard } from '~/router/WhiteboardRouter';
 
@@ -15,6 +17,7 @@ export const TrpcRouter = router({
   file,
   mypage,
   group,
+  space,
   todo,
   whiteboard,
 });
@@ -38,7 +41,7 @@ export const createCaller = createCallerFactory(TrpcRouter);
 export type TrpcPaths = DotTrpcKeys<(typeof TrpcRouter)['_def']['record']>;
 
 type IsProcedure<T> = T extends {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   _def: any;
 }
   ? true

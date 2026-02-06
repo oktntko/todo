@@ -1,0 +1,37 @@
+.navigator_default_main {
+  --dp-nav-font-family: var(--font-sans);
+}
+.calendar_default_main {
+  --dp-calendar-font-family: var(--font-sans);
+  --dp-calendar-event-bar-bg-color: transparent;
+}
+.month_default_main {
+  --dp-month-font-family: var(--font-sans);
+  --dp-month-event-vertical-align: start;
+  --dp-month-event-bar-bg-color: transparent; /* 現状この変数はなかったが追加されそうなので宣言しておく */
+}
+.scheduler_default_main {
+  --dp-scheduler-font-family: var(--font-sans);
+  --dp-scheduler-event-vertical-align: start;
+  --dp-scheduler-event-bar-bg-color: transparent;
+}
+
+#calendar {
+  /* カレンダーの周囲にボーダーが引かれていて、スクロール時に若干ずれるので無効化する。 sticky をやめれば目立たないが。 */
+  border: none;
+}
+
+/* header */
+#calendar :deep(> div:nth-child(1)) {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  border: 1px solid var(--dp-calendar-border-color);
+  border-bottom: none;
+}
+
+/* table */
+#calendar :deep(> div:nth-child(2)) {
+  border: 1px solid var(--dp-calendar-border-color);
+  border-top: none;
+}

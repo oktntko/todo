@@ -1,6 +1,8 @@
-import { expect, test } from '@playwright/test';
 import type { TrpcPaths } from '@todo/express';
+
+import { expect, test } from '@playwright/test';
 import { jsonStringifyTrpcSuccessResponse, screenshotPath } from 'test:e2e/helper';
+
 import type { RouterOutput } from '~/lib/trpc';
 
 test.describe('scenario.test /todo/table', () => {

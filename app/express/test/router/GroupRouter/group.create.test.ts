@@ -1,53 +1,77 @@
 import { z } from '@todo/lib/zod';
+import { TRPCError } from '@trpc/server';
+
+import { message } from '~/lib/message';
 import { ExtendsPrismaClient } from '~/middleware/prisma';
 import { GroupRouterSchema } from '~/schema/GroupRouterSchema';
+
 import { transactionRollbackTrpc } from '../../helper';
+import { createTestSpace } from '../SpaceRouter/_SpaceRouterTestHelper';
 
 const prisma = ExtendsPrismaClient;
 
 describe(`GroupRouter group.create`, () => {
-  test(`✅ success - create a new group.
+  test.for([
+    { role: 'OWNER' }, //
+    { role: 'ADMIN' }, //
+  ] as const)(
+    `✅ success - create a new group, when operator has $role role.
     - it return the created group.
     - it create the record in the database.
-    - it assign group_order automatically.`, async () => {
-    return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
-      // arrange
-      const input: z.infer<typeof GroupRouterSchema.createInput> = {
-        group_name: 'test group',
-        group_description: 'test description',
-        group_image: 'iVBORw0KGgoANeSU',
-        group_color: '#FFFFFF',
-      };
+    - it assign group_order automatically.`,
+    async ({ role }) => {
+      return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+        // arrange
+        const space = await createTestSpace(tx, operator, role);
 
-      // act
-      const output = await caller.group.create(input);
+        const input: z.infer<typeof GroupRouterSchema.createInput> = {
+          space_id: space.space_id,
+          group_name: 'test group',
+          group_description: 'test description',
+          group_image: 'iVBORw0KGgoANeSU',
+          group_color: '#FFFFFF',
+        };
 
-      // assert
-      expect(output).toMatchObject(input);
+        // act
+        const output = await caller.group.create(input);
 
-      // Verify the record is saved in the database
-      const created = await tx.group.findUnique({
-        where: { group_id: output.group_id },
+        // assert
+        expect(output).toEqual({
+          ...input,
+          group_id: output.group_id,
+          group_order: 0,
+          created_at: output.created_at,
+          updated_at: output.updated_at,
+          created_by: operator.user_id,
+          updated_by: operator.user_id,
+        } satisfies typeof output);
+
+        // Verify the record is saved in the database
+        const created = await tx.group.findUnique({
+          where: { group_id: output.group_id },
+        });
+        expect(created).toMatchObject({
+          ...input,
+          group_id: output.group_id,
+          group_order: 0,
+          created_at: output.created_at,
+          updated_at: output.updated_at,
+          created_by: operator.user_id,
+          updated_by: operator.user_id,
+        });
       });
-      expect(created).toMatchObject({
-        ...input,
-        group_id: output.group_id,
-        group_order: 0,
-        owner_id: operator.user_id,
-        created_at: expect.any(Date),
-        updated_at: expect.any(Date),
-        created_by: operator.user_id,
-        updated_by: operator.user_id,
-      });
-    });
-  });
+    },
+  );
 
   test(`✅ success - group_order is assigned correctly.
     - when creating the first group, group_order should be 0.
     - when creating the second group, group_order should be 1.`, async () => {
-    return transactionRollbackTrpc(prisma, async ({ caller }) => {
+    return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
+      const space = await createTestSpace(tx, operator, 'OWNER');
+
       const input1: z.infer<typeof GroupRouterSchema.createInput> = {
+        space_id: space.space_id,
         group_name: 'first group',
         group_description: '',
         group_image: '',
@@ -55,6 +79,7 @@ describe(`GroupRouter group.create`, () => {
       };
 
       const input2: z.infer<typeof GroupRouterSchema.createInput> = {
+        space_id: space.space_id,
         group_name: 'second group',
         group_description: '',
         group_image: '',
@@ -68,6 +93,82 @@ describe(`GroupRouter group.create`, () => {
       // assert
       expect(output1.group_order).toBe(0);
       expect(output2.group_order).toBe(1);
+    });
+  });
+
+  test.for([
+    { role: 'EDITOR' }, //
+    { role: 'READER' }, //
+  ] as const)(
+    `⚠️ unauthorized error - operator does not have changeable authorization to the data, when operator has $role role.
+    - it throw FORBIDDEN error.`,
+    async ({ role }) => {
+      return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+        // arrange
+        const space = await createTestSpace(tx, operator, role);
+
+        const input: z.infer<typeof GroupRouterSchema.createInput> = {
+          space_id: space.space_id,
+          group_name: 'test group',
+          group_description: '',
+          group_image: '',
+          group_color: '#FFFFFF',
+        };
+
+        // act & assert
+        await expect(caller.group.create(input)).rejects.toThrow(
+          new TRPCError({
+            code: 'FORBIDDEN',
+            message: message.error.FORBIDDEN,
+          }),
+        );
+      });
+    },
+  );
+
+  test(`⚠️ unauthorized error - operator has no authorization to the data.
+    - it throw NOT_FOUND error.`, async () => {
+    return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+      // arrange
+      const space = await createTestSpace(tx, operator, undefined);
+
+      const input: z.infer<typeof GroupRouterSchema.createInput> = {
+        space_id: space.space_id,
+        group_name: 'test group',
+        group_description: '',
+        group_image: '',
+        group_color: '#FFFFFF',
+      };
+
+      // act & assert
+      await expect(caller.group.create(input)).rejects.toThrow(
+        new TRPCError({
+          code: 'NOT_FOUND',
+          message: message.error.NOT_FOUND,
+        }),
+      );
+    });
+  });
+
+  test(`⚠️ resource state error - data not found in database.
+    - it throw NOT_FOUND error.`, async () => {
+    return transactionRollbackTrpc(prisma, async ({ caller }) => {
+      // arrange
+      const input: z.infer<typeof GroupRouterSchema.createInput> = {
+        space_id: '019c23d1-31db-70ed-bfda-84f64ea77614', // not found
+        group_name: 'test group',
+        group_description: '',
+        group_image: '',
+        group_color: '#FFFFFF',
+      };
+
+      // act & assert
+      await expect(caller.group.create(input)).rejects.toThrow(
+        new TRPCError({
+          code: 'NOT_FOUND',
+          message: message.error.NOT_FOUND,
+        }),
+      );
     });
   });
 });

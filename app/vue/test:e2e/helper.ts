@@ -1,4 +1,5 @@
 import type { TestInfo } from '@playwright/test';
+
 import path from 'path';
 import superjson from 'superjson';
 

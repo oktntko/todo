@@ -1,5 +1,8 @@
 import { isAxiosError } from 'axios';
-import App from '~/App.vue';
+import { createPinia } from 'pinia';
+import { createApp } from 'vue';
+
+import App from '~/App.tsx';
 import router from '~/lib/router';
 import { isRouterError } from '~/lib/trpc';
 import '~/main.css';

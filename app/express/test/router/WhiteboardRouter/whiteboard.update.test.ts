@@ -1,62 +1,102 @@
 import { z } from '@todo/lib/zod';
 import { TRPCError } from '@trpc/server';
+
 import { message } from '~/lib/message';
 import { ExtendsPrismaClient } from '~/middleware/prisma';
 import { WhiteboardRouterSchema } from '~/schema/WhiteboardRouterSchema';
+
 import { transactionRollbackTrpc } from '../../helper';
-import { createWhiteboard } from './testWhiteboardRouterHelper';
+import { createTestSpaceAndAddWhiteboard } from './_WhiteboardRouterTestHelper';
 
 const prisma = ExtendsPrismaClient;
 
 describe(`WhiteboardRouter whiteboard.update`, () => {
-  test(`✅ success - update whiteboard.
+  test.for([
+    { role: 'OWNER' }, //
+    { role: 'ADMIN' }, //
+    { role: 'EDITOR' }, //
+  ] as const)(
+    `✅ success - update whiteboard, when operator has $role role.
     - it return the updated whiteboard.
-    - it update the record in the database.`, async () => {
-    return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
-      // arrange
-      const whiteboard = await createWhiteboard(tx, operator);
+    - it update the record in the database.`,
+    async ({ role }) => {
+      return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+        // arrange
+        const whiteboard = await createTestSpaceAndAddWhiteboard(tx, operator, role);
 
-      const input: z.infer<typeof WhiteboardRouterSchema.updateInput> = {
-        whiteboard_id: whiteboard.whiteboard_id,
-        whiteboard_name: 'updated whiteboard name',
-        whiteboard_description: 'updated description',
-        whiteboard_content: '{"test": true}',
-        updated_at: whiteboard.updated_at,
-      };
-
-      // act
-      const output = await caller.whiteboard.update(input);
-
-      // assert
-      expect(output).toEqual(
-        expect.objectContaining({
+        const input: z.infer<typeof WhiteboardRouterSchema.updateInput> = {
           whiteboard_id: whiteboard.whiteboard_id,
-          whiteboard_name: input.whiteboard_name,
-          whiteboard_description: input.whiteboard_description,
-          whiteboard_content: input.whiteboard_content,
-        }),
-      );
+          whiteboard_name: 'updated whiteboard name',
+          whiteboard_description: 'updated description',
+          whiteboard_content: '{"test": true}',
+          updated_at: whiteboard.updated_at,
+        };
 
-      // Verify the record is updated in the database
-      const updated = await tx.whiteboard.findUnique({
-        where: { whiteboard_id: whiteboard.whiteboard_id },
+        // act
+        const output = await caller.whiteboard.update(input);
+
+        // assert
+        expect(output).toEqual({
+          ...input,
+          space_id: whiteboard.space_id,
+          whiteboard_order: whiteboard.whiteboard_order,
+          created_at: whiteboard.created_at,
+          updated_at: output.updated_at,
+          created_by: whiteboard.created_by,
+          updated_by: operator.user_id,
+        } satisfies typeof output);
+
+        // Verify the record is updated in the database
+        const updated = await tx.whiteboard.findUniqueOrThrow({
+          where: { whiteboard_id: whiteboard.whiteboard_id },
+        });
+        expect(updated).toEqual({
+          ...input,
+          space_id: whiteboard.space_id,
+          whiteboard_order: whiteboard.whiteboard_order,
+          created_at: whiteboard.created_at,
+          updated_at: output.updated_at,
+          created_by: whiteboard.created_by,
+          updated_by: operator.user_id,
+        } satisfies typeof updated);
       });
-      expect(updated).not.toBeNull();
-      expect(updated).toEqual(
-        expect.objectContaining({
-          whiteboard_name: input.whiteboard_name,
-          whiteboard_description: input.whiteboard_description,
-          whiteboard_content: input.whiteboard_content,
-        }),
-      );
-    });
-  });
+    },
+  );
+
+  test.for([
+    { role: 'READER' }, //
+  ] as const)(
+    `⚠️ unauthorized error - operator does not have changeable authorization to the data, when operator has $role role.
+      - it throw FORBIDDEN error.`,
+    async ({ role }) => {
+      return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+        // arrange
+        const whiteboard = await createTestSpaceAndAddWhiteboard(tx, operator, role);
+
+        const input: z.infer<typeof WhiteboardRouterSchema.updateInput> = {
+          whiteboard_id: whiteboard.whiteboard_id,
+          whiteboard_name: 'updated name',
+          whiteboard_description: '',
+          whiteboard_content: '{}',
+          updated_at: whiteboard.updated_at,
+        };
+
+        // act & assert
+        await expect(caller.whiteboard.update(input)).rejects.toThrow(
+          new TRPCError({
+            code: 'FORBIDDEN',
+            message: message.error.FORBIDDEN,
+          }),
+        );
+      });
+    },
+  );
 
   test(`⚠️ resource state error - concurrency update.
     - it throw CONFLICT error.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const { whiteboard_id } = await createWhiteboard(tx, operator);
+      const { whiteboard_id } = await createTestSpaceAndAddWhiteboard(tx, operator, 'OWNER');
 
       const input: z.infer<typeof WhiteboardRouterSchema.updateInput> = {
         whiteboard_id,
@@ -70,7 +110,31 @@ describe(`WhiteboardRouter whiteboard.update`, () => {
       await expect(caller.whiteboard.update(input)).rejects.toThrow(
         new TRPCError({
           code: 'CONFLICT',
-          message: message.error.CONFLICT_PREVIOUS_UPDATED,
+          message: message.error.CONFLICT_CURRENT_UPDATED,
+        }),
+      );
+    });
+  });
+
+  test(`⚠️ unauthorized error - operator has no authorization to the data.
+        - it throw NOT_FOUND error.`, async () => {
+    return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+      // arrange
+      const whiteboard = await createTestSpaceAndAddWhiteboard(tx, operator, undefined);
+
+      const input: z.infer<typeof WhiteboardRouterSchema.updateInput> = {
+        whiteboard_id: whiteboard.whiteboard_id,
+        whiteboard_name: 'updated name',
+        whiteboard_description: '',
+        whiteboard_content: '{}',
+        updated_at: whiteboard.updated_at,
+      };
+
+      // act & assert
+      await expect(caller.whiteboard.update(input)).rejects.toThrow(
+        new TRPCError({
+          code: 'NOT_FOUND',
+          message: message.error.NOT_FOUND,
         }),
       );
     });
@@ -81,7 +145,7 @@ describe(`WhiteboardRouter whiteboard.update`, () => {
     return transactionRollbackTrpc(prisma, async ({ caller }) => {
       // arrange
       const input: z.infer<typeof WhiteboardRouterSchema.updateInput> = {
-        whiteboard_id: 999999, // not found
+        whiteboard_id: '019c23d1-31db-70ed-bfda-84f64ea77614', // not found
         whiteboard_name: 'updated name',
         whiteboard_description: '',
         whiteboard_content: '{}',

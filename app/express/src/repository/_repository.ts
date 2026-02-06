@@ -1,11 +1,12 @@
 import { R } from '@todo/lib/remeda';
 import { TRPCError } from '@trpc/server';
+
 import { message } from '~/lib/message';
 
 export const _repository = {
   checkDataExist,
   checkDuplicate,
-  checkPreviousVersion,
+  checkVersion,
 };
 
 async function checkDataExist<T>(params: {
@@ -48,26 +49,26 @@ async function checkDuplicate<T>(params: {
   return data;
 }
 
-async function checkPreviousVersion<T extends { updated_at: Date }>(params: {
-  previous: T | null | Promise<T | null>;
+async function checkVersion<T extends { updated_at: Date }>(params: {
+  current: T | null | Promise<T | null>;
   updated_at: string | Date;
   dataIsNotExistMessage?: string;
-  previousIsUpdatedMessage?: string;
+  currentIsUpdatedMessage?: string;
 }) {
-  const data = await checkDataExist({
-    data: params.previous,
+  const current = await checkDataExist({
+    data: params.current,
     dataIsNotExistMessage: params.dataIsNotExistMessage,
   });
 
   const date =
     typeof params.updated_at === 'string' ? new Date(params.updated_at) : params.updated_at;
 
-  if (data.updated_at.getTime() !== date.getTime()) {
+  if (current.updated_at.getTime() !== date.getTime()) {
     throw new TRPCError({
       code: 'CONFLICT',
-      message: params.previousIsUpdatedMessage || message.error.CONFLICT_PREVIOUS_UPDATED,
+      message: params.currentIsUpdatedMessage || message.error.CONFLICT_CURRENT_UPDATED,
     });
   }
 
-  return data;
+  return current;
 }

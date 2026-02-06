@@ -1,6 +1,10 @@
 {
   "name": "@todo/lib",
   "version": "1.0.0",
+  "files": [
+    "dist",
+    "package.json"
+  ],
   "type": "module",
   "exports": {
     "./dayjs": {
@@ -16,28 +20,24 @@
       "default": "./dist/zod.mjs"
     }
   },
-  "files": [
-    "dist",
-    "package.json"
-  ],
   "scripts": {
     "build": "tsdown",
     "type-check": "tsc --project tsconfig.base.json --noEmit",
-    "lint": "eslint src/ --max-warnings 0",
-    "format": "prettier src/ --write",
+    "lint": "oxlint --type-aware --type-check",
+    "format": "oxfmt",
     "test": "vitest run",
     "test:preview": "vitest --ui"
   },
   "dependencies": {
     "dayjs": "^1.11.19",
-    "remeda": "^2.33.1",
-    "zod": "^4.3.4"
+    "remeda": "^2.33.4",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@vitest/coverage-v8": "^4.0.16",
-    "@vitest/ui": "^4.0.16",
-    "tsdown": "^0.18.4",
-    "vitest": "^4.0.16"
+    "@vitest/coverage-v8": "^4.0.18",
+    "@vitest/ui": "^4.0.18",
+    "tsdown": "^0.20.1",
+    "vitest": "^4.0.18"
   },
-  "packageManager": "pnpm@10.27.0"
+  "packageManager": "pnpm@10.28.1"
 }

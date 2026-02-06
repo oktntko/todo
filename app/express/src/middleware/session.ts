@@ -2,6 +2,7 @@ import { dayjs } from '@todo/lib/dayjs';
 import * as express from 'express';
 import { SessionData, Store } from 'express-session';
 import superjson from 'superjson';
+
 import { env } from '~/lib/env';
 import { log } from '~/lib/log4js';
 import { ExtendsPrismaClient, PrismaClient } from '~/middleware/prisma';
@@ -145,7 +146,7 @@ async function destroySession(session_key: string) {
     where: { session_key },
   });
 
-  return { ok: true };
+  return { ok: true } as const;
 }
 
 // session.regenerate
