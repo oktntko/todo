@@ -12,7 +12,7 @@ import {
 describe('zod', () => {
   describe('DateSchema', () => {
     const error = {
-      errors: ['無効な日付形式です。'],
+      errors: ['Invalid date format.'],
     };
     test.each`
       arg              | success  | data            | error
@@ -36,7 +36,7 @@ describe('zod', () => {
 
   describe('MonthSchema', () => {
     const error = {
-      errors: ['無効な年月形式です。'],
+      errors: ['Invalid year/month format.'],
     };
     test.each`
       arg           | success  | data         | error
@@ -57,7 +57,7 @@ describe('zod', () => {
 
   describe('TimeSchema', () => {
     const error = {
-      errors: ['無効な時刻形式です。'],
+      errors: ['Invalid time format.'],
     };
     test.each`
       arg         | success  | data         | error
@@ -82,7 +82,7 @@ describe('zod', () => {
 
   describe('ColorSchema', () => {
     const error = {
-      errors: ['無効な色です。'],
+      errors: ['Invalid color.'],
     };
     // cSpell:ignore afafah
     test.each`
@@ -114,7 +114,7 @@ describe('zod', () => {
 
   describe('UnsignedDecimalSchema', () => {
     const error = {
-      errors: ['無効な数値形式です。'],
+      errors: ['Invalid number format.'],
     };
     // cSpell:ignore afafah
     test.each`
@@ -149,7 +149,7 @@ describe('zod', () => {
 
   describe('SignedDecimalSchema', () => {
     const error = {
-      errors: ['無効な数値形式です。'],
+      errors: ['Invalid number format.'],
     };
     test.each`
       arg                                            | success  | data                                           | error
