@@ -47,7 +47,7 @@ export default defineComponent(() => {
               const loading = $dialog.loading();
               try {
                 await trpc.auth.signup.mutate(modelValue.value);
-                $router.push({ name: '//space/' });
+                return $router.push({ name: '//space/' });
               } finally {
                 loading.close();
               }

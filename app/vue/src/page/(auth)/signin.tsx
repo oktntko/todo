@@ -59,7 +59,7 @@ export default defineComponent(() => {
                 onSuccess: resolve,
               }));
 
-              $router.push({ name: '//space/' });
+              return $router.push({ name: '//space/' });
             }}
           >
             <section class="flex flex-col gap-3">

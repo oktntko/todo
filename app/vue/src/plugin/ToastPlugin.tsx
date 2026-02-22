@@ -71,19 +71,19 @@ function installToastPlugin() {
 
   type O = { color?: ColorType };
   return {
-    async open(message: string, { color = 'white', ...options }: O = {}) {
+    open(message: string, { color = 'white', ...options }: O = {}) {
       return open({ message, color, ...options });
     },
-    async success(message: string, { color = 'green', ...options }: O = {}) {
+    success(message: string, { color = 'green', ...options }: O = {}) {
       return this.open(message, { color, ...options });
     },
-    async info(message: string, { color = 'blue', ...options }: O = {}) {
+    info(message: string, { color = 'blue', ...options }: O = {}) {
       return this.open(message, { color, ...options });
     },
-    async warn(message: string, { color = 'yellow', ...options }: O = {}) {
+    warn(message: string, { color = 'yellow', ...options }: O = {}) {
       return this.open(message, { color, ...options });
     },
-    async danger(message: string, { color = 'red', ...options }: O = {}) {
+    danger(message: string, { color = 'red', ...options }: O = {}) {
       return this.open(message, { color, ...options });
     },
   };

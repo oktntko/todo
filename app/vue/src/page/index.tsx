@@ -141,8 +141,8 @@ export default defineComponent(() => {
               class="relative flex cursor-pointer items-center justify-center rounded-full p-1.5 hover:bg-gray-200"
               title="avatar"
               onClick={async () => {
-                trpc.auth.delete.mutate();
-                $router.push({ name: '/(auth)/signin' });
+                await trpc.auth.delete.mutate();
+                return $router.push({ name: '/(auth)/signin' });
               }}
             >
               <span class="icon-[radix-icons--avatar] h-5 w-5" />

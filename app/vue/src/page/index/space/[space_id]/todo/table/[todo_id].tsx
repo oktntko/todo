@@ -32,7 +32,7 @@ export default defineComponent(async () => {
 
       $toast.success('Todo has been saved.');
 
-      $router.push({
+      return $router.push({
         name: '//space/[space_id]/todo/table/',
         params: {
           space_id: $route.params.space_id,
@@ -101,7 +101,7 @@ export default defineComponent(async () => {
 
                       $toast.success('Todo have been deleted.');
 
-                      $router.replace({
+                      return $router.replace({
                         name: '//space/[space_id]/todo/table/',
                         params: {
                           space_id: $route.params.space_id,
