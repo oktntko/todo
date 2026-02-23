@@ -18,7 +18,7 @@
   },
   "scripts": {
     "build": "tsdown",
-    "type-check": "tsc --project tsconfig.base.json --noEmit",
+    "type-check": "tsc --project tsconfig.base.json",
     "lint": "oxlint --type-aware --type-check",
     "format": "oxfmt",
     "prisma:generate": "prisma generate && find src/schema -type f | xargs sed -i -e \"s#from 'zod';#from '@todo/lib/zod';#g\" && tsx ../../script/generateBarrelFile.ts src/schema/generated/schemas/enums src/schema/option && oxfmt --write src/schema",

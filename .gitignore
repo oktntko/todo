@@ -2,4 +2,5 @@ mise.local.toml
 node_modules/
 .turbo
 .report
-dist
+dist/
+types/

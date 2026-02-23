@@ -2,13 +2,14 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": ["@tsconfig/node24/tsconfig.json", "@tsconfig/strictest/tsconfig.json"],
   "compilerOptions": {
-    "composite": true,
     "outDir": "./dist",
     "module": "esnext",
     "moduleResolution": "bundler",
+    "composite": true,
     "declaration": true,
     "declarationDir": "./types",
     "emitDeclarationOnly": true,
+    "skipLibCheck": true,
     // override strictest
     "exactOptionalPropertyTypes": false,
     // app settings
@@ -16,5 +17,9 @@
       "~/*": ["./src/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src"],
+  "references": [
+    { "path": "../../common/lib/tsconfig.base.json" },
+    { "path": "../../common/prisma/tsconfig.base.json" }
+  ]
 }

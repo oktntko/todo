@@ -22,7 +22,7 @@
   },
   "scripts": {
     "build": "tsdown",
-    "type-check": "tsc --project tsconfig.base.json --noEmit",
+    "type-check": "tsc --project tsconfig.base.json",
     "lint": "oxlint --type-aware --type-check",
     "format": "oxfmt",
     "test": "vitest run",

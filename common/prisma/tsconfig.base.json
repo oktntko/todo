@@ -5,11 +5,14 @@
     "outDir": "./dist",
     "module": "esnext",
     "moduleResolution": "bundler",
+    "composite": true,
     "declaration": true,
     "declarationDir": "./types",
     "emitDeclarationOnly": true,
+    "skipLibCheck": true,
     // override strictest
     "exactOptionalPropertyTypes": false
   },
-  "include": ["src"]
+  "include": ["src"],
+  "references": [{ "path": "../lib/tsconfig.base.json" }]
 }

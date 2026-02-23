@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "disableSourceOfProjectReferenceRedirect": true
+  },
+  "files": [],
+  "exclude": ["node_modules", ".turbo"],
+  "references": [
+    { "path": "app/express" },
+    { "path": "app/vue" },
+    { "path": "common/lib" },
+    { "path": "common/prisma" }
+  ]
+}
