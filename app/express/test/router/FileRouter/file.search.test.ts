@@ -3,8 +3,10 @@ import { z } from '@todo/lib/zod';
 import { ExtendsPrismaClient } from '~/middleware/prisma';
 import { FileRouterSchema } from '~/schema/FileRouterSchema';
 
-import { createTestUser, transactionRollbackTrpc } from '../../helper';
-import { addTestFile, createTestSpaceAndAddFile } from './_FileRouterTestHelper';
+import { FileFactory } from '../../factory/FileFactory';
+import { SpaceFactory } from '../../factory/SpaceFactory';
+import { UserFactory } from '../../factory/UserFactory';
+import { transactionRollbackTrpc } from '../../helper';
 
 const prisma = ExtendsPrismaClient;
 
@@ -20,9 +22,18 @@ describe(`FileRouter file.search`, () => {
       async ({ role }) => {
         return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
           // arrange
-          const fileInSpaceA_1 = await createTestSpaceAndAddFile(tx, operator, role);
-          const fileInSpaceA_2 = await addTestFile(tx, operator, fileInSpaceA_1);
-          /* const fileInSpaceB = */ await createTestSpaceAndAddFile(tx, operator, role);
+          const spaceA = await SpaceFactory.create(tx, {
+            user_id: operator.user_id,
+            role,
+          });
+          const fileInSpaceA_1 = await FileFactory.create(tx, spaceA);
+          const fileInSpaceA_2 = await FileFactory.create(tx, spaceA);
+
+          const spaceB = await SpaceFactory.create(tx, {
+            user_id: operator.user_id,
+            role,
+          });
+          /* const fileInSpaceB = */ await FileFactory.create(tx, spaceB);
 
           const input: z.infer<typeof FileRouterSchema.searchInput> = {
             space_id: fileInSpaceA_1.space_id,
@@ -57,12 +68,20 @@ describe(`FileRouter file.search`, () => {
     - it does not return files owned by other users.`, async () => {
       return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
         // arrange
-        const other = await createTestUser(tx);
+        const other = await UserFactory.create(tx);
 
-        const fileInSpaceA_1 = await createTestSpaceAndAddFile(tx, other, 'OWNER');
-        /* const fileInSpaceA_2 = */ await addTestFile(tx, operator, fileInSpaceA_1);
-        /* const fileInSpaceB = */ await createTestSpaceAndAddFile(tx, operator, 'OWNER');
+        const spaceA = await SpaceFactory.create(tx, {
+          user_id: other.user_id,
+          role: 'OWNER',
+        });
+        const fileInSpaceA_1 = await FileFactory.create(tx, spaceA);
+        /* const fileInSpaceA_2 = */ await FileFactory.create(tx, spaceA);
 
+        const spaceB = await SpaceFactory.create(tx, {
+          user_id: operator.user_id,
+          role: 'OWNER',
+        });
+        /* const fileInSpaceB = */ await FileFactory.create(tx, spaceB);
         const input: z.infer<typeof FileRouterSchema.searchInput> = {
           space_id: fileInSpaceA_1.space_id,
           where: {
@@ -116,18 +135,26 @@ describe(`FileRouter file.search`, () => {
     test(`search by filename`, async () => {
       return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
         // arrange
-        const file1 = await createTestSpaceAndAddFile(tx, operator, 'OWNER', {
+        const { space_id } = await SpaceFactory.create(tx, {
+          user_id: operator.user_id,
+          role: 'OWNER',
+        });
+
+        /* const file1 = */ await FileFactory.create(tx, {
+          space_id,
           filename: 'sentence',
         });
-        /* const file2 =  */ await addTestFile(tx, operator, file1, {
+        /* const file2 =  */ await FileFactory.create(tx, {
+          space_id,
           filename: 'tribute',
         });
-        const file3 = await addTestFile(tx, operator, file1, {
+        const file3 = await FileFactory.create(tx, {
+          space_id,
           filename: 'nightmare',
         });
 
         const input: z.infer<typeof FileRouterSchema.searchInput> = {
-          space_id: file1.space_id,
+          space_id,
           where: {
             file_keyword: 'ght',
           },
@@ -152,13 +179,21 @@ describe(`FileRouter file.search`, () => {
     test(`search by todo title`, async () => {
       return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
         // arrange
-        const file1 = await createTestSpaceAndAddFile(tx, operator, 'OWNER', {
+        const { space_id } = await SpaceFactory.create(tx, {
+          user_id: operator.user_id,
+          role: 'OWNER',
+        });
+
+        const file1 = await FileFactory.create(tx, {
+          space_id,
           filename: 'filename',
         });
-        /* const file2 = */ await addTestFile(tx, operator, file1, {
+        /* const file2 = */ await FileFactory.create(tx, {
+          space_id,
           filename: 'filename',
         });
-        /* const file3 = */ await addTestFile(tx, operator, file1, {
+        /* const file3 = */ await FileFactory.create(tx, {
+          space_id,
           filename: 'filename',
         });
 
@@ -190,12 +225,17 @@ describe(`FileRouter file.search`, () => {
   test(`pagination`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const file1 = await createTestSpaceAndAddFile(tx, operator, 'OWNER');
-      /* const file2 = */ await addTestFile(tx, operator, file1);
-      const file3 = await addTestFile(tx, operator, file1);
+      const { space_id } = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
+      });
+
+      /* const file1 = */ await FileFactory.create(tx, { space_id });
+      /* const file2 = */ await FileFactory.create(tx, { space_id });
+      const file3 = await FileFactory.create(tx, { space_id });
 
       const input: z.infer<typeof FileRouterSchema.searchInput> = {
-        space_id: file1.space_id,
+        space_id,
         where: {
           file_keyword: '',
         },

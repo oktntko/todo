@@ -5,8 +5,10 @@ import { message } from '~/lib/message';
 import { ExtendsPrismaClient } from '~/middleware/prisma';
 import { TodoRouterSchema } from '~/schema/TodoRouterSchema';
 
+import { GroupFactory } from '../../factory/GroupFactory';
+import { SpaceFactory } from '../../factory/SpaceFactory';
+import { TodoFactory } from '../../factory/TodoFactory';
 import { transactionRollbackTrpc } from '../../helper';
-import { createTestSpaceGroupAndAddTodo } from './_TodoRouterTestHelper';
 
 const prisma = ExtendsPrismaClient;
 
@@ -16,7 +18,14 @@ describe(`TodoRouter todo.delete`, () => {
     - it delete the record in the database.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const todo = await createTestSpaceGroupAndAddTodo(tx, operator, 'OWNER');
+      const { space_id } = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
+      });
+      const { group_id } = await GroupFactory.create(tx, {
+        space_id,
+      });
+      const todo = await TodoFactory.create(tx, { group_id });
 
       const input: z.infer<typeof TodoRouterSchema.deleteInput> = {
         todo_id: todo.todo_id,
@@ -39,9 +48,13 @@ describe(`TodoRouter todo.delete`, () => {
 
   test(`⚠️ access control - forbidden to delete todo in other user's group.
     - it throw FORBIDDEN error.`, async () => {
-    return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+    return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
       // arrange
-      const todo = await createTestSpaceGroupAndAddTodo(tx, operator, undefined);
+      const { space_id } = await SpaceFactory.create(tx);
+      const { group_id } = await GroupFactory.create(tx, {
+        space_id,
+      });
+      const todo = await TodoFactory.create(tx, { group_id });
 
       const input: z.infer<typeof TodoRouterSchema.deleteInput> = {
         todo_id: todo.todo_id,

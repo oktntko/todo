@@ -3,9 +3,10 @@ import { z } from '@todo/lib/zod';
 import { ExtendsPrismaClient } from '~/middleware/prisma';
 import { TodoRouterSchema } from '~/schema/TodoRouterSchema';
 
+import { GroupFactory } from '../../factory/GroupFactory';
+import { SpaceFactory } from '../../factory/SpaceFactory';
+import { TodoFactory } from '../../factory/TodoFactory';
 import { transactionRollbackTrpc } from '../../helper';
-import { addTestGroup } from '../GroupRouter/_GroupRouterTestHelper';
-import { createTestSpaceGroupAndAddTodo } from './_TodoRouterTestHelper';
 
 const prisma = ExtendsPrismaClient;
 
@@ -15,8 +16,15 @@ describe(`TodoRouter todo.applyChange`, () => {
     - it save the record in the database.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const todo = await createTestSpaceGroupAndAddTodo(tx, operator, 'OWNER');
-      const newGroup = await addTestGroup(tx, operator, todo.group);
+      const { space_id } = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
+      });
+      const { group_id } = await GroupFactory.create(tx, {
+        space_id,
+      });
+      const todo = await TodoFactory.create(tx, { group_id });
+      const newGroup = await GroupFactory.create(tx, { space_id });
 
       const input: z.infer<typeof TodoRouterSchema.applyChangeInput> = {
         todo_id: todo.todo_id,

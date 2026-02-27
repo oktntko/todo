@@ -5,8 +5,9 @@ import { message } from '~/lib/message';
 import { ExtendsPrismaClient } from '~/middleware/prisma';
 import { TodoRouterSchema } from '~/schema/TodoRouterSchema';
 
+import { GroupFactory } from '../../factory/GroupFactory';
+import { SpaceFactory } from '../../factory/SpaceFactory';
 import { transactionRollbackTrpc } from '../../helper';
-import { createTestSpaceAndAddGroup } from '../GroupRouter/_GroupRouterTestHelper';
 
 const prisma = ExtendsPrismaClient;
 
@@ -16,10 +17,16 @@ describe(`TodoRouter todo.create`, () => {
     - it save the record in the database.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const group = await createTestSpaceAndAddGroup(tx, operator, 'OWNER');
+      const { space_id } = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
+      });
+      const { group_id } = await GroupFactory.create(tx, {
+        space_id,
+      });
 
       const input: z.infer<typeof TodoRouterSchema.createInput> = {
-        group_id: group.group_id,
+        group_id,
         title: 'test todo',
         description: 'test description',
         begin_date: '2023-10-01',
@@ -36,7 +43,7 @@ describe(`TodoRouter todo.create`, () => {
       // assert
       expect(output).toEqual(
         expect.objectContaining({
-          group_id: group.group_id,
+          group_id,
           title: input.title,
           description: input.description,
         }),
@@ -79,12 +86,15 @@ describe(`TodoRouter todo.create`, () => {
 
   test(`⚠️ access control - group owned by other user.
     - it throw FORBIDDEN error.`, async () => {
-    return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+    return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
       // arrange
-      const group = await createTestSpaceAndAddGroup(tx, operator, undefined);
+      const { space_id } = await SpaceFactory.create(tx);
+      const { group_id } = await GroupFactory.create(tx, {
+        space_id,
+      });
 
       const input: z.infer<typeof TodoRouterSchema.createInput> = {
-        group_id: group.group_id,
+        group_id,
         title: 'test todo',
         description: '',
         begin_date: '',

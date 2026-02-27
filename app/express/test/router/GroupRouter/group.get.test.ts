@@ -5,8 +5,9 @@ import { message } from '~/lib/message';
 import { ExtendsPrismaClient } from '~/middleware/prisma';
 import { GroupRouterSchema } from '~/schema/GroupRouterSchema';
 
+import { GroupFactory } from '../../factory/GroupFactory';
+import { SpaceFactory } from '../../factory/SpaceFactory';
 import { transactionRollbackTrpc } from '../../helper';
-import { createTestSpaceAndAddGroup } from './_GroupRouterTestHelper';
 
 const prisma = ExtendsPrismaClient;
 
@@ -22,29 +23,38 @@ describe(`GroupRouter group.get`, () => {
     async ({ role }) => {
       return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
         // arrange
-        const group = await createTestSpaceAndAddGroup(tx, operator, role);
+        const { space_id } = await SpaceFactory.create(tx, {
+          user_id: operator.user_id,
+          role,
+        });
+        const { group_id } = await GroupFactory.create(tx, {
+          space_id,
+        });
 
         const input: z.infer<typeof GroupRouterSchema.getInput> = {
-          group_id: group.group_id,
+          group_id,
         };
 
         // act
         const output = await caller.group.get(input);
 
         // assert
-        expect(output).toEqual(expect.objectContaining({ group_id: group.group_id }));
+        expect(output).toEqual(expect.objectContaining({ group_id }));
       });
     },
   );
 
   test(`⚠️ unauthorized error - operator has no authorization to the data.
     - it throw NOT_FOUND error.`, async () => {
-    return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+    return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
       // arrange
-      const group = await createTestSpaceAndAddGroup(tx, operator, undefined);
+      const { space_id } = await SpaceFactory.create(tx);
+      const { group_id } = await GroupFactory.create(tx, {
+        space_id,
+      });
 
       const input: z.infer<typeof GroupRouterSchema.getInput> = {
-        group_id: group.group_id,
+        group_id,
       };
 
       // act & assert

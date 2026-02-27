@@ -5,8 +5,10 @@ import { message } from '~/lib/message';
 import { ExtendsPrismaClient } from '~/middleware/prisma';
 import { TodoRouterSchema } from '~/schema/TodoRouterSchema';
 
+import { GroupFactory } from '../../factory/GroupFactory';
+import { SpaceFactory } from '../../factory/SpaceFactory';
+import { TodoFactory } from '../../factory/TodoFactory';
 import { transactionRollbackTrpc } from '../../helper';
-import { createTestSpaceGroupAndAddTodo } from './_TodoRouterTestHelper';
 
 const prisma = ExtendsPrismaClient;
 
@@ -15,17 +17,24 @@ describe(`TodoRouter todo.get`, () => {
     - it return the todo data with group and file_list.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const todo = await createTestSpaceGroupAndAddTodo(tx, operator, 'OWNER');
+      const { space_id } = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
+      });
+      const { group_id } = await GroupFactory.create(tx, {
+        space_id,
+      });
+      const { todo_id } = await TodoFactory.create(tx, { group_id });
 
       const input: z.infer<typeof TodoRouterSchema.getInput> = {
-        todo_id: todo.todo_id,
+        todo_id,
       };
 
       // act
       const output = await caller.todo.get(input);
 
       // assert
-      expect(output).toEqual(expect.objectContaining({ todo_id: todo.todo_id }));
+      expect(output).toEqual(expect.objectContaining({ todo_id }));
       expect(output.group).toBeDefined();
       expect(output.file_list).toBeDefined();
     });
@@ -51,12 +60,16 @@ describe(`TodoRouter todo.get`, () => {
 
   test(`⚠️ access control - forbidden to access todo in other user's group.
     - it throw NOT_FOUND error.`, async () => {
-    return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+    return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
       // arrange
-      const todo = await createTestSpaceGroupAndAddTodo(tx, operator, undefined);
+      const { space_id } = await SpaceFactory.create(tx);
+      const { group_id } = await GroupFactory.create(tx, {
+        space_id,
+      });
+      const { todo_id } = await TodoFactory.create(tx, { group_id });
 
       const input: z.infer<typeof TodoRouterSchema.getInput> = {
-        todo_id: todo.todo_id,
+        todo_id,
       };
 
       // act & assert

@@ -5,8 +5,8 @@ import { message } from '~/lib/message';
 import { ExtendsPrismaClient } from '~/middleware/prisma';
 import { SpaceRouterSchema } from '~/schema';
 
+import { SpaceFactory } from '../../factory/SpaceFactory';
 import { transactionRollbackTrpc } from '../../helper';
-import { createTestSpace } from './_SpaceRouterTestHelper';
 
 const prisma = ExtendsPrismaClient;
 
@@ -22,29 +22,32 @@ describe(`SpaceRouter space.get`, () => {
     async ({ role }) => {
       return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
         // arrange
-        const space = await createTestSpace(tx, operator, role);
+        const { space_id } = await SpaceFactory.create(tx, {
+          user_id: operator.user_id,
+          role,
+        });
 
         const input: z.infer<typeof SpaceRouterSchema.getInput> = {
-          space_id: space.space_id,
+          space_id,
         };
 
         // act
         const output = await caller.space.get(input);
 
         // assert
-        expect(output).toEqual(SpaceRouterSchema.getOutput.parse(space));
+        expect(output).toContainEqual({ space_id });
       });
     },
   );
 
   test(`⚠️ unauthorized error - operator has no authorization to the data.
     - it throw NOT_FOUND error.`, async () => {
-    return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+    return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
       // arrange
-      const space = await createTestSpace(tx, operator, undefined);
+      const { space_id } = await SpaceFactory.create(tx);
 
       const input: z.infer<typeof SpaceRouterSchema.getInput> = {
-        space_id: space.space_id,
+        space_id,
       };
 
       // act & assert

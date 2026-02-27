@@ -3,9 +3,10 @@ import { z } from '@todo/lib/zod';
 import { ExtendsPrismaClient } from '~/middleware/prisma';
 import { TodoRouterSchema } from '~/schema/TodoRouterSchema';
 
+import { GroupFactory } from '../../factory/GroupFactory';
+import { SpaceFactory } from '../../factory/SpaceFactory';
+import { TodoFactory } from '../../factory/TodoFactory';
 import { transactionRollbackTrpc } from '../../helper';
-import { addTestGroup, createTestSpaceAndAddGroup } from '../GroupRouter/_GroupRouterTestHelper';
-import { addTestTodo } from './_TodoRouterTestHelper';
 
 const prisma = ExtendsPrismaClient;
 
@@ -14,21 +15,30 @@ describe(`TodoRouter todo.search`, () => {
     - it search in title and description.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const group = await createTestSpaceAndAddGroup(tx, operator, 'OWNER');
+      const { space_id } = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
+      });
+      const { group_id } = await GroupFactory.create(tx, {
+        space_id,
+      });
 
-      const todo1 = await addTestTodo(tx, operator, group, {
+      const todo1 = await TodoFactory.create(tx, {
+        group_id,
         title: 'test keyword',
       });
-      const todo2 = await addTestTodo(tx, operator, group, {
+      const todo2 = await TodoFactory.create(tx, {
+        group_id,
         title: 'another todo',
         description: 'contains keyword here',
       });
-      const todo3 = await addTestTodo(tx, operator, group, {
+      const todo3 = await TodoFactory.create(tx, {
+        group_id,
         title: 'no match',
       });
 
       const input: z.infer<typeof TodoRouterSchema.searchInput> = {
-        space_id: group.space_id,
+        space_id,
         where: {
           group_id_list: [],
           todo_keyword: 'keyword',
@@ -60,17 +70,25 @@ describe(`TodoRouter todo.search`, () => {
     - when todo_status array has only 'done', return only done todos.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const group = await createTestSpaceAndAddGroup(tx, operator, 'OWNER');
+      const { space_id } = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
+      });
+      const { group_id } = await GroupFactory.create(tx, {
+        space_id,
+      });
 
-      const todoActive = await addTestTodo(tx, operator, group, {
+      const todoActive = await TodoFactory.create(tx, {
+        group_id,
         done_at: null,
       });
-      const todoDone = await addTestTodo(tx, operator, group, {
+      const todoDone = await TodoFactory.create(tx, {
+        group_id,
         done_at: new Date(),
       });
 
       const inputActive: z.infer<typeof TodoRouterSchema.searchInput> = {
-        space_id: group.space_id,
+        space_id,
         where: {
           group_id_list: [],
           todo_keyword: '',
@@ -94,7 +112,7 @@ describe(`TodoRouter todo.search`, () => {
       );
 
       const inputDone: z.infer<typeof TodoRouterSchema.searchInput> = {
-        space_id: group.space_id,
+        space_id,
         where: {
           group_id_list: [],
           todo_keyword: '',
@@ -120,16 +138,24 @@ describe(`TodoRouter todo.search`, () => {
     - it only return todos in specified groups.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const group1 = await createTestSpaceAndAddGroup(tx, operator, 'OWNER');
-      const group2 = await addTestGroup(tx, operator, group1);
+      const { space_id } = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
+      });
+      const groupA = await GroupFactory.create(tx, {
+        space_id,
+      });
+      const groupB = await GroupFactory.create(tx, {
+        space_id,
+      });
 
-      const todo1 = await addTestTodo(tx, operator, group1);
-      await addTestTodo(tx, operator, group2);
+      const todo1 = await TodoFactory.create(tx, { group_id: groupA.group_id });
+      await TodoFactory.create(tx, { group_id: groupB.group_id });
 
       const input: z.infer<typeof TodoRouterSchema.searchInput> = {
-        space_id: group1.space_id,
+        space_id,
         where: {
-          group_id_list: [group1.group_id],
+          group_id_list: [groupA.group_id],
           todo_keyword: '',
           todo_status: [],
         },
@@ -154,18 +180,25 @@ describe(`TodoRouter todo.search`, () => {
     - it return paginated results based on limit and page.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const group = await createTestSpaceAndAddGroup(tx, operator, 'OWNER');
+      const { space_id } = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
+      });
+      const { group_id } = await GroupFactory.create(tx, {
+        space_id,
+      });
 
       const todos = [];
       for (let i = 0; i < 5; i++) {
-        const todo = await addTestTodo(tx, operator, group, {
+        const todo = await TodoFactory.create(tx, {
+          group_id,
           title: `todo ${i}`,
         });
         todos.push(todo);
       }
 
       const input: z.infer<typeof TodoRouterSchema.searchInput> = {
-        space_id: group.space_id,
+        space_id,
         where: {
           group_id_list: [],
           todo_keyword: '',

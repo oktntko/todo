@@ -3,9 +3,10 @@ import { z } from '@todo/lib/zod';
 import { ExtendsPrismaClient } from '~/middleware/prisma';
 import { TodoRouterSchema } from '~/schema/TodoRouterSchema';
 
+import { GroupFactory } from '../../factory/GroupFactory';
+import { SpaceFactory } from '../../factory/SpaceFactory';
+import { TodoFactory } from '../../factory/TodoFactory';
 import { transactionRollbackTrpc } from '../../helper';
-import { addTestGroup } from '../GroupRouter/_GroupRouterTestHelper';
-import { addTestTodo, createTestSpaceGroupAndAddTodo } from './_TodoRouterTestHelper';
 
 const prisma = ExtendsPrismaClient;
 
@@ -15,8 +16,15 @@ describe(`TodoRouter todo.updateMany`, () => {
     - it update all todos in the database.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const todo1 = await createTestSpaceGroupAndAddTodo(tx, operator, 'OWNER');
-      const todo2 = await addTestTodo(tx, operator, todo1);
+      const { space_id } = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
+      });
+      const { group_id } = await GroupFactory.create(tx, {
+        space_id,
+      });
+      const todo1 = await TodoFactory.create(tx, { group_id });
+      const todo2 = await TodoFactory.create(tx, { group_id });
 
       const input: z.infer<typeof TodoRouterSchema.updateManyInput> = {
         space_id: todo1.group.space_id,
@@ -42,15 +50,15 @@ describe(`TodoRouter todo.updateMany`, () => {
       expect(output).toEqual({ ok: true });
 
       // Verify the records are updated in the database
-      const updated1 = await tx.todo.findUnique({
+      const updated1 = await tx.todo.findUniqueOrThrow({
         where: { todo_id: todo1.todo_id },
       });
-      const updated2 = await tx.todo.findUnique({
+      const updated2 = await tx.todo.findUniqueOrThrow({
         where: { todo_id: todo2.todo_id },
       });
 
-      expect(updated1?.description).toBe('batch updated description');
-      expect(updated2?.description).toBe('batch updated description');
+      expect(updated1.description).toBe('batch updated description');
+      expect(updated2.description).toBe('batch updated description');
     });
   });
 
@@ -58,10 +66,19 @@ describe(`TodoRouter todo.updateMany`, () => {
     - it update group_id for all todos.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
+      const { space_id } = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
+      });
+      const { group_id } = await GroupFactory.create(tx, {
+        space_id,
+      });
+      const todo1 = await TodoFactory.create(tx, { group_id });
+      const todo2 = await TodoFactory.create(tx, { group_id });
 
-      const todo1 = await createTestSpaceGroupAndAddTodo(tx, operator, 'OWNER');
-      const todo2 = await addTestTodo(tx, operator, todo1);
-      const newGroup = await addTestGroup(tx, operator, todo1.group);
+      const newGroup = await GroupFactory.create(tx, {
+        space_id,
+      });
 
       const input: z.infer<typeof TodoRouterSchema.updateManyInput> = {
         space_id: todo1.group.space_id,

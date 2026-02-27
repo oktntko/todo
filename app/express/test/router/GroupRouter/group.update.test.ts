@@ -5,8 +5,9 @@ import { message } from '~/lib/message';
 import { ExtendsPrismaClient } from '~/middleware/prisma';
 import { GroupRouterSchema } from '~/schema/GroupRouterSchema';
 
+import { GroupFactory } from '../../factory/GroupFactory';
+import { SpaceFactory } from '../../factory/SpaceFactory';
 import { transactionRollbackTrpc } from '../../helper';
-import { createTestSpaceAndAddGroup } from './_GroupRouterTestHelper';
 
 const prisma = ExtendsPrismaClient;
 
@@ -21,7 +22,13 @@ describe(`GroupRouter group.update`, () => {
     async ({ role }) => {
       return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
         // arrange
-        const group = await createTestSpaceAndAddGroup(tx, operator, role);
+        const { space_id } = await SpaceFactory.create(tx, {
+          user_id: operator.user_id,
+          role,
+        });
+        const group = await GroupFactory.create(tx, {
+          space_id,
+        });
 
         const input: z.infer<typeof GroupRouterSchema.updateInput> = {
           group_id: group.group_id,
@@ -72,7 +79,13 @@ describe(`GroupRouter group.update`, () => {
     async ({ role }) => {
       return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
         // arrange
-        const group = await createTestSpaceAndAddGroup(tx, operator, role);
+        const { space_id } = await SpaceFactory.create(tx, {
+          user_id: operator.user_id,
+          role,
+        });
+        const group = await GroupFactory.create(tx, {
+          space_id,
+        });
 
         const input: z.infer<typeof GroupRouterSchema.updateInput> = {
           group_id: group.group_id,
@@ -98,7 +111,13 @@ describe(`GroupRouter group.update`, () => {
     - it throw CONFLICT error.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const { group_id } = await createTestSpaceAndAddGroup(tx, operator, 'OWNER');
+      const { space_id } = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
+      });
+      const { group_id } = await GroupFactory.create(tx, {
+        space_id,
+      });
 
       const input: z.infer<typeof GroupRouterSchema.updateInput> = {
         group_id,
@@ -121,9 +140,10 @@ describe(`GroupRouter group.update`, () => {
 
   test(`⚠️ unauthorized error - operator has no authorization to the data.
       - it throw NOT_FOUND error.`, async () => {
-    return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+    return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
       // arrange
-      const group = await createTestSpaceAndAddGroup(tx, operator, undefined);
+      const { space_id } = await SpaceFactory.create(tx);
+      const group = await GroupFactory.create(tx, { space_id });
 
       const input: z.infer<typeof GroupRouterSchema.updateInput> = {
         group_id: group.group_id,

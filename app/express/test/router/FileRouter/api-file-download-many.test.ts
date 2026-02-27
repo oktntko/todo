@@ -7,8 +7,9 @@ import { ExtendsPrismaClient } from '~/middleware/prisma';
 import { FileRepository } from '~/repository/FileRepository';
 import { FileRouterSchema } from '~/schema/FileRouterSchema';
 
+import { FileFactory } from '../../factory/FileFactory';
+import { SpaceFactory } from '../../factory/SpaceFactory';
 import { transactionRollbackExpress } from '../../helper';
-import { addTestFile, createTestSpaceAndAddFile } from './_FileRouterTestHelper';
 
 const prisma = ExtendsPrismaClient;
 
@@ -24,9 +25,14 @@ describe(`FileRouter /api/file/download/many`, () => {
     async ({ role }) => {
       return transactionRollbackExpress(prisma, async ({ tx, operator }) => {
         // arrange
-        const file1 = await createTestSpaceAndAddFile(tx, operator, role);
-        const file2 = await addTestFile(tx, operator, file1);
-        const file3 = await addTestFile(tx, operator, file1);
+        const { space_id } = await SpaceFactory.create(tx, {
+          user_id: operator.user_id,
+          role,
+        });
+
+        const file1 = await FileFactory.create(tx, { space_id });
+        const file2 = await FileFactory.create(tx, { space_id });
+        const file3 = await FileFactory.create(tx, { space_id });
 
         const input: z.infer<typeof FileRouterSchema.getManyInput> = {
           file_id_list: [file1.file_id, file2.file_id, file3.file_id],
@@ -57,9 +63,22 @@ describe(`FileRouter /api/file/download/many`, () => {
     - it throw NOT_FOUND error.`, async () => {
     return transactionRollbackExpress(prisma, async ({ tx, operator }) => {
       // arrange
-      const file1 = await createTestSpaceAndAddFile(tx, operator, 'OWNER');
-      const file2 = await createTestSpaceAndAddFile(tx, operator, 'OWNER');
-      const file3 = await createTestSpaceAndAddFile(tx, operator, 'OWNER');
+      const spaceA = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
+      });
+      const spaceB = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
+      });
+      const spaceC = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
+      });
+
+      const file1 = await FileFactory.create(tx, spaceA);
+      const file2 = await FileFactory.create(tx, spaceB);
+      const file3 = await FileFactory.create(tx, spaceC);
 
       const input: z.infer<typeof FileRouterSchema.getManyInput> = {
         file_id_list: [file1.file_id, file2.file_id, file3.file_id],

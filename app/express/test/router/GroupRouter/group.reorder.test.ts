@@ -5,8 +5,9 @@ import { message } from '~/lib/message';
 import { ExtendsPrismaClient } from '~/middleware/prisma';
 import { GroupRouterSchema } from '~/schema/GroupRouterSchema';
 
+import { GroupFactory } from '../../factory/GroupFactory';
+import { SpaceFactory } from '../../factory/SpaceFactory';
 import { transactionRollbackTrpc } from '../../helper';
-import { addTestGroup, createTestSpaceAndAddGroup } from './_GroupRouterTestHelper';
 
 const prisma = ExtendsPrismaClient;
 
@@ -21,12 +22,22 @@ describe(`GroupRouter group.reorder`, () => {
     async ({ role }) => {
       return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
         // arrange
-        const group1 = await createTestSpaceAndAddGroup(tx, operator, role, { group_order: 2 });
-        const group2 = await addTestGroup(tx, operator, group1, { group_order: 0 });
-        const group3 = await addTestGroup(tx, operator, group1, { group_order: 1 });
+        const { space_id } = await SpaceFactory.create(tx, {
+          user_id: operator.user_id,
+          role,
+        });
+        const group1 = await GroupFactory.create(tx, { space_id, group_order: 2 });
+        const group2 = await GroupFactory.create(tx, { space_id, group_order: 0 });
+        const group3 = await GroupFactory.create(tx, { space_id, group_order: 1 });
 
-        await createTestSpaceAndAddGroup(tx, operator, role); // 権限はあるが異なる space_id
-        await createTestSpaceAndAddGroup(tx, operator, undefined); // 権限がない space_id
+        const otherAuthZSpace = await SpaceFactory.create(tx, {
+          user_id: operator.user_id,
+          role,
+        });
+        const noAuthZSpace = await SpaceFactory.create(tx);
+
+        await GroupFactory.create(tx, { space_id: otherAuthZSpace.space_id }); // 権限はあるが異なる space_id
+        await GroupFactory.create(tx, { space_id: noAuthZSpace.space_id }); // 権限がない space_id
 
         const input: z.infer<typeof GroupRouterSchema.reorderInput> = {
           space_id: group1.space_id,
@@ -80,13 +91,18 @@ describe(`GroupRouter group.reorder`, () => {
     async ({ role }) => {
       return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
         // arrange
-        const group = await createTestSpaceAndAddGroup(tx, operator, role, { group_order: 0 });
+        const { space_id } = await SpaceFactory.create(tx, {
+          user_id: operator.user_id,
+          role,
+        });
+
+        const { group_id } = await GroupFactory.create(tx, { space_id, group_order: 0 });
 
         const input: z.infer<typeof GroupRouterSchema.reorderInput> = {
-          space_id: group.space_id,
+          space_id,
           order: [
             {
-              group_id: group.group_id,
+              group_id,
               group_order: 5,
             },
           ],
@@ -100,7 +116,7 @@ describe(`GroupRouter group.reorder`, () => {
 
         // Verify the record is updated in the database
         const updated = await tx.group.findUniqueOrThrow({
-          where: { group_id: group.group_id },
+          where: { group_id },
         });
         expect(updated.group_order).toBe(5);
       });
@@ -116,13 +132,18 @@ describe(`GroupRouter group.reorder`, () => {
     async ({ role }) => {
       return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
         // arrange
-        const group = await createTestSpaceAndAddGroup(tx, operator, role);
+        const { space_id } = await SpaceFactory.create(tx, {
+          user_id: operator.user_id,
+          role,
+        });
+
+        const { group_id } = await GroupFactory.create(tx, { space_id, group_order: 0 });
 
         const input: z.infer<typeof GroupRouterSchema.reorderInput> = {
-          space_id: group.space_id,
+          space_id,
           order: [
             {
-              group_id: group.group_id,
+              group_id,
               group_order: 5,
             },
           ],
@@ -141,15 +162,17 @@ describe(`GroupRouter group.reorder`, () => {
 
   test(`⚠️ unauthorized error - operator has no authorization to the data.
         - it throw NOT_FOUND error.`, async () => {
-    return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+    return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
       // arrange
-      const group = await createTestSpaceAndAddGroup(tx, operator, undefined);
+      const { space_id } = await SpaceFactory.create(tx);
+
+      const { group_id } = await GroupFactory.create(tx, { space_id, group_order: 0 });
 
       const input: z.infer<typeof GroupRouterSchema.reorderInput> = {
-        space_id: group.space_id,
+        space_id,
         order: [
           {
-            group_id: group.group_id,
+            group_id,
             group_order: 5,
           },
         ],
@@ -170,13 +193,18 @@ describe(`GroupRouter group.reorder`, () => {
       - it throw NOT_FOUND error.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const group = await createTestSpaceAndAddGroup(tx, operator, 'OWNER');
+      const { space_id } = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
+      });
+
+      const { group_id } = await GroupFactory.create(tx, { space_id });
 
       const input: z.infer<typeof GroupRouterSchema.reorderInput> = {
         space_id: '019c23d1-31db-70ed-bfda-84f64ea77614', // not found
         order: [
           {
-            group_id: group.group_id,
+            group_id,
             group_order: 5,
           },
         ],
@@ -197,13 +225,18 @@ describe(`GroupRouter group.reorder`, () => {
       - it throw NOT_FOUND error.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const group = await createTestSpaceAndAddGroup(tx, operator, 'OWNER');
+      const { space_id } = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
+      });
+
+      const { group_id } = await GroupFactory.create(tx, { space_id });
 
       const input: z.infer<typeof GroupRouterSchema.reorderInput> = {
-        space_id: group.space_id,
+        space_id,
         order: [
           {
-            group_id: group.group_id,
+            group_id,
             group_order: 5,
           },
           {
@@ -228,8 +261,17 @@ describe(`GroupRouter group.reorder`, () => {
       - it throw NOT_FOUND error.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const group1 = await createTestSpaceAndAddGroup(tx, operator, 'OWNER');
-      const group2 = await createTestSpaceAndAddGroup(tx, operator, 'OWNER');
+      const space1 = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
+      });
+      const group1 = await GroupFactory.create(tx, { space_id: space1.space_id });
+
+      const space2 = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
+      });
+      const group2 = await GroupFactory.create(tx, { space_id: space2.space_id });
 
       const input: z.infer<typeof GroupRouterSchema.reorderInput> = {
         space_id: group1.space_id,

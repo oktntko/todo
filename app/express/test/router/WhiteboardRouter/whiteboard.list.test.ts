@@ -3,8 +3,10 @@ import { z } from '@todo/lib/zod';
 import { ExtendsPrismaClient } from '~/middleware/prisma';
 import { WhiteboardRouterSchema } from '~/schema';
 
-import { createTestUser, transactionRollbackTrpc } from '../../helper';
-import { addTestWhiteboard, createTestSpaceAndAddWhiteboard } from './_WhiteboardRouterTestHelper';
+import { SpaceFactory } from '../../factory/SpaceFactory';
+import { UserFactory } from '../../factory/UserFactory';
+import { WhiteboardFactory } from '../../factory/WhiteboardFactory';
+import { transactionRollbackTrpc } from '../../helper';
 
 const prisma = ExtendsPrismaClient;
 
@@ -20,18 +22,23 @@ describe(`WhiteboardRouter whiteboard.list`, () => {
     async ({ role }) => {
       return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
         // arrange
-        const whiteboard1 = await createTestSpaceAndAddWhiteboard(tx, operator, role, {
-          whiteboard_order: 2,
-        });
-        const whiteboard2 = await addTestWhiteboard(tx, operator, whiteboard1, {
-          whiteboard_order: 0,
-        });
-        const whiteboard3 = await addTestWhiteboard(tx, operator, whiteboard1, {
-          whiteboard_order: 1,
+        const { space_id } = await SpaceFactory.create(tx, {
+          user_id: operator.user_id,
+          role,
         });
 
-        await createTestSpaceAndAddWhiteboard(tx, operator, role); // 権限はあるが異なる space_id
-        await createTestSpaceAndAddWhiteboard(tx, operator, undefined); // 権限がない space_id
+        const whiteboard1 = await WhiteboardFactory.create(tx, { space_id, whiteboard_order: 2 });
+        const whiteboard2 = await WhiteboardFactory.create(tx, { space_id, whiteboard_order: 0 });
+        const whiteboard3 = await WhiteboardFactory.create(tx, { space_id, whiteboard_order: 1 });
+
+        const otherAuthZSpace = await SpaceFactory.create(tx, {
+          user_id: operator.user_id,
+          role,
+        });
+        const noAuthZSpace = await SpaceFactory.create(tx);
+
+        await WhiteboardFactory.create(tx, { space_id: otherAuthZSpace.space_id }); // 権限はあるが異なる space_id
+        await WhiteboardFactory.create(tx, { space_id: noAuthZSpace.space_id }); // 権限がない space_id
 
         const input: z.infer<typeof WhiteboardRouterSchema.listInput> = {
           space_id: whiteboard1.space_id,
@@ -60,9 +67,13 @@ describe(`WhiteboardRouter whiteboard.list`, () => {
     - it does not return whiteboards owned by other users.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
       // arrange
-      const other = await createTestUser(tx);
+      const other = await UserFactory.create(tx);
 
-      const whiteboardOther = await createTestSpaceAndAddWhiteboard(tx, other, 'OWNER');
+      const { space_id } = await SpaceFactory.create(tx, {
+        user_id: other.user_id,
+        role: 'OWNER',
+      });
+      const whiteboardOther = await WhiteboardFactory.create(tx, { space_id });
 
       const input: z.infer<typeof WhiteboardRouterSchema.listInput> = {
         space_id: whiteboardOther.space_id,

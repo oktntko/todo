@@ -8,8 +8,8 @@ import { FileRepository } from '~/repository/FileRepository';
 import { FileRouterSchema } from '~/schema';
 import { FileService } from '~/service/FileService';
 
+import { SpaceFactory } from '../../factory/SpaceFactory';
 import { transactionRollbackExpress } from '../../helper';
-import { createTestSpace } from '../SpaceRouter/_SpaceRouterTestHelper';
 
 const prisma = ExtendsPrismaClient;
 
@@ -28,10 +28,13 @@ describe(`FileRouter /api/file/upload/many`, () => {
         const mockWriteFile = vi.spyOn(FileRepository, 'writeFile');
         mockWriteFile.mockResolvedValue();
 
-        const space = await createTestSpace(tx, operator, role);
+        const { space_id } = await SpaceFactory.create(tx, {
+          user_id: operator.user_id,
+          role,
+        });
 
         const input: z.infer<typeof FileRouterSchema.createInputBody> = {
-          space_id: space.space_id,
+          space_id,
         };
 
         const output1 = Buffer.from('test1');

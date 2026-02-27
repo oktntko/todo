@@ -7,8 +7,9 @@ import { ExtendsPrismaClient } from '~/middleware/prisma';
 import { FileRepository } from '~/repository/FileRepository';
 import { FileRouterSchema } from '~/schema/FileRouterSchema';
 
+import { FileFactory } from '../../factory/FileFactory';
+import { SpaceFactory } from '../../factory/SpaceFactory';
 import { transactionRollbackExpress } from '../../helper';
-import { createTestSpaceAndAddFile } from './_FileRouterTestHelper';
 
 const prisma = ExtendsPrismaClient;
 
@@ -24,7 +25,11 @@ describe(`FileRouter /api/file/download/single`, () => {
     async ({ role }) => {
       return transactionRollbackExpress(prisma, async ({ tx, operator }) => {
         // arrange
-        const file = await createTestSpaceAndAddFile(tx, operator, role);
+        const { space_id } = await SpaceFactory.create(tx, {
+          user_id: operator.user_id,
+          role,
+        });
+        const file = await FileFactory.create(tx, { space_id });
 
         const input: z.infer<typeof FileRouterSchema.getInput> = {
           file_id: file.file_id,
@@ -54,7 +59,12 @@ describe(`FileRouter /api/file/download/single`, () => {
     - it throw NOT_FOUND error.`, async () => {
     return transactionRollbackExpress(prisma, async ({ tx, operator }) => {
       // arrange
-      const file = await createTestSpaceAndAddFile(tx, operator, 'OWNER');
+      const { space_id } = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
+      });
+
+      const file = await FileFactory.create(tx, { space_id });
 
       const input: z.infer<typeof FileRouterSchema.getInput> = {
         file_id: file.file_id,

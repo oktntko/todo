@@ -3,9 +3,10 @@ import { z } from '@todo/lib/zod';
 import { ExtendsPrismaClient } from '~/middleware/prisma';
 import { TodoRouterSchema } from '~/schema/TodoRouterSchema';
 
+import { GroupFactory } from '../../factory/GroupFactory';
+import { SpaceFactory } from '../../factory/SpaceFactory';
+import { TodoFactory } from '../../factory/TodoFactory';
 import { transactionRollbackTrpc } from '../../helper';
-import { addTestGroup } from '../GroupRouter/_GroupRouterTestHelper';
-import { addTestTodo, createTestSpaceGroupAndAddTodo } from './_TodoRouterTestHelper';
 
 const prisma = ExtendsPrismaClient;
 
@@ -15,8 +16,15 @@ describe(`TodoRouter todo.list`, () => {
     - it filter by todo_status (active).`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const todo1 = await createTestSpaceGroupAndAddTodo(tx, operator, 'OWNER');
-      const todo2 = await addTestTodo(tx, operator, todo1);
+      const { space_id } = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
+      });
+      const { group_id } = await GroupFactory.create(tx, {
+        space_id,
+      });
+      const todo1 = await TodoFactory.create(tx, { group_id });
+      const todo2 = await TodoFactory.create(tx, { group_id });
 
       const input: z.infer<typeof TodoRouterSchema.listInput> = {
         space_id: todo1.group.space_id,
@@ -38,10 +46,16 @@ describe(`TodoRouter todo.list`, () => {
     - it return only done todos.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const todo1 = await createTestSpaceGroupAndAddTodo(tx, operator, 'OWNER');
-      const todo2 = await addTestTodo(tx, operator, todo1, {
-        done_at: new Date(),
+
+      const { space_id } = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
       });
+      const { group_id } = await GroupFactory.create(tx, {
+        space_id,
+      });
+      const todo1 = await TodoFactory.create(tx, { group_id });
+      const todo2 = await TodoFactory.create(tx, { group_id, done_at: new Date() });
 
       const input: z.infer<typeof TodoRouterSchema.listInput> = {
         space_id: todo1.group.space_id,
@@ -62,9 +76,19 @@ describe(`TodoRouter todo.list`, () => {
     - it return all todos in user's groups regardless of group.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const todo1 = await createTestSpaceGroupAndAddTodo(tx, operator, 'OWNER');
-      const group2 = await addTestGroup(tx, operator, todo1.group);
-      const todo2 = await addTestTodo(tx, operator, group2);
+      const { space_id } = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
+      });
+      const groupA = await GroupFactory.create(tx, {
+        space_id,
+      });
+      const groupB = await GroupFactory.create(tx, {
+        space_id,
+      });
+
+      const todo1 = await TodoFactory.create(tx, { group_id: groupA.group_id });
+      const todo2 = await TodoFactory.create(tx, { group_id: groupB.group_id });
 
       const input: z.infer<typeof TodoRouterSchema.listInput> = {
         space_id: todo1.group.space_id,
@@ -84,9 +108,13 @@ describe(`TodoRouter todo.list`, () => {
 
   test(`✅ success - filter by login user.
     - it only return todos in groups owned by the login user.`, async () => {
-    return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+    return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
       // arrange
-      const todo = await createTestSpaceGroupAndAddTodo(tx, operator, undefined);
+      const { space_id } = await SpaceFactory.create(tx);
+      const { group_id } = await GroupFactory.create(tx, {
+        space_id,
+      });
+      const todo = await TodoFactory.create(tx, { group_id });
 
       const input: z.infer<typeof TodoRouterSchema.listInput> = {
         space_id: todo.group.space_id,

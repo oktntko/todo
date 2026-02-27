@@ -5,8 +5,9 @@ import { message } from '~/lib/message';
 import { ExtendsPrismaClient } from '~/middleware/prisma';
 import { WhiteboardRouterSchema } from '~/schema/WhiteboardRouterSchema';
 
+import { SpaceFactory } from '../../factory/SpaceFactory';
+import { WhiteboardFactory } from '../../factory/WhiteboardFactory';
 import { transactionRollbackTrpc } from '../../helper';
-import { addTestWhiteboard, createTestSpaceAndAddWhiteboard } from './_WhiteboardRouterTestHelper';
 
 const prisma = ExtendsPrismaClient;
 
@@ -22,15 +23,14 @@ describe(`WhiteboardRouter whiteboard.reorder`, () => {
     async ({ role }) => {
       return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
         // arrange
-        const whiteboard1 = await createTestSpaceAndAddWhiteboard(tx, operator, role, {
-          whiteboard_order: 2,
+        const { space_id } = await SpaceFactory.create(tx, {
+          user_id: operator.user_id,
+          role,
         });
-        const whiteboard2 = await addTestWhiteboard(tx, operator, whiteboard1, {
-          whiteboard_order: 0,
-        });
-        const whiteboard3 = await addTestWhiteboard(tx, operator, whiteboard1, {
-          whiteboard_order: 1,
-        });
+
+        const whiteboard1 = await WhiteboardFactory.create(tx, { space_id, whiteboard_order: 2 });
+        const whiteboard2 = await WhiteboardFactory.create(tx, { space_id, whiteboard_order: 0 });
+        const whiteboard3 = await WhiteboardFactory.create(tx, { space_id, whiteboard_order: 1 });
 
         const input: z.infer<typeof WhiteboardRouterSchema.reorderInput> = {
           space_id: whiteboard1.space_id,
@@ -85,15 +85,20 @@ describe(`WhiteboardRouter whiteboard.reorder`, () => {
     async ({ role }) => {
       return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
         // arrange
-        const whiteboard = await createTestSpaceAndAddWhiteboard(tx, operator, role, {
+        const { space_id } = await SpaceFactory.create(tx, {
+          user_id: operator.user_id,
+          role,
+        });
+        const { whiteboard_id } = await WhiteboardFactory.create(tx, {
+          space_id,
           whiteboard_order: 0,
         });
 
         const input: z.infer<typeof WhiteboardRouterSchema.reorderInput> = {
-          space_id: whiteboard.space_id,
+          space_id,
           order: [
             {
-              whiteboard_id: whiteboard.whiteboard_id,
+              whiteboard_id,
               whiteboard_order: 5,
             },
           ],
@@ -107,7 +112,7 @@ describe(`WhiteboardRouter whiteboard.reorder`, () => {
 
         // Verify the record is updated in the database
         const updated = await tx.whiteboard.findUniqueOrThrow({
-          where: { whiteboard_id: whiteboard.whiteboard_id },
+          where: { whiteboard_id },
         });
         expect(updated.whiteboard_order).toBe(5);
       });
@@ -122,7 +127,12 @@ describe(`WhiteboardRouter whiteboard.reorder`, () => {
     async ({ role }) => {
       return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
         // arrange
-        const whiteboard = await createTestSpaceAndAddWhiteboard(tx, operator, role);
+        const { space_id } = await SpaceFactory.create(tx, {
+          user_id: operator.user_id,
+          role,
+        });
+
+        const whiteboard = await WhiteboardFactory.create(tx, { space_id });
 
         const input: z.infer<typeof WhiteboardRouterSchema.reorderInput> = {
           space_id: whiteboard.space_id,
@@ -147,9 +157,11 @@ describe(`WhiteboardRouter whiteboard.reorder`, () => {
 
   test(`⚠️ unauthorized error - operator has no authorization to the data.
           - it throw NOT_FOUND error.`, async () => {
-    return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+    return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
       // arrange
-      const whiteboard = await createTestSpaceAndAddWhiteboard(tx, operator, undefined);
+      const { space_id } = await SpaceFactory.create(tx);
+
+      const whiteboard = await WhiteboardFactory.create(tx, { space_id });
 
       const input: z.infer<typeof WhiteboardRouterSchema.reorderInput> = {
         space_id: whiteboard.space_id,
@@ -176,7 +188,12 @@ describe(`WhiteboardRouter whiteboard.reorder`, () => {
         - it throw NOT_FOUND error.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const whiteboard = await createTestSpaceAndAddWhiteboard(tx, operator, 'OWNER');
+      const { space_id } = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
+      });
+
+      const whiteboard = await WhiteboardFactory.create(tx, { space_id });
 
       const input: z.infer<typeof WhiteboardRouterSchema.reorderInput> = {
         space_id: '019c23d1-31db-70ed-bfda-84f64ea77614', // not found
@@ -203,7 +220,12 @@ describe(`WhiteboardRouter whiteboard.reorder`, () => {
         - it throw NOT_FOUND error.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const whiteboard = await createTestSpaceAndAddWhiteboard(tx, operator, 'OWNER');
+      const { space_id } = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
+      });
+
+      const whiteboard = await WhiteboardFactory.create(tx, { space_id });
 
       const input: z.infer<typeof WhiteboardRouterSchema.reorderInput> = {
         space_id: whiteboard.space_id,
@@ -234,8 +256,17 @@ describe(`WhiteboardRouter whiteboard.reorder`, () => {
         - it throw NOT_FOUND error.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const whiteboard1 = await createTestSpaceAndAddWhiteboard(tx, operator, 'OWNER');
-      const whiteboard2 = await createTestSpaceAndAddWhiteboard(tx, operator, 'OWNER');
+      const { space_id: space_id1 } = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
+      });
+      const whiteboard1 = await WhiteboardFactory.create(tx, { space_id: space_id1 });
+
+      const { space_id: space_id2 } = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
+      });
+      const whiteboard2 = await WhiteboardFactory.create(tx, { space_id: space_id2 });
 
       const input: z.infer<typeof WhiteboardRouterSchema.reorderInput> = {
         space_id: whiteboard1.space_id,

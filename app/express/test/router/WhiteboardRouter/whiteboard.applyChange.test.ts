@@ -5,8 +5,9 @@ import { message } from '~/lib/message';
 import { ExtendsPrismaClient } from '~/middleware/prisma';
 import { WhiteboardRouterSchema } from '~/schema/WhiteboardRouterSchema';
 
+import { SpaceFactory } from '../../factory/SpaceFactory';
+import { WhiteboardFactory } from '../../factory/WhiteboardFactory';
 import { transactionRollbackTrpc } from '../../helper';
-import { createTestSpaceAndAddWhiteboard } from './_WhiteboardRouterTestHelper';
 
 const prisma = ExtendsPrismaClient;
 
@@ -22,10 +23,14 @@ describe(`WhiteboardRouter whiteboard.applyChange`, () => {
     async ({ role }) => {
       return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
         // arrange
-        const whiteboard = await createTestSpaceAndAddWhiteboard(tx, operator, role);
+        const { space_id } = await SpaceFactory.create(tx, {
+          user_id: operator.user_id,
+          role,
+        });
+        const { whiteboard_id } = await WhiteboardFactory.create(tx, { space_id });
 
         const input: z.infer<typeof WhiteboardRouterSchema.applyChangeInput> = {
-          whiteboard_id: whiteboard.whiteboard_id,
+          whiteboard_id,
           whiteboard_content: '{"test": true}',
         };
 
@@ -39,7 +44,7 @@ describe(`WhiteboardRouter whiteboard.applyChange`, () => {
 
         // Verify the record is updated in the database
         const updated = await tx.whiteboard.findUniqueOrThrow({
-          where: { whiteboard_id: whiteboard.whiteboard_id },
+          where: { whiteboard_id },
         });
         expect(updated).toMatchObject({
           ...input,
@@ -56,10 +61,14 @@ describe(`WhiteboardRouter whiteboard.applyChange`, () => {
     async ({ role }) => {
       return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
         // arrange
-        const whiteboard = await createTestSpaceAndAddWhiteboard(tx, operator, role);
+        const { space_id } = await SpaceFactory.create(tx, {
+          user_id: operator.user_id,
+          role,
+        });
+        const { whiteboard_id } = await WhiteboardFactory.create(tx, { space_id });
 
         const input: z.infer<typeof WhiteboardRouterSchema.applyChangeInput> = {
-          whiteboard_id: whiteboard.whiteboard_id,
+          whiteboard_id,
           whiteboard_content: '{}',
         };
 
@@ -76,12 +85,13 @@ describe(`WhiteboardRouter whiteboard.applyChange`, () => {
 
   test(`⚠️ unauthorized error - operator has no authorization to the data.
         - it throw NOT_FOUND error.`, async () => {
-    return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+    return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
       // arrange
-      const whiteboard = await createTestSpaceAndAddWhiteboard(tx, operator, undefined);
+      const { space_id } = await SpaceFactory.create(tx);
+      const { whiteboard_id } = await WhiteboardFactory.create(tx, { space_id });
 
       const input: z.infer<typeof WhiteboardRouterSchema.applyChangeInput> = {
-        whiteboard_id: whiteboard.whiteboard_id,
+        whiteboard_id,
         whiteboard_content: '{}',
       };
 

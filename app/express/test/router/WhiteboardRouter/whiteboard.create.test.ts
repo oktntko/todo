@@ -5,8 +5,8 @@ import { message } from '~/lib/message';
 import { ExtendsPrismaClient } from '~/middleware/prisma';
 import { WhiteboardRouterSchema } from '~/schema/WhiteboardRouterSchema';
 
+import { SpaceFactory } from '../../factory/SpaceFactory';
 import { transactionRollbackTrpc } from '../../helper';
-import { createTestSpace } from '../SpaceRouter/_SpaceRouterTestHelper';
 
 const prisma = ExtendsPrismaClient;
 
@@ -23,10 +23,13 @@ describe(`WhiteboardRouter whiteboard.create`, () => {
     async ({ role }) => {
       return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
         // arrange
-        const space = await createTestSpace(tx, operator, role);
+        const { space_id } = await SpaceFactory.create(tx, {
+          user_id: operator.user_id,
+          role,
+        });
 
         const input: z.infer<typeof WhiteboardRouterSchema.createInput> = {
-          space_id: space.space_id,
+          space_id,
           whiteboard_name: 'test whiteboard',
           whiteboard_description: 'test description',
           whiteboard_content: '{}',
@@ -69,17 +72,20 @@ describe(`WhiteboardRouter whiteboard.create`, () => {
     - when creating the second whiteboard, whiteboard_order should be 1.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const space = await createTestSpace(tx, operator, 'OWNER');
+      const { space_id } = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
+      });
 
       const input1: z.infer<typeof WhiteboardRouterSchema.createInput> = {
-        space_id: space.space_id,
+        space_id,
         whiteboard_name: 'first whiteboard',
         whiteboard_description: '',
         whiteboard_content: '{}',
       };
 
       const input2: z.infer<typeof WhiteboardRouterSchema.createInput> = {
-        space_id: space.space_id,
+        space_id,
         whiteboard_name: 'second whiteboard',
         whiteboard_description: '',
         whiteboard_content: '{}',
@@ -103,10 +109,13 @@ describe(`WhiteboardRouter whiteboard.create`, () => {
     async ({ role }) => {
       return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
         // arrange
-        const space = await createTestSpace(tx, operator, role);
+        const { space_id } = await SpaceFactory.create(tx, {
+          user_id: operator.user_id,
+          role,
+        });
 
         const input: z.infer<typeof WhiteboardRouterSchema.createInput> = {
-          space_id: space.space_id,
+          space_id,
           whiteboard_name: 'test whiteboard',
           whiteboard_description: 'test description',
           whiteboard_content: '{}',
@@ -125,12 +134,12 @@ describe(`WhiteboardRouter whiteboard.create`, () => {
 
   test(`⚠️ unauthorized error - operator has no authorization to the data.
         - it throw NOT_FOUND error.`, async () => {
-    return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+    return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
       // arrange
-      const space = await createTestSpace(tx, operator, undefined);
+      const { space_id } = await SpaceFactory.create(tx);
 
       const input: z.infer<typeof WhiteboardRouterSchema.createInput> = {
-        space_id: space.space_id,
+        space_id,
         whiteboard_name: 'test whiteboard',
         whiteboard_description: 'test description',
         whiteboard_content: '{}',

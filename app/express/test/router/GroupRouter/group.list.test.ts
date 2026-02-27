@@ -3,8 +3,10 @@ import { z } from '@todo/lib/zod';
 import { ExtendsPrismaClient } from '~/middleware/prisma';
 import { GroupRouterSchema } from '~/schema';
 
-import { createTestUser, transactionRollbackTrpc } from '../../helper';
-import { addTestGroup, createTestSpaceAndAddGroup } from './_GroupRouterTestHelper';
+import { GroupFactory } from '../../factory/GroupFactory';
+import { SpaceFactory } from '../../factory/SpaceFactory';
+import { UserFactory } from '../../factory/UserFactory';
+import { transactionRollbackTrpc } from '../../helper';
 
 const prisma = ExtendsPrismaClient;
 
@@ -20,12 +22,22 @@ describe(`GroupRouter group.list`, () => {
     async ({ role }) => {
       return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
         // arrange
-        const group1 = await createTestSpaceAndAddGroup(tx, operator, role, { group_order: 2 });
-        const group2 = await addTestGroup(tx, operator, group1, { group_order: 0 });
-        const group3 = await addTestGroup(tx, operator, group1, { group_order: 1 });
+        const { space_id } = await SpaceFactory.create(tx, {
+          user_id: operator.user_id,
+          role,
+        });
+        const group1 = await GroupFactory.create(tx, { space_id, group_order: 2 });
+        const group2 = await GroupFactory.create(tx, { space_id, group_order: 0 });
+        const group3 = await GroupFactory.create(tx, { space_id, group_order: 1 });
 
-        await createTestSpaceAndAddGroup(tx, operator, role); // 権限はあるが異なる space_id
-        await createTestSpaceAndAddGroup(tx, operator, undefined); // 権限がない space_id
+        const otherAuthZSpace = await SpaceFactory.create(tx, {
+          user_id: operator.user_id,
+          role,
+        });
+        const noAuthZSpace = await SpaceFactory.create(tx);
+
+        await GroupFactory.create(tx, { space_id: otherAuthZSpace.space_id }); // 権限はあるが異なる space_id
+        await GroupFactory.create(tx, { space_id: noAuthZSpace.space_id }); // 権限がない space_id
 
         const input: z.infer<typeof GroupRouterSchema.listInput> = {
           space_id: group1.space_id,
@@ -54,12 +66,16 @@ describe(`GroupRouter group.list`, () => {
     - it does not return groups owned by other users.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
       // arrange
-      const other = await createTestUser(tx);
+      const other = await UserFactory.create(tx);
 
-      const groupOther = await createTestSpaceAndAddGroup(tx, other, 'OWNER');
+      const { space_id } = await SpaceFactory.create(tx, {
+        user_id: other.user_id,
+        role: 'OWNER',
+      });
+      /* const groupOther = */ await GroupFactory.create(tx, { space_id });
 
       const input: z.infer<typeof GroupRouterSchema.listInput> = {
-        space_id: groupOther.space_id,
+        space_id,
       };
 
       // act

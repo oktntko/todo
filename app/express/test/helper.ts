@@ -6,7 +6,6 @@ import { UserSchema } from '@todo/prisma/schema';
 import { CreateExpressContextOptions } from '@trpc/server/adapters/express';
 import { SessionData } from 'express-session';
 
-import { HashPassword } from '~/lib/secret';
 import {
   ExtendsPrismaClient,
   type PrismaClient,
@@ -17,28 +16,7 @@ import * as LibTrpc from '~/middleware/trpc';
 import { createContext } from '~/middleware/trpc';
 import { createCaller } from '~/router/_router';
 
-// ID固定のテストユーザー
-export async function createTestUser(prisma: PrismaClient) {
-  const user_id = crypto.randomUUID();
-  return prisma.user.create({
-    data: {
-      user_id,
-      email: `${user_id}@example.com`,
-      password: HashPassword.hash('test@example.com'),
-      username: `${user_id} username`,
-      description: `${user_id} description`,
-      twofa_enable: false,
-      twofa_secret: '',
-      aichat_api_key: '',
-      aichat_enable: false,
-      aichat_model: 'gpt-4.1',
-      avatar_image: '',
-      created_at: new Date(1997, 7, 17),
-      updated_at: new Date(1997, 7, 17),
-    },
-  });
-}
-
+import { UserFactory } from './factory/UserFactory';
 async function $rollback(prisma: PrismaClient) {
   return prisma.$executeRaw`ROLLBACK;`;
 }
@@ -75,7 +53,7 @@ export async function transactionRollbackExpress<R>(
   },
 ) {
   return prisma.$transaction(async (tx) => {
-    const operator = await createTestUser(tx);
+    const operator = await UserFactory.create(tx);
 
     const { restoreMockContext } = useMockContext(tx);
     const { restoreMockSession } = useMockSession(operator);
@@ -141,7 +119,7 @@ export async function transactionRollbackTrpc<R>(
   fn: (params: {
     tx: TransactionExtendsPrismaClient;
     caller: ReturnType<typeof createCaller>;
-    operator: Awaited<ReturnType<typeof createTestUser>>;
+    operator: Awaited<ReturnType<typeof UserFactory.create>>;
   }) => Promise<R>,
   options?: {
     maxWait?: number;
@@ -150,7 +128,7 @@ export async function transactionRollbackTrpc<R>(
   },
 ) {
   return prisma.$transaction(async (tx) => {
-    const operator = await createTestUser(tx);
+    const operator = await UserFactory.create(tx);
 
     const ctx = createContext(mockopts(operator), tx);
     const caller = createCaller(ctx);

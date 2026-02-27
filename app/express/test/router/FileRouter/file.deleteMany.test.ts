@@ -5,8 +5,9 @@ import { message } from '~/lib/message';
 import { ExtendsPrismaClient } from '~/middleware/prisma';
 import { FileRouterSchema } from '~/schema/FileRouterSchema';
 
+import { FileFactory } from '../../factory/FileFactory';
+import { SpaceFactory } from '../../factory/SpaceFactory';
 import { transactionRollbackTrpc } from '../../helper';
-import { addTestFile, createTestSpaceAndAddFile } from './_FileRouterTestHelper';
 
 const prisma = ExtendsPrismaClient;
 
@@ -22,9 +23,14 @@ describe(`FileRouter file.deleteMany`, () => {
     async ({ role }) => {
       return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
         // arrange
-        const file1 = await createTestSpaceAndAddFile(tx, operator, role);
-        const file2 = await addTestFile(tx, operator, file1);
-        const file3 = await addTestFile(tx, operator, file1); // 削除しないファイル
+        const { space_id } = await SpaceFactory.create(tx, {
+          user_id: operator.user_id,
+          role,
+        });
+
+        const file1 = await FileFactory.create(tx, { space_id });
+        const file2 = await FileFactory.create(tx, { space_id });
+        const file3 = await FileFactory.create(tx, { space_id }); // 削除しないファイル
 
         const input: z.infer<typeof FileRouterSchema.deleteManyInput> = {
           space_id: file1.space_id,
@@ -74,7 +80,12 @@ describe(`FileRouter file.deleteMany`, () => {
     async ({ role }) => {
       return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
         // arrange
-        const file = await createTestSpaceAndAddFile(tx, operator, role);
+        const { space_id } = await SpaceFactory.create(tx, {
+          user_id: operator.user_id,
+          role,
+        });
+
+        const file = await FileFactory.create(tx, { space_id });
 
         const input: z.infer<typeof FileRouterSchema.deleteManyInput> = {
           space_id: file.space_id,
@@ -99,9 +110,10 @@ describe(`FileRouter file.deleteMany`, () => {
 
   test(`⚠️ unauthorized error - operator has no authorization to the data.
           - it throw NOT_FOUND error.`, async () => {
-    return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+    return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
       // arrange
-      const file = await createTestSpaceAndAddFile(tx, operator, undefined);
+      const { space_id } = await SpaceFactory.create(tx);
+      const file = await FileFactory.create(tx, { space_id });
 
       const input: z.infer<typeof FileRouterSchema.deleteManyInput> = {
         space_id: file.space_id,
@@ -128,7 +140,12 @@ describe(`FileRouter file.deleteMany`, () => {
       - it throw NOT_FOUND error.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const file = await createTestSpaceAndAddFile(tx, operator, 'OWNER');
+      const { space_id } = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
+      });
+
+      const file = await FileFactory.create(tx, { space_id });
 
       const input: z.infer<typeof FileRouterSchema.deleteManyInput> = {
         space_id: '019c23d1-31db-70ed-bfda-84f64ea77614', // not found
@@ -155,9 +172,14 @@ describe(`FileRouter file.deleteMany`, () => {
     - it throw NOT_FOUND error.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const file1 = await createTestSpaceAndAddFile(tx, operator, 'OWNER');
-      const file2 = await addTestFile(tx, operator, file1);
-      const file3 = await addTestFile(tx, operator, file1);
+      const { space_id } = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
+      });
+
+      const file1 = await FileFactory.create(tx, { space_id });
+      const file2 = await FileFactory.create(tx, { space_id });
+      const file3 = await FileFactory.create(tx, { space_id });
 
       const input: z.infer<typeof FileRouterSchema.deleteManyInput> = {
         space_id: file1.space_id,
@@ -192,8 +214,17 @@ describe(`FileRouter file.deleteMany`, () => {
         - it throw NOT_FOUND error.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const file1 = await createTestSpaceAndAddFile(tx, operator, 'OWNER');
-      const file2 = await createTestSpaceAndAddFile(tx, operator, 'OWNER');
+      const spaceA = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
+      });
+      const file1 = await FileFactory.create(tx, spaceA);
+
+      const spaceB = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
+      });
+      const file2 = await FileFactory.create(tx, spaceB);
 
       const input: z.infer<typeof FileRouterSchema.deleteManyInput> = {
         space_id: file1.space_id,
@@ -223,9 +254,14 @@ describe(`FileRouter file.deleteMany`, () => {
     - it throw CONFLICT error.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
       // arrange
-      const file1 = await createTestSpaceAndAddFile(tx, operator, 'OWNER');
-      const file2 = await addTestFile(tx, operator, file1);
-      const file3 = await addTestFile(tx, operator, file1);
+      const { space_id } = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
+      });
+
+      const file1 = await FileFactory.create(tx, { space_id });
+      const file2 = await FileFactory.create(tx, { space_id });
+      const file3 = await FileFactory.create(tx, { space_id });
 
       const input: z.infer<typeof FileRouterSchema.deleteManyInput> = {
         space_id: file1.space_id,
