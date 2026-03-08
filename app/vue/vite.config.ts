@@ -3,8 +3,8 @@ import Vue from '@vitejs/plugin-vue';
 import VueJsx from '@vitejs/plugin-vue-jsx';
 import { fileURLToPath, URL } from 'node:url';
 import Unfonts from 'unplugin-fonts/vite';
-import VueRouter from 'unplugin-vue-router/vite';
 import { defineConfig } from 'vitest/config';
+import VueRouter from 'vue-router/vite';
 
 // https://vitejs.dev/config/
 export default defineConfig({
