@@ -10,5 +10,5 @@
     "dev": "docker compose --profile dev up --detach",
     "stg": "docker compose --profile stg up --detach"
   },
-  "packageManager": "pnpm@10.27.0"
+  "packageManager": "pnpm@10.31.0"
 }

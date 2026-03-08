@@ -94,7 +94,7 @@ export default defineComponent(() => {
                   class="inline-flex items-center justify-center px-4 py-2 text-sm text-gray-700 transition-colors hover:text-blue-600"
                   onClick={async () => {
                     qrcode.value = await trpc.mypage.generateSecret.mutate();
-                    nextTick(() => refInputToken.value?.focus());
+                    return nextTick(() => refInputToken.value?.focus());
                   }}
                 >
                   <span class="icon-[wpf--security-checked] mr-2 -ml-1 h-4 w-4 text-green-400" />

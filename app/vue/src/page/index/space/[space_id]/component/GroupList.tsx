@@ -67,7 +67,7 @@ export default defineComponent(
             checkedGroupList.value.find((y) => y.group_id === x.group_id),
           );
 
-          trpc.group.reorder
+          void trpc.group.reorder
             .mutate({
               space_id: $props.space_id,
               order: storedGroupList.value,

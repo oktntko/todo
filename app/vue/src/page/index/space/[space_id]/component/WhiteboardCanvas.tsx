@@ -63,7 +63,7 @@ export default defineComponent(
         return;
       }
 
-      trpc.whiteboard.applyChange.mutate({
+      void trpc.whiteboard.applyChange.mutate({
         whiteboard_id: currentWhiteboard.value.whiteboard_id,
         whiteboard_content: state,
       });
@@ -283,6 +283,7 @@ export default defineComponent(
         if (activeObjects.length > 0) {
           const object = activeObjects[0]!;
           if (object.fill) {
+            // oxlint-disable-next-line typescript/no-base-to-string
             control.value.background = R.hex(object.fill.toString());
           }
         }
@@ -322,7 +323,7 @@ export default defineComponent(
         const scale = Math.min(scaleX, scaleY);
 
         // オブジェクトをコピーしてミニマップに配置
-        for await (const object of objects.map((object) => object.clone())) {
+        for (const object of await Promise.all(objects.map((object) => object.clone()))) {
           object.left = (object.left - bounds.minX) * scale;
           object.top = (object.top - bounds.minY) * scale;
           object.scaleX = object.scaleX * scale;
@@ -355,7 +356,7 @@ export default defineComponent(
         minimap.renderAll();
       }
 
-      updateMinimap();
+      void updateMinimap();
       canvas.on('after:render', updateMinimap);
 
       canvas.clear();
@@ -398,7 +399,9 @@ export default defineComponent(
     }
 
     async function copyActiveObjects() {
-      for await (const object of canvas.getActiveObjects().map((object) => object.clone())) {
+      for (const object of await Promise.all(
+        canvas.getActiveObjects().map((object) => object.clone()),
+      )) {
         object.set({
           left: object.left + 20, // Offset the new object
           top: object.top + 20,

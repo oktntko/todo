@@ -225,7 +225,7 @@ export default defineComponent(() => {
               onDrop={(e) => {
                 e.preventDefault();
                 dragging.value = false;
-                handleFileInput(e.dataTransfer?.files);
+                return handleFileInput(e.dataTransfer?.files);
               }}
             >
               <span class="sr-only capitalize">group image</span>

@@ -121,7 +121,7 @@ export const LogHandler: RequestHandler = (req, res, next) => {
 function formatAccessInfo(prefix: string, req: Request, res?: Response) {
   return `${ReqCtx.reqid} ${prefix} - "${req.method} ${decodeURIComponent(req.originalUrl || req.url)}" ${
     res?.statusCode ?? '( )'
-  } - ${req.headers['x-forwarded-for'] || req.ip}`;
+  } - ${req.ip}`;
 }
 
 // createHandler

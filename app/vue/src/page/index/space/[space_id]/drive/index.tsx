@@ -138,8 +138,8 @@ export default defineComponent(() => {
     }
   });
 
-  onMounted(() => {
-    handleSubmit();
+  onMounted(async () => {
+    await handleSubmit();
   });
 
   async function changeSortOrder(field: typeof modelValue.value.sort.field) {
@@ -549,8 +549,8 @@ export default defineComponent(() => {
                 disabled={loading.value}
                 onChange={handleSubmit}
               />
-              <span class="absolute end-0 -top-3 text-xs text-gray-500"> max </span>
-              <span class="absolute end-0 -bottom-3 text-xs text-gray-500">
+              <span class="absolute inset-e-0 -top-3 text-xs text-gray-500"> max </span>
+              <span class="absolute inset-e-0 -bottom-3 text-xs text-gray-500">
                 {Math.ceil(data.value.total / modelValue.value.limit)}
               </span>
             </div>

@@ -46,7 +46,7 @@ export default defineComponent(async () => {
           whiteboard_order: i,
         }));
 
-        trpc.whiteboard.reorder
+        void trpc.whiteboard.reorder
           .mutate({
             space_id: $route.params.space_id,
             order: whiteboard_list.value,
