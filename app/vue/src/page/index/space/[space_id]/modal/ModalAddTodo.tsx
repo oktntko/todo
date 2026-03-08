@@ -3,7 +3,7 @@ import type { TodoRouterSchema } from '@todo/express/schema';
 import { type z } from '@todo/lib/zod';
 import { defineComponent, ref } from 'vue';
 
-import type { DownloadFile } from '~/component/MyDownloadFileList.vue';
+import type { DownloadFile } from '~/component/type';
 
 import { trpc } from '~/lib/trpc';
 import { satisfiesKeys, type EmitsType } from '~/lib/vue.ts';

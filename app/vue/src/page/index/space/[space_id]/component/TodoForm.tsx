@@ -7,12 +7,14 @@ import { storeToRefs } from 'pinia';
 import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import { defineComponent, type SlotsType } from 'vue';
 
+import type { DownloadFile } from '~/component/type';
+
 import MyButton from '~/component/button/MyButton';
 import MyInput from '~/component/input/MyInput.vue';
 import MyModalInputFile from '~/component/input/MyModalInputFile.vue';
 import MySelect from '~/component/input/MySelect.vue';
 import MyTextarea from '~/component/input/MyTextarea.vue';
-import MyDownloadFileList, { type DownloadFile } from '~/component/MyDownloadFileList.vue';
+import MyDownloadFileList from '~/component/MyDownloadFileList.vue';
 import { useFile } from '~/composable/useFile';
 import { satisfiesKeys, type EmitsType } from '~/lib/vue';
 import { useDialog } from '~/plugin/DialogPlugin';
@@ -216,9 +218,11 @@ export default defineComponent(
                 </button>
               </label>
             </div>
+            {/* v: エディタだと型推論されるが、 oxlint を直接実行すると any になるため型宣言する。 */}
+            {/* 適当な型を書くとエディタ上でもエラーになるので、型安全は損なわれないと思う。 */}
             <MyDownloadFileList
               modelValueFileList={modelValueFileList.value}
-              onUpdate:modelValueFileList={(v) => (modelValueFileList.value = v)}
+              onUpdate:modelValueFileList={(v: DownloadFile[]) => (modelValueFileList.value = v)}
             ></MyDownloadFileList>
           </div>
         </section>

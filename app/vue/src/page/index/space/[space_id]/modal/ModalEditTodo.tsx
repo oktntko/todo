@@ -1,7 +1,7 @@
 import { R } from '@todo/lib/remeda';
 import { defineComponent, ref } from 'vue';
 
-import type { DownloadFile } from '~/component/MyDownloadFileList.vue';
+import type { DownloadFile } from '~/component/type';
 
 import MyButton from '~/component/button/MyButton.tsx';
 import { trpc, type RouterOutput } from '~/lib/trpc';

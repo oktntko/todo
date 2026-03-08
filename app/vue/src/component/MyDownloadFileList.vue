@@ -1,12 +1,8 @@
 <script setup lang="ts">
+import type { DownloadFile } from '~/component/type';
+
 import { useFile } from '~/composable/useFile';
 import { trpc } from '~/lib/trpc';
-
-export type DownloadFile = {
-  file_id: string;
-  filename: string;
-  updated_at: Date;
-};
 
 defineEmits<{
   deleted: [number];
@@ -33,7 +29,7 @@ const { downloadSingleFile } = useFile();
         @click="() => downloadSingleFile({ file_id: file.file_id })"
       >
         <span class="icon-[simple-line-icons--cloud-download]"></span>
-        <span class>{{ file.filename }}</span>
+        <span>{{ file.filename }}</span>
       </button>
 
       <button

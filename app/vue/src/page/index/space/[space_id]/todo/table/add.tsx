@@ -1,7 +1,7 @@
 import { defineComponent, ref } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 
-import type { DownloadFile } from '~/component/MyDownloadFileList.vue';
+import type { DownloadFile } from '~/component/type';
 
 import MyBreadcrumb from '~/component/navi/MyBreadcrumb.vue';
 import { trpc } from '~/lib/trpc';

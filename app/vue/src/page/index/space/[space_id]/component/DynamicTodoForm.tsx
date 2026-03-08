@@ -4,10 +4,10 @@ import { onClickOutside, useVModel } from '@vueuse/core';
 import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import { defineComponent, ref, useTemplateRef, watch } from 'vue';
 
-import type { DownloadFile } from '~/component/MyDownloadFileList.vue';
+import type { DownloadFile, MyDropdownSlots } from '~/component/type';
 
 import MyModalInputFile from '~/component/input/MyModalInputFile.vue';
-import MyDropdown, { type MyDropdownSlots } from '~/component/MyDropdown.vue';
+import MyDropdown from '~/component/MyDropdown.vue';
 import { useFile } from '~/composable/useFile';
 import { trpc, type RouterOutput } from '~/lib/trpc';
 import { satisfiesKeys, type EmitsType } from '~/lib/vue';

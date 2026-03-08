@@ -2,7 +2,7 @@ import { R } from '@todo/lib/remeda';
 import { defineComponent, ref } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 
-import type { DownloadFile } from '~/component/MyDownloadFileList.vue';
+import type { DownloadFile } from '~/component/type';
 
 import MyButton from '~/component/button/MyButton.tsx';
 import MyBreadcrumb from '~/component/navi/MyBreadcrumb.vue';
