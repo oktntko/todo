@@ -35,8 +35,7 @@
   },
   "devDependencies": {
     "prisma": "^7.4.2",
-    "prisma-zod-generator": "^2.1.4",
-    "tsdown": "^0.21.0"
+    "prisma-zod-generator": "^2.1.4"
   },
   "packageManager": "pnpm@10.31.0"
 }
