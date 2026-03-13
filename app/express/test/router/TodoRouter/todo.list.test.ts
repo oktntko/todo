@@ -23,8 +23,8 @@ describe(`TodoRouter todo.list`, () => {
       const { group_id } = await GroupFactory.create(tx, {
         space_id,
       });
-      const todo1 = await TodoFactory.create(tx, { group_id });
-      const todo2 = await TodoFactory.create(tx, { group_id });
+      const todo1 = await TodoFactory.create(tx, { group_id, order: 0 });
+      const todo2 = await TodoFactory.create(tx, { group_id, order: 1 });
 
       const input: z.infer<typeof TodoRouterSchema.listInput> = {
         space_id: todo1.group.space_id,

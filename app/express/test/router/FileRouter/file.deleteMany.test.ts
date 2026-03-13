@@ -218,13 +218,13 @@ describe(`FileRouter file.deleteMany`, () => {
         user_id: operator.user_id,
         role: 'OWNER',
       });
-      const file1 = await FileFactory.create(tx, spaceA);
+      const file1 = await FileFactory.create(tx, { space_id: spaceA.space_id });
 
       const spaceB = await SpaceFactory.create(tx, {
         user_id: operator.user_id,
         role: 'OWNER',
       });
-      const file2 = await FileFactory.create(tx, spaceB);
+      const file2 = await FileFactory.create(tx, { space_id: spaceB.space_id });
 
       const input: z.infer<typeof FileRouterSchema.deleteManyInput> = {
         space_id: file1.space_id,

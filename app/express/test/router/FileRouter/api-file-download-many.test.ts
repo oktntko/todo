@@ -76,9 +76,9 @@ describe(`FileRouter /api/file/download/many`, () => {
         role: 'OWNER',
       });
 
-      const file1 = await FileFactory.create(tx, spaceA);
-      const file2 = await FileFactory.create(tx, spaceB);
-      const file3 = await FileFactory.create(tx, spaceC);
+      const file1 = await FileFactory.create(tx, { space_id: spaceA.space_id });
+      const file2 = await FileFactory.create(tx, { space_id: spaceB.space_id });
+      const file3 = await FileFactory.create(tx, { space_id: spaceC.space_id });
 
       const input: z.infer<typeof FileRouterSchema.getManyInput> = {
         file_id_list: [file1.file_id, file2.file_id, file3.file_id],

@@ -26,14 +26,14 @@ describe(`FileRouter file.search`, () => {
             user_id: operator.user_id,
             role,
           });
-          const fileInSpaceA_1 = await FileFactory.create(tx, spaceA);
-          const fileInSpaceA_2 = await FileFactory.create(tx, spaceA);
+          const fileInSpaceA_1 = await FileFactory.create(tx, { space_id: spaceA.space_id });
+          const fileInSpaceA_2 = await FileFactory.create(tx, { space_id: spaceA.space_id });
 
           const spaceB = await SpaceFactory.create(tx, {
             user_id: operator.user_id,
             role,
           });
-          /* const fileInSpaceB = */ await FileFactory.create(tx, spaceB);
+          /* const fileInSpaceB = */ await FileFactory.create(tx, { space_id: spaceB.space_id });
 
           const input: z.infer<typeof FileRouterSchema.searchInput> = {
             space_id: fileInSpaceA_1.space_id,
@@ -74,14 +74,14 @@ describe(`FileRouter file.search`, () => {
           user_id: other.user_id,
           role: 'OWNER',
         });
-        const fileInSpaceA_1 = await FileFactory.create(tx, spaceA);
-        /* const fileInSpaceA_2 = */ await FileFactory.create(tx, spaceA);
+        const fileInSpaceA_1 = await FileFactory.create(tx, { space_id: spaceA.space_id });
+        /* const fileInSpaceA_2 = */ await FileFactory.create(tx, { space_id: spaceA.space_id });
 
         const spaceB = await SpaceFactory.create(tx, {
           user_id: operator.user_id,
           role: 'OWNER',
         });
-        /* const fileInSpaceB = */ await FileFactory.create(tx, spaceB);
+        /* const fileInSpaceB = */ await FileFactory.create(tx, { space_id: spaceB.space_id });
         const input: z.infer<typeof FileRouterSchema.searchInput> = {
           space_id: fileInSpaceA_1.space_id,
           where: {
