@@ -1,4 +1,5 @@
 import log4js from 'log4js';
+import { cwd } from 'node:process';
 
 import { env } from '~/lib/env';
 
@@ -6,7 +7,7 @@ log4js.configure({
   appenders: {
     file: {
       type: 'file',
-      filename: 'logs/application.log',
+      filename: cwd() + '/logs/application.log',
       maxLogSize: 1024 * 1024 * 10,
       backups: 5,
       compress: true,

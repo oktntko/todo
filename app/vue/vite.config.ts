@@ -14,7 +14,7 @@ export default defineConfig({
       extensions: ['.vue', '.tsx'],
       routesFolder: 'src/page',
       exclude: ['**/component', '**/modal'],
-      dts: 'src/vue-router.d.ts',
+      dts: './src/vue-router.d.ts',
     }),
     Vue({
       template: {
