@@ -2,7 +2,6 @@ import tailwindcss from '@tailwindcss/vite';
 import Vue from '@vitejs/plugin-vue';
 import VueJsx from '@vitejs/plugin-vue-jsx';
 import { fileURLToPath, URL } from 'node:url';
-import Unfonts from 'unplugin-fonts/vite';
 import { defineConfig } from 'vitest/config';
 import VueRouter from 'vue-router/vite';
 
@@ -24,14 +23,12 @@ export default defineConfig({
       },
     }),
     VueJsx(),
-    Unfonts({
-      // https://fontsource.org/
-      fontsource: {
-        families: ['Noto Sans JP Variable', 'M PLUS 1 Code Variable'],
-      },
-    }),
     tailwindcss(),
   ],
+  build: {
+    // 'lightningcss' だと ::picker(select):popover-open をビルドできないため esbuild でビルドエラーを回避する
+    cssMinify: 'esbuild',
+  },
   resolve: {
     alias: {
       '~': fileURLToPath(new URL('./src', import.meta.url)),

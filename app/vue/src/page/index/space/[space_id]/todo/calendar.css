@@ -22,7 +22,7 @@
 }
 
 /* header */
-#calendar :deep(> div:nth-child(1)) {
+#calendar > div:nth-child(1) {
   position: sticky;
   top: 0;
   z-index: 1;
@@ -31,7 +31,7 @@
 }
 
 /* table */
-#calendar :deep(> div:nth-child(2)) {
+#calendar > div:nth-child(2) {
   border: 1px solid var(--dp-calendar-border-color);
   border-top: none;
 }
