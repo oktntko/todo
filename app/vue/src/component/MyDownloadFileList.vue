@@ -3,15 +3,23 @@ import type { DownloadFile } from '~/component/type';
 
 import { useFile } from '~/composable/useFile';
 import { trpc } from '~/lib/trpc';
+import { useDialog } from '~/plugin/DialogPlugin';
+import { useToast } from '~/plugin/ToastPlugin';
 
 defineEmits<{
   deleted: [number];
 }>();
 
+
+const $dialog = useDialog();
+const $toast = useToast();
+
+
 const modelValueFileList = defineModel<DownloadFile[]>('modelValueFileList', {
   required: false,
   default: () => [],
 });
+
 
 const { downloadSingleFile } = useFile();
 </script>

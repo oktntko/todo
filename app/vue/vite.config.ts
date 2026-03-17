@@ -49,6 +49,7 @@ export default defineConfig({
     alias: {
       '~': fileURLToPath(new URL('./src', import.meta.url)),
     },
+    setupFiles: ['./test/setup.ts'],
     reporters: ['default', 'html'],
     outputFile: {
       html: '.report/html/index.html',

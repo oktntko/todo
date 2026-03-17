@@ -35,12 +35,6 @@ export function useDialog() {
   return inject<DialogPlugin>(DialogPluginKey)!;
 }
 
-declare module '@vue/runtime-core' {
-  export interface ComponentCustomProperties {
-    $dialog: DialogPlugin;
-  }
-}
-
 function installDialogPlugin(parentApp: App) {
   const dialogTemplate = document.createElement('template');
   dialogTemplate.innerHTML = `

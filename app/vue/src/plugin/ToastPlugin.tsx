@@ -16,21 +16,15 @@ type ToastPlugin = ReturnType<typeof installToastPlugin>;
 const ToastPluginKey = Symbol() as InjectionKey<ToastPlugin>;
 
 export default function (parentApp: App) {
-  const toast = installToastPlugin();
+  const $toast = installToastPlugin();
 
-  parentApp.config.globalProperties.$toast = toast;
+  parentApp.config.globalProperties.$toast = $toast;
 
-  parentApp.provide<ToastPlugin>(ToastPluginKey, toast);
+  parentApp.provide<ToastPlugin>(ToastPluginKey, $toast);
 }
 
 export function useToast() {
   return inject<ToastPlugin>(ToastPluginKey)!;
-}
-
-declare module '@vue/runtime-core' {
-  export interface ComponentCustomProperties {
-    $toast: ToastPlugin;
-  }
 }
 
 type ColorType = 'white' | 'gray' | 'green' | 'red' | 'blue' | 'yellow';

@@ -1,31 +1,30 @@
 import { mount } from '@vue/test-utils';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
-// グローバルモック
-// トップレベルで宣言する
-vi.mock('~/lib/trpc', () => ({
-  trpc: {
-    file: {
-      delete: {
-        mutate: vi.fn(),
-      },
-    },
-  },
-}));
+/**
+ * グローバルモックは test/setup.ts で管理されており、
+ * すべてのテスト前に自動で読み込まれる
+ *
+ * このテストファイルでは、テスト固有のモック上書きのみを行う
+ */
 
 describe('MyDownloadFileList', () => {
+  /**
+   * beforeEach: 各テスト前に実行
+   * - vi.resetModules() - モジュールキャッシュをリセットして、各テストに新しいインスタンスを提供
+   * - vi.clearAllMocks() - すべてのモック（spy含む）の呼び出し履歴をクリア
+   */
   beforeEach(() => {
     vi.resetModules();
+    vi.clearAllMocks();
   });
-  test('renders correctly with no files', async () => {
-    // arrange
-    // nothing to do
 
+  test('renders correctly with no files', async () => {
     // act
     const { default: MyDownloadFileList } = await import('~/component/MyDownloadFileList.vue');
     const wrapper = mount(MyDownloadFileList, {
       props: {
-        file_list: [],
+        modelValueFileList: [],
       },
     });
 
@@ -45,7 +44,7 @@ describe('MyDownloadFileList', () => {
     const { default: MyDownloadFileList } = await import('~/component/MyDownloadFileList.vue');
     const wrapper = mount(MyDownloadFileList, {
       props: {
-        file_list: files,
+        modelValueFileList: files,
       },
     });
 
@@ -60,23 +59,26 @@ describe('MyDownloadFileList', () => {
     const files = [{ file_id: '1', filename: 'test1.txt', updated_at: new Date() }];
 
     const downloadSingleFile = vi.fn();
-    // vi.mock だと関数の巻き上げが起きるため、
-    // 変数を代入すると `downloadSingleFile is not defined` が起きる。
-    // vi.doMock を使えば関数の巻き上げが起きない。
+    /**
+     * vi.doMock() - テスト内で宣言するモック関数
+     * - ホイスティングが発生しないため、テスト内で動的にモック値を変更できる
+     * - vi.mock だと関数の巻き上げが起きる
+     * - vi.doMock を使えば関数の巻き上げが起きない
+     */
     vi.doMock('~/composable/useFile', async () => ({
       useFile: () => ({
         downloadSingleFile,
       }),
     }));
 
+    // act
     const { default: MyDownloadFileList } = await import('~/component/MyDownloadFileList.vue');
     const wrapper = mount(MyDownloadFileList, {
       props: {
-        file_list: files,
+        modelValueFileList: files,
       },
     });
 
-    // act
     await wrapper.find('li button').trigger('click');
 
     // assert
@@ -85,69 +87,117 @@ describe('MyDownloadFileList', () => {
 
   test('calls trpc.file.delete.mutate and emits deleted event when delete button is clicked and confirmed', async () => {
     // arrange
+    const dialogConfirmWarn = vi.fn(() => Promise.resolve('YES'));
+    const dialogLoading = vi.fn(() => ({ close: vi.fn() }));
+    vi.doMock('~/plugin/DialogPlugin', () => ({
+      useDialog: () => ({
+        loading: dialogLoading,
+        confirm: {
+          warn: dialogConfirmWarn,
+        },
+      }),
+    }));
+
+    const toastSuccess = vi.fn();
+    vi.doMock('~/plugin/ToastPlugin', () => ({
+      useToast: () => ({
+        success: toastSuccess,
+      }),
+    }));
+
+    const trpcFileDeleteMutate = vi.fn();
+    vi.doMock('~/lib/trpc', () => ({
+      trpc: {
+        file: {
+          delete: {
+            mutate: trpcFileDeleteMutate,
+          },
+        },
+      },
+    }));
+
     const files = [{ file_id: '1', filename: 'test1.txt', updated_at: new Date() }];
 
+    // act
     const { default: MyDownloadFileList } = await import('~/component/MyDownloadFileList.vue');
     const wrapper = mount(MyDownloadFileList, {
       props: {
-        file_list: files,
-      },
-      global: {
-        mocks: {
-          $dialog: { confirm: vi.fn(() => Promise.resolve(true)) },
-          $loading: { open: vi.fn(() => ({ close: vi.fn() })) },
-          $toast: { success: vi.fn() },
-        },
+        modelValueFileList: files,
       },
     });
-
-    const { trpc } = await import('~/lib/trpc');
-    const deleteMutateSpy = vi.spyOn(trpc.file.delete, 'mutate');
 
     // act
     await wrapper.find('[aria-label="close"]').trigger('click');
 
     // assert
-    expect(wrapper.vm.$dialog.confirm).toHaveBeenCalledWith(
+    expect(dialogConfirmWarn).toHaveBeenCalledWith(
       `Do you really want to delete this file?\n'test1.txt'`,
     );
-    expect(wrapper.vm.$dialog.loading).toHaveBeenCalled();
-    expect(deleteMutateSpy).toHaveBeenCalledWith(files[0]);
-    expect(wrapper.vm.$toast.success).toHaveBeenCalledWith('Data has been deleted.');
+    expect(dialogLoading).toHaveBeenCalled();
+    expect(trpcFileDeleteMutate).toHaveBeenCalledWith(files[0]);
+    expect(toastSuccess).toHaveBeenCalledWith('Data has been deleted.');
     expect(wrapper.emitted('deleted')).toEqual([[0]]);
-    expect(wrapper.vm.file_list).toEqual([]); // Check if file is removed from the list
+    expect(wrapper.vm.modelValueFileList).toEqual([]); // Check if file is removed from the list
   });
 
   test('does not delete file if confirmation is cancelled', async () => {
     // arrange
+    const dialogConfirmWarn = vi.fn(() => Promise.reject('cancel'));
+    const dialogLoading = vi.fn(() => ({ close: vi.fn() }));
+    /**
+     * vi.doMock() - このテストだけ、DialogPluginをオーバーライド
+     * - warn() が Promise.reject('cancel') を返すように上書き
+     * - グローバル設定を特定のテストのみ変更したいときに使用
+     */
+    vi.doMock('~/plugin/DialogPlugin', () => ({
+      useDialog: () => ({
+        loading: dialogLoading,
+        confirm: {
+          warn: dialogConfirmWarn,
+        },
+      }),
+    }));
+
+    const toastSuccess = vi.fn();
+    vi.doMock('~/plugin/ToastPlugin', () => ({
+      useToast: () => ({
+        success: toastSuccess,
+      }),
+    }));
+
+    const trpcFileDeleteMutate = vi.fn();
+    vi.doMock('~/lib/trpc', () => ({
+      trpc: {
+        file: {
+          delete: {
+            mutate: trpcFileDeleteMutate,
+          },
+        },
+      },
+    }));
+
     const files = [{ file_id: '1', filename: 'test1.txt', updated_at: new Date() }];
 
+    // act
     const { default: MyDownloadFileList } = await import('~/component/MyDownloadFileList.vue');
     const wrapper = mount(MyDownloadFileList, {
       props: {
-        file_list: files,
-      },
-      global: {
-        mocks: {
-          $dialog: { confirm: vi.fn(() => Promise.resolve(false)) },
-          $loading: { open: vi.fn(() => ({ close: vi.fn() })) },
-          $toast: { success: vi.fn() },
-        },
+        modelValueFileList: files,
       },
     });
 
-    const { trpc } = await import('~/lib/trpc');
-    const deleteMutateSpy = vi.spyOn(trpc.file.delete, 'mutate');
-
-    // act
     await wrapper.find('[aria-label="close"]').trigger('click');
 
     // assert
-    expect(wrapper.vm.$dialog.confirm).toHaveBeenCalled();
-    expect(deleteMutateSpy).not.toHaveBeenCalled();
-    expect(wrapper.vm.$dialog.loading).not.toHaveBeenCalled();
-    expect(wrapper.vm.$toast.success).not.toHaveBeenCalled();
+    // ダイアログが正しく呼ばれたことを確認（メッセージ内容の妥当性検証）
+    expect(dialogConfirmWarn).toHaveBeenCalledWith(
+      `Do you really want to delete this file?\n'test1.txt'`,
+    );
+    // キャンセル時は削除処理が実行されないことを確認
+    expect(trpcFileDeleteMutate).not.toHaveBeenCalled();
+    expect(dialogLoading).not.toHaveBeenCalled();
+    expect(toastSuccess).not.toHaveBeenCalled();
     expect(wrapper.emitted('deleted')).toBeUndefined();
-    expect(wrapper.vm.file_list).toEqual(files); // File should still be in the list
+    expect(wrapper.vm.modelValueFileList).toEqual(files); // File should still be in the list
   });
 });

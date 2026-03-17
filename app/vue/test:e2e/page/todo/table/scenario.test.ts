@@ -1,21 +1,45 @@
 import type { TrpcPaths } from '@todo/express';
 
 import { expect, test } from '@playwright/test';
-import { jsonStringifyTrpcSuccessResponse, screenshotPath } from 'test:e2e/helper';
 
 import type { RouterOutput } from '~/lib/trpc';
 
+import { FileFactory } from '../../../factory/FileFactory';
+import { GroupFactory } from '../../../factory/GroupFactory';
+import { SpaceFactory } from '../../../factory/SpaceFactory';
+import { TodoFactory } from '../../../factory/TodoFactory';
+import { jsonStringifyTrpcSuccessResponse, screenshotPath } from '../../../helper';
+
 test.describe('scenario.test /todo/table', () => {
   test('ttt.', async ({ page }, testInfo) => {
+    const space_id = crypto.randomUUID();
+
     // mock API
     await page.route('**/api/trpc/' + ('group.list' satisfies TrpcPaths) + '?**', async (route) => {
-      route.fulfill({
+      return route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: jsonStringifyTrpcSuccessResponse({
-          group_list: [group1, group2, group3],
-          total: 3,
-        } satisfies RouterOutput['group']['list']),
+        body: jsonStringifyTrpcSuccessResponse([
+          GroupFactory.create({
+            group_name: `group_name-1`,
+          }),
+          GroupFactory.create({
+            group_name: `group_name-2`,
+          }),
+          GroupFactory.create({
+            group_name: `group_name-3`,
+          }),
+        ] satisfies RouterOutput['group']['list']),
+      });
+    });
+
+    await page.route('**/api/trpc/' + ('space.list' satisfies TrpcPaths) + '?**', (route) => {
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: jsonStringifyTrpcSuccessResponse([
+          SpaceFactory.create({ space_name: 'space_name-1' }),
+        ] satisfies RouterOutput['space']['list']),
       });
     });
 
@@ -23,7 +47,7 @@ test.describe('scenario.test /todo/table', () => {
     await page.route(
       '**/api/trpc/' + ('todo.search' satisfies TrpcPaths) + '?**',
       async (route) => {
-        route.fulfill({
+        return route.fulfill({
           status: 200,
           contentType: 'application/json',
           body: jsonStringifyTrpcSuccessResponse({
@@ -33,7 +57,7 @@ test.describe('scenario.test /todo/table', () => {
         });
       },
     );
-    await page.goto('/todo/table/');
+    await page.goto(`/space/${space_id}/todo/table/`);
     await page.screenshot({ path: screenshotPath(testInfo) });
 
     // #region 検索条件を入力する
@@ -47,7 +71,7 @@ test.describe('scenario.test /todo/table', () => {
     await page.route(
       '**/api/trpc/' + ('todo.search' satisfies TrpcPaths) + '?**',
       async (route) => {
-        route.fulfill({
+        return route.fulfill({
           status: 200,
           contentType: 'application/json',
           body: jsonStringifyTrpcSuccessResponse({
@@ -62,17 +86,17 @@ test.describe('scenario.test /todo/table', () => {
     // #endregion
 
     // #region 追加ボタンをクリックする
-    await page.locator('a[href="/todo/table/add"]').click();
+    await page.locator(`a[href="/space/${space_id}/todo/table/add"]`).click();
     await page.screenshot({ path: screenshotPath(testInfo) });
     // 登録画面に遷移すること
-    await expect(page).toHaveURL('/todo/table/add');
+    await expect(page).toHaveURL(`/space/${space_id}/todo/table/add`);
     // #endregion
     // #endregion
 
     // #region 登録画面を表示する
     // #region 必須項目を入力する
     await page.locator('#group_id').click();
-    await page.locator('ul li').filter({ hasText: 'group_name-1' }).click();
+    await page.locator('option').filter({ hasText: 'group_name-1' }).click();
     await page.locator('#title').fill('title');
     await page.locator('#begin_date').fill('2025-01-01');
     await page.locator('#begin_time').fill('12:00');
@@ -84,7 +108,7 @@ test.describe('scenario.test /todo/table', () => {
 
     // #region 登録ボタンをクリックする
     await page.route('**/api/trpc/' + ('todo.create' satisfies TrpcPaths), async (route) => {
-      route.fulfill({
+      return route.fulfill({
         status: 200,
         contentType: 'application/json',
         body: jsonStringifyTrpcSuccessResponse(todo1 satisfies RouterOutput['todo']['create']),
@@ -92,7 +116,7 @@ test.describe('scenario.test /todo/table', () => {
     });
     await page.locator('button[type="submit"]').click();
     // 検索画面に遷移すること
-    await expect(page).toHaveURL('/todo/table');
+    await expect(page).toHaveURL(`/space/${space_id}/todo/table`);
     await page.screenshot({ path: screenshotPath(testInfo) });
     // #endregion
     // #endregion
@@ -100,23 +124,23 @@ test.describe('scenario.test /todo/table', () => {
     // #region 検索画面を表示する
     // #region リンクをクリックする
     await page.route('**/api/trpc/' + ('todo.get' satisfies TrpcPaths) + '?**', async (route) => {
-      route.fulfill({
+      return route.fulfill({
         status: 200,
         contentType: 'application/json',
         body: jsonStringifyTrpcSuccessResponse(todo1 satisfies RouterOutput['todo']['get']),
       });
     });
-    await page.locator(`a[href="/todo/table/${todo1.todo_id}"]`).click();
+    await page.locator(`a[href="/space/${space_id}/todo/table/${todo1.todo_id}"]`).click();
     await page.screenshot({ path: screenshotPath(testInfo) });
     // 変更画面に遷移すること
-    await expect(page).toHaveURL(`/todo/table/${todo1.todo_id}`);
+    await expect(page).toHaveURL(`/space/${space_id}/todo/table/${todo1.todo_id}`);
     // #endregion
     // #endregion
 
     // #region 変更画面を表示する
     // #region 必須項目を入力する
     await page.locator('#group_id').click();
-    await page.locator('ul li').filter({ hasText: 'group_name-1' }).click();
+    await page.locator('option').filter({ hasText: 'group_name-1' }).click();
     await page.locator('#title').fill('title');
     await page.locator('#begin_date').fill('2025-01-01');
     await page.locator('#begin_time').fill('12:00');
@@ -128,7 +152,7 @@ test.describe('scenario.test /todo/table', () => {
 
     // #region 登録ボタンをクリックする
     await page.route('**/api/trpc/' + ('todo.update' satisfies TrpcPaths), async (route) => {
-      route.fulfill({
+      return route.fulfill({
         status: 200,
         contentType: 'application/json',
         body: jsonStringifyTrpcSuccessResponse(todo1 satisfies RouterOutput['todo']['update']),
@@ -136,24 +160,24 @@ test.describe('scenario.test /todo/table', () => {
     });
     await page.locator('button[type="submit"]').click();
     // 検索画面に遷移すること
-    await expect(page).toHaveURL('/todo/table');
+    await expect(page).toHaveURL(`/space/${space_id}/todo/table`);
     await page.screenshot({ path: screenshotPath(testInfo) });
     // #endregion
     // #endregion
 
     // #region 検索画面を表示する
     // #region リンクをクリックする
-    await page.locator(`a[href="/todo/table/${todo1.todo_id}"]`).click();
+    await page.locator(`a[href="/space/${space_id}/todo/table/${todo1.todo_id}"]`).click();
     await page.screenshot({ path: screenshotPath(testInfo) });
     // 変更画面に遷移すること
-    await expect(page).toHaveURL(`/todo/table/${todo1.todo_id}`);
+    await expect(page).toHaveURL(`/space/${space_id}/todo/table/${todo1.todo_id}`);
     // #endregion
     // #endregion
 
     // #region 変更画面を表示する
     // #region 削除ボタンをクリックする
     await page.route('**/api/trpc/' + ('todo.delete' satisfies TrpcPaths), async (route) => {
-      route.fulfill({
+      return route.fulfill({
         status: 200,
         contentType: 'application/json',
         body: jsonStringifyTrpcSuccessResponse(todo1 satisfies RouterOutput['todo']['delete']),
@@ -162,9 +186,9 @@ test.describe('scenario.test /todo/table', () => {
     await page.locator('button[type="button"]').filter({ hasText: 'Delete' }).click();
     await page.screenshot({ path: screenshotPath(testInfo) });
     // 確認ダイアログをクリックする
-    await page.locator('button[type="button"]').filter({ hasText: 'YES' }).click();
+    await page.locator('button[type="submit"]').filter({ hasText: 'YES' }).click();
     // 検索画面に遷移すること
-    await expect(page).toHaveURL('/todo/table');
+    await expect(page).toHaveURL(`/space/${space_id}/todo/table`);
     await page.screenshot({ path: screenshotPath(testInfo) });
     // #endregion
     // #endregion
@@ -174,61 +198,16 @@ test.describe('scenario.test /todo/table', () => {
 const [todo1, todo2, todo3] = [1, 2, 3].map(
   (i) =>
     ({
-      todo_id: `todo_id-${i}`,
-      title: `title-${i}`,
-      description: `description-${i}`,
-      begin_date: `2025-10-0${i}`,
-      begin_time: `10:0${i}`,
-      limit_date: `2025-12-0${i}`,
-      limit_time: `12:0${i}`,
-      done_at: null,
-      order: i,
-      created_at: new Date(),
-      created_by: 0,
-      updated_at: new Date(),
-      updated_by: 0,
-      group_id: i,
-      group: {
-        owner_id: i,
-        group_id: i,
-        group_name: `group_name-${i}`,
-        group_description: `group_description-${i}`,
-        group_color: `#12456${i}`,
-        group_image: `https://dummyimage.com/${i * 10}x${i * 100}`,
-        group_order: 0,
-        created_at: new Date(),
-        created_by: 0,
-        updated_at: new Date(),
-        updated_by: 0,
-      },
+      ...TodoFactory.create({
+        title: `title-${i}`,
+      }),
+      group: GroupFactory.create({
+        group_name: `${i}`,
+      }),
       file_list: [
-        {
+        FileFactory.create({
           filename: `filename-${i}`,
-          file_id: `file_id-${i}`,
-          filesize: i * 100,
-          mimetype: 'application/zip',
-          created_at: new Date(),
-          created_by: 0,
-          updated_at: new Date(),
-          updated_by: 0,
-        },
+        }),
       ],
     }) satisfies RouterOutput['todo']['create'],
-);
-
-const [group1, group2, group3] = [1, 2, 3].map(
-  (i) =>
-    ({
-      group_id: i,
-      group_name: `group_name-${i}`,
-      group_description: `group_description-${i}`,
-      group_image: `group_image-${i}`,
-      group_color: `group_color-${i}`,
-      group_order: i,
-      owner_id: i,
-      created_at: new Date(),
-      created_by: 0,
-      updated_at: new Date(),
-      updated_by: 0,
-    }) satisfies RouterOutput['group']['get'],
 );
