@@ -100,7 +100,92 @@ describe(`FileRouter /api/file/upload/many`, () => {
     },
   );
 
-  // TODO テストパターンを追加する
+  test.for([
+    { role: 'READER' }, //
+  ] as const)(
+    `⚠️ unauthorized error - operator does not have changeable authorization to the data, when operator has $role role.
+    - it throw FORBIDDEN error.`,
+    async ({ role }) => {
+      return transactionRollbackExpress(prisma, async ({ tx, operator }) => {
+        // arrange
+        const { space_id } = await SpaceFactory.create(tx, {
+          user_id: operator.user_id,
+          role,
+        });
+
+        const input: z.infer<typeof FileRouterSchema.createInputBody> = {
+          space_id,
+        };
+
+        const output = Buffer.from('test1');
+
+        // act
+        const res = await supertest(app)
+          .post(`/api/file/upload/many`)
+          .attach('files', output, 'test1.txt')
+          .field('space_id', input.space_id)
+          .expect(403);
+
+        // assert
+        expect(res.body).toEqual({
+          code: 'FORBIDDEN',
+          message: message.error.FORBIDDEN,
+        });
+      });
+    },
+  );
+
+  test(`⚠️ unauthorized error - operator has no authorization to the data.
+    - it throw NOT_FOUND error.`, async () => {
+    return transactionRollbackExpress(prisma, async ({ tx }) => {
+      // arrange
+      const { space_id } = await SpaceFactory.create(tx);
+
+      const input: z.infer<typeof FileRouterSchema.createInputBody> = {
+        space_id,
+      };
+
+      const output = Buffer.from('test1');
+
+      // act
+      const res = await supertest(app)
+        .post(`/api/file/upload/many`)
+        .attach('files', output, 'test1.txt')
+        .field('space_id', input.space_id)
+        .expect(404);
+
+      // assert
+      expect(res.body).toEqual({
+        code: 'NOT_FOUND',
+        message: message.error.NOT_FOUND,
+      });
+    });
+  });
+
+  test(`⚠️ resource state error - data not found in database.
+    - it throw NOT_FOUND error.`, async () => {
+    return transactionRollbackExpress(prisma, async () => {
+      // arrange
+      const input: z.infer<typeof FileRouterSchema.createInputBody> = {
+        space_id: '019c23d1-31db-70ed-bfda-84f64ea77614', // not found
+      };
+
+      const output = Buffer.from('test1');
+
+      // act
+      const res = await supertest(app)
+        .post(`/api/file/upload/many`)
+        .attach('files', output, 'test1.txt')
+        .field('space_id', input.space_id)
+        .expect(404);
+
+      // assert
+      expect(res.body).toEqual({
+        code: 'NOT_FOUND',
+        message: message.error.NOT_FOUND,
+      });
+    });
+  });
 
   test(`⚠️ validation error - input incorrect data.
     - it throw BAD_REQUEST error.`, async () => {

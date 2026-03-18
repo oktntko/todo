@@ -53,8 +53,6 @@ describe(`FileRouter /api/file/download/single`, () => {
     },
   );
 
-  // TODO テストパターンを追加する
-
   test(`⚠️ resource state error - file not found in storage.
     - it throw NOT_FOUND error.`, async () => {
     return transactionRollbackExpress(prisma, async ({ tx, operator }) => {
@@ -63,6 +61,31 @@ describe(`FileRouter /api/file/download/single`, () => {
         user_id: operator.user_id,
         role: 'OWNER',
       });
+
+      const file = await FileFactory.create(tx, { space_id });
+
+      const input: z.infer<typeof FileRouterSchema.getInput> = {
+        file_id: file.file_id,
+      };
+
+      // act
+      const res = await supertest(app)
+        .get(`/api/file/download/single/${input.file_id}`)
+        .expect(404);
+
+      // assert
+      expect(res.body).toEqual({
+        code: 'NOT_FOUND',
+        message: message.error.NOT_FOUND,
+      });
+    });
+  });
+
+  test(`⚠️ unauthorized error - operator has no authorization to the data.
+    - it throw NOT_FOUND error.`, async () => {
+    return transactionRollbackExpress(prisma, async ({ tx }) => {
+      // arrange
+      const { space_id } = await SpaceFactory.create(tx);
 
       const file = await FileFactory.create(tx, { space_id });
 

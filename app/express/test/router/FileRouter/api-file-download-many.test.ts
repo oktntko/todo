@@ -57,8 +57,6 @@ describe(`FileRouter /api/file/download/many`, () => {
     },
   );
 
-  // TODO テストパターンを追加する
-
   test(`⚠️ resource state error - file not found in storage.
     - it throw NOT_FOUND error.`, async () => {
     return transactionRollbackExpress(prisma, async ({ tx, operator }) => {
@@ -88,6 +86,37 @@ describe(`FileRouter /api/file/download/many`, () => {
       const res = await supertest(app).get(`/api/file/download/many`).query(input).expect(404);
 
       // assert
+      expect(res.body).toEqual({
+        code: 'NOT_FOUND',
+        message: message.error.NOT_FOUND,
+      });
+    });
+  });
+
+  test(`⚠️ unauthorized error - operator has no authorization to the data.
+    - it throw NOT_FOUND error.`, async () => {
+    return transactionRollbackExpress(prisma, async ({ tx, operator }) => {
+      // arrange
+      const unauthorizedSpace = await SpaceFactory.create(tx);
+      const unauthorizedFile = await FileFactory.create(tx, {
+        space_id: unauthorizedSpace.space_id,
+      });
+
+      const authorizedSpace = await SpaceFactory.create(tx, {
+        user_id: operator.user_id,
+        role: 'OWNER',
+      });
+      const authorizedFile = await FileFactory.create(tx, {
+        space_id: authorizedSpace.space_id,
+      });
+
+      const input: z.infer<typeof FileRouterSchema.getManyInput> = {
+        file_id_list: [unauthorizedFile.file_id, authorizedFile.file_id],
+      };
+
+      // act & assert
+      const res = await supertest(app).get(`/api/file/download/many`).query(input).expect(404);
+
       expect(res.body).toEqual({
         code: 'NOT_FOUND',
         message: message.error.NOT_FOUND,

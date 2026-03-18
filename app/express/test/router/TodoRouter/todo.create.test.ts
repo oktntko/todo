@@ -12,58 +12,111 @@ import { transactionRollbackTrpc } from '../../helper';
 const prisma = ExtendsPrismaClient;
 
 describe(`TodoRouter todo.create`, () => {
-  test(`✅ success - create a new todo.
+  test.for([
+    { role: 'OWNER' }, //
+    { role: 'ADMIN' }, //
+    { role: 'EDITOR' }, //
+  ] as const)(
+    `✅ success - create a new group, when operator has $role role.
     - it return the created todo.
-    - it save the record in the database.`, async () => {
-    return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
-      // arrange
-      const { space_id } = await SpaceFactory.create(tx, {
-        user_id: operator.user_id,
-        role: 'OWNER',
+    - it save the record in the database.`,
+    async ({ role }) => {
+      return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+        // arrange
+        const { space_id } = await SpaceFactory.create(tx, {
+          user_id: operator.user_id,
+          role,
+        });
+        const { group_id } = await GroupFactory.create(tx, {
+          space_id,
+        });
+
+        const input: z.infer<typeof TodoRouterSchema.createInput> = {
+          group_id,
+          title: 'test todo',
+          description: 'test description',
+          begin_date: '2023-10-01',
+          begin_time: '10:00',
+          limit_date: '2023-10-10',
+          limit_time: '18:00',
+          order: 0,
+          done_at: null,
+        };
+
+        // act
+        const output = await caller.todo.create(input);
+
+        // assert
+        expect(output).toEqual(
+          expect.objectContaining({
+            group_id,
+            title: input.title,
+            description: input.description,
+          }),
+        );
+
+        // Verify the record is saved in the database
+        const created = await tx.todo.findUnique({
+          where: { todo_id: output.todo_id },
+        });
+        expect(created).not.toBeNull();
+        expect(created).toEqual(expect.objectContaining({ title: input.title }));
       });
+    },
+  );
+
+  test.for([
+    { role: 'READER' }, //
+  ] as const)(
+    `⚠️ unauthorized error - operator does not have changeable authorization to the data, when operator has $role role.
+    - it throw FORBIDDEN error.`,
+    async ({ role }) => {
+      return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+        // arrange
+        const { space_id } = await SpaceFactory.create(tx, {
+          user_id: operator.user_id,
+          role,
+        });
+
+        const { group_id } = await GroupFactory.create(tx, {
+          space_id,
+        });
+
+        const input: z.infer<typeof TodoRouterSchema.createInput> = {
+          group_id,
+          title: 'test todo',
+          description: 'test description',
+          begin_date: '2023-10-01',
+          begin_time: '10:00',
+          limit_date: '2023-10-10',
+          limit_time: '18:00',
+          order: 0,
+          done_at: null,
+        };
+
+        // act & assert
+        await expect(caller.todo.create(input)).rejects.toThrow(
+          new TRPCError({
+            code: 'FORBIDDEN',
+            message: message.error.FORBIDDEN,
+          }),
+        );
+      });
+    },
+  );
+
+  test(`⚠️ unauthorized error - operator has no authorization to the data.
+    - it throw NOT_FOUND error.`, async () => {
+    return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
+      // arrange
+      const { space_id } = await SpaceFactory.create(tx);
+
       const { group_id } = await GroupFactory.create(tx, {
         space_id,
       });
 
       const input: z.infer<typeof TodoRouterSchema.createInput> = {
         group_id,
-        title: 'test todo',
-        description: 'test description',
-        begin_date: '2023-10-01',
-        begin_time: '10:00',
-        limit_date: '2023-10-10',
-        limit_time: '18:00',
-        order: 0,
-        done_at: null,
-      };
-
-      // act
-      const output = await caller.todo.create(input);
-
-      // assert
-      expect(output).toEqual(
-        expect.objectContaining({
-          group_id,
-          title: input.title,
-          description: input.description,
-        }),
-      );
-
-      // Verify the record is saved in the database
-      const created = await tx.todo.findUnique({
-        where: { todo_id: output.todo_id },
-      });
-      expect(created).not.toBeNull();
-      expect(created).toEqual(expect.objectContaining({ title: input.title }));
-    });
-  });
-
-  test(`⚠️ validation error - group not found.
-    - it throw BAD_REQUEST error.`, async () => {
-    return transactionRollbackTrpc(prisma, async ({ caller }) => {
-      // arrange
-      const input: z.infer<typeof TodoRouterSchema.createInput> = {
-        group_id: '019c23d1-31db-70ed-bfda-84f64ea77614', // not found
         title: 'test todo',
         description: '',
         begin_date: '',
@@ -84,17 +137,12 @@ describe(`TodoRouter todo.create`, () => {
     });
   });
 
-  test(`⚠️ access control - group owned by other user.
-    - it throw FORBIDDEN error.`, async () => {
-    return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
+  test(`⚠️ resource state error - data not found in database.
+    - it throw NOT_FOUND error.`, async () => {
+    return transactionRollbackTrpc(prisma, async ({ caller }) => {
       // arrange
-      const { space_id } = await SpaceFactory.create(tx);
-      const { group_id } = await GroupFactory.create(tx, {
-        space_id,
-      });
-
       const input: z.infer<typeof TodoRouterSchema.createInput> = {
-        group_id,
+        group_id: '019c23d1-31db-70ed-bfda-84f64ea77614', // not found
         title: 'test todo',
         description: '',
         begin_date: '',
