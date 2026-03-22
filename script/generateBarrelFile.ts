@@ -16,15 +16,16 @@ async function generate(dir: string) {
   const outputPath = path.resolve(dir, 'index.ts');
 
   await fs.writeFile(outputPath, exportLines, 'utf8');
-  console.log('Generated:', outputPath, targets);
+  // oxlint-disable-next-line no-console
+  console.info('Generated:', outputPath, targets);
 }
 
 const [, , ...dirs] = process.argv;
 for (const dir of dirs) {
-  generate(path.resolve(cwd(), dir));
+  await generate(path.resolve(cwd(), dir));
 }
 
-// TODO 暫定対応
+// TODO: 暫定対応
 // 1. useMultipleFiles: false にすると、 '.' で始まるカスタムインポート文(@zod.import)が生成ファイルに出力されない (prisma-zod-generatorの問題)
 // - https://github.com/omar-dulaimi/prisma-zod-generator/issues/335
 // 2. ts の paths によるエイリアスを設定して '~'で始まるようにする、生成ファイルには出力されるが、参照先のプロジェクトでパスの解決ができない (tsの正しい動作)

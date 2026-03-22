@@ -24,7 +24,7 @@
     "@todo/express": "workspace:*",
     "@todo/lib": "workspace:*",
     "@todo/prisma": "workspace:*",
-    "@trpc/client": "11.13.4",
+    "@trpc/client": "11.14.1",
     "@vueuse/components": "^14.2.1",
     "@vueuse/core": "^14.2.1",
     "axios": "^1.13.6",
@@ -34,15 +34,15 @@
     "superjson": "^2.2.6",
     "use-vue-validate-schema": "^1.0.1",
     "vue": "^3.5.30",
-    "vue-router": "^5.0.3"
+    "vue-router": "^5.0.4"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "^0.3.16",
-    "@iconify/json": "^2.2.450",
+    "@electric-sql/pglite": "^0.4.1",
+    "@iconify/json": "^2.2.453",
     "@iconify/tailwind4": "^1.2.3",
     "@playwright/test": "^1.58.2",
-    "@tailwindcss/vite": "^4.2.1",
-    "@trpc/server": "11.13.4",
+    "@tailwindcss/vite": "^4.2.2",
+    "@trpc/server": "11.14.1",
     "@types/express": "^5.0.6",
     "@types/multer": "^2.1.0",
     "@types/sortablejs": "^1.15.9",
@@ -51,14 +51,14 @@
     "@vue/runtime-core": "^3.5.30",
     "@vue/test-utils": "^2.4.6",
     "@vue/tsconfig": "^0.9.0",
-    "drizzle-kit": "^0.31.9",
+    "drizzle-kit": "^0.31.10",
     "drizzle-orm": "^0.45.1",
-    "jsdom": "^29.0.0",
-    "msw": "^2.12.11",
+    "jsdom": "^29.0.1",
+    "msw": "^2.12.14",
     "msw-trpc": "^2.0.1",
-    "tailwindcss": "^4.2.1",
-    "vue-component-type-helpers": "^3.2.5",
-    "vue-tsc": "^3.2.5"
+    "tailwindcss": "^4.2.2",
+    "vue-component-type-helpers": "^3.2.6",
+    "vue-tsc": "^3.2.6"
   },
   "msw": {
     "workerDirectory": [

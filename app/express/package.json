@@ -29,7 +29,7 @@
   "dependencies": {
     "@todo/lib": "workspace:*",
     "@todo/prisma": "workspace:*",
-    "@trpc/server": "11.13.4",
+    "@trpc/server": "11.14.1",
     "adm-zip": "^0.5.16",
     "axios": "^1.13.6",
     "bcryptjs": "^3.0.3",
@@ -39,13 +39,13 @@
     "helmet": "^8.1.0",
     "log4js": "^6.9.1",
     "multer": "2.1.1",
-    "openai": "^6.29.0",
+    "openai": "^6.32.0",
     "qrcode": "^1.5.4",
     "speakeasy": "^2.0.0",
     "superjson": "^2.2.6"
   },
   "devDependencies": {
-    "@types/adm-zip": "^0.5.7",
+    "@types/adm-zip": "^0.5.8",
     "@types/cookie-parser": "^1.4.10",
     "@types/express": "^5.0.6",
     "@types/express-serve-static-core": "^5.1.1",

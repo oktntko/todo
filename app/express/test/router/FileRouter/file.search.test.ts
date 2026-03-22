@@ -197,8 +197,6 @@ describe(`FileRouter file.search`, () => {
           filename: 'filename',
         });
 
-        // TODO relate todo list
-
         const input: z.infer<typeof FileRouterSchema.searchInput> = {
           space_id: file1.space_id,
           where: {

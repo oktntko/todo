@@ -215,9 +215,9 @@ export default defineComponent(
                     top: refstate.value.pointerY,
                     fontFamily: 'Noto Sans JP Variable',
                   });
-                // TODO arrow はいろいろ試したが無理だった
+                // TODO: arrow はいろいろ試したが無理だった
                 // case 'object:draw:arrow':
-                // TODO diamond はいろいろ試したが無理だった
+                // TODO: diamond はいろいろ試したが無理だった
                 // case 'object:draw:diamond':
               }
             })();
