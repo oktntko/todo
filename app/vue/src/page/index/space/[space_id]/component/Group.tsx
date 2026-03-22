@@ -50,7 +50,6 @@ export default defineComponent(
       }
     }
 
-    // TODO データ作成はフロントで実行して非同期で項目を追加する IDをフロントから指定できるようにする
     function createNewEmptyTodo(): Promise<DynamicTodoModel> {
       return trpc.todo.create.mutate({
         group_id: $props.group.group_id,
@@ -175,7 +174,51 @@ export default defineComponent(
               type="button"
               class="group flex cursor-pointer items-center rounded-full px-4 py-2 text-blue-600 transition duration-75 hover:bg-gray-200"
               onClick={async () => {
-                todo_list.value.unshift(await createNewEmptyTodo());
+                const dummyTodo: DynamicTodoModel = {
+                  loading: true,
+                  todo_id: `temp-${Date.now()}`,
+                  group_id: $props.group.group_id,
+                  title: '',
+                  description: '',
+                  begin_date: '',
+                  begin_time: '',
+                  limit_date: '',
+                  limit_time: '',
+                  done_at: null,
+                  order:
+                    (R.firstBy(
+                      todo_list.value.map((x) => x.order),
+                      [(x) => x, 'desc'],
+                    ) ?? -1) + 1,
+                  file_list: [],
+                  created_at: new Date(),
+                  updated_at: new Date(),
+                  created_by: '',
+                  updated_by: '',
+                  group: $props.group,
+                };
+
+                todo_list.value.unshift(dummyTodo);
+
+                try {
+                  const realTodo = await createNewEmptyTodo();
+                  // todo_idで自身を探して置き換え（インデックスの変動に対応）
+                  const dummyIndex = todo_list.value.findIndex(
+                    (t) => t.todo_id === dummyTodo.todo_id,
+                  );
+                  if (dummyIndex >= 0) {
+                    todo_list.value[dummyIndex] = realTodo;
+                  }
+                } catch (error) {
+                  // エラー発生時はダミーを削除
+                  const dummyIndex = todo_list.value.findIndex(
+                    (t) => t.todo_id === dummyTodo.todo_id,
+                  );
+                  if (dummyIndex >= 0) {
+                    todo_list.value.splice(dummyIndex, 1);
+                  }
+                  throw error;
+                }
               }}
             >
               <span class="icon-[icon-park-solid--add-one] h-4 w-4"></span>

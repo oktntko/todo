@@ -17,6 +17,7 @@ import { useToast } from '~/plugin/ToastPlugin';
 export type DynamicTodoModel = Omit<RouterOutput['todo']['get'], 'file_list'> & {
   file_list: DownloadFile[];
   editing?: boolean;
+  loading?: boolean;
 };
 type Props = {
   modelValue: DynamicTodoModel;
@@ -113,9 +114,9 @@ export default defineComponent(
     return () => (
       <form
         ref="refForm"
-        class="relative text-sm"
+        class={['relative text-sm', { 'pointer-events-none opacity-60': modelValue.value.loading }]}
         autocomplete="off"
-        onClick={() => (modelValue.value.editing = true)}
+        onClick={() => !modelValue.value.loading && (modelValue.value.editing = true)}
         onSubmit={async (e) => {
           e.preventDefault();
           return handleSubmit();
@@ -200,6 +201,7 @@ export default defineComponent(
                 v-model={modelValue.value.title}
                 name="title"
                 type="text"
+                disabled={modelValue.value.loading}
                 class="block w-full border-b border-b-gray-400 bg-inherit pb-0.5 text-sm font-bold outline-hidden"
                 placeholder="Title"
                 maxlength="100"
@@ -286,6 +288,7 @@ export default defineComponent(
                     v-model={modelValue.value.begin_date}
                     name="begin_date"
                     type="date"
+                    disabled={modelValue.value.loading}
                     max="9999-12-31"
                     class="block border-b border-b-gray-400 bg-inherit pb-0.5 outline-hidden sm:text-sm"
                     onInput={handleInput}
@@ -297,6 +300,7 @@ export default defineComponent(
                     v-model={modelValue.value.begin_time}
                     name="begin_time"
                     type="time"
+                    disabled={modelValue.value.loading}
                     class="block border-b border-b-gray-400 bg-inherit pb-0.5 outline-hidden sm:text-sm"
                     onInput={handleInput}
                   />
@@ -310,6 +314,7 @@ export default defineComponent(
                     v-model={modelValue.value.limit_date}
                     name="limit_date"
                     type="date"
+                    disabled={modelValue.value.loading}
                     max="9999-12-31"
                     class="block border-b border-b-gray-400 bg-inherit pb-0.5 outline-hidden sm:text-sm"
                     onInput={handleInput}
@@ -321,6 +326,7 @@ export default defineComponent(
                     v-model={modelValue.value.limit_time}
                     name="limit_time"
                     type="time"
+                    disabled={modelValue.value.loading}
                     class="block border-b border-b-gray-400 bg-inherit pb-0.5 outline-hidden sm:text-sm"
                     onInput={handleInput}
                   />
@@ -332,6 +338,7 @@ export default defineComponent(
               <textarea
                 id={`${modelValue.value.todo_id}-description`}
                 v-model={modelValue.value.description}
+                disabled={modelValue.value.loading}
                 class="block field-sizing-content w-full border-b border-b-gray-400 bg-inherit pb-0.5 outline-hidden"
                 placeholder="Description"
                 onInput={handleInput}

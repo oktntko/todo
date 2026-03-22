@@ -13,41 +13,81 @@ import { transactionRollbackTrpc } from '../../helper';
 const prisma = ExtendsPrismaClient;
 
 describe(`TodoRouter todo.delete`, () => {
-  test(`✅ success - delete todo.
+  test.for([
+    { role: 'OWNER' }, //
+    { role: 'ADMIN' }, //
+    { role: 'EDITOR' }, //
+  ] as const)(
+    `✅ success - delete todo, when operator has $role role.
     - it return the deleted ID.
-    - it delete the record in the database.`, async () => {
-    return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
-      // arrange
-      const { space_id } = await SpaceFactory.create(tx, {
-        user_id: operator.user_id,
-        role: 'OWNER',
+    - it delete the record in the database.`,
+    async ({ role }) => {
+      return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+        // arrange
+        const { space_id } = await SpaceFactory.create(tx, {
+          user_id: operator.user_id,
+          role,
+        });
+        const { group_id } = await GroupFactory.create(tx, {
+          space_id,
+        });
+        const todo = await TodoFactory.create(tx, { group_id });
+
+        const input: z.infer<typeof TodoRouterSchema.deleteInput> = {
+          todo_id: todo.todo_id,
+          updated_at: todo.updated_at,
+        };
+
+        // act
+        const output = await caller.todo.delete(input);
+
+        // assert
+        expect(output).toEqual({ todo_id: input.todo_id });
+
+        // Verify the record is deleted from the database
+        const deleted = await tx.todo.findUnique({
+          where: { todo_id: input.todo_id },
+        });
+        expect(deleted).toBeNull();
       });
-      const { group_id } = await GroupFactory.create(tx, {
-        space_id,
+    },
+  );
+
+  test.for([
+    { role: 'READER' }, //
+  ] as const)(
+    `⚠️ unauthorized error - operator does not have changeable authorization to the data, when operator has $role role.
+    - it throw FORBIDDEN error.`,
+    async ({ role }) => {
+      return transactionRollbackTrpc(prisma, async ({ tx, caller, operator }) => {
+        // arrange
+        const { space_id } = await SpaceFactory.create(tx, {
+          user_id: operator.user_id,
+          role,
+        });
+        const { group_id } = await GroupFactory.create(tx, {
+          space_id,
+        });
+        const todo = await TodoFactory.create(tx, { group_id });
+
+        const input: z.infer<typeof TodoRouterSchema.deleteInput> = {
+          todo_id: todo.todo_id,
+          updated_at: todo.updated_at,
+        };
+
+        // act & assert
+        await expect(caller.todo.delete(input)).rejects.toThrow(
+          new TRPCError({
+            code: 'FORBIDDEN',
+            message: message.error.FORBIDDEN,
+          }),
+        );
       });
-      const todo = await TodoFactory.create(tx, { group_id });
+    },
+  );
 
-      const input: z.infer<typeof TodoRouterSchema.deleteInput> = {
-        todo_id: todo.todo_id,
-        updated_at: todo.updated_at,
-      };
-
-      // act
-      const output = await caller.todo.delete(input);
-
-      // assert
-      expect(output).toEqual({ todo_id: input.todo_id });
-
-      // Verify the record is deleted from the database
-      const deleted = await tx.todo.findUnique({
-        where: { todo_id: input.todo_id },
-      });
-      expect(deleted).toBeNull();
-    });
-  });
-
-  test(`⚠️ access control - forbidden to delete todo in other user's group.
-    - it throw FORBIDDEN error.`, async () => {
+  test(`⚠️ unauthorized error - operator has no authorization to the data.
+        - it throw NOT_FOUND error.`, async () => {
     return transactionRollbackTrpc(prisma, async ({ tx, caller }) => {
       // arrange
       const { space_id } = await SpaceFactory.create(tx);
