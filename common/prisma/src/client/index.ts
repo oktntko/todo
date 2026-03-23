@@ -11,6 +11,7 @@ const adapter = new PrismaMariaDb({
   port: Number(process.env['DATABASE_PORT']),
   database: process.env['DATABASE_NAME'],
   connectTimeout: 5000,
+  allowPublicKeyRetrieval: true,
 });
 
 type TransactionOriginPrismaClient = Omit<PrismaClient, ITXClientDenyList>;
