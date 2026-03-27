@@ -97,24 +97,4 @@ export const mypage = router({
         ctx.req.session.data.setting_twofa = null;
       });
     }),
-
-  // mypage.enableAichat
-  enableAichat: protectedProcedure
-    .input(MypageRouterSchema.enableAichatInput)
-    .output(MypageRouterSchema.getOutput)
-    .mutation(async ({ ctx, input }) => {
-      return $transaction(ctx.prisma, async (prisma) => {
-        return MypageService.enableAichat({ ...ctx, prisma }, input);
-      });
-    }),
-
-  // mypage.disableAichat
-  disableAichat: protectedProcedure
-    .input(z.void())
-    .output(MypageRouterSchema.getOutput)
-    .mutation(async ({ ctx }) => {
-      return $transaction(ctx.prisma, async (prisma) => {
-        return MypageService.disableAichat({ ...ctx, prisma });
-      });
-    }),
 });

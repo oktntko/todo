@@ -55,4 +55,24 @@ export const space = router({
         return SpaceService.deleteSpace({ ...ctx, prisma }, input);
       });
     }),
+
+  // space.enableAichat
+  enableAichat: protectedProcedure
+    .input(SpaceRouterSchema.enableAichatInput)
+    .output(SpaceRouterSchema.getOutput)
+    .mutation(async ({ ctx, input }) => {
+      return $transaction(ctx.prisma, async (prisma) => {
+        return SpaceService.enableAichat({ ...ctx, prisma }, input);
+      });
+    }),
+
+  // space.disableAichat
+  disableAichat: protectedProcedure
+    .input(SpaceRouterSchema.deleteInput)
+    .output(SpaceRouterSchema.getOutput)
+    .mutation(async ({ ctx, input }) => {
+      return $transaction(ctx.prisma, async (prisma) => {
+        return SpaceService.disableAichat({ ...ctx, prisma }, input);
+      });
+    }),
 });

@@ -18,19 +18,24 @@ datasource db {
   provider = "mysql"
 }
 
-/// @zod.import(["import { ColorSchema } from '@todo/lib/zod'"]);
+/// @zod.import(["import { ColorSchema } from '@todo/lib/zod'", "import { AichatModelSchema } from '../../../option'"]);
 model Space {
   space_id String @id @default(uuid(7)) @db.VarChar(36) /// @zod.length(36)
 
-  space_name        String @db.VarChar(100) /// @zod.trim().min(1).max(100)
-  space_description String @default("") @db.VarChar(400) /// @zod.max(400)
-  space_image       String @default(dbgenerated("('')")) @db.Text
-  space_color       String @default("") @db.VarChar(100) /// @zod.custom.use(ColorSchema.or(z.literal('')))
+  space_name        String  @db.VarChar(100) /// @zod.trim().min(1).max(100)
+  space_description String  @default("") @db.VarChar(400) /// @zod.max(400)
+  space_image       String  @default(dbgenerated("('')")) @db.Text
+  space_color       String  @default("") @db.VarChar(100) /// @zod.custom.use(ColorSchema.or(z.literal('')))
+  /// AIチャットの有効化 `true`: 有効 / `false`: 無効
+  aichat_enable     Boolean @default(false)
+  /// AIチャットのAPIキー
+  aichat_api_key    String  @default("") @db.VarChar(400) /// @zod.trim().max(400)
 
   group_list      Group[]
   whiteboard_list Whiteboard[]
   file_list       File[]
   space_user_list SpaceUser[]
+  aichat_list     Aichat[]
 
   created_at DateTime @default(now()) @db.DateTime(3)
   created_by String
@@ -114,14 +119,43 @@ model Whiteboard {
   @@map("whiteboard")
 }
 
+/// @zod.import(["import { StringRelationIdSchema } from '@todo/lib/zod'"]);
 model Aichat {
   aichat_id String @id @default(uuid(7)) @db.VarChar(36) /// @zod.length(36)
 
-  message String @db.Text
+  space_id String /// @zod.custom.use(StringRelationIdSchema)
+  space    Space  @relation(fields: [space_id], references: [space_id], onDelete: Cascade)
+
+  aichat_title String @default("") @db.VarChar(100) /// @zod.trim().max(100)
+
+  aichat_message_list AichatMessage[]
 
   created_at DateTime @default(now()) @db.DateTime(3)
+  created_by String
+  updated_at DateTime @updatedAt @db.DateTime(3)
+  updated_by String
 
   @@map("aichat")
+}
+
+/// @zod.import(["import { StringRelationIdSchema } from '@todo/lib/zod'", "import { AichatRoleSchema } from '../../../option'"]);
+model AichatMessage {
+  aichat_message_id String @id @default(uuid(7)) @db.VarChar(36) /// @zod.length(36)
+
+  aichat_id String /// @zod.custom.use(StringRelationIdSchema)
+  aichat    Aichat  @relation(fields: [aichat_id], references: [aichat_id], onDelete: Cascade)
+  user_id   String? /// @zod.custom.use(StringRelationIdSchema.or(z.null()))
+  user      User?   @relation(fields: [user_id], references: [user_id], onDelete: SetNull)
+
+  role    String @db.VarChar(10) /// @zod.custom.use(AichatRoleSchema)
+  content String @default(dbgenerated("('')")) @db.Text
+
+  created_at DateTime @default(now()) @db.DateTime(3)
+  created_by String
+  updated_at DateTime @updatedAt @db.DateTime(3)
+  updated_by String
+
+  @@map("aichat_message")
 }
 
 ////////////////////////////////
@@ -129,33 +163,27 @@ model Aichat {
 ////////////////////////////////
 
 /// ユーザ
-/// @zod.import(["import { AichatModelSchema } from '../../../option'"])
 model User {
   user_id String @id @default(uuid(7)) @db.VarChar(36) /// @zod.length(36)
 
-  email          String  @unique @db.VarChar(255) /// @zod.email().trim().min(1).max(255)
-  password       String  @db.VarChar(255) /// @zod.trim().min(1).max(255)
-  username       String  @db.VarChar(100) /// @zod.trim().min(1).max(100)
+  email        String  @unique @db.VarChar(255) /// @zod.email().trim().min(1).max(255)
+  password     String  @db.VarChar(255) /// @zod.trim().min(1).max(255)
+  username     String  @db.VarChar(100) /// @zod.trim().min(1).max(100)
   /// アバターイメージ
-  avatar_image   String  @default(dbgenerated("('')")) @db.Text
+  avatar_image String  @default(dbgenerated("('')")) @db.Text
   /// 自己紹介
-  description    String  @default("") @db.VarChar(400) /// @zod.trim().max(400)
+  description  String  @default("") @db.VarChar(400) /// @zod.trim().max(400)
   /// 二要素認証の有効化 `true`: 有効 / `false`: 無効
-  twofa_enable   Boolean @default(false)
+  twofa_enable Boolean @default(false)
   /// 二要素認証の秘密鍵
-  twofa_secret   String  @default("") @db.VarChar(255) /// @zod.trim().max(255)
-  /// AIチャットの有効化 `true`: 有効 / `false`: 無効
-  aichat_enable  Boolean @default(false)
-  /// AIチャットのモデル
-  aichat_model   String  @default("") @db.VarChar(100) /// @zod.custom.use(AichatModelSchema.or(z.literal('')))
-  /// AIチャットのAPIキー
-  aichat_api_key String  @default("") @db.VarChar(255) /// @zod.trim().max(255)
+  twofa_secret String  @default("") @db.VarChar(255) /// @zod.trim().max(255)
 
   created_at DateTime @default(now()) @db.DateTime(3)
   updated_at DateTime @updatedAt @db.DateTime(3)
 
   session_list    Session[]
   space_user_list SpaceUser[]
+  aichatMessages  AichatMessage[]
 
   @@index([username], name: "index_username")
   @@map("user")

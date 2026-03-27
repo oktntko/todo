@@ -71,6 +71,8 @@ async function createSpace(
       space_description: params.data.space_description,
       space_image: params.data.space_image,
       space_color: params.data.space_color,
+      aichat_enable: params.data.aichat_enable,
+      aichat_api_key: params.data.aichat_api_key,
 
       created_by: params.operator_id,
       updated_by: params.operator_id,
@@ -97,6 +99,8 @@ async function updateSpace(
       space_description: params.data.space_description,
       space_image: params.data.space_image,
       space_color: params.data.space_color,
+      aichat_enable: params.data.aichat_enable,
+      aichat_api_key: params.data.aichat_api_key,
 
       updated_by: params.operator_id,
 

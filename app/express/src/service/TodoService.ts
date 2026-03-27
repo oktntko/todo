@@ -12,9 +12,8 @@ import { _repository } from '~/repository/_repository';
 import { GroupRepository } from '~/repository/GroupRepository';
 import { TodoRepository } from '~/repository/TodoRepository';
 import { TodoRouterSchema } from '~/schema/TodoRouterSchema';
-
-import { GroupService } from './GroupService';
-import { SpaceAuthorization, SpaceService } from './SpaceService';
+import { GroupService } from '~/service/GroupService';
+import { SpaceAuthorization, SpaceService } from '~/service/SpaceService';
 
 export const TodoService = {
   listTodo,

@@ -2,10 +2,13 @@ import type { z } from '@todo/lib/zod';
 
 import { SpaceUserRole, type Prisma } from '@todo/prisma/client';
 import { TRPCError } from '@trpc/server';
+import { APIError } from 'openai';
 
+import { newOpenAI } from '~/external/openai';
 import { ReqCtx } from '~/lib/context';
 import { log } from '~/lib/log4js';
 import { message } from '~/lib/message';
+import { SecretPassword } from '~/lib/secret';
 import { ProtectedContext } from '~/middleware/trpc';
 import { _repository } from '~/repository/_repository';
 import { SpaceRepository } from '~/repository/SpaceRepository';
@@ -17,6 +20,9 @@ export const SpaceService = {
   createSpace,
   updateSpace,
   deleteSpace,
+  // ai chat
+  enableAichat,
+  disableAichat,
 };
 
 // space.list
@@ -130,6 +136,93 @@ async function deleteSpace(
   });
 
   return { space_id: input.space_id };
+}
+
+// space.enableAichat
+async function enableAichat(
+  ctx: ProtectedContext,
+  input: z.infer<typeof SpaceRouterSchema.enableAichatInput>,
+) {
+  log.trace(ReqCtx.reqid, 'enableAichat', ctx.operator.user_id);
+
+  // 存在チェック & 認可（読み取り権限）の確認
+  const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
+  const current = await _repository.checkVersion({
+    current: SpaceRepository.findUniqueSpace(ctx.prisma, {
+      operator_id: ctx.operator.user_id,
+      where: {
+        ...hasAccessAuthorityWhere,
+        space_id: input.space_id,
+      },
+    }),
+    updated_at: input.updated_at,
+  });
+
+  // 認可（変更権限）の確認
+  const user_role = current.space_user_list.find((x) => x.user_id === ctx.operator.user_id)?.role;
+  SpaceAuthorization.checkHasAuthority({ need_role: ['OWNER'], user_role });
+
+  // OpenAI には「APIキーを検証する専用API」は存在しないため、軽い API コールを 1 回実行して、成功/失敗で判断する
+  try {
+    const openai = newOpenAI({ apiKey: input.aichat_api_key });
+    await openai.models.list();
+  } catch (e) {
+    if (e instanceof APIError && (e.status === 401 || e.status === 403)) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: 'The AI chat API key is invalid. Please check and try again.',
+      });
+    }
+
+    log.error(ReqCtx.reqid, 'patchAichat', 'OpenAI API key validation failed', e);
+    throw new TRPCError({
+      code: 'BAD_GATEWAY',
+      message: 'The service is temporarily unavailable. Please try again in a moment.',
+    });
+  }
+
+  return SpaceRepository.updateSpace(ctx.prisma, {
+    data: {
+      aichat_enable: true,
+      aichat_api_key: SecretPassword.encrypt(input.aichat_api_key),
+    },
+    operator_id: ctx.operator.user_id,
+    where: { space_id: current.space_id },
+  });
+}
+
+// space.disableAichat
+async function disableAichat(
+  ctx: ProtectedContext,
+  input: z.infer<typeof SpaceRouterSchema.deleteInput>,
+) {
+  log.trace(ReqCtx.reqid, 'disableAichat', ctx.operator.user_id);
+
+  // 存在チェック & 認可（読み取り権限）の確認
+  const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
+  const current = await _repository.checkVersion({
+    current: SpaceRepository.findUniqueSpace(ctx.prisma, {
+      operator_id: ctx.operator.user_id,
+      where: {
+        ...hasAccessAuthorityWhere,
+        space_id: input.space_id,
+      },
+    }),
+    updated_at: input.updated_at,
+  });
+
+  // 認可（変更権限）の確認
+  const user_role = current.space_user_list.find((x) => x.user_id === ctx.operator.user_id)?.role;
+  SpaceAuthorization.checkHasAuthority({ need_role: ['OWNER'], user_role });
+
+  return SpaceRepository.updateSpace(ctx.prisma, {
+    data: {
+      aichat_enable: false,
+      aichat_api_key: '',
+    },
+    operator_id: ctx.operator.user_id,
+    where: { space_id: current.space_id },
+  });
 }
 
 // #region Authorization

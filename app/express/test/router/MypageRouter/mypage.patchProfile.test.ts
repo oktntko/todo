@@ -20,7 +20,6 @@ describe(`MypageRouter mypage.patchProfile`, () => {
         username: 'new_username',
         avatar_image: 'https://example.com/avatar.jpg',
         description: 'New description',
-        aichat_model: 'gpt-4.1',
       };
 
       // act
@@ -53,9 +52,6 @@ describe(`MypageRouter mypage.patchProfile`, () => {
           description: '',
           twofa_enable: false,
           twofa_secret: '',
-          aichat_enable: false,
-          aichat_model: '',
-          aichat_api_key: '',
         },
       });
 
@@ -64,7 +60,6 @@ describe(`MypageRouter mypage.patchProfile`, () => {
         username: 'new_username',
         avatar_image: '',
         description: '',
-        aichat_model: '',
       };
 
       // act & assert

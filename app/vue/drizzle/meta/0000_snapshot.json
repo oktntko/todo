@@ -1,5 +1,5 @@
 {
-  "id": "18d310f2-bd4f-4144-ad3c-7630fd3e9afa",
+  "id": "8e909e1d-54d2-4b50-b17c-e90c4c728d1a",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -15,11 +15,18 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "message": {
-          "name": "message",
-          "type": "text",
+        "space_id": {
+          "name": "space_id",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
+        },
+        "aichat_title": {
+          "name": "aichat_title",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "''"
         },
         "created_at": {
           "name": "created_at",
@@ -27,10 +34,144 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "created_by": {
+          "name": "created_by",
+          "type": "varchar(36)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_by": {
+          "name": "updated_by",
+          "type": "varchar(36)",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "aichat_space_id_space_space_id_fk": {
+          "name": "aichat_space_id_space_space_id_fk",
+          "tableFrom": "aichat",
+          "tableTo": "space",
+          "schemaTo": "todo",
+          "columnsFrom": [
+            "space_id"
+          ],
+          "columnsTo": [
+            "space_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "todo.aichat_message": {
+      "name": "aichat_message",
+      "schema": "todo",
+      "columns": {
+        "aichat_message_id": {
+          "name": "aichat_message_id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "aichat_id": {
+          "name": "aichat_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "role": {
+          "name": "role",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "content": {
+          "name": "content",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "''"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_by": {
+          "name": "created_by",
+          "type": "varchar(36)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_by": {
+          "name": "updated_by",
+          "type": "varchar(36)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "aichat_message_aichat_id_aichat_aichat_id_fk": {
+          "name": "aichat_message_aichat_id_aichat_aichat_id_fk",
+          "tableFrom": "aichat_message",
+          "tableTo": "aichat",
+          "schemaTo": "todo",
+          "columnsFrom": [
+            "aichat_id"
+          ],
+          "columnsTo": [
+            "aichat_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "aichat_message_user_id_user_user_id_fk": {
+          "name": "aichat_message_user_id_user_user_id_fk",
+          "tableFrom": "aichat_message",
+          "tableTo": "user",
+          "schemaTo": "todo",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "user_id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -350,6 +491,20 @@
           "notNull": true,
           "default": "''"
         },
+        "aichat_enable": {
+          "name": "aichat_enable",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "aichat_api_key": {
+          "name": "aichat_api_key",
+          "type": "varchar(400)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "''"
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp with time zone",
@@ -429,7 +584,7 @@
           "columnsTo": [
             "user_id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "space_user_space_id_space_space_id_fk": {
@@ -443,7 +598,7 @@
           "columnsTo": [
             "space_id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -575,6 +730,60 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "todo.todo_to_file": {
+      "name": "todo_to_file",
+      "schema": "todo",
+      "columns": {
+        "todo_id": {
+          "name": "todo_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "file_id": {
+          "name": "file_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "todo_to_file_todo_id_todo_todo_id_fk": {
+          "name": "todo_to_file_todo_id_todo_todo_id_fk",
+          "tableFrom": "todo_to_file",
+          "tableTo": "todo",
+          "schemaTo": "todo",
+          "columnsFrom": [
+            "todo_id"
+          ],
+          "columnsTo": [
+            "todo_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "todo_to_file_file_id_file_file_id_fk": {
+          "name": "todo_to_file_file_id_file_file_id_fk",
+          "tableFrom": "todo_to_file",
+          "tableTo": "file",
+          "schemaTo": "todo",
+          "columnsFrom": [
+            "file_id"
+          ],
+          "columnsTo": [
+            "file_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "todo.user": {
       "name": "user",
       "schema": "todo",
@@ -627,27 +836,6 @@
         },
         "twofa_secret": {
           "name": "twofa_secret",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "''"
-        },
-        "aichat_enable": {
-          "name": "aichat_enable",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": false
-        },
-        "aichat_model": {
-          "name": "aichat_model",
-          "type": "varchar(100)",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "''"
-        },
-        "aichat_api_key": {
-          "name": "aichat_api_key",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true,

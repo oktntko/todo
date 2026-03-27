@@ -11,8 +11,7 @@ import { _repository } from '~/repository/_repository';
 import { SpaceRepository } from '~/repository/SpaceRepository';
 import { WhiteboardRepository } from '~/repository/WhiteboardRepository';
 import { WhiteboardRouterSchema } from '~/schema/WhiteboardRouterSchema';
-
-import { SpaceAuthorization, SpaceService } from './SpaceService';
+import { SpaceAuthorization, SpaceService } from '~/service/SpaceService';
 
 export const WhiteboardService = {
   listWhiteboard,

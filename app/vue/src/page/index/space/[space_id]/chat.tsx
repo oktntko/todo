@@ -1,62 +1,49 @@
-import type { z } from '@todo/lib/zod';
+import { defineComponent, Suspense, Transition, type DefineComponent } from 'vue';
+import { RouterView, useRoute } from 'vue-router';
 
-import { MessageSchema } from '@todo/express/schema';
-import { defineComponent, onMounted, ref } from 'vue';
+import { useAichatStore } from '~/store/AichatStore';
 
-import { trpc, type RouterOutput } from '~/lib/trpc';
-import { useDialog } from '~/plugin/DialogPlugin';
+export default defineComponent(async () => {
+  const $route = useRoute('//space/[space_id]/todo');
 
-export default defineComponent(() => {
-  const $dialog = useDialog();
+  const { fetchAichat } = useAichatStore();
 
-  const data = ref<RouterOutput['aichat']['list']>([]);
-  const loading = ref(false);
-
-  const modelValue = ref<z.infer<typeof MessageSchema>>({
-    role: 'user',
-    content: '',
-  });
-
-  onMounted(async () => {
-    loading.value = true;
-    try {
-      data.value = await trpc.aichat.list.query({});
-    } finally {
-      loading.value = false;
-    }
-  });
-
-  async function handleSubmit() {
-    const loading = $dialog.loading();
-    try {
-      data.value = await trpc.aichat.chat.mutate({
-        messages: data.value,
-        message: modelValue.value,
-      });
-    } finally {
-      loading.close();
-    }
-  }
+  await fetchAichat({ space_id: $route.params.space_id });
 
   return () => (
     <div>
-      {data.value.map(({ message }, i) => (
-        <div key={i}>
-          <div>{message.role}</div>
-          <div>{message.content}</div>
-          <form
-            onSubmit={async (e) => {
-              e.preventDefault();
-              return handleSubmit();
-            }}
-          >
-            <div>
-              <textarea v-model={modelValue.value.content} class="w-full bg-white"></textarea>
-            </div>
-            <button type="submit">send</button>
-          </form>
-        </div>
-      ))}
+      <RouterView
+        v-slots={{
+          default: ({ Component }: { Component?: DefineComponent }) =>
+            Component && (
+              <Transition
+                mode="out-in"
+                enter-from-class="transform opacity-0"
+                enter-active-class="transition ease-out duration-200"
+                enter-to-class="transform opacity-100"
+              >
+                <Suspense
+                  v-slots={{
+                    default: () => <Component></Component>,
+                    fallback: () => {
+                      return (
+                        <div class="flex flex-col items-center bg-transparent p-8">
+                          <span class="icon-[eos-icons--bubble-loading] text-opacity-60 h-16 w-16 text-gray-600"></span>
+                          <span class="sr-only">Loading...</span>
+                          <input
+                            autofocus
+                            name="loading"
+                            class="h-0 w-0 border-none bg-transparent caret-transparent outline-hidden"
+                          />
+                        </div>
+                      );
+                    },
+                  }}
+                ></Suspense>
+              </Transition>
+            ),
+        }}
+      ></RouterView>
     </div>
   );
 });

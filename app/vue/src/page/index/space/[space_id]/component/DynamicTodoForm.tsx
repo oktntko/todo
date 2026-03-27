@@ -227,7 +227,7 @@ export default defineComponent(
                         <li>
                           <button
                             type="button"
-                            class="group flex w-full cursor-pointer items-center p-2 transition duration-75 hover:bg-gray-200 disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100"
+                            class="group flex w-full cursor-pointer items-center gap-1 p-2 transition duration-75 hover:bg-gray-200 disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100"
                             onClick={async () => {
                               status.value.fixedEditing = true;
                               try {
@@ -253,13 +253,13 @@ export default defineComponent(
                             }}
                           >
                             <span class="icon-[material-symbols--upload-file] h-4 w-4"></span>
-                            <span class="ms-1 capitalize">upload file</span>
+                            <span class="capitalize">upload file</span>
                           </button>
                         </li>
                         <li>
                           <button
                             type="button"
-                            class="group flex w-full cursor-pointer items-center p-2 text-yellow-600 transition duration-75 hover:bg-gray-200"
+                            class="group flex w-full cursor-pointer items-center gap-1 p-2 text-yellow-600 transition duration-75 hover:bg-gray-200"
                             onClick={async () => {
                               await $dialog.confirm.warn(`Do you really want to delete this data?`);
 
@@ -270,7 +270,7 @@ export default defineComponent(
                             }}
                           >
                             <span class="icon-[tabler--trash-filled] h-4 w-4"></span>
-                            <span class="ms-1 capitalize">delete todo</span>
+                            <span class="capitalize">delete todo</span>
                           </button>
                         </li>
                       </ul>

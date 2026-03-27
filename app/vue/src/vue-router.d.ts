@@ -50,13 +50,16 @@ declare module 'vue-router/auto-routes' {
       | '//mypage/'
       | '//mypage/account'
       | '//mypage/change-password'
-      | '//mypage/chat'
       | '//mypage/security'
       | '//space'
       | '//space/'
       | '//space/[space_id]'
       | '//space/[space_id]/chat'
+      | '//space/[space_id]/chat/'
       | '//space/[space_id]/drive/'
+      | '//space/[space_id]/setting'
+      | '//space/[space_id]/setting/'
+      | '//space/[space_id]/setting/chat'
       | '//space/[space_id]/todo'
       | '//space/[space_id]/todo/'
       | '//space/[space_id]/todo/board'
@@ -76,7 +79,6 @@ declare module 'vue-router/auto-routes' {
       | '//mypage/'
       | '//mypage/account'
       | '//mypage/change-password'
-      | '//mypage/chat'
       | '//mypage/security'
     >,
     '//mypage/': RouteRecordInfo<
@@ -100,13 +102,6 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '//mypage/chat': RouteRecordInfo<
-      '//mypage/chat',
-      '/mypage/chat',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
     '//mypage/security': RouteRecordInfo<
       '//mypage/security',
       '/mypage/security',
@@ -122,7 +117,11 @@ declare module 'vue-router/auto-routes' {
       | '//space/'
       | '//space/[space_id]'
       | '//space/[space_id]/chat'
+      | '//space/[space_id]/chat/'
       | '//space/[space_id]/drive/'
+      | '//space/[space_id]/setting'
+      | '//space/[space_id]/setting/'
+      | '//space/[space_id]/setting/chat'
       | '//space/[space_id]/todo'
       | '//space/[space_id]/todo/'
       | '//space/[space_id]/todo/board'
@@ -147,7 +146,11 @@ declare module 'vue-router/auto-routes' {
       { space_id: ParamValue<true> },
       { space_id: ParamValue<false> },
       | '//space/[space_id]/chat'
+      | '//space/[space_id]/chat/'
       | '//space/[space_id]/drive/'
+      | '//space/[space_id]/setting'
+      | '//space/[space_id]/setting/'
+      | '//space/[space_id]/setting/chat'
       | '//space/[space_id]/todo'
       | '//space/[space_id]/todo/'
       | '//space/[space_id]/todo/board'
@@ -164,11 +167,40 @@ declare module 'vue-router/auto-routes' {
       '/space/:space_id/chat',
       { space_id: ParamValue<true> },
       { space_id: ParamValue<false> },
+      | '//space/[space_id]/chat/'
+    >,
+    '//space/[space_id]/chat/': RouteRecordInfo<
+      '//space/[space_id]/chat/',
+      '/space/:space_id/chat',
+      { space_id: ParamValue<true> },
+      { space_id: ParamValue<false> },
       | never
     >,
     '//space/[space_id]/drive/': RouteRecordInfo<
       '//space/[space_id]/drive/',
       '/space/:space_id/drive',
+      { space_id: ParamValue<true> },
+      { space_id: ParamValue<false> },
+      | never
+    >,
+    '//space/[space_id]/setting': RouteRecordInfo<
+      '//space/[space_id]/setting',
+      '/space/:space_id/setting',
+      { space_id: ParamValue<true> },
+      { space_id: ParamValue<false> },
+      | '//space/[space_id]/setting/'
+      | '//space/[space_id]/setting/chat'
+    >,
+    '//space/[space_id]/setting/': RouteRecordInfo<
+      '//space/[space_id]/setting/',
+      '/space/:space_id/setting',
+      { space_id: ParamValue<true> },
+      { space_id: ParamValue<false> },
+      | never
+    >,
+    '//space/[space_id]/setting/chat': RouteRecordInfo<
+      '//space/[space_id]/setting/chat',
+      '/space/:space_id/setting/chat',
       { space_id: ParamValue<true> },
       { space_id: ParamValue<false> },
       | never
@@ -291,13 +323,16 @@ declare module 'vue-router/auto-routes' {
         | '//mypage/'
         | '//mypage/account'
         | '//mypage/change-password'
-        | '//mypage/chat'
         | '//mypage/security'
         | '//space'
         | '//space/'
         | '//space/[space_id]'
         | '//space/[space_id]/chat'
+        | '//space/[space_id]/chat/'
         | '//space/[space_id]/drive/'
+        | '//space/[space_id]/setting'
+        | '//space/[space_id]/setting/'
+        | '//space/[space_id]/setting/chat'
         | '//space/[space_id]/todo'
         | '//space/[space_id]/todo/'
         | '//space/[space_id]/todo/board'
@@ -317,7 +352,6 @@ declare module 'vue-router/auto-routes' {
         | '//mypage/'
         | '//mypage/account'
         | '//mypage/change-password'
-        | '//mypage/chat'
         | '//mypage/security'
       views:
         | 'default'
@@ -340,12 +374,6 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
-    'src/page/index/mypage/chat.tsx': {
-      routes:
-        | '//mypage/chat'
-      views:
-        | never
-    }
     'src/page/index/mypage/security.tsx': {
       routes:
         | '//mypage/security'
@@ -358,7 +386,11 @@ declare module 'vue-router/auto-routes' {
         | '//space/'
         | '//space/[space_id]'
         | '//space/[space_id]/chat'
+        | '//space/[space_id]/chat/'
         | '//space/[space_id]/drive/'
+        | '//space/[space_id]/setting'
+        | '//space/[space_id]/setting/'
+        | '//space/[space_id]/setting/chat'
         | '//space/[space_id]/todo'
         | '//space/[space_id]/todo/'
         | '//space/[space_id]/todo/board'
@@ -382,7 +414,11 @@ declare module 'vue-router/auto-routes' {
       routes:
         | '//space/[space_id]'
         | '//space/[space_id]/chat'
+        | '//space/[space_id]/chat/'
         | '//space/[space_id]/drive/'
+        | '//space/[space_id]/setting'
+        | '//space/[space_id]/setting/'
+        | '//space/[space_id]/setting/chat'
         | '//space/[space_id]/todo'
         | '//space/[space_id]/todo/'
         | '//space/[space_id]/todo/board'
@@ -399,12 +435,39 @@ declare module 'vue-router/auto-routes' {
     'src/page/index/space/[space_id]/chat.tsx': {
       routes:
         | '//space/[space_id]/chat'
+        | '//space/[space_id]/chat/'
+      views:
+        | 'default'
+    }
+    'src/page/index/space/[space_id]/chat/index.tsx': {
+      routes:
+        | '//space/[space_id]/chat/'
       views:
         | never
     }
     'src/page/index/space/[space_id]/drive/index.tsx': {
       routes:
         | '//space/[space_id]/drive/'
+      views:
+        | never
+    }
+    'src/page/index/space/[space_id]/setting.tsx': {
+      routes:
+        | '//space/[space_id]/setting'
+        | '//space/[space_id]/setting/'
+        | '//space/[space_id]/setting/chat'
+      views:
+        | 'default'
+    }
+    'src/page/index/space/[space_id]/setting/index.tsx': {
+      routes:
+        | '//space/[space_id]/setting/'
+      views:
+        | never
+    }
+    'src/page/index/space/[space_id]/setting/chat.tsx': {
+      routes:
+        | '//space/[space_id]/setting/chat'
       views:
         | never
     }

@@ -10,8 +10,6 @@ export const useMypageStore = defineStore('mypage', () => {
     username: '',
     avatar_image: '',
     twofa_enable: false,
-    aichat_enable: false,
-    aichat_model: '',
   });
 
   async function fetchMypage() {

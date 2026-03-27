@@ -6,7 +6,6 @@ const patchProfileInput = UserSchema.pick({
   email: true,
   avatar_image: true,
   description: true,
-  aichat_model: true,
 });
 
 const patchPasswordInput = z
@@ -24,24 +23,17 @@ const enableSecretInput = z.object({
   token: z.string().length(6),
 });
 
-const enableAichatInput = UserSchema.pick({
-  aichat_api_key: true,
-});
-
 const getOutput = UserSchema.pick({
   email: true,
   username: true,
   avatar_image: true,
   description: true,
   twofa_enable: true,
-  aichat_enable: true,
-  aichat_model: true,
 });
 
 export const MypageRouterSchema = {
   patchProfileInput,
   patchPasswordInput,
   enableSecretInput,
-  enableAichatInput,
   getOutput,
 };

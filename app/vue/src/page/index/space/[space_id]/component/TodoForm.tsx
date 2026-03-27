@@ -88,19 +88,19 @@ export default defineComponent(
                       'checked:bg-blue-100 checked:font-bold',
                     ]}
                   >
-                    <div class="flex items-center text-sm text-gray-900">
+                    <div class="flex items-center gap-1 text-sm text-gray-900">
                       {group.group_image ? (
                         <img
                           src={group.group_image}
-                          width="16"
-                          height="16"
+                          width="20"
+                          height="20"
                           decoding="async"
-                          class="h-4 w-4 rounded-sm object-cover object-center"
+                          class="h-5 w-5 rounded-sm object-cover object-center"
                         />
                       ) : (
-                        <span class="icon-[ri--image-circle-fill] h-4 w-4"></span>
+                        <span class="icon-[ri--image-circle-fill] h-5 w-5"></span>
                       )}
-                      <span class="ms-1">{group.group_name}</span>
+                      <span>{group.group_name}</span>
                     </div>
                   </option>
                 ))}

@@ -45,6 +45,7 @@ describe(`SpaceRouter space.update`, () => {
           updated_at: output.updated_at,
           created_by: space.created_by,
           updated_by: operator.user_id,
+          aichat_enable: false,
         } satisfies typeof output);
 
         // Verify the record is updated in the database
@@ -57,6 +58,8 @@ describe(`SpaceRouter space.update`, () => {
           updated_at: output.updated_at,
           created_by: space.created_by,
           updated_by: operator.user_id,
+          aichat_enable: false,
+          aichat_api_key: '',
         } satisfies typeof updated);
       });
     },

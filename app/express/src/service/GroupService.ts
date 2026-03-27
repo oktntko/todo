@@ -11,8 +11,7 @@ import { _repository } from '~/repository/_repository';
 import { GroupRepository } from '~/repository/GroupRepository';
 import { SpaceRepository } from '~/repository/SpaceRepository';
 import { GroupRouterSchema } from '~/schema/GroupRouterSchema';
-
-import { SpaceAuthorization, SpaceService } from './SpaceService';
+import { SpaceAuthorization, SpaceService } from '~/service/SpaceService';
 
 export const GroupService = {
   listGroup,

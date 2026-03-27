@@ -133,7 +133,7 @@ export default defineComponent(async () => {
 
             <button
               type="button"
-              class="group sticky bottom-0 flex w-full items-center rounded-e-full bg-gray-200/10 p-2 text-blue-600 backdrop-blur transition hover:bg-gray-200"
+              class="group sticky bottom-0 flex w-full items-center gap-1 rounded-e-full bg-gray-200/10 p-2 text-blue-600 backdrop-blur transition hover:bg-gray-200"
               onClick={async () => {
                 const loading = $dialog.loading();
                 try {
@@ -152,7 +152,7 @@ export default defineComponent(async () => {
               }}
             >
               <span class="icon-[icon-park-solid--add-one] h-4 w-4" />
-              <span class="ms-1 capitalize">create new canvas</span>
+              <span class="capitalize">create new canvas</span>
             </button>
           </aside>
         </div>

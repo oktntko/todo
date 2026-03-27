@@ -91,7 +91,7 @@ export default defineComponent(
               <li key={group.group_id} class="rounded-e-full py-px">
                 <label
                   class={[
-                    'group/item relative flex w-full cursor-pointer items-center justify-start rounded-e-full border-l-[6px] p-1 transition duration-75 hover:bg-gray-200',
+                    'group/item relative flex w-full cursor-pointer items-center justify-start gap-1 rounded-e-full border-l-[6px] p-1 transition duration-75 hover:bg-gray-200',
                     {
                       'bg-gray-300': ~checkedGroupList.value.findIndex(
                         (x) => x.group_id === group.group_id,
@@ -128,7 +128,7 @@ export default defineComponent(
                     <span class="icon-[ri--image-circle-fill] h-4 w-4 shrink-0"></span>
                   )}
 
-                  <span class="mx-1 shrink grow truncate">{group.group_name}</span>
+                  <span class="shrink grow truncate">{group.group_name}</span>
                   <button
                     type="button"
                     class={[
@@ -165,7 +165,7 @@ export default defineComponent(
 
           <button
             type="button"
-            class="group sticky bottom-0 flex w-full cursor-pointer items-center rounded-e-full bg-gray-200/10 p-2 text-blue-600 backdrop-blur transition duration-75 hover:bg-gray-200"
+            class="group sticky bottom-0 flex w-full cursor-pointer items-center gap-1 rounded-e-full bg-gray-200/10 p-2 text-blue-600 backdrop-blur transition duration-75 hover:bg-gray-200"
             onClick={async () => {
               await $dialog.showModal(ModalAddGroup, (resolve) => ({
                 space_id: $props.space_id,
@@ -174,7 +174,7 @@ export default defineComponent(
             }}
           >
             <span class="icon-[icon-park-solid--add-one] h-4 w-4"></span>
-            <span class="ms-1 capitalize">create new group</span>
+            <span class="capitalize">create new group</span>
           </button>
         </div>
       </aside>

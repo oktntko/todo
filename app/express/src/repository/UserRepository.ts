@@ -65,9 +65,6 @@ async function createUser(
       description: params.data.description,
       twofa_enable: params.data.twofa_enable,
       twofa_secret: params.data.twofa_secret,
-      aichat_enable: params.data.aichat_enable,
-      aichat_model: params.data.aichat_model,
-      aichat_api_key: params.data.aichat_api_key,
 
       session_list: params.data.session_list,
     },
@@ -90,9 +87,6 @@ async function updateUser(
       description: params.data.description,
       twofa_enable: params.data.twofa_enable,
       twofa_secret: params.data.twofa_secret,
-      aichat_enable: params.data.aichat_enable,
-      aichat_model: params.data.aichat_model,
-      aichat_api_key: params.data.aichat_api_key,
 
       session_list: params.data.session_list,
     },

@@ -12,8 +12,7 @@ import { _repository } from '~/repository/_repository';
 import { FileRepository } from '~/repository/FileRepository';
 import { TodoRepository } from '~/repository/TodoRepository';
 import { FileRouterSchema } from '~/schema/FileRouterSchema';
-
-import { SpaceAuthorization, SpaceService } from './SpaceService';
+import { SpaceAuthorization, SpaceService } from '~/service/SpaceService';
 
 export const FileService = {
   searchFile,

@@ -35,9 +35,6 @@ const ctx = {
     description: '',
     twofa_enable: false,
     twofa_secret: '',
-    aichat_enable: false,
-    aichat_model: '',
-    aichat_api_key: '',
     created_at: new Date(),
     updated_at: new Date(),
   } satisfies z.infer<typeof UserSchema>,
@@ -68,9 +65,31 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
     console.trace('aichat.list');
     return [];
   }),
-  trpcMsw.aichat.chat.mutation(() => {
-    console.trace('aichat.chat');
-    return [];
+  trpcMsw.aichat.listMessage.query(() => {
+    console.trace('aichat.listMessage');
+    return {
+      space_id: '',
+      aichat_id: 'aichat_id',
+      aichat_title: '',
+      created_by: '',
+      created_at: new Date(),
+      updated_by: '',
+      updated_at: new Date(),
+      aichat_message_list: [],
+    };
+  }),
+  trpcMsw.aichat.postMessage.mutation(() => {
+    console.trace('aichat.postMessage');
+    return {
+      space_id: '',
+      aichat_id: 'aichat_id',
+      aichat_title: '',
+      created_by: '',
+      created_at: new Date(),
+      updated_by: '',
+      updated_at: new Date(),
+      aichat_message_list: [],
+    };
   }),
 
   // auth
@@ -193,14 +212,6 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
   trpcMsw.mypage.disableSecret.mutation(() => {
     console.trace('mypage.disableSecret');
     // void
-  }),
-  trpcMsw.mypage.enableAichat.mutation(() => {
-    console.trace('mypage.enableAichat');
-    return ctx.user;
-  }),
-  trpcMsw.mypage.disableAichat.mutation(() => {
-    console.trace('mypage.disableAichat');
-    return ctx.user;
   }),
 
   // space

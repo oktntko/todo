@@ -46,20 +46,17 @@ select::picker-icon {
 }
 
 ::picker(select) {
-  transform: translateY(-0.5rem);
   opacity: 0;
   transition: all 100ms ease-out;
   transition-behavior: allow-discrete;
 }
 
 ::picker(select):popover-open {
-  transform: translateY(0);
   opacity: 1;
 }
 
 @starting-style {
   ::picker(select):popover-open {
-    transform: translateY(-0.5rem);
     opacity: 0;
   }
 }

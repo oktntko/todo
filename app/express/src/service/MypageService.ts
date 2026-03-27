@@ -2,9 +2,7 @@ import type { z } from '@todo/lib/zod';
 
 import { dayjs } from '@todo/lib/dayjs';
 import { TRPCError } from '@trpc/server';
-import { APIError } from 'openai';
 
-import { newOpenAI } from '~/external/openai';
 import { ReqCtx } from '~/lib/context';
 import { log } from '~/lib/log4js';
 import { HashPassword, OnetimePassword, SecretPassword } from '~/lib/secret';
@@ -20,8 +18,6 @@ export const MypageService = {
   generateSecret,
   enableSecret,
   disableSecret,
-  enableAichat,
-  disableAichat,
 };
 
 // mypage.deleteMypage
@@ -142,55 +138,6 @@ async function disableSecret(ctx: ProtectedContext) {
 
   return UserRepository.updateUser(ctx.prisma, {
     data: { twofa_enable: false, twofa_secret: '' },
-    where: { user_id: ctx.operator.user_id },
-  });
-}
-
-// mypage.enableAichat
-async function enableAichat(
-  ctx: ProtectedContext,
-  input: z.infer<typeof MypageRouterSchema.enableAichatInput>,
-) {
-  log.trace(ReqCtx.reqid, 'enableAichat', ctx.operator.user_id);
-
-  // OpenAI には「APIキーを検証する専用API」は存在しないため、軽い API コールを 1 回実行して、成功/失敗で判断する
-  try {
-    const openai = newOpenAI({ apiKey: input.aichat_api_key });
-    await openai.models.list();
-  } catch (e) {
-    if (e instanceof APIError && (e.status === 401 || e.status === 403)) {
-      throw new TRPCError({
-        code: 'BAD_REQUEST',
-        message: 'The AI chat API key is invalid. Please check and try again.',
-      });
-    }
-
-    log.error(ReqCtx.reqid, 'patchAichat', 'OpenAI API key validation failed', e);
-    throw new TRPCError({
-      code: 'BAD_GATEWAY',
-      message: 'The service is temporarily unavailable. Please try again in a moment.',
-    });
-  }
-
-  return UserRepository.updateUser(ctx.prisma, {
-    data: {
-      aichat_enable: true,
-      aichat_api_key: SecretPassword.encrypt(input.aichat_api_key),
-    },
-    where: { user_id: ctx.operator.user_id },
-  });
-}
-
-// mypage.disableAichat
-async function disableAichat(ctx: ProtectedContext) {
-  log.trace(ReqCtx.reqid, 'disableAichat', ctx.operator.user_id);
-
-  return UserRepository.updateUser(ctx.prisma, {
-    data: {
-      aichat_enable: false,
-      aichat_api_key: '',
-      aichat_model: '',
-    },
     where: { user_id: ctx.operator.user_id },
   });
 }

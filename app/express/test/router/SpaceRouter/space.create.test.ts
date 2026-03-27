@@ -32,6 +32,7 @@ describe(`SpaceRouter space.create`, () => {
         updated_at: output.updated_at,
         created_by: operator.user_id,
         updated_by: operator.user_id,
+        aichat_enable: false,
       } satisfies typeof output);
 
       // Verify the record is saved in the database
@@ -46,6 +47,8 @@ describe(`SpaceRouter space.create`, () => {
         updated_at: output.updated_at,
         created_by: operator.user_id,
         updated_by: operator.user_id,
+        aichat_enable: false,
+        aichat_api_key: '',
         space_user_list: [
           {
             id: expect.any(String),

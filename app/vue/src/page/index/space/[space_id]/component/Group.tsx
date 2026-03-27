@@ -148,7 +148,7 @@ export default defineComponent(
       >
         <div class="sticky top-0 z-10 bg-white pt-4 pb-2">
           <div class="px-4">
-            <div class="flex items-center text-lg font-bold">
+            <div class="flex items-center gap-1 text-lg font-bold">
               {$props.group.group_image ? (
                 <img
                   src={$props.group.group_image}
@@ -160,7 +160,7 @@ export default defineComponent(
               ) : (
                 <span class="icon-[ri--image-circle-fill] h-6 w-6"></span>
               )}
-              <span class="ms-1">{$props.group.group_name}</span>
+              <span>{$props.group.group_name}</span>
             </div>
             {$props.group.group_description && (
               <div class="inline-block max-w-full text-xs wrap-break-word whitespace-pre-wrap text-gray-500">
@@ -172,7 +172,7 @@ export default defineComponent(
           <div class="flex flex-row items-center gap-2 ps-2 pe-4 text-sm">
             <button
               type="button"
-              class="group flex cursor-pointer items-center rounded-full px-4 py-2 text-blue-600 transition duration-75 hover:bg-gray-200"
+              class="group flex cursor-pointer items-center gap-1 rounded-full px-4 py-2 text-blue-600 transition duration-75 hover:bg-gray-200"
               onClick={async () => {
                 const dummyTodo: DynamicTodoModel = {
                   loading: true,
@@ -222,7 +222,7 @@ export default defineComponent(
               }}
             >
               <span class="icon-[icon-park-solid--add-one] h-4 w-4"></span>
-              <span class="ms-1 capitalize">add todo</span>
+              <span class="capitalize">add todo</span>
             </button>
 
             <form

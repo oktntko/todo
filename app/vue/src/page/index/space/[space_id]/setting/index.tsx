@@ -1,7 +1,6 @@
 import type { z } from '@todo/lib/zod';
 
-import { MypageRouterSchema } from '@todo/express/schema';
-import { storeToRefs } from 'pinia';
+import { SpaceRouterSchema } from '@todo/express/schema';
 import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import { defineComponent, ref } from 'vue';
 
@@ -12,19 +11,21 @@ import { bytesToBase64 } from '~/lib/file';
 import { trpc } from '~/lib/trpc';
 import { useDialog } from '~/plugin/DialogPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
-import { useMypageStore } from '~/store/MypageStore';
+
+import { useCurrentSpace } from '../../[space_id]';
 
 export default defineComponent(() => {
   const $dialog = useDialog();
   const $toast = useToast();
-  const { mypage } = storeToRefs(useMypageStore());
 
-  const modelValue = ref<z.infer<typeof MypageRouterSchema.patchProfileInput>>({
-    ...mypage.value,
+  const currentSpace = useCurrentSpace();
+
+  const modelValue = ref<z.infer<typeof SpaceRouterSchema.updateInput>>({
+    ...currentSpace.value,
   });
 
   const { validate, ErrorMessage, isDirty, reset } = useVueValidateZod(
-    MypageRouterSchema.patchProfileInput,
+    SpaceRouterSchema.updateInput,
     modelValue,
   );
 
@@ -47,7 +48,7 @@ export default defineComponent(() => {
       return $dialog.alert.info('The upper limit is 15kb.');
     }
 
-    modelValue.value.avatar_image = await bytesToBase64(file);
+    modelValue.value.space_image = await bytesToBase64(file);
   }
 
   return () => (
@@ -61,10 +62,10 @@ export default defineComponent(() => {
 
         const loading = $dialog.loading();
         try {
-          const updatedMypage = await trpc.mypage.patchProfile.mutate(modelValue.value);
-          mypage.value = updatedMypage;
+          const updatedSpace = await trpc.space.update.mutate(modelValue.value);
+          currentSpace.value = updatedSpace;
 
-          reset(updatedMypage);
+          reset(updatedSpace);
 
           $toast.success('Data saved successfully.');
         } finally {
@@ -77,49 +78,28 @@ export default defineComponent(() => {
           {/* 名前 */}
           <div class="focus-container flex flex-col gap-0.5">
             <div>
-              <label for="username" class="required text-sm capitalize">
-                username
+              <label for="space_name" class="required text-sm capitalize">
+                name
               </label>
             </div>
 
             <div>
               <MyInput
                 id="username"
-                v-model={modelValue.value.username}
+                v-model={modelValue.value.space_name}
                 type="text"
                 class="w-full"
                 required
               />
             </div>
 
-            <ErrorMessage class="text-xs text-red-600" field="username" />
-          </div>
-
-          {/* メールアドレス */}
-          <div class="focus-container flex flex-col gap-0.5">
-            <div>
-              <label for="email" class="required text-sm capitalize">
-                email address
-              </label>
-            </div>
-
-            <div>
-              <MyInput
-                id="email"
-                v-model={modelValue.value.email}
-                type="email"
-                class="w-full"
-                required
-              />
-            </div>
-
-            <ErrorMessage class="text-xs text-red-600" field="email" />
+            <ErrorMessage class="text-xs text-red-600" field="space_name" />
           </div>
 
           {/* 自己紹介 */}
           <div class="focus-container flex flex-col gap-0.5">
             <div>
-              <label for="description" class="optional text-sm capitalize">
+              <label for="space_description" class="optional text-sm capitalize">
                 description
               </label>
             </div>
@@ -127,22 +107,22 @@ export default defineComponent(() => {
             <div>
               <MyTextarea
                 id="description"
-                v-model={modelValue.value.description}
+                v-model={modelValue.value.space_description}
                 rows="4"
                 class="w-full"
               ></MyTextarea>
             </div>
 
-            <ErrorMessage class="text-xs text-red-600" field="description" />
+            <ErrorMessage class="text-xs text-red-600" field="space_description" />
           </div>
         </div>
 
         {/* 画像 */}
         <div class="flex flex-col items-center gap-3">
-          {modelValue.value.avatar_image ? (
+          {modelValue.value.space_image ? (
             <div class="relative h-64 w-64">
               <img
-                src={modelValue.value.avatar_image}
+                src={modelValue.value.space_image}
                 width="256"
                 height="256"
                 decoding="async"
@@ -154,7 +134,7 @@ export default defineComponent(() => {
                 class="absolute -top-2 -right-2 flex h-4 w-4 cursor-pointer items-center justify-center rounded-full border border-gray-300 bg-white text-gray-900 transition-colors hover:bg-gray-200"
                 aria-label="Close"
                 onClick={() => {
-                  modelValue.value.avatar_image = '';
+                  modelValue.value.space_image = '';
                 }}
               >
                 <span class="icon-[bi--x] h-4 w-4" />

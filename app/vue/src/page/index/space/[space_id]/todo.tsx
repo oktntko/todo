@@ -28,7 +28,7 @@ export default defineComponent(async () => {
                     fallback: () => {
                       return (
                         <div class="container flex min-h-dvh grow flex-col items-center justify-center gap-4">
-                          <span class="icon-[line-md--loading-loop] text-opacity-60 h-16 w-16 text-gray-600"></span>
+                          <span class="icon-[eos-icons--bubble-loading] text-opacity-60 h-16 w-16 text-gray-600"></span>
                           <span class="sr-only">Loading...</span>
                           <input
                             autofocus

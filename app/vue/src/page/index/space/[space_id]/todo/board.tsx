@@ -46,9 +46,8 @@ export default defineComponent(() => {
       w-[calc(100vw-224px-224px-10px)]
       224px: グローバルメニュー
       224px: GroupList
-       10px: 縦スクロールバーを常時表示しているため
       */}
-      <div class="h-[calc(100vh-64px)] w-[calc(100vw-224px-224px-10px)] grow-0 overflow-x-auto px-4 pb-4">
+      <div class="h-[calc(100vh-64px)] w-[calc(100vw-224px-224px)] grow-0 overflow-x-auto px-4 pb-4">
         <div class="flex h-full w-full flex-row gap-2">
           {checkedGroupList.value.map((group) => (
             <div key={group.group_id} class={['shrink-0 break-inside-avoid', 'w-2xl']}>

@@ -5,14 +5,12 @@ import {
   Prisma,
   type ITXClientDenyList,
 } from '@todo/prisma/client';
-import { AichatModelSchema } from '@todo/prisma/schema';
+import { AichatRoleSchema } from '@todo/prisma/schema';
 import log4js from 'log4js';
 import util from 'node:util';
-import superjson from 'superjson';
 
 import { ReqCtx } from '~/lib/context';
 import { env } from '~/lib/env';
-import { MessageSchema } from '~/schema/AichatRouterSchema';
 
 const log = log4js.getLogger('database');
 
@@ -48,16 +46,7 @@ export const ExtendsPrismaClient = new OriginPrismaClient({
       },
     },
     result: {
-      user: {
-        aichat_model: {
-          needs: {
-            aichat_model: true,
-          },
-          compute({ aichat_model }) {
-            return AichatModelSchema.or(z.literal('')).parse(aichat_model);
-          },
-        },
-      },
+      user: {},
       space: {
         space_color: {
           needs: {
@@ -112,13 +101,13 @@ export const ExtendsPrismaClient = new OriginPrismaClient({
           },
         },
       },
-      aichat: {
-        message: {
+      aichatMessage: {
+        role: {
           needs: {
-            message: true,
+            role: true,
           },
-          compute({ message }) {
-            return superjson.parse<z.infer<typeof MessageSchema>>(message);
+          compute({ role }) {
+            return AichatRoleSchema.parse(role);
           },
         },
       },

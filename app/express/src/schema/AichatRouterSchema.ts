@@ -1,33 +1,72 @@
 import { z } from '@todo/lib/zod';
+import {
+  AichatMessageSchema,
+  AichatModelSchema,
+  AichatSchema,
+  UserSchema,
+} from '@todo/prisma/schema';
 
-const listInput = z.object({});
+const getInput = AichatSchema.pick({
+  aichat_id: true,
+});
 
-export const AichatRoleSchema = z.enum([
-  'developer',
-  'system',
-  'user',
-  'assistant',
-  // 'tool',
-  // 'function',
-]);
+const getOutput = AichatSchema;
 
-export const MessageSchema = z.object({
-  role: AichatRoleSchema,
+const listInput = AichatSchema.pick({
+  space_id: true,
+});
+
+const createInput = AichatSchema.omit({
+  aichat_id: true,
+
+  created_by: true,
+  created_at: true,
+  updated_by: true,
+  updated_at: true,
+});
+
+const deleteInput = AichatSchema.pick({
+  aichat_id: true,
+  updated_at: true,
+});
+
+const updateInput = createInput.extend(deleteInput.shape).omit({
+  space_id: true,
+});
+
+const MessageSchema = AichatMessageSchema.pick({
+  role: true,
+  content: true,
+});
+
+const listMessageInput = getInput;
+
+const listMessageOutput = getOutput.extend({
+  aichat_message_list: MessageSchema.extend({
+    user: UserSchema.pick({
+      username: true,
+      avatar_image: true,
+    }).nullable(),
+  }).array(),
+});
+
+const PostMessage = z.object({
   content: z.string(),
+  aichat_model: AichatModelSchema,
 });
 
-export const MessagesSchema = z
-  .object({
-    message: MessageSchema,
-  })
-  .array();
-
-const chatInput = z.object({
-  messages: MessagesSchema,
-  message: MessageSchema,
-});
+const postMessageInput = deleteInput.extend(PostMessage.shape);
 
 export const AichatRouterSchema = {
+  getInput,
+  getOutput,
   listInput,
-  chatInput,
+  createInput,
+  deleteInput,
+  updateInput,
+  listMessageInput,
+  listMessageOutput,
+  postMessageInput,
+  MessageSchema,
+  PostMessage,
 };

@@ -8,9 +8,6 @@
 }
 
 @layer utilities {
-  body {
-    overflow-y: scroll;
-  }
   button {
     cursor: pointer;
     &:disabled {
