@@ -104,7 +104,12 @@ const isAuthed = middleware(async ({ next, ctx }) => {
   });
 });
 
-export const protectedProcedure = publicProcedure.use(isAuthed);
+// src/middleware/trpc.ts:107:14 - error TS2883: The inferred type of 'protectedProcedure' cannot be named without a reference to 'ParsedQs' from '.pnpm/@types+qs@6.1 5.0/node_modules/@types/qs'. This is likely not portable. A type annotation is necessary.
+// export const protectedProcedure = publicProcedure.use(isAuthed);
+//              ~~~~~~~~~~~~~~~~~~
+// qsの肩を: 型エラーが出るため、二回宣言している
+const _protectedProcedure = publicProcedure.use(isAuthed);
+export const protectedProcedure: typeof _protectedProcedure = _protectedProcedure;
 export type ProtectedContext = PublicContext & {
   operator: z.infer<typeof UserSchema>;
 };

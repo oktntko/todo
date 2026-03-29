@@ -236,7 +236,24 @@ export default defineComponent(
               <ErrorMessage class="text-xs text-red-600" field="content"></ErrorMessage>
             </div>
 
-            <div class="flex items-center justify-between">
+            <div class="flex gap-2">
+              <MyButton
+                type="submit"
+                color="green"
+                variant="contained"
+                disabled={
+                  loading.value ||
+                  isPosting.value ||
+                  !(formValue.value.aichat_model && formValue.value.content)
+                }
+                class="min-w-24 shadow-sm"
+              >
+                {isPosting.value ? (
+                  <span class="icon-[eos-icons--bubble-loading] mr-1 h-3 w-3"></span>
+                ) : null}
+                Send
+              </MyButton>
+
               <MySelect v-model={formValue.value.aichat_model}>
                 {AichatModelList.map((aichat_model) => (
                   <option
@@ -255,23 +272,6 @@ export default defineComponent(
                   </option>
                 ))}
               </MySelect>
-
-              <MyButton
-                type="submit"
-                color="green"
-                variant="contained"
-                disabled={
-                  loading.value ||
-                  isPosting.value ||
-                  !(formValue.value.aichat_model && formValue.value.content)
-                }
-                class="min-w-24 shadow-sm"
-              >
-                {isPosting.value ? (
-                  <span class="icon-[eos-icons--bubble-loading] mr-1 h-3 w-3"></span>
-                ) : null}
-                Send
-              </MyButton>
             </div>
           </form>
         </div>

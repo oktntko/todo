@@ -52,6 +52,9 @@ export default defineComponent(() => {
       }}
     >
       <section class="flex flex-col gap-3">
+        {/* TODO: Chromeの警告対策で入れているだけ。 type="hidden"だと警告が出る */}
+        <input name="username" autocomplete="username" class="hidden" />
+
         <div class="focus-container flex flex-col gap-0.5">
           <div>
             <label for="current_password" class="required text-sm capitalize">

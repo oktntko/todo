@@ -109,6 +109,7 @@ export default defineComponent(() => {
                     type="password"
                     required
                     class="w-full"
+                    autocomplete="new-password"
                   />
                 </div>
 

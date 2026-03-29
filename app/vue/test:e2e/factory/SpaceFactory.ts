@@ -23,6 +23,8 @@ function create({
     space_description,
     space_image,
     space_color,
+    aichat_api_key: '',
+    aichat_enable: false,
 
     created_at,
     created_by,

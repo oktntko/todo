@@ -16,7 +16,7 @@ export default defineComponent(() => {
       <div>
         <div class="mb-4 text-2xl font-bold dark:text-white">Delete account</div>
 
-        <section class="flex gap-4">
+        <section class="flex gap-2">
           <MyButton
             type="submit"
             color="red"
