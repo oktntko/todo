@@ -5,16 +5,16 @@
     "vite.config.*": "jsconfig*, vitest.config.*, cypress.config.*, playwright.config.*",
     "package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .oxlint*, oxlint*, .oxfmt*, ,oxfmt*, .prettier*, prettier*, .editorconfig"
   },
-
   "editor.codeActionsOnSave": {
     "source.fixAll": "explicit",
     "source.organizeImports": "explicit"
   },
   "editor.defaultFormatter": "oxc.oxc-vscode",
   "editor.formatOnSave": true,
-  "editor.rulers": [100],
+  "editor.rulers": [
+    100
+  ],
   "eslint.useFlatConfig": true,
-
   "files.encoding": "utf8",
   "files.eol": "\n",
   "files.insertFinalNewline": true,
@@ -22,12 +22,12 @@
   "files.associations": {
     "*.css": "tailwindcss"
   },
-
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
   },
-
+  "[vue]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
   "vitest.shellType": "terminal",
-
   "oxc.typeAware": true
 }

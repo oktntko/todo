@@ -10,16 +10,13 @@ defineEmits<{
   deleted: [number];
 }>();
 
-
 const $dialog = useDialog();
 const $toast = useToast();
-
 
 const modelValueFileList = defineModel<DownloadFile[]>('modelValueFileList', {
   required: false,
   default: () => [],
 });
-
 
 const { downloadSingleFile } = useFile();
 </script>
