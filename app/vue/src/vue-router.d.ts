@@ -50,6 +50,7 @@ declare module 'vue-router/auto-routes' {
       | '//mypage/'
       | '//mypage/account'
       | '//mypage/change-password'
+      | '//mypage/notification'
       | '//mypage/security'
       | '//space'
       | '//space/'
@@ -79,6 +80,7 @@ declare module 'vue-router/auto-routes' {
       | '//mypage/'
       | '//mypage/account'
       | '//mypage/change-password'
+      | '//mypage/notification'
       | '//mypage/security'
     >,
     '//mypage/': RouteRecordInfo<
@@ -98,6 +100,13 @@ declare module 'vue-router/auto-routes' {
     '//mypage/change-password': RouteRecordInfo<
       '//mypage/change-password',
       '/mypage/change-password',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '//mypage/notification': RouteRecordInfo<
+      '//mypage/notification',
+      '/mypage/notification',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -323,6 +332,7 @@ declare module 'vue-router/auto-routes' {
         | '//mypage/'
         | '//mypage/account'
         | '//mypage/change-password'
+        | '//mypage/notification'
         | '//mypage/security'
         | '//space'
         | '//space/'
@@ -352,6 +362,7 @@ declare module 'vue-router/auto-routes' {
         | '//mypage/'
         | '//mypage/account'
         | '//mypage/change-password'
+        | '//mypage/notification'
         | '//mypage/security'
       views:
         | 'default'
@@ -371,6 +382,12 @@ declare module 'vue-router/auto-routes' {
     'src/page/index/mypage/change-password.tsx': {
       routes:
         | '//mypage/change-password'
+      views:
+        | never
+    }
+    'src/page/index/mypage/notification.tsx': {
+      routes:
+        | '//mypage/notification'
       views:
         | never
     }

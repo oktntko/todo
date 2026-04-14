@@ -46,7 +46,7 @@ export default defineComponent(() => {
         <div>
           <button
             type="button"
-            class="aichat sticky top-0 z-10 flex w-full cursor-pointer items-center gap-1 rounded-e-full bg-gray-200/10 p-2 text-blue-600 backdrop-blur transition duration-75 hover:bg-gray-200"
+            class="aichat sticky top-0 z-10 flex w-full cursor-pointer items-center gap-1 rounded-e-full bg-gray-200/10 p-2 text-blue-600 backdrop-blur transition hover:bg-gray-200"
             onClick={async () => {
               const loading = $dialog.loading();
 
@@ -76,7 +76,7 @@ export default defineComponent(() => {
               >
                 <label
                   class={[
-                    'group/item relative flex w-full cursor-pointer items-center justify-start rounded-e-full border-l-[6px] p-1 transition duration-75 hover:bg-gray-200',
+                    'group/item relative flex w-full cursor-pointer items-center justify-start rounded-e-full border-l-[6px] p-1 transition hover:bg-gray-200',
                     {
                       'bg-gray-300': currentAichat.value?.aichat_id === aichat.aichat_id,
                     },
@@ -94,7 +94,7 @@ export default defineComponent(() => {
                     type="button"
                     class={[
                       'group/edit inline-flex justify-center rounded-full p-1 transition-all',
-                      'invisible group-hover/item:visible',
+                      'opacity-0 group-hover/item:opacity-100',
                       'hover:bg-gray-300',
                     ]}
                     onClick={async (e) => {

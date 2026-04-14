@@ -91,7 +91,7 @@ export default defineComponent(
               <li key={group.group_id} class="rounded-e-full py-px">
                 <label
                   class={[
-                    'group/item relative flex w-full cursor-pointer items-center justify-start gap-1 rounded-e-full border-l-[6px] p-1 transition duration-75 hover:bg-gray-200',
+                    'group/item relative flex w-full cursor-pointer items-center justify-start gap-1 rounded-e-full border-l-[6px] p-1 transition hover:bg-gray-200',
                     {
                       'bg-gray-300': ~checkedGroupList.value.findIndex(
                         (x) => x.group_id === group.group_id,
@@ -133,7 +133,7 @@ export default defineComponent(
                     type="button"
                     class={[
                       'group/edit inline-flex justify-center rounded-full p-1 transition-all',
-                      'invisible group-hover/item:visible',
+                      'opacity-0 group-hover/item:opacity-100',
                       'hover:bg-gray-300',
                     ]}
                     onClick={async (e) => {
@@ -165,7 +165,7 @@ export default defineComponent(
 
           <button
             type="button"
-            class="group sticky bottom-0 flex w-full cursor-pointer items-center gap-1 rounded-e-full bg-gray-200/10 p-2 text-blue-600 backdrop-blur transition duration-75 hover:bg-gray-200"
+            class="group sticky bottom-0 flex w-full cursor-pointer items-center gap-1 rounded-e-full bg-gray-200/10 p-2 text-blue-600 backdrop-blur transition hover:bg-gray-200"
             onClick={async () => {
               await $dialog.showModal(ModalAddGroup, (resolve) => ({
                 space_id: $props.space_id,

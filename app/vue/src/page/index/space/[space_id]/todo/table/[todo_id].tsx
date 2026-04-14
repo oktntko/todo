@@ -57,7 +57,7 @@ export default defineComponent(async () => {
               }}
               class="inline-flex items-center gap-0.5 text-sm font-medium text-gray-400 hover:text-blue-600"
             >
-              <span class="icon-[fontisto--table-2] h-3 w-3 transition duration-75"> </span>
+              <span class="icon-[fontisto--table-2] h-3 w-3 transition"> </span>
               <span class="capitalize">table</span>
             </RouterLink>
             <RouterLink

@@ -141,7 +141,7 @@ export default defineComponent(
 
     return () => (
       <div
-        class="rounded-sm border border-l-[6px] border-gray-300 bg-white pb-4 text-sm shadow-sm"
+        class="rounded-sm border border-l-[6px] border-gray-300 bg-white pb-10 text-sm shadow-sm"
         style={{
           'border-left-color': $props.group.group_color,
         }}
@@ -172,7 +172,7 @@ export default defineComponent(
           <div class="flex flex-row items-center gap-2 ps-2 pe-4 text-sm">
             <button
               type="button"
-              class="group flex cursor-pointer items-center gap-1 rounded-full px-4 py-2 text-blue-600 transition duration-75 hover:bg-gray-200"
+              class="group flex cursor-pointer items-center gap-1 rounded-full px-4 py-2 text-blue-600 transition hover:bg-gray-200"
               onClick={async () => {
                 const dummyTodo: DynamicTodoModel = {
                   loading: true,

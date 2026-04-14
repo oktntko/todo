@@ -83,7 +83,7 @@ export default defineComponent(async () => {
                 <li key={whiteboard.whiteboard_id} class="rounded-e-full py-px">
                   <label
                     class={[
-                      'group/item relative flex w-full cursor-pointer items-center justify-start rounded-e-full border-l-[6px] p-1 transition duration-75 hover:bg-gray-200',
+                      'group/item relative flex w-full cursor-pointer items-center justify-start rounded-e-full border-l-[6px] p-1 transition hover:bg-gray-200',
                       currentWhiteboard.value?.whiteboard_id === whiteboard.whiteboard_id &&
                         'bg-gray-300',
                     ]}
@@ -99,7 +99,11 @@ export default defineComponent(async () => {
 
                     <button
                       type="button"
-                      class="group/edit invisible inline-flex justify-center rounded-full p-1 transition-all group-hover/item:visible hover:bg-gray-300"
+                      class={[
+                        'group/edit inline-flex justify-center rounded-full p-1 transition-all',
+                        'opacity-0 group-hover/item:opacity-100',
+                        'hover:bg-gray-300',
+                      ]}
                       onClick={async (e) => {
                         e.preventDefault();
 

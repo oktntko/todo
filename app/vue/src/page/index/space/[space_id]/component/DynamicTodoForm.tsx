@@ -114,7 +114,10 @@ export default defineComponent(
     return () => (
       <form
         ref="refForm"
-        class={['relative text-sm', { 'pointer-events-none opacity-60': modelValue.value.loading }]}
+        class={[
+          'group/item relative text-sm',
+          { 'pointer-events-none opacity-60': modelValue.value.loading },
+        ]}
         autocomplete="off"
         onClick={() => !modelValue.value.loading && (modelValue.value.editing = true)}
         onSubmit={async (e) => {
@@ -124,8 +127,8 @@ export default defineComponent(
       >
         <div
           class={[
-            'absolute inset-y-0 left-0 flex items-center justify-center',
-            { hidden: !modelValue.value.editing },
+            'absolute inset-y-0 left-0 flex items-center justify-center transition-all transition-discrete',
+            modelValue.value.editing ? 'opacity-100' : 'pointer-events-none opacity-0',
           ]}
         >
           <button
@@ -209,16 +212,27 @@ export default defineComponent(
               />
 
               <MyDropdown
-                class={[{ hidden: !modelValue.value.editing }]}
+                class={[
+                  'opacity-0 transition-all transition-discrete group-hover/item:inline-block group-hover/item:opacity-100',
+                  { 'inline-block! opacity-100!': modelValue.value.editing },
+                ]}
                 v-slots={
                   {
                     button: ({ toggle }) => (
                       <button
                         type="button"
-                        class="relative flex cursor-pointer items-center justify-center rounded-full p-0.5 transition-colors hover:bg-gray-200"
+                        class={[
+                          'group/edit inline-flex justify-center rounded-full transition-all',
+                          'opacity-0 group-hover/item:opacity-100',
+                        ]}
                         onClick={toggle}
                       >
-                        <span class="icon-[bx--menu] h-4 w-4"></span>
+                        <span
+                          class={[
+                            'icon-[bx--menu] h-4 w-4 shrink-0 transition-all',
+                            'group-hover/edit:scale-125 group-hover/edit:text-gray-900',
+                          ]}
+                        ></span>
                         <span class="sr-only capitalize">menu</span>
                       </button>
                     ),
@@ -256,10 +270,11 @@ export default defineComponent(
                             <span class="capitalize">upload file</span>
                           </button>
                         </li>
+
                         <li>
                           <button
                             type="button"
-                            class="group flex w-full cursor-pointer items-center gap-1 p-2 text-yellow-600 transition duration-75 hover:bg-gray-200"
+                            class="group flex w-full cursor-pointer items-center gap-1 p-2 text-yellow-600 transition hover:bg-gray-200"
                             onClick={async () => {
                               await $dialog.confirm.warn(`Do you really want to delete this data?`);
 

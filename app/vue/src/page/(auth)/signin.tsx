@@ -114,14 +114,14 @@ export default defineComponent(() => {
 
           <section class="mt-8 flex flex-col items-end gap-1">
             <div class="text-sm font-light text-gray-500">
-              <RouterLink to="#" class="text-primary-600 font-medium text-blue-600 hover:underline">
+              <RouterLink to="#" class="font-medium text-blue-600 hover:underline">
                 Forgot password?
               </RouterLink>
             </div>
             <div class="text-sm font-light text-gray-500">
               <RouterLink
                 to={{ name: '/(auth)/signup' }}
-                class="text-primary-600 font-medium text-blue-600 hover:underline"
+                class="font-medium text-blue-600 hover:underline"
               >
                 Create an account
               </RouterLink>

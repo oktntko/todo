@@ -197,7 +197,7 @@ export default defineComponent(() => {
               }}
               class="inline-flex items-center gap-0.5 text-sm font-medium text-gray-900"
             >
-              <span class="icon-[vaadin--folder-open] h-3 w-3 transition duration-75"> </span>
+              <span class="icon-[vaadin--folder-open] h-3 w-3 transition"> </span>
               <span class="capitalize">drive</span>
             </RouterLink>
           </MyBreadcrumb>
