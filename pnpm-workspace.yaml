@@ -11,6 +11,7 @@ onlyBuiltDependencies:
   - '@tailwindcss/oxide'
   - canvas
   - esbuild
+  - msgpackr-extract
   - msw
   - prisma
   - prisma-zod-generator

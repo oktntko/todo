@@ -11,6 +11,8 @@ export const env = {
     return process.env.NODE_ENV === 'production';
   },
   EXPRESS_PORT: Number(process.env.EXPRESS_PORT!),
+  CACHE_HOST: process.env.CACHE_HOST!,
+  CACHE_PORT: Number(process.env.CACHE_PORT!),
   session: {
     SESSION_SECRET: process.env.SESSION_SECRET!,
     SESSION_NAME: process.env.SESSION_NAME,

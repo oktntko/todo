@@ -20,6 +20,12 @@ export const TimeSchema = z
   .refine((arg) => dayjs(arg, 'HH:mm', true).isValid(), 'Invalid time format.')
   .pipe(z.custom<`${number}:${number}`>());
 
+export const DateTimeSchema = z
+  .string()
+  .trim()
+  .refine((arg) => dayjs(arg, 'YYYY-MM-DD HH:mm', true).isValid(), 'Invalid datetime format.')
+  .pipe(z.custom<`${number}-${number}-${number} ${number}:${number}`>());
+
 export const ColorSchema = z
   .string()
   .trim()

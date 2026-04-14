@@ -7,6 +7,8 @@ import { auth } from '~/router/AuthRouter';
 import { file, FileRouter } from '~/router/FileRouter';
 import { group } from '~/router/GroupRouter';
 import { mypage } from '~/router/MypageRouter';
+import { notification } from '~/router/NotificationRouter';
+import { ServerSentEventsRouter } from '~/router/ServerSentEventsRouter';
 import { space } from '~/router/SpaceRouter';
 import { todo } from '~/router/TodoRouter';
 import { whiteboard } from '~/router/WhiteboardRouter';
@@ -16,6 +18,7 @@ export const TrpcRouter = router({
   auth,
   file,
   mypage,
+  notification,
   group,
   space,
   todo,
@@ -24,6 +27,7 @@ export const TrpcRouter = router({
 
 export const ExpressRouter = [
   FileRouter,
+  ServerSentEventsRouter,
   express.Router().post(
     '/api/csp-report',
     express.json({

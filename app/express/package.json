@@ -33,6 +33,7 @@
     "adm-zip": "^0.5.16",
     "axios": "^1.14.0",
     "bcryptjs": "^3.0.3",
+    "bullmq": "^5.71.1",
     "cookie-parser": "^1.4.7",
     "express": "^5.2.1",
     "express-session": "^1.19.0",

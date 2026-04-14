@@ -1,20 +1,25 @@
+import { dayjs } from '@todo/lib/dayjs';
 import { defineComponent, onMounted, ref, Suspense, Transition, type DefineComponent } from 'vue';
-import { RouterLink, RouterView, useRouter } from 'vue-router';
+import { RouterLink, RouterView } from 'vue-router';
 
-import { trpc } from '~/lib/trpc';
+import type { MyDropdownSlots } from '~/component/type';
+
+import MyDropdown from '~/component/MyDropdown.vue';
 import { useMypageStore } from '~/store/MypageStore';
+import { useNotificationStore } from '~/store/NotificationStore';
 import { useSpaceStore } from '~/store/SpaceStore';
 
 export default defineComponent(() => {
-  const $router = useRouter();
   const SpaceStore = useSpaceStore();
   const { fetchMypage } = useMypageStore();
+  const NotificationStore = useNotificationStore();
 
   const loading = ref(true);
 
   onMounted(async () => {
     await SpaceStore.fetchSpace()
       .then(fetchMypage)
+      .then(NotificationStore.fetchNotification)
       .finally(() => {
         loading.value = false;
       });
@@ -35,9 +40,9 @@ export default defineComponent(() => {
               <ul class="font-medium">
                 {SpaceStore.storedSpaceList.map((space) => (
                   <li key={space.space_id}>
-                    <div class="flex w-full items-center rounded-lg p-2 text-sm text-gray-500">
+                    <div class="flex w-full items-center gap-2 rounded-lg p-2 text-sm text-gray-500">
                       <span class="icon-[quill--todo] h-4 w-4 text-gray-500" />
-                      <span class="ms-2 capitalize">{space.space_name}</span>
+                      <span class="capitalize">{space.space_name}</span>
                     </div>
 
                     <ul class="ml-3 border-l border-gray-600">
@@ -91,30 +96,19 @@ export default defineComponent(() => {
                               name: item.route,
                               params: { space_id: space.space_id },
                             }}
-                            class="group flex w-full items-center rounded-e-full p-2 pl-3 text-base text-gray-200 transition duration-75 hover:bg-gray-800 hover:text-white"
+                            class="group flex w-full items-center gap-2 rounded-e-full p-2 pl-3 text-base text-gray-200 transition hover:bg-gray-800 hover:text-white"
                             active-class="bg-gray-700"
                           >
                             <span
-                              class={`${item.icon} h-5 w-5 text-gray-200 transition duration-75 group-hover:text-white`}
+                              class={`${item.icon} h-5 w-5 text-gray-200 transition group-hover:text-white`}
                             />
-                            <span class="ms-2 capitalize">{item.name}</span>
+                            <span class="capitalize">{item.name}</span>
                           </RouterLink>
                         </li>
                       ))}
                     </ul>
                   </li>
                 ))}
-
-                <li>
-                  <RouterLink
-                    to={{ name: '//mypage/' }}
-                    class="group flex w-full items-center rounded-e-full p-2 pl-3 text-base text-gray-200 transition duration-75 hover:bg-gray-800 hover:text-white"
-                    active-class="bg-gray-700"
-                  >
-                    <span class="icon-[radix-icons--avatar] h-5 w-5 text-gray-200 transition duration-75 group-hover:text-white" />
-                    <span class="ms-2 capitalize">my page</span>
-                  </RouterLink>
-                </li>
               </ul>
             </div>
           </aside>
@@ -135,34 +129,103 @@ export default defineComponent(() => {
               <nav class="flex items-center gap-2">
                 <button
                   type="button"
-                  class="relative flex cursor-pointer items-center justify-center rounded-full p-1.5 hover:bg-gray-200"
+                  class="relative flex cursor-pointer items-center justify-center rounded-full p-1.5 transition-colors hover:bg-gray-200"
                   title="bookmark"
                 >
                   <span class="icon-[bxs--bookmark] h-5 w-5" />
                   <span class="sr-only capitalize">bookmark</span>
                 </button>
+                <MyDropdown
+                  class="z-100"
+                  v-slots={
+                    {
+                      button: ({ toggle }) => (
+                        <button
+                          type="button"
+                          class="relative flex cursor-pointer items-center justify-center rounded-full p-1.5 transition-colors hover:bg-gray-200"
+                          title="notification"
+                          onClick={toggle}
+                        >
+                          {NotificationStore.unreadCount > 0 && (
+                            <div class="absolute top-0 right-0 min-w-4 translate-x-1/2 -translate-y-1/2 transform rounded-full border-2 border-white bg-red-500 px-1.5 py-0.5 text-center text-[10px] font-bold text-white">
+                              {NotificationStore.unreadCount > 99
+                                ? '99+'
+                                : NotificationStore.unreadCount}
+                            </div>
+                          )}
+                          <span class="icon-[bx--notification] h-5 w-5" />
+                          <span class="sr-only capitalize">notification</span>
+                        </button>
+                      ),
 
-                <button
-                  type="button"
-                  class="relative flex cursor-pointer items-center justify-center rounded-full p-1.5 hover:bg-gray-200"
-                  title="notification"
-                >
-                  <span class="icon-[bx--notification] h-5 w-5" />
-                  <span class="sr-only capitalize">notification</span>
-                </button>
+                      default: () => (
+                        <div class="w-96 divide-gray-200 rounded-sm border border-gray-300 bg-white shadow-md">
+                          <h1 class="flex items-center gap-2 p-2 text-xs text-gray-500">
+                            <span class="capitalize">notification</span>
+                          </h1>
 
-                <button
-                  type="button"
-                  class="relative flex cursor-pointer items-center justify-center rounded-full p-1.5 hover:bg-gray-200"
-                  title="avatar"
-                  onClick={async () => {
-                    await trpc.auth.delete.mutate();
-                    return $router.push({ name: '/(auth)/signin' });
-                  }}
+                          <ul>
+                            {NotificationStore.unreadNotificationList.length > 0 ? (
+                              NotificationStore.unreadNotificationList.map((x) => (
+                                <li key={x.notification_id}>
+                                  <a
+                                    href={x.notification_link}
+                                    class="flex items-center gap-1 p-2 transition-all hover:bg-gray-200"
+                                    onClick={() => {
+                                      void NotificationStore.readNotification(x.notification_id);
+                                    }}
+                                  >
+                                    <div>
+                                      <span
+                                        class={[
+                                          'relative h-6 w-6',
+                                          x.type === 'todo'
+                                            ? 'icon-[flat-color-icons--todo-list]'
+                                            : 'icon-[fluent-emoji-flat--bell]',
+                                        ]}
+                                      />
+                                    </div>
+
+                                    <div class="grow">
+                                      <div class="bold line-clamp-2">{x.notification_title}</div>
+                                      <div class="line-clamp-4 text-xs whitespace-pre-wrap text-gray-600">
+                                        {x.notification_body}
+                                      </div>
+                                      <div class="text-xs text-gray-400">
+                                        {dayjs(x.notification_at).format('YYYY-MM-DD hh:mm')}
+                                      </div>
+                                    </div>
+                                  </a>
+                                </li>
+                              ))
+                            ) : (
+                              <li class="flex p-2 capitalize">nothing to do!</li>
+                            )}
+                          </ul>
+
+                          <div class="flex items-center justify-center p-2 text-sm">
+                            <RouterLink
+                              to={{
+                                name: '//mypage/notification',
+                              }}
+                              class="font-medium text-blue-600 hover:underline"
+                            >
+                              <span class="capitalize">view all notification</span>
+                            </RouterLink>
+                          </div>
+                        </div>
+                      ),
+                    } satisfies MyDropdownSlots
+                  }
+                ></MyDropdown>
+
+                <RouterLink
+                  to={{ name: '//mypage/' }}
+                  class="relative flex cursor-pointer items-center justify-center rounded-full p-1.5 transition-colors hover:bg-gray-200"
                 >
                   <span class="icon-[radix-icons--avatar] h-5 w-5" />
-                  <span class="sr-only capitalize">avatar</span>
-                </button>
+                  <span class="sr-only capitalize">mypage</span>
+                </RouterLink>
               </nav>
             </header>
 

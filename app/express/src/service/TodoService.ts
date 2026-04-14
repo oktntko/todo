@@ -132,7 +132,13 @@ async function searchTodo(
 }
 
 // todo.get
-async function getTodo(ctx: ProtectedContext, input: z.infer<typeof TodoRouterSchema.getInput>) {
+async function getTodo(
+  ctx: {
+    prisma: ProtectedContext['prisma'];
+    operator: Pick<ProtectedContext['operator'], 'user_id'>;
+  },
+  input: z.infer<typeof TodoRouterSchema.getInput>,
+) {
   log.trace(ReqCtx.reqid, 'getTodo', ctx.operator.user_id, input);
 
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);

@@ -86,7 +86,8 @@ model Todo {
   order       Int       @default(0)
   done_at     DateTime? @db.DateTime(3)
 
-  file_list File[]
+  file_list              File[]
+  notification_todo_list NotificationTodo[]
 
   created_at DateTime @default(now()) @db.DateTime(3)
   created_by String
@@ -181,9 +182,11 @@ model User {
   created_at DateTime @default(now()) @db.DateTime(3)
   updated_at DateTime @updatedAt @db.DateTime(3)
 
-  session_list    Session[]
-  space_user_list SpaceUser[]
-  aichatMessages  AichatMessage[]
+  session_list           Session[]
+  space_user_list        SpaceUser[]
+  aichat_message_list    AichatMessage[]
+  notification_list      Notification[]
+  notification_todo_list NotificationTodo[]
 
   @@index([username], name: "index_username")
   @@map("user")
@@ -247,4 +250,51 @@ model File {
   todo_list Todo[]
 
   @@map("file")
+}
+
+enum NotificationStatus {
+  PLANNING
+  QUEUING
+  UNREAD
+  READ
+}
+
+/// @zod.import(["import { StringRelationIdSchema } from '@todo/lib/zod'"]);
+model Notification {
+  notification_id String @id @default(uuid(7)) @db.VarChar(36) /// @zod.length(36)
+
+  user_id String /// @zod.custom.use(StringRelationIdSchema)
+  user    User   @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+
+  notification_title  String             @db.VarChar(400) /// @zod.trim().min(1).max(400)
+  notification_body   String             @default("") @db.VarChar(400) /// @zod.trim().max(400)
+  notification_link   String             @default("") @db.VarChar(400) /// @zod.trim().max(400)
+  notification_status NotificationStatus
+  notification_at     DateTime           @default(now()) @db.DateTime(3)
+
+  created_at DateTime @default(now()) @db.DateTime(3)
+  updated_at DateTime @updatedAt @db.DateTime(3)
+
+  @@map("notification")
+}
+
+/// @zod.import(["import { StringRelationIdSchema } from '@todo/lib/zod'"]);
+model NotificationTodo {
+  notification_id String @id @default(uuid(7)) @db.VarChar(36) /// @zod.length(36)
+
+  user_id String /// @zod.custom.use(StringRelationIdSchema)
+  user    User   @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  todo_id String /// @zod.custom.use(StringRelationIdSchema)
+  todo    Todo   @relation(fields: [todo_id], references: [todo_id], onDelete: Cascade)
+
+  notification_title  String             @db.VarChar(400) /// @zod.trim().min(1).max(400)
+  notification_body   String             @default("") @db.VarChar(400) /// @zod.trim().max(400)
+  notification_link   String             @default("") @db.VarChar(400) /// @zod.trim().max(400)
+  notification_status NotificationStatus
+  notification_at     DateTime           @default(now()) @db.DateTime(3)
+
+  created_at DateTime @default(now()) @db.DateTime(3)
+  updated_at DateTime @updatedAt @db.DateTime(3)
+
+  @@map("notification_todo")
 }

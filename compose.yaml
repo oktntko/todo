@@ -42,8 +42,19 @@ services:
     ports:
       - ${DATABASE_PORT}:3306
     volumes:
-      - todo-volume:/var/lib/mysql
+      - todo-database-volume:/var/lib/mysql
       - ./docker/database/initdb.d/:/docker-entrypoint-initdb.d/
 
+  cache:
+    container_name: todo-cache
+    profiles: ['dev', 'stg']
+    image: redis:8.6.2-alpine
+    ports:
+      - ${CACHE_PORT}:6379
+    volumes:
+      - todo-cache-volume:/data
+    command: ['redis-server', '--appendonly', 'yes']
+
 volumes:
-  todo-volume:
+  todo-database-volume:
+  todo-cache-volume:

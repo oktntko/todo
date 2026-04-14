@@ -14,6 +14,8 @@ import { satisfiesKeys, type EmitsType } from '~/lib/vue';
 import { useDialog } from '~/plugin/DialogPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
 
+import ModalAddNotification from '../modal/ModalAddNotification';
+
 export type DynamicTodoModel = Omit<RouterOutput['todo']['get'], 'file_list'> & {
   file_list: DownloadFile[];
   editing?: boolean;
@@ -241,7 +243,28 @@ export default defineComponent(
                         <li>
                           <button
                             type="button"
-                            class="group flex w-full cursor-pointer items-center gap-1 p-2 transition duration-75 hover:bg-gray-200 disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100"
+                            class="group flex w-full cursor-pointer items-center gap-1 p-2 transition hover:bg-gray-200 disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100"
+                            onClick={async () => {
+                              status.value.fixedEditing = true;
+                              try {
+                                await $dialog.showModal(ModalAddNotification, (resolve) => ({
+                                  todo_id: modelValue.value.todo_id,
+                                  onDone: resolve,
+                                }));
+                              } finally {
+                                status.value.fixedEditing = false;
+                              }
+                            }}
+                          >
+                            <span class="icon-[ion--notifcations] h-4 w-4"></span>
+                            <span class="capitalize">notify later</span>
+                          </button>
+                        </li>
+
+                        <li>
+                          <button
+                            type="button"
+                            class="group flex w-full cursor-pointer items-center gap-1 p-2 transition hover:bg-gray-200 disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100"
                             onClick={async () => {
                               status.value.fixedEditing = true;
                               try {
