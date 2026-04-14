@@ -21,7 +21,16 @@ import { createTRPCMsw, httpLink } from 'msw-trpc';
 import superjson from 'superjson';
 
 import { drizzle, migrate } from './drizzle';
-import { pgGroup, pgSpace, pgSpaceUser, pgTodo, pgUser, pgWhiteboard } from './schema';
+import {
+  pgGroup,
+  pgNotification,
+  pgNotificationTodo,
+  pgSpace,
+  pgSpaceUser,
+  pgTodo,
+  pgUser,
+  pgWhiteboard,
+} from './schema';
 
 await migrate();
 
@@ -45,6 +54,35 @@ const user = await drizzle.query.pgUser.findFirst({
 });
 if (user == null) {
   await drizzle.insert(pgUser).values(ctx.user);
+
+  await drizzle.insert(pgSpace).values({
+    space_id: '019aeeb6-10e4-7e44-b31d-0c1f45e91ad9',
+    space_name: 'MySpace',
+    space_description: 'This is my space',
+    space_image: '',
+    space_color: '#ff0000',
+    created_by: ctx.user.user_id,
+    updated_by: ctx.user.user_id,
+  });
+
+  await drizzle.insert(pgGroup).values({
+    group_id: '019aeeb6-10e4-7e44-b31d-0c1f45e91ad9',
+    space_id: '019aeeb6-10e4-7e44-b31d-0c1f45e91ad9',
+    group_name: 'MyGroup',
+    group_description: 'This is my space',
+    group_image: '',
+    group_color: '#ff0000',
+    created_by: ctx.user.user_id,
+    updated_by: ctx.user.user_id,
+  });
+
+  await drizzle.insert(pgTodo).values({
+    group_id: '019aeeb6-10e4-7e44-b31d-0c1f45e91ad9',
+    title: 'MyTodo',
+    description: 'My First Todo',
+    created_by: ctx.user.user_id,
+    updated_by: ctx.user.user_id,
+  });
 }
 
 const trpcMsw = createTRPCMsw<typeof TrpcRouter>({
@@ -60,6 +98,23 @@ const trpcMsw = createTRPCMsw<typeof TrpcRouter>({
 });
 
 export const handlers: Array<RequestHandler | WebSocketHandler> = [
+  http.get(`${import.meta.env.BASE_URL}api/notification/subscribe`, () => {
+    const stream = new ReadableStream({
+      start(controller) {
+        controller.enqueue(new TextEncoder().encode('data: Hello World\n\n'));
+        controller.close();
+      },
+    });
+
+    return new Response(stream, {
+      headers: {
+        connection: 'keep-alive',
+        'content-type': 'text/event-stream',
+        'cache-control': 'no-cache',
+      },
+    });
+  }),
+
   // aichat
   trpcMsw.aichat.list.query(() => {
     console.trace('aichat.list');
@@ -612,6 +667,125 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
     }
 
     return { ok: true } as const;
+  }),
+
+  // notification
+  trpcMsw.notification.list.query(async () => {
+    console.trace('notification.list');
+    const [general, todo] = await Promise.all([
+      drizzle.query.pgNotification.findMany({
+        where: and(
+          eq(pgNotification.user_id, ctx.user.user_id),
+          or(
+            eq(pgNotification.notification_status, 'PLANNING'),
+            eq(pgNotification.notification_status, 'QUEUING'),
+            eq(pgNotification.notification_status, 'UNREAD'),
+          ),
+        ),
+        orderBy: desc(pgNotification.notification_at),
+      }),
+      drizzle.query.pgNotificationTodo.findMany({
+        where: and(
+          eq(pgNotificationTodo.user_id, ctx.user.user_id),
+          or(
+            eq(pgNotificationTodo.notification_status, 'PLANNING'),
+            eq(pgNotificationTodo.notification_status, 'QUEUING'),
+            eq(pgNotificationTodo.notification_status, 'UNREAD'),
+          ),
+        ),
+        orderBy: desc(pgNotificationTodo.notification_at),
+      }),
+    ]);
+
+    const notification_list = [
+      ...general.map((x) => ({ ...x, type: 'general' as const })),
+      ...todo.map((x) => ({ ...x, type: 'todo' as const })),
+    ].sort((a, b) => b.notification_at.getTime() - a.notification_at.getTime());
+
+    return notification_list;
+  }),
+
+  trpcMsw.notification.addTodo.mutation(async ({ input }) => {
+    console.trace('notification.addTodo', input);
+
+    const todo = await drizzle.query.pgTodo.findFirst({
+      with: { group: true },
+      where: eq(pgTodo.todo_id, input.todo_id!),
+    });
+
+    if (!todo) {
+      throw new TRPCError({ code: 'NOT_FOUND', message: 'TODOが存在しません' });
+    }
+
+    const [notification] = await drizzle
+      .insert(pgNotificationTodo)
+      .values({
+        notification_link: `/space/${todo.group.space_id}/todo/table/${todo.todo_id}`,
+        notification_title: `It's time for "${todo.title}"`,
+        notification_body: [
+          todo.begin_date || todo.begin_time
+            ? 'BEGIN: ' + [todo.begin_date, todo.begin_time].filter((x) => x).join(' ')
+            : '',
+          todo.limit_date || todo.limit_time
+            ? 'LIMIT: ' + [todo.limit_date, todo.limit_time].filter((x) => x).join(' ')
+            : '',
+          todo.description,
+        ]
+          .filter((x) => x)
+          .join('\n'),
+        notification_status: 'QUEUING',
+        notification_at: new Date(Date.now() + input.delay),
+        user_id: ctx.user.user_id,
+        todo_id: input.todo_id!,
+      })
+      .returning();
+
+    return {
+      type: 'todo' as const,
+      ...notification!,
+    };
+  }),
+
+  trpcMsw.notification.read.mutation(async ({ input }) => {
+    console.trace('notification.read', input);
+
+    await Promise.all([
+      drizzle
+        .update(pgNotification)
+        .set({ notification_status: 'READ' })
+        .where(
+          and(
+            eq(pgNotification.notification_id, input.notification_id),
+            eq(pgNotification.user_id, ctx.user.user_id),
+          ),
+        ),
+      drizzle
+        .update(pgNotificationTodo)
+        .set({ notification_status: 'READ' })
+        .where(
+          and(
+            eq(pgNotificationTodo.notification_id, input.notification_id),
+            eq(pgNotificationTodo.user_id, ctx.user.user_id),
+          ),
+        ),
+    ]);
+
+    return { ok: true } as const;
+  }),
+
+  trpcMsw.notification.removeTodo.mutation(async ({ input }) => {
+    console.trace('notification.removeTodo', input);
+
+    await drizzle
+      .delete(pgNotificationTodo)
+      .where(
+        and(
+          eq(pgNotificationTodo.notification_id, input.notification_id),
+          eq(pgNotificationTodo.user_id, ctx.user.user_id),
+        ),
+      );
+
+    return { notification_id: input.notification_id };
   }),
 
   // whiteboard

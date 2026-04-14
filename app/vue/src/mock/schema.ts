@@ -21,6 +21,13 @@ export const pgSpaceUserRoleEnum = pgEnum('space_user_role', [
   'READER',
 ]);
 
+export const pgNotificationStatusEnum = pgEnum('notification_status', [
+  'PLANNING',
+  'QUEUING',
+  'UNREAD',
+  'READ',
+]);
+
 // User
 export const pgUser = pgSchemaTodo.table('user', {
   user_id: uuid('user_id').primaryKey().defaultRandom(),
@@ -182,12 +189,51 @@ export const pgTodoToFile = pgSchemaTodo.table('todo_to_file', {
     .references(() => pgFile.file_id, { onDelete: 'cascade' }),
 });
 
+// Notification
+export const pgNotification = pgSchemaTodo.table('notification', {
+  notification_id: uuid('notification_id').primaryKey().defaultRandom(),
+  user_id: uuid('user_id')
+    .notNull()
+    .references(() => pgUser.user_id, { onDelete: 'cascade' }),
+  notification_title: varchar('notification_title', { length: 400 }).notNull(),
+  notification_body: varchar('notification_body', { length: 400 }).default('').notNull(),
+  notification_link: varchar('notification_link', { length: 400 }).default('').notNull(),
+  notification_status: pgNotificationStatusEnum('notification_status').notNull(),
+  notification_at: timestamp('notification_at', { withTimezone: true, mode: 'date' })
+    .defaultNow()
+    .notNull(),
+  created_at: timestamp('created_at', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
+  updated_at: timestamp('updated_at', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
+});
+
+// NotificationTodo
+export const pgNotificationTodo = pgSchemaTodo.table('notification_todo', {
+  notification_id: uuid('notification_id').primaryKey().defaultRandom(),
+  user_id: uuid('user_id')
+    .notNull()
+    .references(() => pgUser.user_id, { onDelete: 'cascade' }),
+  todo_id: uuid('todo_id')
+    .notNull()
+    .references(() => pgTodo.todo_id, { onDelete: 'cascade' }),
+  notification_title: varchar('notification_title', { length: 400 }).notNull(),
+  notification_body: varchar('notification_body', { length: 400 }).default('').notNull(),
+  notification_link: varchar('notification_link', { length: 400 }).default('').notNull(),
+  notification_status: pgNotificationStatusEnum('notification_status').notNull(),
+  notification_at: timestamp('notification_at', { withTimezone: true, mode: 'date' })
+    .defaultNow()
+    .notNull(),
+  created_at: timestamp('created_at', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
+  updated_at: timestamp('updated_at', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
+});
+
 // ================= relations =================
 
 export const pgUserRelations = relations(pgUser, ({ many }) => ({
   session_list: many(pgSession),
   space_user_list: many(pgSpaceUser),
   aichat_message_list: many(pgAichatMessage),
+  notification_list: many(pgNotification),
+  notification_todo_list: many(pgNotificationTodo),
 }));
 
 export const pgSpaceRelations = relations(pgSpace, ({ many }) => ({
@@ -223,6 +269,7 @@ export const pgTodoRelations = relations(pgTodo, ({ one, many }) => ({
     references: [pgGroup.group_id],
   }),
   file_list: many(pgTodoToFile),
+  notification_todo_list: many(pgNotificationTodo),
 }));
 
 export const pgWhiteboardRelations = relations(pgWhiteboard, ({ one }) => ({
@@ -270,6 +317,24 @@ export const pgTodoToFileRelations = relations(pgTodoToFile, ({ one }) => ({
   }),
 }));
 
+export const pgNotificationRelations = relations(pgNotification, ({ one }) => ({
+  user: one(pgUser, {
+    fields: [pgNotification.user_id],
+    references: [pgUser.user_id],
+  }),
+}));
+
+export const pgNotificationTodoRelations = relations(pgNotificationTodo, ({ one }) => ({
+  user: one(pgUser, {
+    fields: [pgNotificationTodo.user_id],
+    references: [pgUser.user_id],
+  }),
+  todo: one(pgTodo, {
+    fields: [pgNotificationTodo.todo_id],
+    references: [pgTodo.todo_id],
+  }),
+}));
+
 export const schema = {
   pgUser,
   pgSpace,
@@ -282,6 +347,8 @@ export const schema = {
   pgSession,
   pgFile,
   pgTodoToFile,
+  pgNotification,
+  pgNotificationTodo,
   // relations
   pgUserRelations,
   pgSpaceRelations,
@@ -293,4 +360,6 @@ export const schema = {
   pgAichatMessageRelations,
   pgFileRelations,
   pgTodoToFileRelations,
+  pgNotificationRelations,
+  pgNotificationTodoRelations,
 };
