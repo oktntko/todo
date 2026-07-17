@@ -1,4 +1,4 @@
-import { SpaceSchema } from '@todo/prisma/schema';
+import { SpaceSchema, SpaceUserSchema } from '@todo/prisma/schema';
 
 const getInput = SpaceSchema.pick({
   space_id: true,
@@ -6,6 +6,12 @@ const getInput = SpaceSchema.pick({
 
 const getOutput = SpaceSchema.omit({
   aichat_api_key: true,
+}).extend({
+  space_user_list: SpaceUserSchema.pick({
+    role: true,
+  })
+    .array()
+    .length(1),
 });
 
 const createInput = SpaceSchema.omit({

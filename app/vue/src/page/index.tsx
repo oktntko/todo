@@ -40,10 +40,16 @@ export default defineComponent(() => {
               <ul class="font-medium">
                 {SpaceStore.storedSpaceList.map((space) => (
                   <li key={space.space_id}>
-                    <div class="flex w-full items-center gap-2 rounded-lg p-2 text-sm text-gray-500">
-                      <span class="icon-[quill--todo] h-4 w-4 text-gray-500" />
-                      <span class="capitalize">{space.space_name}</span>
-                    </div>
+                    <RouterLink
+                      to={{
+                        name: '//space/[space_id]/',
+                        params: { space_id: space.space_id },
+                      }}
+                      class="flex items-center gap-2 rounded-lg p-2 text-sm text-gray-500 transition-colors hover:text-gray-200"
+                    >
+                      <span class="icon-[quill--todo] h-4 w-4 shrink-0" />
+                      <span class="truncate capitalize">{space.space_name}</span>
+                    </RouterLink>
 
                     <ul class="ml-3 border-l border-gray-600">
                       {(

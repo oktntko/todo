@@ -48,6 +48,8 @@
     background-color: var(--color-white);
     /* .px-1 */
     padding-inline: calc(var(--spacing) * 1);
+    /* .mx-0.5 */
+    margin-inline: calc(var(--spacing) * 0.5);
     /* .text-xs */
     font-size: var(--text-xs);
     line-height: var(--tw-leading, var(--text-xs--line-height));
@@ -74,6 +76,8 @@
     background-color: var(--color-white);
     /* .px-1 */
     padding-inline: calc(var(--spacing) * 1);
+    /* .mx-0.5 */
+    margin-inline: calc(var(--spacing) * 0.5);
     /* .text-xs */
     font-size: var(--text-xs);
     line-height: var(--tw-leading, var(--text-xs--line-height));

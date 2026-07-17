@@ -31,6 +31,7 @@ async function listSpace(ctx: ProtectedContext) {
 
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
   return SpaceRepository.findManySpace(ctx.prisma, {
+    operator_id: ctx.operator.user_id,
     where: {
       ...hasAccessAuthorityWhere,
     },
