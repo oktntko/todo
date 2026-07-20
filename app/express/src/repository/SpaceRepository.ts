@@ -26,12 +26,20 @@ async function findManySpace(
   prisma: PrismaClient,
   params: {
     where: Prisma.SpaceWhereInput;
+    operator_id: string;
     orderBy: Prisma.SpaceOrderByWithRelationInput | Prisma.SpaceOrderByWithRelationInput[];
     take?: number;
     skip?: number;
   },
 ) {
   return prisma.space.findMany({
+    include: {
+      space_user_list: {
+        where: {
+          user_id: params.operator_id,
+        },
+      },
+    },
     where: params.where,
     orderBy: params.orderBy,
     take: params.take,
@@ -66,6 +74,13 @@ async function createSpace(
   },
 ) {
   return prisma.space.create({
+    include: {
+      space_user_list: {
+        where: {
+          user_id: params.operator_id,
+        },
+      },
+    },
     data: {
       space_name: params.data.space_name,
       space_description: params.data.space_description,
@@ -94,6 +109,13 @@ async function updateSpace(
   },
 ) {
   return prisma.space.update({
+    include: {
+      space_user_list: {
+        where: {
+          user_id: params.operator_id,
+        },
+      },
+    },
     data: {
       space_name: params.data.space_name,
       space_description: params.data.space_description,
