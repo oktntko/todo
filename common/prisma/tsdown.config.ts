@@ -8,6 +8,6 @@ export default defineConfig({
   treeshake: true,
   tsconfig: './tsconfig.base.json',
   format: 'esm',
-  target: 'node24',
+  target: 'node26',
   dts: false,
 });

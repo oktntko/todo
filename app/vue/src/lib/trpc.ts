@@ -12,7 +12,9 @@ export function isRouterError(cause: unknown): cause is TRPCClientError<typeof T
   return cause instanceof TRPCClientError;
 }
 
-export const trpc = createTRPCClient<typeof TrpcRouter>({
+export const trpc: ReturnType<typeof createTRPCClient<typeof TrpcRouter>> = createTRPCClient<
+  typeof TrpcRouter
+>({
   links: [
     httpLink({
       url: `${import.meta.env.BASE_URL}api/trpc`,

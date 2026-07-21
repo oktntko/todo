@@ -33,6 +33,7 @@ describe(`SpaceRouter space.create`, () => {
         created_by: operator.user_id,
         updated_by: operator.user_id,
         aichat_enable: false,
+        space_user_list: [{ role: 'OWNER' }],
       } satisfies typeof output);
 
       // Verify the record is saved in the database

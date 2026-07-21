@@ -46,6 +46,7 @@ describe(`SpaceRouter space.update`, () => {
           created_by: space.created_by,
           updated_by: operator.user_id,
           aichat_enable: false,
+          space_user_list: [{ role }],
         } satisfies typeof output);
 
         // Verify the record is updated in the database

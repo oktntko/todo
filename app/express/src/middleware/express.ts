@@ -11,7 +11,7 @@ import { log } from '~/lib/log4js';
 import { message } from '~/lib/message';
 import { type PrismaClient } from '~/middleware/prisma';
 import { SessionService } from '~/middleware/session';
-import { createContext } from '~/middleware/trpc';
+import { createContext, MyRequest, MyResponse } from '~/middleware/trpc';
 
 export const InjectRequestIdHandler: RequestHandler = (_req, _res, next) => {
   ReqCtx.context.run({ reqid: crypto.randomUUID() }, () => {
@@ -129,8 +129,8 @@ export function createHandler<T extends z.ZodRawShape>(
   schema: z.ZodObject<T>,
   resolver: (opts: {
     ctx: {
-      req: Request;
-      res: Response;
+      req: MyRequest;
+      res: MyResponse;
       prisma: PrismaClient;
       next: NextFunction;
     };
@@ -161,8 +161,8 @@ export function createProtectHandler<T extends z.ZodRawShape>(
   schema: z.ZodObject<T>,
   resolver: (opts: {
     ctx: {
-      req: Request;
-      res: Response;
+      req: MyRequest;
+      res: MyResponse;
       prisma: PrismaClient;
       next: NextFunction;
       operator: z.infer<typeof UserSchema>;

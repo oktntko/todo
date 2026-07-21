@@ -14,11 +14,15 @@ import type {
   ParamValueZeroOrMore,
   ParamValueZeroOrOne,
 } from 'vue-router'
+import type {
+  _ExtractParamParserType,
+} from 'vue-router/experimental'
 
 declare module 'vue-router' {
   interface TypesConfig {
-    ParamParsers:
-      | never
+    _ParamParsers: {}
+    RouteNamedMap: import('vue-router/auto-routes').RouteNamedMap
+    _RouteFileInfoMap: import('vue-router/auto-routes')._RouteFileInfoMap
   }
 }
 
@@ -328,11 +332,15 @@ declare module 'vue-router/auto-routes' {
         | '/(auth)/signin'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/page/(auth)/signup.tsx': {
       routes:
         | '/(auth)/signup'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/page/index.tsx': {
@@ -366,6 +374,8 @@ declare module 'vue-router/auto-routes' {
         | '//space/[space_id]/whiteboard'
       views:
         | 'default'
+      pathParamNames:
+        | never
     }
     'src/page/index/mypage.tsx': {
       routes:
@@ -377,11 +387,15 @@ declare module 'vue-router/auto-routes' {
         | '//mypage/security'
       views:
         | 'default'
+      pathParamNames:
+        | never
     }
     'src/page/index/mypage/index.tsx': {
       routes:
         | '//mypage/'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/page/index/mypage/account.tsx': {
@@ -389,11 +403,15 @@ declare module 'vue-router/auto-routes' {
         | '//mypage/account'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/page/index/mypage/change-password.tsx': {
       routes:
         | '//mypage/change-password'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/page/index/mypage/notification.tsx': {
@@ -401,11 +419,15 @@ declare module 'vue-router/auto-routes' {
         | '//mypage/notification'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/page/index/mypage/security.tsx': {
       routes:
         | '//mypage/security'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/page/index/space.tsx': {
@@ -432,11 +454,15 @@ declare module 'vue-router/auto-routes' {
         | '//space/[space_id]/whiteboard'
       views:
         | 'default'
+      pathParamNames:
+        | never
     }
     'src/page/index/space/index.tsx': {
       routes:
         | '//space/'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/page/index/space/[space_id].tsx': {
@@ -461,11 +487,15 @@ declare module 'vue-router/auto-routes' {
         | '//space/[space_id]/whiteboard'
       views:
         | 'default'
+      pathParamNames:
+        | 'space_id'
     }
     'src/page/index/space/[space_id]/index.tsx': {
       routes:
         | '//space/[space_id]/'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/page/index/space/[space_id]/chat.tsx': {
@@ -474,17 +504,23 @@ declare module 'vue-router/auto-routes' {
         | '//space/[space_id]/chat/'
       views:
         | 'default'
+      pathParamNames:
+        | never
     }
     'src/page/index/space/[space_id]/chat/index.tsx': {
       routes:
         | '//space/[space_id]/chat/'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/page/index/space/[space_id]/drive/index.tsx': {
       routes:
         | '//space/[space_id]/drive/'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/page/index/space/[space_id]/setting.tsx': {
@@ -494,17 +530,23 @@ declare module 'vue-router/auto-routes' {
         | '//space/[space_id]/setting/chat'
       views:
         | 'default'
+      pathParamNames:
+        | never
     }
     'src/page/index/space/[space_id]/setting/index.tsx': {
       routes:
         | '//space/[space_id]/setting/'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/page/index/space/[space_id]/setting/chat.tsx': {
       routes:
         | '//space/[space_id]/setting/chat'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/page/index/space/[space_id]/todo.tsx': {
@@ -520,11 +562,15 @@ declare module 'vue-router/auto-routes' {
         | '//space/[space_id]/todo/table/add'
       views:
         | 'default'
+      pathParamNames:
+        | never
     }
     'src/page/index/space/[space_id]/todo/index.tsx': {
       routes:
         | '//space/[space_id]/todo/'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/page/index/space/[space_id]/todo/board.tsx': {
@@ -532,17 +578,23 @@ declare module 'vue-router/auto-routes' {
         | '//space/[space_id]/todo/board'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/page/index/space/[space_id]/todo/calendar.tsx': {
       routes:
         | '//space/[space_id]/todo/calendar'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/page/index/space/[space_id]/todo/list.tsx': {
       routes:
         | '//space/[space_id]/todo/list'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/page/index/space/[space_id]/todo/table.tsx': {
@@ -553,11 +605,15 @@ declare module 'vue-router/auto-routes' {
         | '//space/[space_id]/todo/table/add'
       views:
         | 'default'
+      pathParamNames:
+        | never
     }
     'src/page/index/space/[space_id]/todo/table/index.tsx': {
       routes:
         | '//space/[space_id]/todo/table/'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/page/index/space/[space_id]/todo/table/[todo_id].tsx': {
@@ -565,11 +621,15 @@ declare module 'vue-router/auto-routes' {
         | '//space/[space_id]/todo/table/[todo_id]'
       views:
         | never
+      pathParamNames:
+        | 'todo_id'
     }
     'src/page/index/space/[space_id]/todo/table/add.tsx': {
       routes:
         | '//space/[space_id]/todo/table/add'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/page/index/space/[space_id]/whiteboard.tsx': {
@@ -577,12 +637,16 @@ declare module 'vue-router/auto-routes' {
         | '//space/[space_id]/whiteboard'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/page/[...404].tsx': {
       routes:
         | '/[...404]'
       views:
         | never
+      pathParamNames:
+        | '404'
     }
   }
 

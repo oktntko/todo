@@ -8,13 +8,33 @@ import { message } from '~/lib/message';
 import { ExtendsPrismaClient, PrismaClient } from '~/middleware/prisma';
 import { SessionService } from '~/middleware/session';
 
+export type MyRequest = Pick<
+  trpcExpress.CreateExpressContextOptions['req'],
+  'session' | 'method' | 'headers' | 'cookies'
+>;
+export type MyResponse = Pick<
+  trpcExpress.CreateExpressContextOptions['res'],
+  | 'headersSent'
+  | 'status'
+  | 'on'
+  | 'cookie'
+  | 'sendStatus'
+  | 'setHeader'
+  | 'set'
+  | 'send'
+  | 'end'
+  | 'json'
+  | 'write'
+  | 'header'
+>;
+
 // The app's context - is generated for each incoming request
 export function createContext(
   opts: Pick<trpcExpress.CreateExpressContextOptions, 'req' | 'res'>,
   prisma: PrismaClient = ExtendsPrismaClient,
 ): {
-  req: trpcExpress.CreateExpressContextOptions['req'];
-  res: trpcExpress.CreateExpressContextOptions['res'];
+  req: MyRequest;
+  res: MyResponse;
   prisma: PrismaClient;
 } {
   return {
@@ -104,12 +124,7 @@ const isAuthed = middleware(async ({ next, ctx }) => {
   });
 });
 
-// src/middleware/trpc.ts:107:14 - error TS2883: The inferred type of 'protectedProcedure' cannot be named without a reference to 'ParsedQs' from '.pnpm/@types+qs@6.1 5.0/node_modules/@types/qs'. This is likely not portable. A type annotation is necessary.
-// export const protectedProcedure = publicProcedure.use(isAuthed);
-//              ~~~~~~~~~~~~~~~~~~
-// qsの肩を: 型エラーが出るため、二回宣言している
-const _protectedProcedure = publicProcedure.use(isAuthed);
-export const protectedProcedure: typeof _protectedProcedure = _protectedProcedure;
+export const protectedProcedure = publicProcedure.use(isAuthed);
 export type ProtectedContext = PublicContext & {
   operator: z.infer<typeof UserSchema>;
 };

@@ -22,7 +22,7 @@ import { vi } from 'vitest';
 function createDeepMockProxy() {
   return new Proxy(
     // vi.spyOn() 対応: 実際のvi.fn()インスタンスを持つオブジェクト
-    { mutate: vi.fn(), query: vi.fn() },
+    { mutate: vi.fn<() => void>(), query: vi.fn<() => void>() },
     {
       get: (target, prop) => {
         // 既存プロパティ（mutate, query）は実際の値を返す
@@ -47,9 +47,11 @@ vi.mock('~/lib/trpc', () => ({
  */
 vi.mock('~/plugin/DialogPlugin', () => ({
   useDialog: () => ({
-    loading: vi.fn(() => ({ close: vi.fn() })),
+    loading: vi.fn<() => { close: ReturnType<typeof vi.fn> }>(() => ({
+      close: vi.fn<() => void>(),
+    })),
     confirm: {
-      warn: vi.fn(() => Promise.resolve()),
+      warn: vi.fn<() => Promise<void>>(() => Promise.resolve()),
     },
   }),
 }));
@@ -60,6 +62,6 @@ vi.mock('~/plugin/DialogPlugin', () => ({
  */
 vi.mock('~/plugin/ToastPlugin', () => ({
   useToast: () => ({
-    success: vi.fn(),
+    success: vi.fn<(message: string) => void>(),
   }),
 }));

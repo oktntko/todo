@@ -58,7 +58,7 @@ describe('MyDownloadFileList', () => {
     // arrange
     const files = [{ file_id: '1', filename: 'test1.txt', updated_at: new Date() }];
 
-    const downloadSingleFile = vi.fn();
+    const downloadSingleFile = vi.fn<(args: { file_id: string }) => void>();
     /**
      * vi.doMock() - テスト内で宣言するモック関数
      * - ホイスティングが発生しないため、テスト内で動的にモック値を変更できる
@@ -87,8 +87,10 @@ describe('MyDownloadFileList', () => {
 
   test('calls trpc.file.delete.mutate and emits deleted event when delete button is clicked and confirmed', async () => {
     // arrange
-    const dialogConfirmWarn = vi.fn(() => Promise.resolve('YES'));
-    const dialogLoading = vi.fn(() => ({ close: vi.fn() }));
+    const dialogConfirmWarn = vi.fn<() => Promise<string>>(() => Promise.resolve('YES'));
+    const dialogLoading = vi.fn<() => { close: ReturnType<typeof vi.fn> }>(() => ({
+      close: vi.fn<() => void>(),
+    }));
     vi.doMock('~/plugin/DialogPlugin', () => ({
       useDialog: () => ({
         loading: dialogLoading,
@@ -98,14 +100,14 @@ describe('MyDownloadFileList', () => {
       }),
     }));
 
-    const toastSuccess = vi.fn();
+    const toastSuccess = vi.fn<() => void>();
     vi.doMock('~/plugin/ToastPlugin', () => ({
       useToast: () => ({
         success: toastSuccess,
       }),
     }));
 
-    const trpcFileDeleteMutate = vi.fn();
+    const trpcFileDeleteMutate = vi.fn<() => void>();
     vi.doMock('~/lib/trpc', () => ({
       trpc: {
         file: {
@@ -142,8 +144,10 @@ describe('MyDownloadFileList', () => {
 
   test('does not delete file if confirmation is cancelled', async () => {
     // arrange
-    const dialogConfirmWarn = vi.fn(() => Promise.reject('cancel'));
-    const dialogLoading = vi.fn(() => ({ close: vi.fn() }));
+    const dialogConfirmWarn = vi.fn<() => Promise<string>>(() => Promise.reject('cancel'));
+    const dialogLoading = vi.fn<() => { close: ReturnType<typeof vi.fn> }>(() => ({
+      close: vi.fn<() => void>(),
+    }));
     /**
      * vi.doMock() - このテストだけ、DialogPluginをオーバーライド
      * - warn() が Promise.reject('cancel') を返すように上書き
@@ -158,14 +162,14 @@ describe('MyDownloadFileList', () => {
       }),
     }));
 
-    const toastSuccess = vi.fn();
+    const toastSuccess = vi.fn<() => void>();
     vi.doMock('~/plugin/ToastPlugin', () => ({
       useToast: () => ({
         success: toastSuccess,
       }),
     }));
 
-    const trpcFileDeleteMutate = vi.fn();
+    const trpcFileDeleteMutate = vi.fn<() => void>();
     vi.doMock('~/lib/trpc', () => ({
       trpc: {
         file: {

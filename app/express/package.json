@@ -29,18 +29,18 @@
   "dependencies": {
     "@todo/lib": "workspace:*",
     "@todo/prisma": "workspace:*",
-    "@trpc/server": "11.16.0",
-    "adm-zip": "^0.5.16",
-    "axios": "^1.14.0",
+    "@trpc/server": "11.18.0",
+    "adm-zip": "^0.6.0",
+    "axios": "^1.18.1",
     "bcryptjs": "^3.0.3",
-    "bullmq": "^5.71.1",
+    "bullmq": "^5.80.9",
     "cookie-parser": "^1.4.7",
     "express": "^5.2.1",
     "express-session": "^1.19.0",
-    "helmet": "^8.1.0",
+    "helmet": "^8.3.0",
     "log4js": "^6.9.1",
-    "multer": "2.1.1",
-    "openai": "^6.33.0",
+    "multer": "2.2.0",
+    "openai": "^6.48.0",
     "qrcode": "^1.5.4",
     "speakeasy": "^2.0.0",
     "superjson": "^2.2.6"
@@ -49,12 +49,12 @@
     "@types/adm-zip": "^0.5.8",
     "@types/cookie-parser": "^1.4.10",
     "@types/express": "^5.0.6",
-    "@types/express-serve-static-core": "^5.1.1",
-    "@types/express-session": "^1.18.2",
-    "@types/multer": "^2.1.0",
+    "@types/express-serve-static-core": "^5.1.2",
+    "@types/express-session": "^1.19.0",
+    "@types/multer": "^2.2.0",
     "@types/qrcode": "^1.5.6",
-    "@types/qs": "^6.15.0",
+    "@types/qs": "^6.15.1",
     "@types/speakeasy": "^2.0.10"
   },
-  "packageManager": "pnpm@10.33.0"
+  "packageManager": "pnpm@11.15.1"
 }

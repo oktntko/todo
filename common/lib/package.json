@@ -29,10 +29,10 @@
     "test:preview": "vitest --ui"
   },
   "dependencies": {
-    "dayjs": "^1.11.20",
-    "remeda": "^2.33.6",
-    "zod": "^4.3.6"
+    "dayjs": "^1.11.21",
+    "remeda": "^2.39.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {},
-  "packageManager": "pnpm@10.33.0"
+  "packageManager": "pnpm@11.15.1"
 }

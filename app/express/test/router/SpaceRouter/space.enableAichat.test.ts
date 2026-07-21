@@ -28,7 +28,7 @@ describe(`SpaceRouter space.enableAichat`, () => {
       const mockOpenAI = vi.spyOn(externalOpenai, 'newOpenAI').mockImplementationOnce(() => {
         return {
           models: {
-            list: vi.fn().mockResolvedValueOnce({}),
+            list: vi.fn<() => Promise<unknown>>().mockResolvedValueOnce({}),
           },
         };
       });

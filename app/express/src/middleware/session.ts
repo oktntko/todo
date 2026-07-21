@@ -1,11 +1,12 @@
 import { dayjs } from '@todo/lib/dayjs';
-import * as express from 'express';
 import { SessionData, Store } from 'express-session';
 import superjson from 'superjson';
 
 import { env } from '~/lib/env';
 import { log } from '~/lib/log4js';
 import { ExtendsPrismaClient, PrismaClient } from '~/middleware/prisma';
+
+import { MyRequest, MyResponse } from './trpc';
 
 /**
  * https://github.com/microsoft/TypeScript-Node-Starter/blob/master/src/types/express-session-types.d.ts
@@ -150,7 +151,7 @@ async function destroySession(session_key: string) {
 }
 
 // session.regenerate
-async function regenerateSession(req: express.Request, res: express.Response) {
+async function regenerateSession(req: Pick<MyRequest, 'session'>, res: Pick<MyResponse, 'cookie'>) {
   await new Promise((resolve, reject) => {
     req.session.regenerate((err) => {
       if (err) {

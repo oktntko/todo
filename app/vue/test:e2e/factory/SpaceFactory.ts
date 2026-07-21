@@ -1,3 +1,4 @@
+import { SpaceRouterSchema } from '@todo/express/schema';
 import { z } from '@todo/lib/zod';
 import { SpaceSchema } from '@todo/prisma/schema';
 
@@ -16,19 +17,19 @@ function create({
   created_by = '019c85ac-6556-7487-9225-6fa9f34c17bb',
   updated_at = new Date(),
   updated_by = '019c85ac-6556-7487-9225-6fa9f34c17bb',
-}: Partial<z.infer<typeof SpaceSchema>>): z.infer<typeof SpaceSchema> {
+}: Partial<z.infer<typeof SpaceSchema>>): z.infer<typeof SpaceRouterSchema.getOutput> {
   return {
     space_id,
     space_name,
     space_description,
     space_image,
     space_color,
-    aichat_api_key: '',
     aichat_enable: false,
 
     created_at,
     created_by,
     updated_at,
     updated_by,
+    space_user_list: [{ role: 'OWNER' }],
   };
 }

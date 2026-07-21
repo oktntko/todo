@@ -5,6 +5,38 @@ packages:
   - common/prisma
   - docker
 
+allowBuilds:
+  '@prisma/engines': true
+  canvas: true
+  esbuild: true
+  msgpackr-extract: true
+  msw: true
+  prisma: true
+  prisma-zod-generator: true
+
+minimumReleaseAgeExclude:
+  - '@iconify/json@2.2.503'
+  - tsdown@0.22.12
+  - verkit@0.1.0
+  - '@oxlint-tsgolint/darwin-arm64@7.0.2000 || 7.0.2001'
+  - '@oxlint-tsgolint/darwin-x64@7.0.2000 || 7.0.2001'
+  - '@oxlint-tsgolint/linux-arm64@7.0.2000 || 7.0.2001'
+  - '@oxlint-tsgolint/linux-x64@7.0.2000 || 7.0.2001'
+  - '@oxlint-tsgolint/win32-arm64@7.0.2000 || 7.0.2001'
+  - '@oxlint-tsgolint/win32-x64@7.0.2000 || 7.0.2001'
+  - '@prisma/adapter-mariadb@7.9.0'
+  - '@prisma/client-runtime-utils@7.9.0'
+  - '@prisma/client@7.9.0'
+  - '@prisma/config@7.9.0'
+  - '@prisma/debug@7.9.0'
+  - '@prisma/driver-adapter-utils@7.9.0'
+  - '@prisma/engines@7.9.0'
+  - '@prisma/fetch-engine@7.9.0'
+  - '@prisma/get-platform@7.9.0'
+  - oxlint-tsgolint@7.0.2000 || 7.0.2001
+  - prettier@3.9.6
+  - prisma@7.9.0
+
 onlyBuiltDependencies:
   - '@prisma/client'
   - '@prisma/engines'
