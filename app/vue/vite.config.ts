@@ -5,11 +5,14 @@ import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vitest/config';
 import VueRouter from 'vue-router/vite';
 
+const appVueRoot = fileURLToPath(new URL('./', import.meta.url));
+
 // https://vitejs.dev/config/
 export default defineConfig({
   base: `${process.env['MODE'] === 'msw' ? '/todo' : ''}/`, // for GitHub Pages
   plugins: [
     VueRouter({
+      root: appVueRoot,
       extensions: ['.vue', '.tsx'],
       routesFolder: 'src/page',
       exclude: ['**/component', '**/modal'],

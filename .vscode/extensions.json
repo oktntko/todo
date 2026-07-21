@@ -7,7 +7,6 @@
     "kingwl.vscode-vitest-runner",
     "oxc.oxc-vscode",
     "streetsidesoftware.code-spell-checker",
-    "vitest.explorer",
-    "esbenp.prettier-vscode"
+    "vitest.explorer"
   ]
 }
