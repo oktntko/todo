@@ -20,14 +20,14 @@ import { useSpaceStore } from '~/store/SpaceStore';
 export default defineComponent(() => {
   const $route = useRoute();
   const SpaceStore = useSpaceStore();
-  const { fetchMypage } = useMypageStore();
+  const MypageStore = useMypageStore();
   const NotificationStore = useNotificationStore();
 
   const loading = ref(true);
 
   onMounted(async () => {
     await SpaceStore.fetchSpace()
-      .then(fetchMypage)
+      .then(MypageStore.fetchMypage)
       .then(NotificationStore.fetchNotification)
       .finally(() => {
         loading.value = false;
@@ -42,10 +42,15 @@ export default defineComponent(() => {
       {!loading.value && (
         <>
           <aside class="flex h-dvh min-h-0 w-56 shrink-0 flex-col overflow-y-auto bg-gray-900 text-gray-50">
-            <h1 class="flex items-center gap-1 p-4 text-2xl font-semibold">
+            <RouterLink
+              to={{
+                name: '//space/',
+              }}
+              class="flex items-center gap-1 p-4 text-2xl font-semibold transition-colors hover:text-gray-200"
+            >
               <span class="icon-[flat-color-icons--todo-list] h-8 w-8 p-2" />
               <span>MyTodo</span>
-            </h1>
+            </RouterLink>
 
             <div class="h-full">
               <ul class="pr-1 pl-2 font-medium">
@@ -139,18 +144,6 @@ export default defineComponent(() => {
                   </li>
                 ))}
               </ul>
-
-              <div class="sticky bottom-0 font-medium backdrop-blur">
-                <RouterLink
-                  to={{
-                    name: '//space/',
-                  }}
-                  class="group flex w-full items-center gap-2 rounded-e-full p-2 pl-3 text-base text-gray-500 transition-colors hover:text-gray-200"
-                >
-                  <span class="icon-[iconoir--line-space] h-5 w-5" />
-                  <span class="truncate capitalize">space</span>
-                </RouterLink>
-              </div>
             </div>
           </aside>
 

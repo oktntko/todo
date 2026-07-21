@@ -93,7 +93,7 @@ export default defineComponent(() => {
           }}
         >
           <span class="icon-[icon-park-solid--add-one] h-4 w-4" />
-          <span class="capitalize">create new canvas</span>
+          <span class="capitalize">create new space</span>
         </button>
       </div>
     </div>
