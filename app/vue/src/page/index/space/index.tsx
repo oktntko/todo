@@ -85,7 +85,7 @@ export default defineComponent(() => {
       <div class="sticky bottom-0">
         <button
           type="button"
-          class="group inline-flex items-center gap-1 rounded bg-gray-200/10 p-2 text-blue-600 backdrop-blur transition hover:text-blue-800 hover:text-shadow-sm"
+          class="group inline-flex items-center gap-1 rounded bg-gray-200/10 p-2 text-blue-600 backdrop-blur transition-[color,text-shadow] hover:text-blue-800 hover:text-shadow-sm"
           onClick={async () => {
             await $dialog.showModal(ModalAddSpace, (resolve) => ({
               onDone: resolve,

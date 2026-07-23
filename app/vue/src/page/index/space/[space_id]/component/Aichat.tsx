@@ -15,8 +15,7 @@ import { trpc, type RouterOutput } from '~/lib/trpc';
 import { satisfiesKeys, type EmitsType } from '~/lib/vue.ts';
 import { useDialog } from '~/plugin/DialogPlugin';
 import { useMypageStore } from '~/store/MypageStore';
-
-import { useCurrentSpace } from '../../[space_id]';
+import { useSpaceStore } from '~/store/SpaceStore';
 
 type Props = {
   modelValue: RouterOutput['aichat']['list'][number];
@@ -32,7 +31,7 @@ export default defineComponent(
     const $dialog = useDialog();
 
     const { mypage } = storeToRefs(useMypageStore());
-    const currentSpace = useCurrentSpace();
+    const { currentSpace } = storeToRefs(useSpaceStore());
 
     const currentAichat = useVModel($props, 'modelValue', $emit);
     const aichat_message_list = ref<RouterOutput['aichat']['listMessage']['aichat_message_list']>(
@@ -81,7 +80,7 @@ export default defineComponent(
     );
 
     async function handleSubmit() {
-      if (!currentSpace.value.aichat_enable) {
+      if (!currentSpace.value?.aichat_enable) {
         return $dialog.alert.info(
           'AI Chat is not enabled in this space. Setup AI Chat in space settings to use this feature.',
         );

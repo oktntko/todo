@@ -137,7 +137,7 @@ export default defineComponent(
               )}
             </div>
 
-            <div class="focus-container flex flex-col gap-0.5">
+            <div class="focus-container flex grow flex-col gap-0.5">
               <div>
                 <label for="group_name" class="required text-sm capitalize">
                   name

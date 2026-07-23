@@ -14,13 +14,14 @@ import { satisfiesKeys, type EmitsType } from '~/lib/vue';
 import { useDialog } from '~/plugin/DialogPlugin';
 
 export type ModelValue = z.infer<typeof SpaceRouterSchema.createInput>;
+export type Reset = (args: ModelValue) => void;
 type Props = {
   modelValue: ModelValue;
 };
 const props = satisfiesKeys<Props>()('modelValue');
 
 const emits = {
-  submit: (_: ModelValue) => true,
+  submit: (_: ModelValue, _reset: Reset) => true,
   'update:modelValue': (_: ModelValue) => true,
 } satisfies EmitsType;
 
@@ -34,7 +35,7 @@ export default defineComponent(
 
     const modelValue = useVModel($props, 'modelValue', $emit);
 
-    const { validate, ErrorMessage, isDirty } = useVueValidateZod(
+    const { validate, ErrorMessage, isDirty, reset } = useVueValidateZod(
       SpaceRouterSchema.createInput,
       modelValue,
     );
@@ -70,7 +71,7 @@ export default defineComponent(
           const result = await validate();
           if (!result.success) return;
 
-          $emit('submit', result.data);
+          $emit('submit', result.data, reset);
         }}
       >
         <section class="flex flex-col gap-3">
@@ -137,7 +138,7 @@ export default defineComponent(
               )}
             </div>
 
-            <div class="focus-container flex flex-col gap-0.5">
+            <div class="focus-container flex grow flex-col gap-0.5">
               <div>
                 <label for="space_name" class="required text-sm capitalize">
                   name

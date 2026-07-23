@@ -35,7 +35,7 @@ async function listSpace(ctx: ProtectedContext) {
     where: {
       ...hasAccessAuthorityWhere,
     },
-    orderBy: { updated_at: 'asc' },
+    orderBy: { updated_at: 'desc' },
   });
 }
 

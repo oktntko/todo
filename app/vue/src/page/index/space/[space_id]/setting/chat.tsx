@@ -1,3 +1,4 @@
+import { storeToRefs } from 'pinia';
 import { defineComponent, ref, Transition } from 'vue';
 
 import MyButton from '~/component/button/MyButton.tsx';
@@ -5,14 +6,13 @@ import MyInput from '~/component/input/MyInput.vue';
 import { trpc } from '~/lib/trpc';
 import { useDialog } from '~/plugin/DialogPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
-
-import { useCurrentSpace } from '../../[space_id]';
+import { useSpaceStore } from '~/store/SpaceStore';
 
 export default defineComponent(() => {
   const $dialog = useDialog();
   const $toast = useToast();
 
-  const currentSpace = useCurrentSpace();
+  const { currentSpace } = storeToRefs(useSpaceStore());
 
   const aichat_api_key = ref('');
 
@@ -24,7 +24,7 @@ export default defineComponent(() => {
         <div
           class={[
             'flex flex-col gap-4 border-t-2 p-4',
-            currentSpace.value.aichat_enable
+            currentSpace.value!.aichat_enable
               ? 'border-blue-300 bg-blue-50'
               : 'border-yellow-300 bg-yellow-50',
           ]}
@@ -35,7 +35,7 @@ export default defineComponent(() => {
             <span
               class={[
                 'icon-[fluent-color--chat-more-16] h-32 w-32',
-                currentSpace.value.aichat_enable ? 'text-blue-900' : 'text-yellow-900',
+                currentSpace.value!.aichat_enable ? 'text-blue-900' : 'text-yellow-900',
               ]}
             ></span>
 
@@ -43,14 +43,14 @@ export default defineComponent(() => {
               <h3
                 class={[
                   'text-lg font-medium',
-                  currentSpace.value.aichat_enable ? 'text-blue-900' : 'text-yellow-900',
+                  currentSpace.value!.aichat_enable ? 'text-blue-900' : 'text-yellow-900',
                 ]}
               >
-                {currentSpace.value.aichat_enable
+                {currentSpace.value!.aichat_enable
                   ? 'AI Chat is enabled.'
                   : 'AI Chat is not enabled.'}
               </h3>
-              {currentSpace.value.aichat_enable ? (
+              {currentSpace.value!.aichat_enable ? (
                 <button
                   type="button"
                   class="inline-flex items-center justify-center px-4 py-2 text-sm text-gray-700 transition-colors hover:text-blue-600"
@@ -60,8 +60,8 @@ export default defineComponent(() => {
                     const loading = $dialog.loading();
                     try {
                       const space = await trpc.space.disableAichat.mutate({
-                        space_id: currentSpace.value.space_id,
-                        updated_at: currentSpace.value.updated_at,
+                        space_id: currentSpace.value!.space_id,
+                        updated_at: currentSpace.value!.updated_at,
                       });
                       currentSpace.value = space;
 
@@ -105,7 +105,7 @@ export default defineComponent(() => {
                 </span>
                 <div>
                   <h3 class="leading-tight font-medium">
-                    Create new secret key in
+                    Create new secret key in&nbsp;
                     <a
                       href="https://platform.openai.com/api-keys"
                       target="_blank"
@@ -137,8 +137,8 @@ export default defineComponent(() => {
                 const loading = $dialog.loading();
                 try {
                   const space = await trpc.space.enableAichat.mutate({
-                    space_id: currentSpace.value.space_id,
-                    updated_at: currentSpace.value.updated_at,
+                    space_id: currentSpace.value!.space_id,
+                    updated_at: currentSpace.value!.updated_at,
                     aichat_api_key: aichat_api_key.value,
                   });
 

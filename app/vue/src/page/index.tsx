@@ -1,14 +1,7 @@
 import { dayjs } from '@todo/lib/dayjs';
-import {
-  computed,
-  defineComponent,
-  onMounted,
-  ref,
-  Suspense,
-  Transition,
-  type DefineComponent,
-} from 'vue';
-import { RouterLink, RouterView, useRoute } from 'vue-router';
+import { storeToRefs } from 'pinia';
+import { defineComponent, onMounted, ref, Suspense, Transition, type DefineComponent } from 'vue';
+import { RouterLink, RouterView } from 'vue-router';
 
 import type { MyDropdownSlots } from '~/component/type';
 
@@ -18,7 +11,6 @@ import { useNotificationStore } from '~/store/NotificationStore';
 import { useSpaceStore } from '~/store/SpaceStore';
 
 export default defineComponent(() => {
-  const $route = useRoute();
   const SpaceStore = useSpaceStore();
   const MypageStore = useMypageStore();
   const NotificationStore = useNotificationStore();
@@ -34,7 +26,7 @@ export default defineComponent(() => {
       });
   });
 
-  const currentSpace = computed(() => $route.path);
+  const { currentSpace } = storeToRefs(SpaceStore);
 
   return () => (
     <div class="flex h-dvh">
@@ -52,20 +44,21 @@ export default defineComponent(() => {
               <span>MyTodo</span>
             </RouterLink>
 
-            <div class="h-full">
-              <ul class="pr-1 pl-2 font-medium">
-                {SpaceStore.storedSpaceList.map((space) => (
-                  <li key={space.space_id}>
+            {currentSpace.value && (
+              <div class="h-full">
+                <ul class="pr-1 pl-2 font-medium">
+                  <li key={currentSpace.value.space_id}>
                     <RouterLink
                       to={{
                         name: '//space/[space_id]/',
-                        params: { space_id: space.space_id },
+                        params: { space_id: currentSpace.value.space_id },
                       }}
-                      class="flex items-center gap-2 rounded-lg p-2 text-sm text-gray-500 transition-colors hover:text-gray-200"
+                      class="flex items-center gap-2 rounded-lg p-2 text-sm transition hover:brightness-75"
+                      style={{ color: currentSpace.value.space_color }}
                     >
-                      {space.space_image ? (
+                      {currentSpace.value.space_image ? (
                         <img
-                          src={space.space_image}
+                          src={currentSpace.value.space_image}
                           width="16"
                           height="16"
                           decoding="async"
@@ -74,77 +67,78 @@ export default defineComponent(() => {
                       ) : (
                         <span class="icon-[ri--image-circle-fill] h-4 w-4 shrink-0"></span>
                       )}
-                      <span class="truncate capitalize">{space.space_name}</span>
+                      <span class="truncate capitalize">{currentSpace.value.space_name}</span>
                     </RouterLink>
 
-                    {currentSpace.value.startsWith(`/space/${space.space_id}`) && (
-                      <ul class={['ml-3 border-l border-gray-600 transition-discrete']}>
-                        {(
-                          [
-                            {
-                              name: 'list',
-                              route: '//space/[space_id]/todo/list',
-                              icon: 'icon-[vaadin--list-ol]',
-                            },
-                            {
-                              name: 'table',
-                              route: '//space/[space_id]/todo/table/',
-                              icon: 'icon-[fontisto--table-2]',
-                            },
-                            {
-                              name: 'board',
-                              route: '//space/[space_id]/todo/board',
-                              icon: 'icon-[bi--kanban-fill]',
-                            },
-                            {
-                              name: 'calendar',
-                              route: '//space/[space_id]/todo/calendar',
-                              icon: 'icon-[subway--calendar-2]',
-                            },
-                            {
-                              name: 'whiteboard',
-                              route: '//space/[space_id]/whiteboard',
-                              icon: 'icon-[hugeicons--whiteboard]',
-                            },
-                            {
-                              name: 'drive',
-                              route: '//space/[space_id]/drive/',
-                              icon: 'icon-[vaadin--folder-open]',
-                            },
-                            {
-                              name: 'chat',
-                              route: '//space/[space_id]/chat/',
-                              icon: 'icon-[vaadin--chat]',
-                            },
-                            {
-                              name: 'setting',
-                              route: '//space/[space_id]/setting/',
-                              icon: 'icon-[uil--setting]',
-                            },
-                          ] as const
-                        ).map((item) => (
-                          <li key={item.route}>
-                            <RouterLink
-                              to={{
-                                name: item.route,
-                                params: { space_id: space.space_id },
-                              }}
-                              class="group flex w-full items-center gap-2 rounded-e-full p-2 pl-3 text-base text-gray-200 transition hover:bg-gray-800 hover:text-white"
-                              active-class="bg-gray-700"
-                            >
-                              <span
-                                class={`${item.icon} h-5 w-5 text-gray-200 transition group-hover:text-white`}
-                              />
-                              <span class="capitalize">{item.name}</span>
-                            </RouterLink>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
+                    <ul
+                      class={['ml-3 border-l-2 border-gray-600 transition-discrete']}
+                      style={{ borderColor: currentSpace.value.space_color }}
+                    >
+                      {(
+                        [
+                          {
+                            name: 'list',
+                            route: '//space/[space_id]/todo/list',
+                            icon: 'icon-[vaadin--list-ol]',
+                          },
+                          {
+                            name: 'table',
+                            route: '//space/[space_id]/todo/table/',
+                            icon: 'icon-[fontisto--table-2]',
+                          },
+                          {
+                            name: 'board',
+                            route: '//space/[space_id]/todo/board',
+                            icon: 'icon-[bi--kanban-fill]',
+                          },
+                          {
+                            name: 'calendar',
+                            route: '//space/[space_id]/todo/calendar',
+                            icon: 'icon-[subway--calendar-2]',
+                          },
+                          {
+                            name: 'whiteboard',
+                            route: '//space/[space_id]/whiteboard',
+                            icon: 'icon-[hugeicons--whiteboard]',
+                          },
+                          {
+                            name: 'drive',
+                            route: '//space/[space_id]/drive/',
+                            icon: 'icon-[vaadin--folder-open]',
+                          },
+                          {
+                            name: 'chat',
+                            route: '//space/[space_id]/chat/',
+                            icon: 'icon-[vaadin--chat]',
+                          },
+                          {
+                            name: 'setting',
+                            route: '//space/[space_id]/setting/',
+                            icon: 'icon-[uil--setting]',
+                          },
+                        ] as const
+                      ).map((item) => (
+                        <li key={item.route}>
+                          <RouterLink
+                            to={{
+                              name: item.route,
+                              params: { space_id: currentSpace.value!.space_id },
+                            }}
+                            class="group flex w-full items-center gap-2 rounded-e-full p-2 pl-3 text-base text-gray-200 transition hover:bg-gray-800 hover:text-white"
+                            active-class="bg-gray-700"
+                          >
+                            <span
+                              class={`${item.icon} h-5 w-5 text-gray-200 transition group-hover:text-white`}
+                            />
+                            <span class="capitalize">{item.name}</span>
+                          </RouterLink>
+                        </li>
+                      ))}
+                    </ul>
                   </li>
-                ))}
-              </ul>
-            </div>
+                </ul>
+              </div>
+            )}
           </aside>
 
           {/* main */}
