@@ -1,9 +1,9 @@
 import { defineComponent } from 'vue';
 import { RouterView } from 'vue-router';
 
-export default defineComponent(async () => {
+export default defineComponent(() => {
   return () => (
-    <div>
+    <div class="h-full">
       <RouterView />
     </div>
   );

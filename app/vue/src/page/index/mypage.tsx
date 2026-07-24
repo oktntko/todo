@@ -1,7 +1,7 @@
 import { defineComponent } from 'vue';
 import { RouterLink, RouterView } from 'vue-router';
 
-export default defineComponent(async () => {
+export default defineComponent(() => {
   return () => (
     <div class="container mx-auto flex max-w-5xl flex-row">
       <aside class="flex w-56 shrink-0 flex-col gap-2 px-4">

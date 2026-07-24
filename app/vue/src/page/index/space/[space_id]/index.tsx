@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue';
 
-export default defineComponent(async () => {
+export default defineComponent(() => {
   return () => <div>dashboard</div>;
 });

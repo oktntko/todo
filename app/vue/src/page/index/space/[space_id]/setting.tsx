@@ -4,7 +4,7 @@ import { RouterLink, RouterView } from 'vue-router';
 
 import { useSpaceStore } from '~/store/SpaceStore';
 
-export default defineComponent(async () => {
+export default defineComponent(() => {
   // ここで currentSpace を待って Props で渡す
   // 子コンポーネントは currentSpace を必須で受け取れる
 

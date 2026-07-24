@@ -3,7 +3,7 @@ import { RouterView } from 'vue-router';
 
 export default defineComponent(() => {
   return () => (
-    <div>
+    <div class="h-full">
       <RouterView />
     </div>
   );
