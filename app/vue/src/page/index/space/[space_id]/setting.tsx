@@ -1,7 +1,15 @@
-import { defineComponent } from 'vue';
+import { storeToRefs } from 'pinia';
+import { defineComponent, type DefineComponent } from 'vue';
 import { RouterLink, RouterView } from 'vue-router';
 
+import { useSpaceStore } from '~/store/SpaceStore';
+
 export default defineComponent(async () => {
+  // ここで currentSpace を待って Props で渡す
+  // 子コンポーネントは currentSpace を必須で受け取れる
+
+  const { currentSpace } = storeToRefs(useSpaceStore());
+
   return () => (
     <div class="container mx-auto flex max-w-5xl flex-row">
       <aside class="flex w-56 shrink-0 flex-col gap-2 px-4">
@@ -33,7 +41,24 @@ export default defineComponent(async () => {
       </aside>
 
       <div class="grow">
-        <RouterView />
+        {currentSpace.value ? (
+          <RouterView
+            v-slots={{
+              default: ({ Component }: { Component?: DefineComponent }) =>
+                Component && <Component {...{ space: currentSpace.value }} />,
+            }}
+          />
+        ) : (
+          <div class="flex min-h-full grow flex-col items-center justify-center">
+            <span class="icon-[eos-icons--bubble-loading] text-opacity-60 h-16 w-16 text-gray-600"></span>
+            <span class="sr-only">Loading...</span>
+            <input
+              autofocus
+              name="loading"
+              class="h-0 w-0 border-none bg-transparent caret-transparent outline-hidden"
+            />
+          </div>
+        )}
       </div>
     </div>
   );

@@ -6,11 +6,11 @@ import type { RouterOutput } from '~/lib/trpc';
 
 import { useGroupStore } from '~/store/GroupStore';
 
-import Group from '../component/Group.tsx';
-import GroupList from '../component/GroupList.tsx';
+import Group from './component/Group.tsx';
+import GroupList from './component/GroupList.tsx';
 
 export default defineComponent(() => {
-  const $route = useRoute('//space/[space_id]/todo/list');
+  const $route = useRoute('//space/[space_id]/list');
 
   const { storedGroupList } = storeToRefs(useGroupStore());
   const checkedGroupList = ref<RouterOutput['group']['list']>(

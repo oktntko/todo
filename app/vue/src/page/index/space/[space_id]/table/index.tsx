@@ -18,7 +18,7 @@ import { useDialog } from '~/plugin/DialogPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
 
 export default defineComponent(() => {
-  const $route = useRoute('//space/[space_id]/todo/table/');
+  const $route = useRoute('//space/[space_id]/table/');
   const $dialog = useDialog();
   const $toast = useToast();
 
@@ -97,7 +97,7 @@ export default defineComponent(() => {
           <MyBreadcrumb class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <RouterLink
               to={{
-                name: '//space/[space_id]/todo/table/',
+                name: '//space/[space_id]/table/',
                 params: {
                   space_id: $route.params.space_id,
                 },
@@ -180,7 +180,7 @@ export default defineComponent(() => {
             tag={RouterLink}
             color="blue"
             to={{
-              name: '//space/[space_id]/todo/table/add',
+              name: '//space/[space_id]/table/add',
               params: {
                 space_id: $route.params.space_id,
               },
@@ -430,7 +430,7 @@ export default defineComponent(() => {
                 <td class="max-w-48">
                   <RouterLink
                     to={{
-                      name: '//space/[space_id]/todo/table/[todo_id]',
+                      name: '//space/[space_id]/table/[todo_id]',
                       params: {
                         space_id: $route.params.space_id,
                         todo_id: todo.todo_id,

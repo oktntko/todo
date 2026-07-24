@@ -4,13 +4,13 @@ import { useRoute } from 'vue-router';
 
 import { useGroupStore } from '~/store/GroupStore';
 
-import type { DynamicTodoModel } from '../component/DynamicTodoForm.tsx';
+import type { DynamicTodoModel } from './component/DynamicTodoForm.tsx';
 
-import Group from '../component/Group.tsx';
-import GroupList from '../component/GroupList.tsx';
+import Group from './component/Group.tsx';
+import GroupList from './component/GroupList.tsx';
 
 export default defineComponent(() => {
-  const $route = useRoute('//space/[space_id]/todo/board');
+  const $route = useRoute('//space/[space_id]/board');
 
   const { storedGroupList } = storeToRefs(useGroupStore());
   const checkedGroupList = ref(storedGroupList.value);

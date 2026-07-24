@@ -215,7 +215,7 @@ export default defineComponent(
                 style={{
                   resize: 'none',
                   maxHeight: '20rem',
-                  height: '60px',
+                  height: '62px',
                 }}
                 onKeydown={(e: KeyboardEvent) => {
                   if (e.ctrlKey && e.key === 'Enter') {
@@ -229,7 +229,7 @@ export default defineComponent(
                     return el;
                   }
                   el.style.height = 'auto';
-                  el.style.height = el.scrollHeight + 'px';
+                  el.style.height = el.scrollHeight + 2 + 'px';
                 }}
               />
               <ErrorMessage class="text-xs text-red-600" field="content"></ErrorMessage>

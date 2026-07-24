@@ -12,13 +12,13 @@ import { useDialog } from '~/plugin/DialogPlugin';
 import { useToast } from '~/plugin/ToastPlugin';
 import { useGroupStore } from '~/store/GroupStore';
 
-import GroupList from '../component/GroupList.tsx';
-import ModalAddTodo, { type ModalAddTodoResult } from '../modal/ModalAddTodo.tsx';
 import './calendar.css';
-import ModalEditTodo, { type ModalEditTodoResult } from '../modal/ModalEditTodo.tsx';
+import GroupList from './component/GroupList.tsx';
+import ModalAddTodo, { type ModalAddTodoResult } from './modal/ModalAddTodo.tsx';
+import ModalEditTodo, { type ModalEditTodoResult } from './modal/ModalEditTodo.tsx';
 
 export default defineComponent(async () => {
-  const $route = useRoute('//space/[space_id]/todo/calendar');
+  const $route = useRoute('//space/[space_id]/calendar');
 
   const $dialog = useDialog();
   const $toast = useToast();
