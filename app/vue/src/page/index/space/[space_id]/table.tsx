@@ -1,10 +1,19 @@
-import { defineComponent } from 'vue';
+import { defineComponent, KeepAlive, type DefineComponent } from 'vue';
 import { RouterView } from 'vue-router';
 
 export default defineComponent(() => {
   return () => (
     <div class="h-full">
-      <RouterView />
+      <RouterView
+        v-slots={{
+          default: ({ Component }: { Component?: DefineComponent }) =>
+            Component && (
+              <KeepAlive include={['space-table-index']}>
+                <Component />
+              </KeepAlive>
+            ),
+        }}
+      />
     </div>
   );
 });
