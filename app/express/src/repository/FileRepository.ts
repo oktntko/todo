@@ -4,7 +4,7 @@ import fsPromises from 'fs/promises';
 import path from 'path';
 import { cwd } from 'process';
 
-import { log } from '~/lib/log4js';
+import { log } from '~/lib/logger';
 import { type PrismaClient } from '~/middleware/prisma';
 
 export const FileRepository = {
@@ -128,7 +128,7 @@ async function deleteManyFile(
 const STORAGE = `${cwd()}/.userstorage`;
 
 async function readFile(params: { file_id: string; filename: string }) {
-  log.debug('readFile', params);
+  log.debug({ params }, 'readFile');
 
   const filepath = path.resolve(STORAGE, params.file_id, params.filename);
 
@@ -136,7 +136,7 @@ async function readFile(params: { file_id: string; filename: string }) {
 }
 
 async function writeFile(params: { file_id: string; filename: string }, buffer: Buffer) {
-  log.debug('writeFile', params);
+  log.debug({ params }, 'writeFile');
 
   const dirpath = path.resolve(STORAGE, params.file_id);
   fs.rmSync(dirpath, { recursive: true, force: true });
@@ -147,7 +147,7 @@ async function writeFile(params: { file_id: string; filename: string }, buffer: 
 }
 
 function removeFile(params: { file_id: string }) {
-  log.debug('removeFile', params);
+  log.debug({ params }, 'removeFile');
 
   const dirpath = path.resolve(STORAGE, params.file_id);
 

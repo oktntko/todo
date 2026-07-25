@@ -4,7 +4,7 @@ import { type Prisma } from '@todo/prisma/client';
 import { TRPCError } from '@trpc/server';
 
 import { ReqCtx } from '~/lib/context';
-import { log } from '~/lib/log4js';
+import { log } from '~/lib/logger';
 import { message } from '~/lib/message';
 import { ProtectedContext } from '~/middleware/trpc';
 import { _repository } from '~/repository/_repository';
@@ -28,7 +28,7 @@ async function listWhiteboard(
   ctx: ProtectedContext,
   input: z.infer<typeof WhiteboardRouterSchema.listInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'listWhiteboard', ctx.operator.user_id);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'listWhiteboard %o', input);
 
   const AND: Prisma.WhiteboardWhereInput[] = [];
   AND.push({ space_id: input.space_id });
@@ -50,7 +50,7 @@ async function getWhiteboard(
   ctx: ProtectedContext,
   input: z.infer<typeof WhiteboardRouterSchema.getInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'getWhiteboard', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'getWhiteboard %o', input);
 
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
   return _repository.checkDataExist({
@@ -69,7 +69,7 @@ async function createWhiteboard(
   ctx: ProtectedContext,
   input: z.infer<typeof WhiteboardRouterSchema.createInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'createWhiteboard', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'createWhiteboard %o', input);
   // 存在チェック & 認可（読み取り権限）の確認
   const space = await SpaceService.getSpace(ctx, input);
 
@@ -95,7 +95,7 @@ async function updateWhiteboard(
   ctx: ProtectedContext,
   input: z.infer<typeof WhiteboardRouterSchema.updateInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'updateWhiteboard', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'updateWhiteboard %o', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
@@ -128,7 +128,11 @@ async function applyChangeWhiteboard(
   ctx: ProtectedContext,
   input: z.infer<typeof WhiteboardRouterSchema.applyChangeInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'applyChangeWhiteboard', ctx.operator.user_id, input);
+  log.trace(
+    { reqid: ReqCtx.reqid, user_id: ctx.operator.user_id },
+    'applyChangeWhiteboard %o',
+    input,
+  );
 
   // 存在チェック & 認可（読み取り権限）の確認
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
@@ -160,7 +164,7 @@ async function deleteWhiteboard(
   ctx: ProtectedContext,
   input: z.infer<typeof WhiteboardRouterSchema.deleteInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'deleteWhiteboard', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'deleteWhiteboard %o', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
@@ -191,7 +195,7 @@ async function reorderWhiteboard(
   ctx: ProtectedContext,
   input: z.infer<typeof WhiteboardRouterSchema.reorderInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'reorderWhiteboard', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'reorderWhiteboard %o', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
   const space = await SpaceService.getSpace(ctx, input);

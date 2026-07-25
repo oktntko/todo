@@ -5,7 +5,7 @@ import { TRPCError } from '@trpc/server';
 import AdmZip from 'adm-zip';
 
 import { ReqCtx } from '~/lib/context';
-import { log } from '~/lib/log4js';
+import { log } from '~/lib/logger';
 import { message } from '~/lib/message';
 import { ProtectedContext } from '~/middleware/trpc';
 import { _repository } from '~/repository/_repository';
@@ -29,7 +29,7 @@ async function searchFile(
   ctx: ProtectedContext,
   input: z.infer<typeof FileRouterSchema.searchInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'searchFile', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid }, 'searchFile %o', input);
 
   const AND: Prisma.FileWhereInput[] = [];
 
@@ -51,10 +51,10 @@ async function searchFile(
     ...hasAccessAuthorityWhere,
     AND,
   };
-  log.debug(ReqCtx.reqid, 'where', where);
+  log.trace({ reqid: ReqCtx.reqid, where }, 'where');
 
   const orderBy: Prisma.FileOrderByWithRelationInput = { [input.sort.field]: input.sort.order };
-  log.debug(ReqCtx.reqid, 'orderBy', orderBy);
+  log.trace({ reqid: ReqCtx.reqid, orderBy }, 'orderBy');
 
   const total = await FileRepository.countFile(ctx.prisma, {
     where,
@@ -74,7 +74,7 @@ async function searchFile(
 
 // /api/file/download/single
 async function readFile(ctx: ProtectedContext, input: z.infer<typeof FileRouterSchema.getInput>) {
-  log.trace(ReqCtx.reqid, 'readFile', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'readFile %o', input);
 
   // テーブルからデータを取得する
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
@@ -105,7 +105,7 @@ async function readManyFile(
   ctx: ProtectedContext,
   input: z.infer<typeof FileRouterSchema.getManyInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'readManyFile', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'readManyFile %o', input);
 
   const dataList = await Promise.all(
     input.file_id_list.map((file_id) => FileService.readFile(ctx, { file_id })),
@@ -127,7 +127,7 @@ async function createFile(
   ctx: ProtectedContext,
   input: z.infer<typeof FileRouterSchema.createInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'createFile', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'createFile %o', input.body);
 
   // 存在チェック & 認可（読み取り権限）の確認
   const space = await SpaceService.getSpace(ctx, input.body);
@@ -171,7 +171,11 @@ async function createManyFile(
   ctx: ProtectedContext,
   input: z.infer<typeof FileRouterSchema.createManyInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'createManyFile', ctx.operator.user_id, input);
+  log.trace(
+    { reqid: ReqCtx.reqid, user_id: ctx.operator.user_id },
+    'createManyFile %o',
+    input.body,
+  );
 
   // 存在チェック & 認可（読み取り権限）の確認
   const space = await SpaceService.getSpace(ctx, input.body);
@@ -224,7 +228,7 @@ async function deleteFile(
   ctx: ProtectedContext,
   input: z.infer<typeof FileRouterSchema.deleteInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'deleteFile', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'deleteFile %o', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
@@ -259,7 +263,7 @@ async function deleteManyFile(
   ctx: ProtectedContext,
   input: z.infer<typeof FileRouterSchema.deleteManyInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'deleteManyFile', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'deleteManyFile %o', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
   const space = await SpaceService.getSpace(ctx, input);

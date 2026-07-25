@@ -7,7 +7,7 @@ import { NextFunction } from 'express-serve-static-core';
 import crypto from 'node:crypto';
 
 import { ReqCtx } from '~/lib/context';
-import { log } from '~/lib/log4js';
+import { log } from '~/lib/logger';
 import { message } from '~/lib/message';
 import { type PrismaClient } from '~/middleware/prisma';
 import { SessionService } from '~/middleware/session';

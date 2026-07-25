@@ -5,7 +5,7 @@ import { TodoStatusSchema } from '@todo/prisma/schema';
 import { TRPCError } from '@trpc/server';
 
 import { ReqCtx } from '~/lib/context';
-import { log } from '~/lib/log4js';
+import { log } from '~/lib/logger';
 import { message } from '~/lib/message';
 import { ProtectedContext } from '~/middleware/trpc';
 import { _repository } from '~/repository/_repository';
@@ -29,7 +29,7 @@ export const TodoService = {
 
 // todo.list
 async function listTodo(ctx: ProtectedContext, input: z.infer<typeof TodoRouterSchema.listInput>) {
-  log.trace(ReqCtx.reqid, 'listTodo', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'listTodo %o', input);
 
   const AND: Prisma.TodoWhereInput[] = [];
   AND.push({ group: { space_id: input.space_id } });
@@ -40,7 +40,7 @@ async function listTodo(ctx: ProtectedContext, input: z.infer<typeof TodoRouterS
 
   AND.push({ done_at: input.todo_status === 'active' ? { equals: null } : { not: null } });
 
-  log.debug(ReqCtx.reqid, 'where', AND);
+  log.trace({ reqid: ReqCtx.reqid }, 'where %o', { AND });
 
   // 認可（読み取り権限）の確認
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
@@ -58,7 +58,7 @@ async function searchTodo(
   ctx: ProtectedContext,
   input: z.infer<typeof TodoRouterSchema.searchInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'searchTodo', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'searchTodo %o', input);
 
   const AND: Prisma.TodoWhereInput[] = [];
 
@@ -97,7 +97,7 @@ async function searchTodo(
     });
   }
 
-  log.debug(ReqCtx.reqid, 'where', AND);
+  log.trace({ reqid: ReqCtx.reqid }, 'where %o', { AND });
 
   const orderBy: Prisma.TodoOrderByWithRelationInput =
     input.sort.field === 'group'
@@ -107,7 +107,7 @@ async function searchTodo(
           },
         }
       : { [input.sort.field]: input.sort.order };
-  log.debug(ReqCtx.reqid, 'orderBy', orderBy);
+  log.trace({ reqid: ReqCtx.reqid }, 'orderBy %o', { orderBy });
 
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
   const where: Prisma.TodoWhereInput = {
@@ -139,7 +139,7 @@ async function getTodo(
   },
   input: z.infer<typeof TodoRouterSchema.getInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'getTodo', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'getTodo %o', input);
 
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
   return _repository.checkDataExist({
@@ -158,7 +158,7 @@ async function createTodo(
   ctx: ProtectedContext,
   input: z.infer<typeof TodoRouterSchema.createInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'createTodo', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'createTodo %o', input);
   // 存在チェック & 認可（読み取り権限）の確認
   const { space } = await GroupService.getGroup(ctx, input);
 
@@ -177,7 +177,7 @@ async function updateTodo(
   ctx: ProtectedContext,
   input: z.infer<typeof TodoRouterSchema.updateInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'updateTodo', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'updateTodo %o', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
@@ -225,7 +225,7 @@ async function applyChangeTodo(
   ctx: ProtectedContext,
   input: z.infer<typeof TodoRouterSchema.applyChangeInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'applyChangeTodo', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'applyChangeTodo %o', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
@@ -272,7 +272,7 @@ async function updateManyTodo(
   ctx: ProtectedContext,
   input: z.infer<typeof TodoRouterSchema.updateManyInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'updateManyTodo', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'updateManyTodo %o', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
   const space = await SpaceService.getSpace(ctx, input);
@@ -340,7 +340,7 @@ async function deleteTodo(
   ctx: ProtectedContext,
   input: z.infer<typeof TodoRouterSchema.deleteInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'deleteTodo', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'deleteTodo %o', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
@@ -373,7 +373,7 @@ async function deleteManyTodo(
   ctx: ProtectedContext,
   input: z.infer<typeof TodoRouterSchema.deleteManyInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'deleteManyTodo', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'deleteManyTodo %o', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
   const space = await SpaceService.getSpace(ctx, input);

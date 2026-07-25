@@ -6,40 +6,43 @@ import {
   type ITXClientDenyList,
 } from '@todo/prisma/client';
 import { AichatRoleSchema } from '@todo/prisma/schema';
-import log4js from 'log4js';
-import util from 'node:util';
 
 import { ReqCtx } from '~/lib/context';
 import { env } from '~/lib/env';
-
-const log = log4js.getLogger('database');
+import { log } from '~/lib/logger';
 
 export const ExtendsPrismaClient = new OriginPrismaClient({
   adapter,
   log: ['warn', 'error', { emit: 'event', level: 'query' }],
 })
   .$on('query', (event) => {
-    log.mark(
-      ReqCtx.reqid,
-      `QUERY::[${event.query};]`,
-      event.params !== '[]' ? `PARAMS::${event.params}` : '',
+    log.trace(
+      { reqid: ReqCtx.reqid, query: event.query, params: JSON.parse(event.params) },
+      'query',
     );
   })
   .$extends({
     query: {
       async $allOperations(params) {
-        log.mark(ReqCtx.reqid, `${params.operation}.${params.model} BEGIN`);
+        log.trace({ reqid: ReqCtx.reqid }, '%s.%s BEGIN', params.operation ?? '', params.model);
         const start = performance.now();
 
         const result = await params.query(params.args);
 
         const end = performance.now();
-        log.mark(ReqCtx.reqid, `${params.operation}.${params.model} END`, `took::${end - start}ms`);
+        log.trace(
+          { reqid: ReqCtx.reqid },
+          '%s.%s END took %d ms',
+          params.operation ?? '',
+          params.model,
+          end - start,
+        );
         if (!env.PROD) {
-          log.mark(
-            ReqCtx.reqid,
-            'RESULT::',
-            util.inspect(result, { showHidden: false, depth: null, colors: true }),
+          log.trace(
+            { reqid: ReqCtx.reqid, result },
+            '%s.%s RESULT',
+            params.operation ?? '',
+            params.model,
           );
         }
         return result;

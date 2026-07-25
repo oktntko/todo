@@ -4,7 +4,7 @@ import { dayjs } from '@todo/lib/dayjs';
 import { TRPCError } from '@trpc/server';
 
 import { ReqCtx } from '~/lib/context';
-import { log } from '~/lib/log4js';
+import { log } from '~/lib/logger';
 import { HashPassword, OnetimePassword, SecretPassword } from '~/lib/secret';
 import { ProtectedContext } from '~/middleware/trpc';
 import { _repository } from '~/repository/_repository';
@@ -22,7 +22,7 @@ export const MypageService = {
 
 // mypage.deleteMypage
 async function deleteMypage(ctx: ProtectedContext) {
-  log.trace(ReqCtx.reqid, 'deleteProfile', ctx.operator.user_id);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'deleteProfile');
 
   await UserRepository.deleteUser(ctx.prisma, {
     where: { user_id: ctx.operator.user_id },
@@ -36,7 +36,7 @@ async function patchPassword(
   ctx: ProtectedContext,
   input: z.infer<typeof MypageRouterSchema.patchPasswordInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'patchPassword', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'patchPassword');
 
   // 現在のパスワードの確認
   if (!HashPassword.compare(input.current_password, ctx.operator.password)) {
@@ -59,7 +59,7 @@ async function patchProfile(
   ctx: ProtectedContext,
   input: z.infer<typeof MypageRouterSchema.patchProfileInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'updateProfile', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'patchProfile');
 
   await _repository.checkDuplicate({
     duplicate: UserRepository.findUniqueUser(ctx.prisma, { where: { email: input.email } }),
@@ -74,7 +74,7 @@ async function patchProfile(
 
 // mypage.generateSecret
 async function generateSecret(ctx: ProtectedContext) {
-  log.trace(ReqCtx.reqid, 'generateSecret', ctx.operator.user_id);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'generateSecret');
 
   const secret = OnetimePassword.generateSecret({ name: ctx.operator.email });
 
@@ -102,7 +102,7 @@ async function enableSecret(
     } | null;
   },
 ) {
-  log.trace(ReqCtx.reqid, 'enableSecret', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'enableSecret');
 
   if (!input.setting_twofa || dayjs(input.setting_twofa.expires).isBefore(dayjs())) {
     // setting_twofa がないのは generateSecret が実行されていない場合（またはセッションがリセットされた場合）。
@@ -134,7 +134,7 @@ async function enableSecret(
 
 // mypage.disableSecret
 async function disableSecret(ctx: ProtectedContext) {
-  log.trace(ReqCtx.reqid, 'disableSecret', ctx.operator.user_id);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'disableSecret');
 
   return UserRepository.updateUser(ctx.prisma, {
     data: { twofa_enable: false, twofa_secret: '' },

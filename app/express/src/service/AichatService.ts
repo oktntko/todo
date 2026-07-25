@@ -6,7 +6,7 @@ import { ChatCompletion } from 'openai/resources';
 
 import { newOpenAI } from '~/external/openai';
 import { ReqCtx } from '~/lib/context';
-import { log } from '~/lib/log4js';
+import { log } from '~/lib/logger';
 import { SecretPassword } from '~/lib/secret';
 import { ProtectedContext } from '~/middleware/trpc';
 import { _repository } from '~/repository/_repository';
@@ -29,7 +29,7 @@ async function listAichat(
   ctx: ProtectedContext,
   input: z.infer<typeof AichatRouterSchema.listInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'listAichat', ctx.operator.user_id);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'listAichat %o', input);
 
   const AND: Prisma.AichatWhereInput[] = [];
   AND.push({ space_id: input.space_id });
@@ -51,7 +51,7 @@ async function getAichat(
   ctx: ProtectedContext,
   input: z.infer<typeof AichatRouterSchema.getInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'getAichat', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'getAichat %o', input);
 
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
   return _repository.checkDataExist({
@@ -70,7 +70,7 @@ async function createAichat(
   ctx: ProtectedContext,
   input: z.infer<typeof AichatRouterSchema.createInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'createAichat', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'createAichat %o', input);
   // 存在チェック & 認可（読み取り権限）の確認
   const space = await SpaceService.getSpace(ctx, input);
 
@@ -91,7 +91,7 @@ async function updateAichat(
   ctx: ProtectedContext,
   input: z.infer<typeof AichatRouterSchema.updateInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'updateAichat', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'updateAichat %o', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
@@ -122,7 +122,7 @@ async function deleteAichat(
   ctx: ProtectedContext,
   input: z.infer<typeof AichatRouterSchema.deleteInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'deleteAichat', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'deleteAichat %o', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
@@ -152,7 +152,7 @@ async function listAichatMessage(
   ctx: ProtectedContext,
   input: z.infer<typeof AichatRouterSchema.listMessageInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'listAichatMessage', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'listAichatMessage %o', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
@@ -177,7 +177,7 @@ async function postAichatMessage(
   ctx: ProtectedContext,
   input: z.infer<typeof AichatRouterSchema.postMessageInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'postAichatMessage', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'postAichatMessage %o', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
@@ -305,7 +305,7 @@ async function postAichatMessage(
     });
   }
 
-  log.trace(ReqCtx.reqid, 'chat', response.choices);
+  log.trace({ reqid: ReqCtx.reqid }, 'chat %o', response.choices);
   const choice: ChatCompletion.Choice = response.choices[0]!;
 
   let content = '';
@@ -313,7 +313,7 @@ async function postAichatMessage(
 
   if (choice.message.tool_calls && choice.message.tool_calls.length > 0) {
     for (const tool of choice.message.tool_calls!) {
-      log.info(tool.id, tool);
+      log.info('%o', tool);
       if (tool.type === 'function') {
         if (tool.function.name === 'output') {
           const { answer, title } = JSON.parse(tool.function.arguments);

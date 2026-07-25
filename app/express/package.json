@@ -16,7 +16,7 @@
   },
   "scripts": {
     "dev": "run-p dev:*",
-    "dev:serve": "tsx watch --tsconfig tsconfig.base.json src/index.ts",
+    "dev:serve": "tsx watch --tsconfig tsconfig.base.json src/index.ts | pino-pretty",
     "dev:barrel": "tsx watch --include='src/schema' --exclude='src/schema/index.ts' ../../script/generateBarrelFile.ts src/schema",
     "build": "tsdown",
     "type-check": "rm -rf types && tsc --project tsconfig.base.json && tsc-alias --project tsconfig.base.json",
@@ -38,9 +38,9 @@
     "express": "^5.2.1",
     "express-session": "^1.19.0",
     "helmet": "^8.3.0",
-    "log4js": "^6.9.1",
     "multer": "2.2.0",
     "openai": "^6.48.0",
+    "pino": "^10.3.1",
     "qrcode": "^1.5.4",
     "speakeasy": "^2.0.0",
     "superjson": "^2.2.6"
@@ -54,7 +54,8 @@
     "@types/multer": "^2.2.0",
     "@types/qrcode": "^1.5.6",
     "@types/qs": "^6.15.1",
-    "@types/speakeasy": "^2.0.10"
+    "@types/speakeasy": "^2.0.10",
+    "pino-pretty": "^13.1.3"
   },
   "packageManager": "pnpm@11.15.1"
 }

@@ -4,7 +4,7 @@ import { type Prisma } from '@todo/prisma/client';
 import { TRPCError } from '@trpc/server';
 
 import { ReqCtx } from '~/lib/context';
-import { log } from '~/lib/log4js';
+import { log } from '~/lib/logger';
 import { message } from '~/lib/message';
 import { ProtectedContext } from '~/middleware/trpc';
 import { _repository } from '~/repository/_repository';
@@ -27,7 +27,7 @@ async function listGroup(
   ctx: ProtectedContext,
   input: z.infer<typeof GroupRouterSchema.listInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'listGroup', ctx.operator.user_id);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'listGroup %o', input);
 
   const AND: Prisma.GroupWhereInput[] = [];
   AND.push({ space_id: input.space_id });
@@ -46,7 +46,7 @@ async function listGroup(
 
 // group.get
 async function getGroup(ctx: ProtectedContext, input: z.infer<typeof GroupRouterSchema.getInput>) {
-  log.trace(ReqCtx.reqid, 'getGroup', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'getGroup %o', input);
 
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
   return _repository.checkDataExist({
@@ -65,7 +65,7 @@ async function createGroup(
   ctx: ProtectedContext,
   input: z.infer<typeof GroupRouterSchema.createInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'createGroup', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'createGroup %o', input);
   // 存在チェック & 認可（読み取り権限）の確認
   const space = await SpaceService.getSpace(ctx, input);
 
@@ -91,7 +91,7 @@ async function updateGroup(
   ctx: ProtectedContext,
   input: z.infer<typeof GroupRouterSchema.updateInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'updateGroup', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'updateGroup %o', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
@@ -122,7 +122,7 @@ async function deleteGroup(
   ctx: ProtectedContext,
   input: z.infer<typeof GroupRouterSchema.deleteInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'deleteGroup', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'deleteGroup %o', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
@@ -153,7 +153,7 @@ async function reorderGroup(
   ctx: ProtectedContext,
   input: z.infer<typeof GroupRouterSchema.reorderInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'reorderGroup', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'reorderGroup %o', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
   const space = await SpaceService.getSpace(ctx, input);

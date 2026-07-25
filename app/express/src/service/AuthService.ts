@@ -5,7 +5,7 @@ import { SpaceUserRole } from '@todo/prisma/client';
 import { TRPCError } from '@trpc/server';
 
 import { ReqCtx } from '~/lib/context';
-import { log } from '~/lib/log4js';
+import { log } from '~/lib/logger';
 import { HashPassword, OnetimePassword, SecretPassword } from '~/lib/secret';
 import { PublicContext } from '~/middleware/trpc';
 import { _repository } from '~/repository/_repository';
@@ -21,7 +21,7 @@ export const AuthService = {
 
 // auth.signup
 async function signup(ctx: PublicContext, input: z.infer<typeof AuthRouterSchema.signupInput>) {
-  log.trace(ReqCtx.reqid, 'signup', input);
+  log.trace({ reqid: ReqCtx.reqid }, 'signup'); // input secret
 
   await _repository.checkDuplicate({
     duplicate: UserRepository.findUniqueUser(ctx.prisma, {
@@ -87,7 +87,7 @@ async function signup(ctx: PublicContext, input: z.infer<typeof AuthRouterSchema
 
 // auth.signin
 async function signin(ctx: PublicContext, input: z.infer<typeof AuthRouterSchema.signinInput>) {
-  log.trace(ReqCtx.reqid, 'signup', input);
+  log.trace({ reqid: ReqCtx.reqid }, 'signin'); // input secret
 
   const user = await UserRepository.findUniqueUser(ctx.prisma, {
     where: { email: input.email },
@@ -114,7 +114,7 @@ async function signinTwofa(
     } | null;
   },
 ) {
-  log.trace(ReqCtx.reqid, 'signinTwofa', input);
+  log.trace({ reqid: ReqCtx.reqid }, 'signinTwofa'); // input secret
 
   if (!input.auth_twofa || dayjs(input.auth_twofa.expires).isBefore(dayjs())) {
     throw new TRPCError({

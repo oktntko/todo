@@ -2,7 +2,7 @@ import { z } from '@todo/lib/zod';
 import express from 'express';
 import superjson from 'superjson';
 
-import { log } from '~/lib/log4js';
+import { log } from '~/lib/logger';
 import { createProtectHandler } from '~/middleware/express';
 import { NotificationRouterSchema } from '~/schema/NotificationRouterSchema';
 import { ServerSentEventsManager } from '~/worker/ServerSentEvents';
@@ -20,7 +20,11 @@ ServerSentEventsRouter.get(
     ServerSentEventsManager.add(
       ctx.operator.user_id,
       (notification: z.infer<typeof NotificationRouterSchema.getOutput>) => {
-        log.trace('ServerSentEventsRouter#send', ctx.operator.user_id, notification);
+        log.trace(
+          { user_id: ctx.operator.user_id },
+          'ServerSentEventsRouter#send %o',
+          notification,
+        );
         ctx.res.write(`data: ${superjson.stringify(notification)}\n\n`);
       },
     );

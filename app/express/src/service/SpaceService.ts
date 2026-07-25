@@ -6,7 +6,7 @@ import { APIError } from 'openai';
 
 import { newOpenAI } from '~/external/openai';
 import { ReqCtx } from '~/lib/context';
-import { log } from '~/lib/log4js';
+import { log } from '~/lib/logger';
 import { message } from '~/lib/message';
 import { SecretPassword } from '~/lib/secret';
 import { ProtectedContext } from '~/middleware/trpc';
@@ -27,7 +27,7 @@ export const SpaceService = {
 
 // space.list
 async function listSpace(ctx: ProtectedContext) {
-  log.trace(ReqCtx.reqid, 'listSpace', ctx.operator.user_id);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'listSpace');
 
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
   return SpaceRepository.findManySpace(ctx.prisma, {
@@ -41,7 +41,7 @@ async function listSpace(ctx: ProtectedContext) {
 
 // space.get
 async function getSpace(ctx: ProtectedContext, input: z.infer<typeof SpaceRouterSchema.getInput>) {
-  log.trace(ReqCtx.reqid, 'getSpace', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'getSpace %o', input);
 
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
   return _repository.checkDataExist({
@@ -60,7 +60,7 @@ async function createSpace(
   ctx: ProtectedContext,
   input: z.infer<typeof SpaceRouterSchema.createInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'createSpace', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'createSpace %o', input);
 
   return SpaceRepository.createSpace(ctx.prisma, {
     operator_id: ctx.operator.user_id,
@@ -82,7 +82,7 @@ async function updateSpace(
   ctx: ProtectedContext,
   input: z.infer<typeof SpaceRouterSchema.updateInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'updateSpace', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'updateSpace %o', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
@@ -113,7 +113,7 @@ async function deleteSpace(
   ctx: ProtectedContext,
   input: z.infer<typeof SpaceRouterSchema.deleteInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'deleteSpace', ctx.operator.user_id, input);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'deleteSpace %o', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
@@ -144,7 +144,7 @@ async function enableAichat(
   ctx: ProtectedContext,
   input: z.infer<typeof SpaceRouterSchema.enableAichatInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'enableAichat', ctx.operator.user_id);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'enableAichat'); // input secret
 
   // 存在チェック & 認可（読み取り権限）の確認
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
@@ -167,15 +167,16 @@ async function enableAichat(
   try {
     const openai = newOpenAI({ apiKey: input.aichat_api_key });
     await openai.models.list();
-  } catch (e) {
-    if (e instanceof APIError && (e.status === 401 || e.status === 403)) {
+  } catch (err) {
+    if (err instanceof APIError && (err.status === 401 || err.status === 403)) {
       throw new TRPCError({
         code: 'BAD_REQUEST',
         message: 'The AI chat API key is invalid. Please check and try again.',
       });
     }
 
-    log.error(ReqCtx.reqid, 'patchAichat', 'OpenAI API key validation failed', e);
+    log.error({ reqid: ReqCtx.reqid, err }, 'OpenAI API key validation failed.');
+
     throw new TRPCError({
       code: 'BAD_GATEWAY',
       message: 'The service is temporarily unavailable. Please try again in a moment.',
@@ -197,7 +198,7 @@ async function disableAichat(
   ctx: ProtectedContext,
   input: z.infer<typeof SpaceRouterSchema.deleteInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'disableAichat', ctx.operator.user_id);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id, input }, 'disableAichat');
 
   // 存在チェック & 認可（読み取り権限）の確認
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);

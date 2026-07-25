@@ -3,7 +3,7 @@ import { SessionData, Store } from 'express-session';
 import superjson from 'superjson';
 
 import { env } from '~/lib/env';
-import { log } from '~/lib/log4js';
+import { log } from '~/lib/logger';
 import { ExtendsPrismaClient, PrismaClient } from '~/middleware/prisma';
 
 import { MyRequest, MyResponse } from './trpc';
@@ -88,7 +88,7 @@ async function findUserBySession(params: {
 
 // session.get
 async function getSession(session_key: string): Promise<SessionData | null> {
-  log.debug('getSession', session_key);
+  log.debug('getSession %s', session_key);
 
   const foundSession = await ExtendsPrismaClient.session.findUnique({
     where: { session_key },
@@ -116,7 +116,7 @@ async function getSession(session_key: string): Promise<SessionData | null> {
 
 // session.set
 async function setSession(session_key: string, session: SessionData) {
-  log.debug('setSession', session_key);
+  log.debug('setSession %s', { session_key });
 
   return ExtendsPrismaClient.session.upsert({
     where: { session_key },
@@ -141,7 +141,7 @@ async function setSession(session_key: string, session: SessionData) {
 
 // session.destroy
 async function destroySession(session_key: string) {
-  log.debug('destroySession', session_key);
+  log.debug('destroySession %s', { session_key });
 
   await ExtendsPrismaClient.session.deleteMany({
     where: { session_key },

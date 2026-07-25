@@ -5,7 +5,7 @@ import helmet from 'helmet';
 import { createServer } from 'node:http';
 
 import { env } from '~/lib/env';
-import { log } from '~/lib/log4js';
+import { log } from '~/lib/logger';
 import {
   ErrorHandler,
   InjectRequestIdHandler,
@@ -104,9 +104,9 @@ app.use(
           'CLIENT_CLOSED_REQUEST',
         ].some((x) => x === opts.error.code)
       ) {
-        log.error(opts.error.code, opts.error);
+        log.error({ err: opts.error });
       } else {
-        log.warn(opts.error.code, opts.error);
+        log.warn({ err: opts.error });
       }
     },
   }),
@@ -118,7 +118,7 @@ app.use(NotFoundHandler);
 app.use(UnhandledErrorHandler);
 
 server.on('error', (err) => {
-  log.error('Error opening server', err);
+  log.error({ err }, 'Error opening server');
 });
 
 export function listen() {

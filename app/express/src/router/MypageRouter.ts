@@ -1,6 +1,6 @@
 import { z } from '@todo/lib/zod';
 
-import { log } from '~/lib/log4js';
+import { log } from '~/lib/logger';
 import { $transaction } from '~/middleware/prisma';
 import { protectedProcedure, router } from '~/middleware/trpc';
 import { MypageRouterSchema } from '~/schema/MypageRouterSchema';
@@ -56,7 +56,7 @@ export const mypage = router({
   generateSecret: protectedProcedure.input(z.void()).mutation(async ({ ctx }) => {
     return $transaction(ctx.prisma, async (prisma) => {
       const data = await MypageService.generateSecret({ ...ctx, prisma });
-      log.debug('setting_twofa', data.setting_twofa);
+      log.debug('setting_twofa %s', data.setting_twofa);
 
       ctx.req.session.data = {
         ...ctx.req.session.data,
@@ -74,7 +74,7 @@ export const mypage = router({
     .mutation(async ({ ctx, input }) => {
       return $transaction(ctx.prisma, async (prisma) => {
         const setting_twofa = ctx.req.session.data?.setting_twofa ?? null;
-        log.debug('setting_twofa', setting_twofa);
+        log.debug('setting_twofa %s', setting_twofa);
 
         await MypageService.enableSecret({ ...ctx, prisma }, { ...input, setting_twofa });
 

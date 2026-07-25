@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { log } from '~/lib/log4js';
+import { log } from '~/lib/logger';
 import { createCallerFactory, router } from '~/middleware/trpc';
 import { aichat } from '~/router/AichatRouter';
 import { auth } from '~/router/AuthRouter';

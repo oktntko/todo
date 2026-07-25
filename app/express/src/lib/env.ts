@@ -1,5 +1,5 @@
 export const env = {
-  APP_NAME: process.env.APP_NAME,
+  APP_NAME: process.env.APP_NAME || 'todo',
   get NODE_ENV() {
     if (process.env.NODE_ENV === 'production') {
       return 'production';

@@ -5,10 +5,9 @@ import { NotificationStatus } from '@todo/prisma/client';
 import { JobsOptions, Queue, Worker } from 'bullmq';
 
 import { ReqCtx } from '~/lib/context';
-import { log } from '~/lib/log4js';
+import { log } from '~/lib/logger';
 import { ExtendsPrismaClient } from '~/middleware/prisma';
 import { ProtectedContext } from '~/middleware/trpc';
-import { _repository } from '~/repository/_repository';
 import { NotificationRepository } from '~/repository/NotificationRepository';
 import { NotificationTodoRepository } from '~/repository/NotificationTodoRepository';
 import { NotificationRouterSchema } from '~/schema/NotificationRouterSchema';
@@ -27,7 +26,7 @@ async function listNotification(
   ctx: ProtectedContext,
   // input: z.infer<typeof GroupRouterSchema.listInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'listNotification', ctx.operator.user_id);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'listNotification');
 
   const [general, todo] = await Promise.all([
     NotificationRepository.findManyNotification(ctx.prisma, {
@@ -70,7 +69,7 @@ async function readNotification(
   ctx: ProtectedContext,
   input: z.infer<typeof NotificationRouterSchema.getInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'readNotification', ctx.operator.user_id);
+  log.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'readNotification %o', input);
 
   await Promise.all([
     NotificationRepository.updateManyNotification(ctx.prisma, {
@@ -101,7 +100,11 @@ async function addNotificationTodo(
   ctx: ProtectedContext,
   input: z.infer<typeof NotificationRouterSchema.addNotificationTodoInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'addNotificationTodo', ctx.operator.user_id);
+  log.trace(
+    { reqid: ReqCtx.reqid, user_id: ctx.operator.user_id },
+    'addNotificationTodo %o',
+    input,
+  );
 
   // 権限チェック
   const todo = await TodoService.getTodo(ctx, input);
@@ -150,7 +153,11 @@ async function removeNotificationTodo(
   ctx: ProtectedContext,
   input: z.infer<typeof NotificationRouterSchema.removeInput>,
 ) {
-  log.trace(ReqCtx.reqid, 'removeNotificationTodo', ctx.operator.user_id);
+  log.trace(
+    { reqid: ReqCtx.reqid, user_id: ctx.operator.user_id },
+    'removeNotificationTodo %o',
+    input,
+  );
 
   // 権限違いでもエラーにしないがデータは消さないため、 user_id を条件に入れる
   // 通知がすでに削除されている場合でもエラーにしないため、 deleteMany を使う
@@ -191,7 +198,7 @@ const worker = new Worker<NotificationTodoData>(
   WORKER_NAME,
   async function (job) {
     const data = job.data;
-    log.info(`Processing job ${WORKER_NAME} with data:`, data);
+    log.trace(`Processing job ${WORKER_NAME} %o`, data);
     const prisma = ExtendsPrismaClient;
 
     const notification = await NotificationTodoRepository.findUniqueNotificationTodo(prisma, {
@@ -237,16 +244,16 @@ const worker = new Worker<NotificationTodoData>(
 );
 
 worker.on('completed', (job) => {
-  log.trace(WORKER_NAME, job.id, `has completed.`);
+  log.trace(`${WORKER_NAME} %s has completed.`, job.id);
 });
 
 worker.on('failed', (job, err) => {
-  log.error(WORKER_NAME, job?.id, `has failed.`, err.message);
+  log.error({ err }, `${WORKER_NAME} %s has failed.`, job?.id);
 });
 
 // サーバー終了時の処理
 process.on('SIGTERM', async () => {
-  log.info(WORKER_NAME, 'Closing worker...');
+  log.error(`${WORKER_NAME} Closing worker...`);
   await worker.close(); // 現在実行中のジョブが完了するのを待って安全に停止
-  log.info(WORKER_NAME, 'Worker closed.');
+  log.error(`${WORKER_NAME} Worker closed.`);
 });
