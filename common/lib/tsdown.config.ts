@@ -1,7 +1,7 @@
 import { defineConfig } from 'tsdown';
 
 export default defineConfig({
-  entry: ['src/dayjs.ts', 'src/remeda.ts', 'src/zod.ts'],
+  entry: ['src/index.ts'],
   sourcemap: true,
   clean: true,
   minify: true,

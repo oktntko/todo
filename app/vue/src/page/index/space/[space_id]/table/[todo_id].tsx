@@ -1,4 +1,4 @@
-import { R } from '@todo/lib/remeda';
+import { R } from '@todo/lib';
 import { defineComponent, onMounted, ref, Transition } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 

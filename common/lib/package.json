@@ -7,17 +7,9 @@
   ],
   "type": "module",
   "exports": {
-    "./dayjs": {
-      "types": "./src/dayjs.ts",
-      "default": "./dist/dayjs.mjs"
-    },
-    "./remeda": {
-      "types": "./src/remeda.ts",
-      "default": "./dist/remeda.mjs"
-    },
-    "./zod": {
-      "types": "./src/zod.ts",
-      "default": "./dist/zod.mjs"
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./dist/index.mjs"
     }
   },
   "scripts": {

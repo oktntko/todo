@@ -1,4 +1,4 @@
-import { R } from '@todo/lib/remeda';
+import { R } from '@todo/lib';
 import { defineStore } from 'pinia';
 import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';

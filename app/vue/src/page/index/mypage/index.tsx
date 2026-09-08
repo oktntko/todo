@@ -1,4 +1,4 @@
-import type { z } from '@todo/lib/zod';
+import type { z } from '@todo/lib';
 
 import { MypageRouterSchema } from '@todo/express/schema';
 import { storeToRefs } from 'pinia';

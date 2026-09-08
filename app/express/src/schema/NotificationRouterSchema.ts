@@ -1,4 +1,4 @@
-import { z } from '@todo/lib/zod';
+import { z } from '@todo/lib';
 import { NotificationSchema, NotificationTodoSchema } from '@todo/prisma/schema';
 
 const getOutput = z.union([

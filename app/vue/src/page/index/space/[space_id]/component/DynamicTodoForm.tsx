@@ -1,5 +1,5 @@
 import { TodoRouterSchema } from '@todo/express/schema';
-import { R } from '@todo/lib/remeda';
+import { R } from '@todo/lib';
 import { onClickOutside, useVModel } from '@vueuse/core';
 import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import { defineComponent, ref, useTemplateRef, watch } from 'vue';

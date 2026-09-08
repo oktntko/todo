@@ -1,6 +1,6 @@
 // oxlint-disable no-console
 import type { TrpcRouter } from '@todo/express';
-import type { z } from '@todo/lib/zod';
+import type { z } from '@todo/lib';
 import type { UserSchema } from '@todo/prisma/schema';
 
 import { TRPCError } from '@trpc/server';

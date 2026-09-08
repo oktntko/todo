@@ -1,6 +1,6 @@
 import type { ErrorRequestHandler, Request, RequestHandler, Response } from 'express';
 
-import { z } from '@todo/lib/zod';
+import { z } from '@todo/lib';
 import { UserSchema } from '@todo/prisma/schema';
 import { TRPCError } from '@trpc/server';
 import { NextFunction } from 'express-serve-static-core';

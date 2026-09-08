@@ -1,4 +1,4 @@
-import { z, ZodError } from '@todo/lib/zod';
+import { z, ZodError } from '@todo/lib';
 import { UserSchema } from '@todo/prisma/schema';
 import { initTRPC, TRPCError } from '@trpc/server';
 import * as trpcExpress from '@trpc/server/adapters/express';

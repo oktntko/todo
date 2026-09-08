@@ -1,7 +1,7 @@
-import type { z } from '@todo/lib/zod';
+import type { z } from '@todo/lib';
 
 import { TodoRouterSchema } from '@todo/express/schema';
-import { dayjs } from '@todo/lib/dayjs';
+import { dayjs } from '@todo/lib';
 import { TodoStatusList } from '@todo/prisma/schema';
 import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import { computed, defineComponent, onMounted, ref } from 'vue';

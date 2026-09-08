@@ -314,7 +314,7 @@ importers:
         version: 2.2.6
       use-vue-validate-schema:
         specifier: ^1.0.2
-        version: 1.0.2(vue@3.5.42(typescript@6.0.3))
+        version: 1.0.2(valibot@1.4.2(typescript@6.0.3))(vue@3.5.42(typescript@6.0.3))(zod@4.5.4)
       vue:
         specifier: ^3.5.42
         version: 3.5.42(typescript@6.0.3)
@@ -9122,8 +9122,8 @@ snapshots:
   '@vue/language-core@3.3.7':
     dependencies:
       '@volar/language-core': 2.4.28
-      '@vue/compiler-dom': 3.5.40
-      '@vue/shared': 3.5.40
+      '@vue/compiler-dom': 3.5.42
+      '@vue/shared': 3.5.42
       alien-signals: 3.2.1
       muggle-string: 0.4.1
       path-browserify: 1.0.1
@@ -10942,8 +10942,8 @@ snapshots:
 
   magicast@0.5.2:
     dependencies:
-      '@babel/parser': 7.29.7
-      '@babel/types': 7.29.7
+      '@babel/parser': 7.29.8
+      '@babel/types': 7.29.8
       source-map-js: 1.2.1
     optional: true
 
@@ -12288,14 +12288,22 @@ snapshots:
     dependencies:
       punycode: 2.3.1
 
-  use-vue-validate-schema@1.0.2(vue@3.5.42(typescript@6.0.3)):
+  use-vue-validate-schema@1.0.2(valibot@1.4.2(typescript@6.0.3))(vue@3.5.42(typescript@6.0.3))(zod@4.5.4):
     dependencies:
       microdiff: 1.6.0
       vue: 3.5.42(typescript@6.0.3)
+    optionalDependencies:
+      valibot: 1.4.2(typescript@6.0.3)
+      zod: 4.5.4
 
   util-deprecate@1.0.2: {}
 
   valibot@1.2.0(typescript@6.0.3):
+    optionalDependencies:
+      typescript: 6.0.3
+    optional: true
+
+  valibot@1.4.2(typescript@6.0.3):
     optionalDependencies:
       typescript: 6.0.3
     optional: true

@@ -1,4 +1,4 @@
-import { dayjs } from '@todo/lib/dayjs';
+import { dayjs } from '@todo/lib';
 import { SessionData, Store } from 'express-session';
 import superjson from 'superjson';
 

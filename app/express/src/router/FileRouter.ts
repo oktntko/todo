@@ -1,4 +1,4 @@
-import { z } from '@todo/lib/zod';
+import { z } from '@todo/lib';
 import express from 'express';
 import multer from 'multer';
 

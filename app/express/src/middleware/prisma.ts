@@ -1,4 +1,4 @@
-import { ColorSchema, DateSchema, TimeSchema, z } from '@todo/lib/zod';
+import { ColorSchema, DateSchema, TimeSchema, z } from '@todo/lib';
 import {
   adapter,
   PrismaClient as OriginPrismaClient,

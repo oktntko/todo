@@ -1,6 +1,6 @@
 import type { TodoRouterSchema } from '@todo/express/schema';
 
-import { type z } from '@todo/lib/zod';
+import { type z } from '@todo/lib';
 import { defineComponent, ref } from 'vue';
 
 import type { DownloadFile } from '~/component/type';

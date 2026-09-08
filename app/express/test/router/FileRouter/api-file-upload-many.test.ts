@@ -1,4 +1,4 @@
-import { z } from '@todo/lib/zod';
+import { z } from '@todo/lib';
 import supertest from 'supertest';
 
 import { app } from '~/app';

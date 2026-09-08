@@ -1,4 +1,4 @@
-import { dayjs } from '@todo/lib/dayjs';
+import { dayjs } from '@todo/lib';
 import Sortable from 'sortablejs';
 import { defineComponent, onMounted, ref, Transition } from 'vue';
 import { useRoute } from 'vue-router';

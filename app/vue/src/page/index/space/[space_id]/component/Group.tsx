@@ -1,7 +1,7 @@
-import type { z } from '@todo/lib/zod';
+import type { z } from '@todo/lib';
 
 import { TodoRouterSchema } from '@todo/express/schema';
-import { R } from '@todo/lib/remeda';
+import { R } from '@todo/lib';
 import Sortable from 'sortablejs';
 import { useVueValidateZod } from 'use-vue-validate-schema/zod';
 import { defineComponent, nextTick, onMounted, ref } from 'vue';

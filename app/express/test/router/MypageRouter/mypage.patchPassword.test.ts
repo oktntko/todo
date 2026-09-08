@@ -1,4 +1,4 @@
-import { z } from '@todo/lib/zod';
+import { z } from '@todo/lib';
 import { TRPCError } from '@trpc/server';
 
 import { ExtendsPrismaClient } from '~/middleware/prisma';

@@ -1,5 +1,5 @@
 import type { FileRouterSchema } from '@todo/express/schema';
-import type { z } from '@todo/lib/zod';
+import type { z } from '@todo/lib';
 
 import { axios, saveAsFile } from '~/lib/axios';
 import { useDialog } from '~/plugin/DialogPlugin';

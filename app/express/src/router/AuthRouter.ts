@@ -1,5 +1,5 @@
-import { dayjs } from '@todo/lib/dayjs';
-import { z } from '@todo/lib/zod';
+import { dayjs } from '@todo/lib';
+import { z } from '@todo/lib';
 
 import { $transaction } from '~/middleware/prisma';
 import { SessionService } from '~/middleware/session';

@@ -1,7 +1,7 @@
-import type { z } from '@todo/lib/zod';
+import type { z } from '@todo/lib';
 
 import { AichatRouterSchema } from '@todo/express/schema';
-import { R } from '@todo/lib/remeda';
+import { R } from '@todo/lib';
 import { AichatModelList, AichatModelSchema } from '@todo/prisma/schema';
 import { useVModel } from '@vueuse/core';
 import { storeToRefs } from 'pinia';

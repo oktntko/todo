@@ -1,4 +1,4 @@
-import { z } from '@todo/lib/zod';
+import { z } from '@todo/lib';
 
 export const AichatModelList = [
   'gpt-5.4',

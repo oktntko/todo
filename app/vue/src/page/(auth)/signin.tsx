@@ -1,4 +1,4 @@
-import type { z } from '@todo/lib/zod';
+import type { z } from '@todo/lib';
 
 import { AuthRouterSchema } from '@todo/express/schema';
 import { useTitle } from '@vueuse/core';

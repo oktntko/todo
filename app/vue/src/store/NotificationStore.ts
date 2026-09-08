@@ -1,7 +1,7 @@
 import type { NotificationRouterSchema } from '@todo/express/schema';
-import type { z } from '@todo/lib/zod';
+import type { z } from '@todo/lib';
 
-import { R } from '@todo/lib/remeda';
+import { R } from '@todo/lib';
 import { defineStore } from 'pinia';
 import superjson from 'superjson';
 import { computed, ref } from 'vue';

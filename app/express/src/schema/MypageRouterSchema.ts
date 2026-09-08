@@ -1,4 +1,4 @@
-import { z } from '@todo/lib/zod';
+import { z } from '@todo/lib';
 import { UserSchema } from '@todo/prisma/schema';
 
 const patchProfileInput = UserSchema.pick({

@@ -1,4 +1,4 @@
-import { dayjs } from '@todo/lib/dayjs';
+import { dayjs } from '@todo/lib';
 import { defineComponent } from 'vue';
 
 import { useNotificationStore } from '~/store/NotificationStore';

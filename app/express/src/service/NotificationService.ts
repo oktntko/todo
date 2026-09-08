@@ -1,6 +1,6 @@
-import type { z } from '@todo/lib/zod';
+import type { z } from '@todo/lib';
 
-import { R } from '@todo/lib/remeda';
+import { R } from '@todo/lib';
 import { NotificationStatus } from '@todo/prisma/client';
 import { JobsOptions, Queue, Worker } from 'bullmq';
 

@@ -1,4 +1,4 @@
-import { dayjs } from '@todo/lib/dayjs';
+import { dayjs } from '@todo/lib';
 import { storeToRefs } from 'pinia';
 import { defineComponent, onMounted, Suspense, Transition, type DefineComponent } from 'vue';
 import { RouterLink, RouterView, useRouter } from 'vue-router';

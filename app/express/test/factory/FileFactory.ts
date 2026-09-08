@@ -1,4 +1,4 @@
-import { z } from '@todo/lib/zod';
+import { z } from '@todo/lib';
 import { FileSchema } from '@todo/prisma/schema';
 
 import { PrismaClient } from '~/middleware/prisma';

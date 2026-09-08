@@ -1,6 +1,6 @@
 import type { Router } from 'express-serve-static-core';
 
-import { z } from '@todo/lib/zod';
+import { z } from '@todo/lib';
 import express from 'express';
 import superjson from 'superjson';
 

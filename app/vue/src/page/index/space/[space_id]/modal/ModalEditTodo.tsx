@@ -1,4 +1,4 @@
-import { R } from '@todo/lib/remeda';
+import { R } from '@todo/lib';
 import { defineComponent, ref } from 'vue';
 
 import type { DownloadFile } from '~/component/type';

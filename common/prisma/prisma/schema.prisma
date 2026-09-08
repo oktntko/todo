@@ -18,7 +18,7 @@ datasource db {
   provider = "mysql"
 }
 
-/// @zod.import(["import { ColorSchema } from '@todo/lib/zod'", "import { AichatModelSchema } from '../../../option'"]);
+/// @zod.import(["import { ColorSchema } from '@todo/lib'", "import { AichatModelSchema } from '../../../option'"]);
 model Space {
   space_id String @id @default(uuid(7)) @db.VarChar(36) /// @zod.length(36)
 
@@ -46,7 +46,7 @@ model Space {
   @@map("space")
 }
 
-/// @zod.import(["import { ColorSchema, StringRelationIdSchema } from '@todo/lib/zod'"]);
+/// @zod.import(["import { ColorSchema, StringRelationIdSchema } from '@todo/lib'"]);
 model Group {
   group_id String @id @default(uuid(7)) @db.VarChar(36) /// @zod.length(36)
 
@@ -70,7 +70,7 @@ model Group {
   @@map("group")
 }
 
-/// @zod.import(["import { DateSchema, TimeSchema, StringRelationIdSchema } from '@todo/lib/zod'"]);
+/// @zod.import(["import { DateSchema, TimeSchema, StringRelationIdSchema } from '@todo/lib'"]);
 model Todo {
   todo_id String @id @default(uuid(7)) @db.VarChar(36) /// @zod.length(36)
 
@@ -100,7 +100,7 @@ model Todo {
   @@map("todo")
 }
 
-/// @zod.import(["import { StringRelationIdSchema } from '@todo/lib/zod'"]);
+/// @zod.import(["import { StringRelationIdSchema } from '@todo/lib'"]);
 model Whiteboard {
   whiteboard_id String @id @default(uuid(7)) @db.VarChar(36) /// @zod.length(36)
 
@@ -120,7 +120,7 @@ model Whiteboard {
   @@map("whiteboard")
 }
 
-/// @zod.import(["import { StringRelationIdSchema } from '@todo/lib/zod'"]);
+/// @zod.import(["import { StringRelationIdSchema } from '@todo/lib'"]);
 model Aichat {
   aichat_id String @id @default(uuid(7)) @db.VarChar(36) /// @zod.length(36)
 
@@ -139,7 +139,7 @@ model Aichat {
   @@map("aichat")
 }
 
-/// @zod.import(["import { StringRelationIdSchema } from '@todo/lib/zod'", "import { AichatRoleSchema } from '../../../option'"]);
+/// @zod.import(["import { StringRelationIdSchema } from '@todo/lib'", "import { AichatRoleSchema } from '../../../option'"]);
 model AichatMessage {
   aichat_message_id String @id @default(uuid(7)) @db.VarChar(36) /// @zod.length(36)
 
@@ -231,7 +231,7 @@ model Session {
   @@map("session")
 }
 
-/// @zod.import(["import { StringRelationIdSchema } from '@todo/lib/zod'"]);
+/// @zod.import(["import { StringRelationIdSchema } from '@todo/lib'"]);
 model File {
   file_id String @id @default(uuid(7)) @db.VarChar(36) /// @zod.length(36) 
 
@@ -259,7 +259,7 @@ enum NotificationStatus {
   READ
 }
 
-/// @zod.import(["import { StringRelationIdSchema } from '@todo/lib/zod'"]);
+/// @zod.import(["import { StringRelationIdSchema } from '@todo/lib'"]);
 model Notification {
   notification_id String @id @default(uuid(7)) @db.VarChar(36) /// @zod.length(36)
 
@@ -278,7 +278,7 @@ model Notification {
   @@map("notification")
 }
 
-/// @zod.import(["import { StringRelationIdSchema } from '@todo/lib/zod'"]);
+/// @zod.import(["import { StringRelationIdSchema } from '@todo/lib'"]);
 model NotificationTodo {
   notification_id String @id @default(uuid(7)) @db.VarChar(36) /// @zod.length(36)
 

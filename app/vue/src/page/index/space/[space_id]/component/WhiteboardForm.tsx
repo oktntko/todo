@@ -1,4 +1,4 @@
-import type { z } from '@todo/lib/zod';
+import type { z } from '@todo/lib';
 import type { SlotsType } from 'vue';
 import type { JSX } from 'vue/jsx-runtime';
 

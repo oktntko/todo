@@ -1,4 +1,4 @@
-import { R } from '@todo/lib/remeda';
+import { R } from '@todo/lib';
 import { TRPCError } from '@trpc/server';
 
 import { message } from '~/lib/message';

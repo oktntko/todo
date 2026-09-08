@@ -1,5 +1,5 @@
 import { DayPilot } from '@daypilot/daypilot-lite-javascript';
-import { dayjs } from '@todo/lib/dayjs';
+import { dayjs } from '@todo/lib';
 import { storeToRefs } from 'pinia';
 import { computed, defineComponent, onMounted, ref, Transition, watch } from 'vue';
 import { useRoute } from 'vue-router';

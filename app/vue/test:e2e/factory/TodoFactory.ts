@@ -1,4 +1,4 @@
-import { z } from '@todo/lib/zod';
+import { z } from '@todo/lib';
 import { TodoSchema } from '@todo/prisma/schema';
 
 export const TodoFactory = {

@@ -1,7 +1,7 @@
 import type { NotificationRouterSchema } from '@todo/express/schema';
 
-import { dayjs } from '@todo/lib/dayjs';
-import { DateTimeSchema, z } from '@todo/lib/zod';
+import { dayjs } from '@todo/lib';
+import { DateTimeSchema, z } from '@todo/lib';
 import { useTimestamp } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { useVueValidateZod } from 'use-vue-validate-schema/zod';

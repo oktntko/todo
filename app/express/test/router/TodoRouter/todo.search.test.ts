@@ -1,4 +1,4 @@
-import { z } from '@todo/lib/zod';
+import { z } from '@todo/lib';
 
 import { ExtendsPrismaClient } from '~/middleware/prisma';
 import { TodoRouterSchema } from '~/schema/TodoRouterSchema';

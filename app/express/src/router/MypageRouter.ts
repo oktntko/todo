@@ -1,4 +1,4 @@
-import { z } from '@todo/lib/zod';
+import { z } from '@todo/lib';
 
 import { log } from '~/lib/logger';
 import { $transaction } from '~/middleware/prisma';

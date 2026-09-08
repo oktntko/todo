@@ -1,4 +1,4 @@
-import { R } from '@todo/lib/remeda';
+import { R } from '@todo/lib';
 import { useVModel } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import Sortable from 'sortablejs';

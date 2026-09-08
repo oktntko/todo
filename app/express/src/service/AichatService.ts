@@ -1,4 +1,4 @@
-import type { z } from '@todo/lib/zod';
+import type { z } from '@todo/lib';
 
 import { type Prisma } from '@todo/prisma/client';
 import { TRPCError } from '@trpc/server';
