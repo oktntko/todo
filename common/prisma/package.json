@@ -29,14 +29,14 @@
     "prisma:studio": "prisma studio"
   },
   "dependencies": {
-    "@prisma/adapter-mariadb": "^7.9.0",
-    "@prisma/client": "7.9.0",
+    "@prisma/adapter-mariadb": "^7.10.0",
+    "@prisma/client": "7.10.0",
     "@todo/lib": "workspace:*"
   },
   "devDependencies": {
     "dotenv": "^17.4.2",
-    "prisma": "^7.9.0",
-    "prisma-zod-generator": "^2.1.4"
+    "prisma": "^7.10.0",
+    "prisma-zod-generator": "^3.3.1"
   },
-  "packageManager": "pnpm@11.15.1"
+  "packageManager": "pnpm@12.3.4"
 }

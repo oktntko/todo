@@ -1,3 +1,5 @@
+import type { Router } from 'express-serve-static-core';
+
 import { z } from '@todo/lib/zod';
 import express from 'express';
 import superjson from 'superjson';
@@ -7,7 +9,7 @@ import { createProtectHandler } from '~/middleware/express';
 import { NotificationRouterSchema } from '~/schema/NotificationRouterSchema';
 import { ServerSentEventsManager } from '~/worker/ServerSentEvents';
 
-export const ServerSentEventsRouter = express.Router();
+export const ServerSentEventsRouter: Router = express.Router();
 
 ServerSentEventsRouter.get(
   '/api/notification/subscribe',

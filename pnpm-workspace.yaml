@@ -15,7 +15,7 @@ allowBuilds:
   prisma-zod-generator: true
 
 minimumReleaseAgeExclude:
-  - '@iconify/json@2.2.503'
+  - '@iconify/json@2.2.503 || 2.2.526'
   - tsdown@0.22.12
   - verkit@0.1.0
   - '@oxlint-tsgolint/darwin-arm64@7.0.2000 || 7.0.2001'
@@ -36,6 +36,72 @@ minimumReleaseAgeExclude:
   - oxlint-tsgolint@7.0.2000 || 7.0.2001
   - prettier@3.9.6
   - prisma@7.9.0
+  - '@cspell/cspell-bundled-dicts@10.3.0'
+  - '@cspell/cspell-json-reporter@10.3.0'
+  - '@cspell/cspell-performance-monitor@10.3.0'
+  - '@cspell/cspell-pipe@10.3.0'
+  - '@cspell/cspell-resolver@10.3.0'
+  - '@cspell/cspell-service-bus@10.3.0'
+  - '@cspell/cspell-types@10.3.0'
+  - '@cspell/cspell-worker@10.3.0'
+  - '@cspell/dynamic-import@10.3.0'
+  - '@cspell/eslint-plugin@10.3.0'
+  - '@cspell/filetypes@10.3.0'
+  - '@cspell/rpc@10.3.0'
+  - '@cspell/strong-weak-map@10.3.0'
+  - '@cspell/url@10.3.0'
+  - '@oxfmt/binding-android-arm-eabi@0.67.0'
+  - '@oxfmt/binding-android-arm64@0.67.0'
+  - '@oxfmt/binding-darwin-arm64@0.67.0'
+  - '@oxfmt/binding-darwin-x64@0.67.0'
+  - '@oxfmt/binding-freebsd-x64@0.67.0'
+  - '@oxfmt/binding-linux-arm-gnueabihf@0.67.0'
+  - '@oxfmt/binding-linux-arm-musleabihf@0.67.0'
+  - '@oxfmt/binding-linux-arm64-gnu@0.67.0'
+  - '@oxfmt/binding-linux-arm64-musl@0.67.0'
+  - '@oxfmt/binding-linux-ppc64-gnu@0.67.0'
+  - '@oxfmt/binding-linux-riscv64-gnu@0.67.0'
+  - '@oxfmt/binding-linux-riscv64-musl@0.67.0'
+  - '@oxfmt/binding-linux-s390x-gnu@0.67.0'
+  - '@oxfmt/binding-linux-x64-gnu@0.67.0'
+  - '@oxfmt/binding-linux-x64-musl@0.67.0'
+  - '@oxfmt/binding-openharmony-arm64@0.67.0'
+  - '@oxfmt/binding-win32-arm64-msvc@0.67.0'
+  - '@oxfmt/binding-win32-ia32-msvc@0.67.0'
+  - '@oxfmt/binding-win32-x64-msvc@0.67.0'
+  - '@oxlint/binding-android-arm-eabi@1.82.0'
+  - '@oxlint/binding-android-arm64@1.82.0'
+  - '@oxlint/binding-darwin-arm64@1.82.0'
+  - '@oxlint/binding-darwin-x64@1.82.0'
+  - '@oxlint/binding-freebsd-x64@1.82.0'
+  - '@oxlint/binding-linux-arm-gnueabihf@1.82.0'
+  - '@oxlint/binding-linux-arm-musleabihf@1.82.0'
+  - '@oxlint/binding-linux-arm64-gnu@1.82.0'
+  - '@oxlint/binding-linux-arm64-musl@1.82.0'
+  - '@oxlint/binding-linux-ppc64-gnu@1.82.0'
+  - '@oxlint/binding-linux-riscv64-gnu@1.82.0'
+  - '@oxlint/binding-linux-riscv64-musl@1.82.0'
+  - '@oxlint/binding-linux-s390x-gnu@1.82.0'
+  - '@oxlint/binding-linux-x64-gnu@1.82.0'
+  - '@oxlint/binding-linux-x64-musl@1.82.0'
+  - '@oxlint/binding-openharmony-arm64@1.82.0'
+  - '@oxlint/binding-win32-arm64-msvc@1.82.0'
+  - '@oxlint/binding-win32-ia32-msvc@1.82.0'
+  - '@oxlint/binding-win32-x64-msvc@1.82.0'
+  - '@types/node@26.5.0'
+  - cspell-config-lib@10.3.0
+  - cspell-dictionary@10.3.0
+  - cspell-gitignore@10.3.0
+  - cspell-glob@10.3.0
+  - cspell-grammar@10.3.0
+  - cspell-io@10.3.0
+  - cspell-lib@10.3.0
+  - cspell-trie-lib@10.3.0
+  - cspell@10.3.0
+  - oxfmt@0.67.0
+  - oxlint@1.82.0
+  - remeda@2.47.0
+  - use-vue-validate-schema@1.0.2
 
 onlyBuiltDependencies:
   - '@prisma/client'
