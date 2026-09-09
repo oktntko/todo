@@ -1,6 +1,7 @@
 packages:
   - app/vue
   - app/express
+  - app/hono-react
   - common/lib
   - common/prisma
   - docker

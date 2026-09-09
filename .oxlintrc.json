@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["eslint", "typescript", "unicorn", "oxc", "import", "vitest", "vue"],
+  "plugins": ["eslint", "typescript", "unicorn", "oxc", "react", "import", "vitest", "vue"],
   "jsPlugins": ["@cspell/eslint-plugin"],
   "categories": {},
   "rules": {
@@ -21,23 +21,11 @@
       }
     ],
     // test.for を使うと誤認識されてしまうため
-    "vitest/no-standalone-expect": "off"
+    "vitest/no-standalone-expect": "off",
+    "react/rules-of-hooks": "error",
+    "react/only-export-components": ["warn", { "allowConstantExport": true }]
   },
   "settings": {
-    "jsx-a11y": {
-      "polymorphicPropName": null,
-      "components": {},
-      "attributes": {}
-    },
-    "next": {
-      "rootDir": []
-    },
-    "react": {
-      "formComponents": [],
-      "linkComponents": [],
-      "version": null,
-      "componentWrapperFunctions": []
-    },
     "jsdoc": {
       "ignorePrivate": false,
       "ignoreInternal": false,

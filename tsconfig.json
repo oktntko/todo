@@ -8,6 +8,7 @@
   "references": [
     { "path": "app/express" },
     { "path": "app/vue" },
+    { "path": "app/hono-react" },
     { "path": "common/lib" },
     { "path": "common/prisma" }
   ]
