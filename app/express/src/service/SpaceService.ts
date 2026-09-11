@@ -179,7 +179,7 @@ async function enableAichat(
 
     throw new TRPCError({
       code: 'BAD_GATEWAY',
-      message: 'The service is temporarily unavailable. Please try again in a moment.',
+      message: message.error.BAD_GATEWAY,
     });
   }
 

@@ -5,7 +5,7 @@
   "categories": {},
   "rules": {
     "@cspell/spellchecker": ["warn", {}],
-    "eslint/no-console": ["error", { "allow": ["warn", "error"] }],
+    "eslint/no-console": ["error", { "allow": ["debug", "trace", "info", "warn", "error"] }],
     "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/switch-exhaustiveness-check": "error",
     "@typescript-eslint/no-unused-vars": [

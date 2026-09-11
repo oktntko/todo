@@ -9,7 +9,7 @@
       "path": "../../common/prisma/tsconfig.base.json"
     }
   ],
-  "include": ["src/server"],
+  "include": ["src/server", "src/@types/index.d.ts"],
   "exclude": ["node_modules"],
   "compilerOptions": {
     "target": "ESNext",
@@ -22,7 +22,7 @@
     "exactOptionalPropertyTypes": false,
     // app settings
     "paths": {
-      "~/*": ["./src/server/*"]
+      "@/*": ["./src/server/*"]
     },
     "types": ["node"],
     "jsx": "react-jsx",

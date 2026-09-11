@@ -14,4 +14,4 @@ DATABASE_NAME = "todo"
 DATABASE_URL = "mysql://{{env.DATABASE_USER}}:{{env.DATABASE_PASSWORD}}@{{env.DATABASE_HOST}}:{{env.DATABASE_PORT}}/{{env.DATABASE_NAME}}"
 CACHE_HOST = "localhost"
 CACHE_PORT = 1334
-
+AUTH_SECRET = "openssl rand -base64 32"

@@ -8,6 +8,7 @@ declare namespace NodeJS {
     readonly SESSION_DOMAIN?: string;
     readonly SESSION_PATH?: string;
     readonly SECRET_KEY?: string;
+    readonly JWT_SECRET?: string;
     readonly CACHE_HOST?: string;
     readonly CACHE_PORT?: string;
   }

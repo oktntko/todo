@@ -1,18 +1,13 @@
 import { serve } from '@hono/node-server';
 import { serveStatic } from '@hono/node-server/serve-static';
-import { Hono } from 'hono';
-import { compress } from 'hono/compress';
-import { logger } from 'hono/logger';
 
-import { api } from './api';
-import { env } from './lib/env';
+import { api } from '@/api';
+import { env } from '@/lib/env';
+import { hono } from '@/middleware/hono';
 
-const server = new Hono().use(logger()).use(compress());
-server.route('/', api);
-
-server.use('*', serveStatic({ root: './dist/client' }));
+hono.route('/', api).use('*', serveStatic({ root: './dist/client' }));
 
 serve({
-  fetch: server.fetch,
+  fetch: hono.fetch,
   port: env.EXPRESS_PORT,
 });

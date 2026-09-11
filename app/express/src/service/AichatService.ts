@@ -7,6 +7,7 @@ import { ChatCompletion } from 'openai/resources';
 import { newOpenAI } from '~/external/openai';
 import { ReqCtx } from '~/lib/context';
 import { log } from '~/lib/logger';
+import { message } from '~/lib/message';
 import { SecretPassword } from '~/lib/secret';
 import { ProtectedContext } from '~/middleware/trpc';
 import { _repository } from '~/repository/_repository';
@@ -300,8 +301,8 @@ async function postAichatMessage(
     // 空配列になるのは、 API 側の障害・内部エラー・タイムアウト後の異常レスポンス などが起きている場合。
     // 正常時は必ず 1 個以上の choice が返る。
     throw new TRPCError({
-      code: 'BAD_REQUEST',
-      message: 'The service is temporarily unavailable. Please try again in a moment.',
+      code: 'BAD_GATEWAY',
+      message: message.error.BAD_GATEWAY,
     });
   }
 

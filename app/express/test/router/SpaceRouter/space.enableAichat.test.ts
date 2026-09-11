@@ -3,6 +3,7 @@ import { TRPCError } from '@trpc/server';
 import { APIError } from 'openai';
 
 import * as externalOpenai from '~/external/openai';
+import { message } from '~/lib/message';
 import { ExtendsPrismaClient } from '~/middleware/prisma';
 import { SpaceRouterSchema } from '~/schema/SpaceRouterSchema';
 
@@ -153,7 +154,7 @@ describe(`SpaceRouter space.enableAichat`, () => {
       await expect(caller.space.enableAichat(input)).rejects.toThrow(
         new TRPCError({
           code: 'BAD_GATEWAY',
-          message: 'The service is temporarily unavailable. Please try again in a moment.',
+          message: message.error.BAD_GATEWAY,
         }),
       );
 

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "include": ["src/client"],
+  "include": ["src/client", "src/@types/index.d.ts"],
   "references": [
     {
       "path": "../../common/lib/tsconfig.base.json"

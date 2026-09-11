@@ -97,7 +97,7 @@ function App() {
         <button
           type="button"
           onClick={async () => {
-            const res = await hono.user.$get();
+            const res = await hono.auth.$get();
             const data = await res.json();
             window.alert(JSON.stringify(data, null, 2));
           }}
