@@ -14,6 +14,7 @@ allowBuilds:
   msw: true
   prisma: true
   prisma-zod-generator: true
+  '@generouted/react-router@https://codeload.github.com/oktntko/generouted/tar.gz/91ff201b8c2982feb4d8b25c60f3a54ede0a2169#path:packages/react-router': true
 
 minimumReleaseAgeExclude:
   - '@iconify/json@2.2.503 || 2.2.526'

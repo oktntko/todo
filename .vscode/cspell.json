@@ -21,6 +21,7 @@
     "dbgenerated",
     "esbuild",
     "filesize",
+    "generouted",
     "iconify",
     "initdb",
     "lightningcss",
@@ -71,6 +72,8 @@
     "vue-components.d.ts",
     "vue-auto-import.d.ts"
   ],
-  "ignoreRegExpList": ["icon-\\[[^\\]]+\\]"],
+  "ignoreRegExpList": [
+    "icon-\\[[^\\]]+\\]"
+  ],
   "import": []
 }

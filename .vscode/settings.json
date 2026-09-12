@@ -12,7 +12,6 @@
   "editor.defaultFormatter": "oxc.oxc-vscode",
   "editor.formatOnSave": true,
   "editor.rulers": [100],
-  "eslint.useFlatConfig": true,
   "files.encoding": "utf8",
   "files.eol": "\n",
   "files.insertFinalNewline": true,
