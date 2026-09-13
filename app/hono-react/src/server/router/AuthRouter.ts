@@ -1,4 +1,3 @@
-import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
 import { HTTPException } from 'hono/http-exception';
@@ -7,14 +6,14 @@ import { sign, verify } from 'hono/jwt';
 import { env } from '@/lib/env';
 import { message } from '@/lib/message';
 import { ALGORITHM_TYPE, COOKIE_AUTH_TOKEN_KEY, type AuthPayload } from '@/middleware/auth';
-import { StatusCode, type PublicEnv } from '@/middleware/hono';
+import { StatusCode, zv, type PublicEnv } from '@/middleware/hono';
 import { $transaction } from '@/middleware/prisma';
 import { UserRepository } from '@/repository/UserRepository';
 import { AuthRouterSchema } from '@/schema';
 import { AuthService } from '@/service/AuthService';
 
 export const AuthRouter = new Hono<PublicEnv>()
-  .post('/signup', zValidator('json', AuthRouterSchema.signupInput), async (c) => {
+  .post('/signup', zv(AuthRouterSchema.signupInput), async (c) => {
     return $transaction(c.var.prisma, async (prisma) => {
       const input = c.req.valid('json');
       const user = await AuthService.signup({ prisma, input });
@@ -38,7 +37,7 @@ export const AuthRouter = new Hono<PublicEnv>()
       return c.json({ auth: true });
     });
   })
-  .post('/signin', zValidator('json', AuthRouterSchema.signinInput), (c) => {
+  .post('/signin', zv(AuthRouterSchema.signinInput), (c) => {
     return $transaction(c.var.prisma, async (prisma) => {
       const input = c.req.valid('json');
       const user = await AuthService.signin({ prisma, input });
@@ -82,7 +81,7 @@ export const AuthRouter = new Hono<PublicEnv>()
       }
     });
   })
-  .post('/signinTwofa', zValidator('json', AuthRouterSchema.signinTwofaInput), async (c) => {
+  .post('/signinTwofa', zv(AuthRouterSchema.signinTwofaInput), async (c) => {
     return $transaction(c.var.prisma, async (prisma) => {
       const input = c.req.valid('json');
       const auth_twofa = getCookie(c, 'auth_twofa');

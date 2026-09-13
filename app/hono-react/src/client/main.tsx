@@ -3,9 +3,15 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import '~/main.css';
+import DialogProvider from '~/plugin/DialogPlugin';
+import ToastProvider from '~/plugin/ToastPlugin';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <Routes />
+    <ToastProvider>
+      <DialogProvider>
+        <Routes />
+      </DialogProvider>
+    </ToastProvider>
   </StrictMode>,
 );

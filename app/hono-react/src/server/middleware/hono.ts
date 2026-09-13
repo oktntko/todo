@@ -1,5 +1,7 @@
+import type { z } from '@todo/lib';
 import type { StatusCode as StatusCodeType } from 'hono/utils/http-status';
 
+import { zValidator } from '@hono/zod-validator';
 import { Context, Hono } from 'hono';
 import { compress } from 'hono/compress';
 import { cors } from 'hono/cors';
@@ -63,6 +65,16 @@ export const hono = new Hono<PublicEnv>()
     log(`[${c.req.method}]${c.req.path}(${ReqCtx.reqid}) - ${err.message}`, err.stack);
     return c.json({ message: errorMessage }, status);
   });
+
+export function zv<Schema extends z.ZodType>(schema: Schema) {
+  return zValidator('json', schema, (result) => {
+    if (!result.success) {
+      throw new HTTPException(StatusCode.BAD_REQUEST, {
+        message: message.error.BAD_REQUEST,
+      });
+    }
+  });
+}
 
 export const StatusCode = {
   CONTINUE: 100,

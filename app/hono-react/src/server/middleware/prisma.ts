@@ -15,7 +15,7 @@ export const ExtendsPrismaClient = new OriginPrismaClient({
   log: ['warn', 'error', { emit: 'event', level: 'query' }],
 })
   .$on('query', (event) => {
-    console.trace(
+    console.debug(
       { reqid: ReqCtx.reqid, query: event.query, params: JSON.parse(event.params) },
       'query',
     );
@@ -23,25 +23,20 @@ export const ExtendsPrismaClient = new OriginPrismaClient({
   .$extends({
     query: {
       async $allOperations(params) {
-        console.trace({ reqid: ReqCtx.reqid }, '%s.%s BEGIN', params.operation ?? '', params.model);
+        console.debug({ reqid: ReqCtx.reqid }, `${params.operation ?? ''}.${params.model} BEGIN`);
         const start = performance.now();
 
         const result = await params.query(params.args);
 
         const end = performance.now();
-        console.trace(
+        console.debug(
           { reqid: ReqCtx.reqid },
-          '%s.%s END took %d ms',
-          params.operation ?? '',
-          params.model,
-          end - start,
+          `${params.operation ?? ''}.${params.model} END took ${end - start} ms`,
         );
         if (!env.PROD) {
-          console.trace(
+          console.debug(
             { reqid: ReqCtx.reqid, result },
-            '%s.%s RESULT',
-            params.operation ?? '',
-            params.model,
+            `${params.operation ?? ''}.${params.model} RESULT`,
           );
         }
         return result;

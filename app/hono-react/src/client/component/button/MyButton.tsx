@@ -9,6 +9,7 @@ type MyButtonProps<T extends React.ElementType> = {
 
 export function MyButton<T extends React.ElementType>({
   tag,
+  className,
   children,
   ...props
 }: MyButtonProps<T>) {
@@ -18,7 +19,7 @@ export function MyButton<T extends React.ElementType>({
   return (
     <Tag
       {...restProps}
-      class={cn([
+      className={cn([
         'inline-flex items-center justify-center gap-0.5 transition',
         'min-w-28 rounded-md border px-4 py-2 text-sm hover:ring-2 focus:ring-2 focus:outline-none',
         'disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:text-gray-100 disabled:hover:bg-gray-400 disabled:hover:text-gray-200 disabled:hover:ring-gray-300 disabled:focus:ring-gray-300',
@@ -46,6 +47,7 @@ export function MyButton<T extends React.ElementType>({
           (variant === 'outlined'
             ? 'border-yellow-600 bg-white text-yellow-600 hover:bg-yellow-50 hover:ring-yellow-600 focus:ring-yellow-600'
             : 'border-transparent bg-yellow-600 text-white hover:bg-yellow-700 hover:ring-yellow-800 focus:ring-yellow-800'),
+        className,
       ])}
     >
       {children}
