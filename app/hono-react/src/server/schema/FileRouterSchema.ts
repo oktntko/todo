@@ -15,19 +15,20 @@ const getManyInput = z.object({
 
 const getOutput = FileSchema;
 
-const fileInput = z.any();
+const fileInput = z
+  .instanceof(File)
+  .refine((file) => file.size > 0, 'File is required')
+  .refine((file) => file.size <= 10485760, 'Max file size is 10MB.');
 
 const createInputBody = z.object({
   space_id: FileSchema.shape.space_id,
   todo_id: TodoSchema.shape.todo_id.optional(),
 });
 
-const createInput = z.object({
-  body: createInputBody,
+const createInput = createInputBody.extend({
   file: fileInput,
 });
-const createManyInput = z.object({
-  body: createInputBody,
+const createManyInput = createInputBody.extend({
   files: fileInput.array().min(1),
 });
 

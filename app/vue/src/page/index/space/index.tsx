@@ -8,6 +8,7 @@ import { useSpaceStore } from '~/store/SpaceStore';
 
 import ModalAddSpace from './[space_id]/modal/ModalAddSpace';
 
+// oxlint-disable-next-line react/only-export-components
 export default defineComponent(() => {
   const $dialog = useDialog();
 

@@ -14,12 +14,19 @@ import { StatusCode, type PublicEnv } from '@/middleware/hono';
 import { UserRepository } from '@/repository/UserRepository';
 
 // cookie
-export const COOKIE_AUTH_TOKEN_KEY = 'auth_token';
+export const COOKIE_KEY = {
+  AUTH_TOKEN: 'auth_token',
+  AUTH_TWOFA: 'auth_twofa',
+  MYPAGE_TWOFA_SECRET: 'mypage_twofa_secret',
+};
 
 // jwt
 export const ALGORITHM_TYPE = 'HS256';
 export type AuthPayload = {
   user_id: string;
+} & JWTPayload;
+export type TwofaSecretPayload = {
+  twofa_secret: string;
 } & JWTPayload;
 
 export type Operator = z.infer<typeof UserSchema>;
@@ -32,7 +39,7 @@ export type ProtectedEnv = {
 export type ProtectedContext = Context<ProtectedEnv>;
 
 export const requireAuth = createMiddleware<ProtectedEnv>(async (c, next) => {
-  const token = getCookie(c, COOKIE_AUTH_TOKEN_KEY);
+  const token = getCookie(c, COOKIE_KEY.AUTH_TOKEN);
 
   if (!token) {
     throw new HTTPException(StatusCode.UNAUTHORIZED, { message: message.error.UNAUTHORIZED });

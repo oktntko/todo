@@ -309,6 +309,9 @@ importers:
       hono:
         specifier: ^4.13.7
         version: 4.13.7
+      jotai:
+        specifier: ^3.0.0
+        version: 3.0.0(@types/react@19.2.18)(react@19.2.8)
       openai:
         specifier: ^7.10.0
         version: 7.10.0(undici@7.28.0)(zod@4.5.4)
@@ -5147,6 +5150,18 @@ packages:
   jiti@2.7.0:
     resolution: {integrity: sha512-AC/7JofJvZGrrneWNaEnJeOLUx+JlGt7tNa0wZiRPT4MY1wmfKjt2+6O2p2uz2+skll8OZZmJMNqeke7kKbNgQ==}
     hasBin: true
+
+  jotai@3.0.0:
+    resolution: {integrity: sha512-KxhbmsJUp/tmrv6aZgO+nzB3H9K8C0xmk5i3aGkwy/EANg73DVBkggv3zVHaAi5PlNlQgTgP4uiVepo+JC+wSA==}
+    engines: {node: '>=22.12.0'}
+    peerDependencies:
+      '@types/react': '>=18.0.0'
+      react: '>=18.0.0'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      react:
+        optional: true
 
   joycon@3.1.1:
     resolution: {integrity: sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==}
@@ -11258,6 +11273,11 @@ snapshots:
   isexe@4.0.0: {}
 
   jiti@2.7.0: {}
+
+  jotai@3.0.0(@types/react@19.2.18)(react@19.2.8):
+    optionalDependencies:
+      '@types/react': 19.2.18
+      react: 19.2.8
 
   joycon@3.1.1: {}
 

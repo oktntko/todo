@@ -5,15 +5,15 @@ import { sign, verify } from 'hono/jwt';
 
 import { env } from '@/lib/env';
 import { message } from '@/lib/message';
-import { ALGORITHM_TYPE, COOKIE_AUTH_TOKEN_KEY, type AuthPayload } from '@/middleware/auth';
-import { StatusCode, zv, type PublicEnv } from '@/middleware/hono';
+import { ALGORITHM_TYPE, COOKIE_KEY, type AuthPayload } from '@/middleware/auth';
+import { StatusCode, zvJson, type PublicEnv } from '@/middleware/hono';
 import { $transaction } from '@/middleware/prisma';
 import { UserRepository } from '@/repository/UserRepository';
 import { AuthRouterSchema } from '@/schema';
 import { AuthService } from '@/service/AuthService';
 
 export const AuthRouter = new Hono<PublicEnv>()
-  .post('/signup', zv(AuthRouterSchema.signupInput), async (c) => {
+  .post('/signup', zvJson(AuthRouterSchema.signupInput), async (c) => {
     return $transaction(c.var.prisma, async (prisma) => {
       const input = c.req.valid('json');
       const user = await AuthService.signup({ prisma, input });
@@ -27,7 +27,7 @@ export const AuthRouter = new Hono<PublicEnv>()
         ALGORITHM_TYPE,
       );
 
-      setCookie(c, COOKIE_AUTH_TOKEN_KEY, token, {
+      setCookie(c, COOKIE_KEY.AUTH_TOKEN, token, {
         httpOnly: true,
         secure: env.NODE_ENV === 'production',
         sameSite: 'Lax',
@@ -37,7 +37,7 @@ export const AuthRouter = new Hono<PublicEnv>()
       return c.json({ auth: true });
     });
   })
-  .post('/signin', zv(AuthRouterSchema.signinInput), (c) => {
+  .post('/signin', zvJson(AuthRouterSchema.signinInput), (c) => {
     return $transaction(c.var.prisma, async (prisma) => {
       const input = c.req.valid('json');
       const user = await AuthService.signin({ prisma, input });
@@ -52,7 +52,7 @@ export const AuthRouter = new Hono<PublicEnv>()
           ALGORITHM_TYPE,
         );
 
-        setCookie(c, 'auth_twofa', token, {
+        setCookie(c, COOKIE_KEY.AUTH_TWOFA, token, {
           httpOnly: true,
           secure: env.NODE_ENV === 'production',
           sameSite: 'Lax',
@@ -70,7 +70,7 @@ export const AuthRouter = new Hono<PublicEnv>()
           ALGORITHM_TYPE,
         );
 
-        setCookie(c, COOKIE_AUTH_TOKEN_KEY, token, {
+        setCookie(c, COOKIE_KEY.AUTH_TOKEN, token, {
           httpOnly: true,
           secure: env.NODE_ENV === 'production',
           sameSite: 'Lax',
@@ -81,10 +81,10 @@ export const AuthRouter = new Hono<PublicEnv>()
       }
     });
   })
-  .post('/signinTwofa', zv(AuthRouterSchema.signinTwofaInput), async (c) => {
+  .post('/signinTwofa', zvJson(AuthRouterSchema.signinTwofaInput), async (c) => {
     return $transaction(c.var.prisma, async (prisma) => {
       const input = c.req.valid('json');
-      const auth_twofa = getCookie(c, 'auth_twofa');
+      const auth_twofa = getCookie(c, COOKIE_KEY.AUTH_TWOFA);
 
       if (!auth_twofa) {
         throw new HTTPException(StatusCode.UNAUTHORIZED, { message: message.error.UNAUTHORIZED });
@@ -103,7 +103,7 @@ export const AuthRouter = new Hono<PublicEnv>()
         input: { ...input, exp, user_id },
       });
 
-      deleteCookie(c, 'auth_twofa', { path: '/api/auth/signinTwofa' });
+      deleteCookie(c, COOKIE_KEY.AUTH_TWOFA, { path: '/api/auth/signinTwofa' });
 
       const token = await sign(
         {
@@ -114,7 +114,7 @@ export const AuthRouter = new Hono<PublicEnv>()
         ALGORITHM_TYPE,
       );
 
-      setCookie(c, COOKIE_AUTH_TOKEN_KEY, token, {
+      setCookie(c, COOKIE_KEY.AUTH_TOKEN, token, {
         httpOnly: true,
         secure: env.NODE_ENV === 'production',
         sameSite: 'Lax',
@@ -125,7 +125,7 @@ export const AuthRouter = new Hono<PublicEnv>()
     });
   })
   .get('/', async (c) => {
-    const token = getCookie(c, COOKIE_AUTH_TOKEN_KEY);
+    const token = getCookie(c, COOKIE_KEY.AUTH_TOKEN);
 
     if (!token) {
       return c.json({ auth: false }, StatusCode.OK);
@@ -151,7 +151,7 @@ export const AuthRouter = new Hono<PublicEnv>()
     return c.json({ auth: true }, StatusCode.OK);
   })
   .delete('/', (c) => {
-    deleteCookie(c, COOKIE_AUTH_TOKEN_KEY, {
+    deleteCookie(c, COOKIE_KEY.AUTH_TOKEN, {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'Lax',
       path: '/',

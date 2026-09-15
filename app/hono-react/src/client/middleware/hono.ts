@@ -1,6 +1,6 @@
 import { hc, type ClientResponse } from 'hono/client';
 
-import type { ApiType } from '@/api';
+import type { ApiType } from '@/router/_api';
 
 type UnwrappedPromise<T> = Promise<ClientResponse<T>> & { unwrap(): Promise<T> };
 
@@ -19,7 +19,6 @@ function wrap(obj: any) {
   return new Proxy(obj, {
     get: (target, prop: string) => {
       const val = target[prop];
-      console.debug('get', typeof val, target, prop);
       if (typeof val === 'function' && prop.startsWith('$')) {
         // oxlint-disable-next-line typescript/no-explicit-any
         return (...args: any[]) => {

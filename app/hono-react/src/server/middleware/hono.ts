@@ -66,14 +66,28 @@ export const hono = new Hono<PublicEnv>()
     return c.json({ message: errorMessage }, status);
   });
 
-export function zv<Schema extends z.ZodType>(schema: Schema) {
-  return zValidator('json', schema, (result) => {
-    if (!result.success) {
-      throw new HTTPException(StatusCode.BAD_REQUEST, {
-        message: message.error.BAD_REQUEST,
-      });
-    }
-  });
+function zValidatorHook(result: { success: boolean }) {
+  if (!result.success) {
+    throw new HTTPException(StatusCode.BAD_REQUEST, {
+      message: message.error.BAD_REQUEST,
+    });
+  }
+}
+
+export function zvJson<Schema extends z.ZodType>(schema: Schema) {
+  return zValidator('json', schema, zValidatorHook);
+}
+
+export function zvForm<Schema extends z.ZodType>(schema: Schema) {
+  return zValidator('form', schema, zValidatorHook);
+}
+
+export function zvParam<Schema extends z.ZodType>(schema: Schema) {
+  return zValidator('param', schema, zValidatorHook);
+}
+
+export function zvQuery<Schema extends z.ZodType>(schema: Schema) {
+  return zValidator('query', schema, zValidatorHook);
 }
 
 export const StatusCode = {

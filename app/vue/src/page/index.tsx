@@ -13,6 +13,7 @@ import { useMypageStore } from '~/store/MypageStore';
 import { useNotificationStore } from '~/store/NotificationStore';
 import { useSpaceStore } from '~/store/SpaceStore';
 
+// oxlint-disable-next-line react/only-export-components
 export default defineComponent(() => {
   const $router = useRouter();
   const $dialog = useDialog();

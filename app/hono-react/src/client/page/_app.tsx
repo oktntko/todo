@@ -15,6 +15,7 @@ export default function Layout() {
         }
 
         if (error instanceof HonoError) {
+          console.warn('http error', error);
           const set =
             0 < error.status && error.status < 400
               ? 'info'

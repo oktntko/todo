@@ -35,7 +35,7 @@ async function searchFile({
   operator: OperatorMinimum;
   input: z.infer<typeof FileRouterSchema.searchInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid }, 'searchFile %o', input);
+  console.debug({ reqid: ReqCtx.reqid }, 'searchFile', input);
 
   const AND: Prisma.FileWhereInput[] = [];
 
@@ -57,10 +57,10 @@ async function searchFile({
     ...hasAccessAuthorityWhere,
     AND,
   };
-  console.trace({ reqid: ReqCtx.reqid, where }, 'where');
+  console.debug({ reqid: ReqCtx.reqid, where }, 'where');
 
   const orderBy: Prisma.FileOrderByWithRelationInput = { [input.sort.field]: input.sort.order };
-  console.trace({ reqid: ReqCtx.reqid, orderBy }, 'orderBy');
+  console.debug({ reqid: ReqCtx.reqid, orderBy }, 'orderBy');
 
   const total = await FileRepository.countFile(ctx.prisma, {
     where,
@@ -87,7 +87,7 @@ async function readFile({
   operator: OperatorMinimum;
   input: z.infer<typeof FileRouterSchema.getInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'readFile %o', input);
+  console.debug({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'readFile', input);
 
   // テーブルからデータを取得する
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
@@ -121,7 +121,7 @@ async function readManyFile({
   operator: OperatorMinimum;
   input: z.infer<typeof FileRouterSchema.getManyInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'readManyFile %o', input);
+  console.debug({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'readManyFile', input);
 
   const dataList = await Promise.all(
     input.file_id_list.map((file_id) => FileService.readFile({ ...ctx, input: { file_id } })),
@@ -134,7 +134,7 @@ async function readManyFile({
 
   return {
     filedata: { filename: 'download.zip', mimetype: 'application/zip' },
-    buffer: zip.toBuffer(),
+    buffer: Buffer.from(zip.toBuffer()),
   };
 }
 
@@ -147,26 +147,22 @@ async function createFile({
   operator: OperatorMinimum;
   input: z.infer<typeof FileRouterSchema.createInput>;
 }) {
-  console.trace(
-    { reqid: ReqCtx.reqid, user_id: ctx.operator.user_id },
-    'createFile %o',
-    input.body,
-  );
+  console.debug({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'createFile', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
-  const space = await SpaceService.getSpace({ ...ctx, input: input.body });
+  const space = await SpaceService.getSpace({ ...ctx, input });
 
   // 認可（変更権限）の確認
   const user_role = space.space_user_list.find((x) => x.user_id === ctx.operator.user_id)?.role;
   SpaceAuthorization.checkHasAuthority({ need_role: ['OWNER', 'ADMIN', 'EDITOR'], user_role });
 
-  if (input.body.todo_id != null) {
+  if (input.todo_id != null) {
     await _repository.checkDataExist({
       data: TodoRepository.findUniqueTodo(ctx.prisma, {
         operator_id: ctx.operator.user_id,
         where: {
-          group: { space_id: input.body.space_id }, // 入力値の space_id と一致すること
-          todo_id: input.body.todo_id, // 存在すること
+          group: { space_id: input.space_id }, // 入力値の space_id と一致すること
+          todo_id: input.todo_id, // 存在すること
         },
       }),
     });
@@ -175,17 +171,17 @@ async function createFile({
   // テーブルにデータを保存する
   const filedata = await FileRepository.createFile(ctx.prisma, ctx.operator.user_id, {
     data: {
-      space_id: input.body.space_id,
-      filename: decodeURIComponent(input.file.originalname),
-      mimetype: input.file.mimetype,
+      space_id: input.space_id,
+      filename: input.file.name,
+      mimetype: input.file.type,
       filesize: input.file.size,
 
-      todo_list: input.body.todo_id ? { connect: { todo_id: input.body.todo_id } } : undefined,
+      todo_list: input.todo_id ? { connect: { todo_id: input.todo_id } } : undefined,
     },
   });
 
   // ストレージにデータを保存する
-  await FileRepository.writeFile(filedata, input.file.buffer);
+  await FileRepository.writeFile(filedata, Buffer.from(await input.file.arrayBuffer()));
 
   return filedata;
 }
@@ -199,26 +195,22 @@ async function createManyFile({
   operator: OperatorMinimum;
   input: z.infer<typeof FileRouterSchema.createManyInput>;
 }) {
-  console.trace(
-    { reqid: ReqCtx.reqid, user_id: ctx.operator.user_id },
-    'createManyFile %o',
-    input.body,
-  );
+  console.debug({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'createManyFile', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
-  const space = await SpaceService.getSpace({ ...ctx, input: input.body });
+  const space = await SpaceService.getSpace({ ...ctx, input });
 
   // 認可（変更権限）の確認
   const user_role = space.space_user_list.find((x) => x.user_id === ctx.operator.user_id)?.role;
   SpaceAuthorization.checkHasAuthority({ need_role: ['OWNER', 'ADMIN', 'EDITOR'], user_role });
 
-  if (input.body.todo_id != null) {
+  if (input.todo_id != null) {
     await _repository.checkDataExist({
       data: TodoRepository.findUniqueTodo(ctx.prisma, {
         operator_id: ctx.operator.user_id,
         where: {
-          group: { space_id: input.body.space_id }, // 入力値の space_id と一致すること
-          todo_id: input.body.todo_id, // 存在すること
+          group: { space_id: input.space_id }, // 入力値の space_id と一致すること
+          todo_id: input.todo_id, // 存在すること
         },
       }),
     });
@@ -229,16 +221,16 @@ async function createManyFile({
     input.files.map(async (file) => {
       const filedata = await FileRepository.createFile(ctx.prisma, ctx.operator.user_id, {
         data: {
-          space_id: input.body.space_id,
-          filename: decodeURIComponent(file.originalname),
-          mimetype: file.mimetype,
+          space_id: input.space_id,
+          filename: file.name,
+          mimetype: file.type,
           filesize: file.size,
 
-          todo_list: input.body.todo_id ? { connect: { todo_id: input.body.todo_id } } : undefined,
+          todo_list: input.todo_id ? { connect: { todo_id: input.todo_id } } : undefined,
         },
       });
 
-      return { filedata, buffer: file.buffer };
+      return { filedata, buffer: Buffer.from(await file.arrayBuffer()) };
     }),
   );
 
@@ -260,7 +252,7 @@ async function deleteFile({
   operator: OperatorMinimum;
   input: z.infer<typeof FileRouterSchema.deleteInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'deleteFile %o', input);
+  console.debug({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'deleteFile', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
@@ -299,7 +291,7 @@ async function deleteManyFile({
   operator: OperatorMinimum;
   input: z.infer<typeof FileRouterSchema.deleteManyInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'deleteManyFile %o', input);
+  console.debug({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'deleteManyFile', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
   const space = await SpaceService.getSpace({ ...ctx, input });

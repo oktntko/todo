@@ -24,6 +24,7 @@
     "paths": {
       "@/*": ["./src/server/*"]
     },
+    "noUnusedLocals": false,
     "types": ["node"],
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",

@@ -1,6 +1,5 @@
 import type { z } from '@todo/lib';
 
-import { dayjs } from '@todo/lib';
 import { HTTPException } from 'hono/http-exception';
 
 import type { Operator, OperatorMinimum } from '@/middleware/auth';
@@ -92,13 +91,9 @@ async function generateSecret({ ...ctx }: { prisma: PrismaClient; operator: Oper
     name: ctx.operator.email,
   });
 
-  // セッションに生成したシークレットを保存する
-  const setting_twofa = {
-    expires: dayjs().add(12, 'hour').toDate(),
-    twofa_secret: SecretPassword.encrypt(secret.base32),
-  };
+  const twofa_secret = SecretPassword.encrypt(secret.base32);
 
-  return { dataurl, setting_twofa };
+  return { dataurl, twofa_secret };
 }
 
 // mypage.enableSecret
@@ -109,25 +104,13 @@ async function enableSecret({
   prisma: PrismaClient;
   operator: OperatorMinimum;
   input: z.infer<typeof MypageRouterSchema.enableSecretInput> & {
-    setting_twofa: {
-      expires: Date;
-      twofa_secret: string;
-    } | null;
+    twofa_secret: string;
   };
 }) {
   console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'enableSecret');
 
-  if (!input.setting_twofa || dayjs(input.setting_twofa.expires).isBefore(dayjs())) {
-    // setting_twofa がないのは generateSecret が実行されていない場合（またはセッションがリセットされた場合）。
-    // 通常の操作では起こりづらいため、有効期限がきれていることだけ伝える。
-    throw new HTTPException(StatusCode.BAD_REQUEST, {
-      message:
-        'Your two-factor authentication setup has expired. Please start the setup process again.',
-    });
-  }
-
   const verified = OnetimePassword.verifyToken({
-    secret: SecretPassword.decrypt(input.setting_twofa.twofa_secret),
+    secret: SecretPassword.decrypt(input.twofa_secret),
     token: input.token,
   });
 
@@ -138,7 +121,7 @@ async function enableSecret({
   }
 
   return UserRepository.updateUser(ctx.prisma, {
-    data: { twofa_enable: true, twofa_secret: input.setting_twofa.twofa_secret },
+    data: { twofa_enable: true, twofa_secret: input.twofa_secret },
     where: { user_id: ctx.operator.user_id },
   });
 }
