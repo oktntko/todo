@@ -8,7 +8,7 @@ import { WhiteboardService } from '@/service/WhiteboardService';
 
 export const WhiteboardRouter = new Hono<ProtectedEnv>()
   .use(requireAuth)
-  .get('/list', zvJson(WhiteboardRouterSchema.listInput), async (c) => {
+  .post('/list', zvJson(WhiteboardRouterSchema.listInput), async (c) => {
     return $transaction(c.var.prisma, async (prisma) => {
       const input = c.req.valid('json');
       return c.json(
@@ -16,7 +16,7 @@ export const WhiteboardRouter = new Hono<ProtectedEnv>()
       );
     });
   })
-  .get('/', zvJson(WhiteboardRouterSchema.getInput), async (c) => {
+  .post('/', zvJson(WhiteboardRouterSchema.getInput), async (c) => {
     return $transaction(c.var.prisma, async (prisma) => {
       const input = c.req.valid('json');
       return c.json(

@@ -1,20 +1,20 @@
 import { Hono } from 'hono';
 
 import { requireAuth, type ProtectedEnv } from '@/middleware/auth';
-import { zvJson } from '@/middleware/hono';
+import { zvJson, zvQuery } from '@/middleware/hono';
 import { $transaction } from '@/middleware/prisma';
 import { AichatRouterSchema } from '@/schema';
 import { AichatService } from '@/service/AichatService';
 
 export const AichatRouter = new Hono<ProtectedEnv>()
   .use(requireAuth)
-  .get('/list', zvJson(AichatRouterSchema.listInput), async (c) => {
+  .post('/list', zvJson(AichatRouterSchema.listInput), async (c) => {
     return $transaction(c.var.prisma, async (prisma) => {
       const input = c.req.valid('json');
       return c.json(await AichatService.listAichat({ prisma, operator: c.var.operator, input }));
     });
   })
-  .get('/', zvJson(AichatRouterSchema.getInput), async (c) => {
+  .post('/', zvJson(AichatRouterSchema.getInput), async (c) => {
     return $transaction(c.var.prisma, async (prisma) => {
       const input = c.req.valid('json');
       return c.json(await AichatService.getAichat({ prisma, operator: c.var.operator, input }));
@@ -38,9 +38,9 @@ export const AichatRouter = new Hono<ProtectedEnv>()
       return c.json(await AichatService.deleteAichat({ prisma, operator: c.var.operator, input }));
     });
   })
-  .get('/listMessage', zvJson(AichatRouterSchema.listMessageInput), async (c) => {
+  .get('/listMessage', zvQuery(AichatRouterSchema.listMessageInput), async (c) => {
     return $transaction(c.var.prisma, async (prisma) => {
-      const input = c.req.valid('json');
+      const input = c.req.valid('query');
       return c.json(
         await AichatService.listAichatMessage({ prisma, operator: c.var.operator, input }),
       );

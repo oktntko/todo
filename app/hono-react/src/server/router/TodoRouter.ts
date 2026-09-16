@@ -8,19 +8,19 @@ import { TodoService } from '@/service/TodoService';
 
 export const TodoRouter = new Hono<ProtectedEnv>()
   .use(requireAuth)
-  .get('/list', zvJson(TodoRouterSchema.listInput), async (c) => {
+  .post('/list', zvJson(TodoRouterSchema.listInput), async (c) => {
     return $transaction(c.var.prisma, async (prisma) => {
       const input = c.req.valid('json');
       return c.json(await TodoService.listTodo({ prisma, operator: c.var.operator, input }));
     });
   })
-  .get('/search', zvJson(TodoRouterSchema.searchInput), async (c) => {
+  .post('/search', zvJson(TodoRouterSchema.searchInput), async (c) => {
     return $transaction(c.var.prisma, async (prisma) => {
       const input = c.req.valid('json');
       return c.json(await TodoService.searchTodo({ prisma, operator: c.var.operator, input }));
     });
   })
-  .get('/', zvJson(TodoRouterSchema.getInput), async (c) => {
+  .post('/', zvJson(TodoRouterSchema.getInput), async (c) => {
     return $transaction(c.var.prisma, async (prisma) => {
       const input = c.req.valid('json');
       return c.json(await TodoService.getTodo({ prisma, operator: c.var.operator, input }));

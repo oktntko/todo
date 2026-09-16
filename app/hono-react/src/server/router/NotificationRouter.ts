@@ -10,7 +10,7 @@ import { ServerSentEventsManager } from '@/worker/ServerSentEvents';
 
 export const NotificationRouter = new Hono<ProtectedEnv>()
   .use(requireAuth)
-  .get('/list', async (c) => {
+  .post('/list', async (c) => {
     return $transaction(c.var.prisma, async (prisma) => {
       return c.json(
         await NotificationService.listNotification({ prisma, operator: c.var.operator }),

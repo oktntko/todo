@@ -8,13 +8,13 @@ import { GroupService } from '@/service/GroupService';
 
 export const GroupRouter = new Hono<ProtectedEnv>()
   .use(requireAuth)
-  .get('/list', zvJson(GroupRouterSchema.listInput), async (c) => {
+  .post('/list', zvJson(GroupRouterSchema.listInput), async (c) => {
     return $transaction(c.var.prisma, async (prisma) => {
       const input = c.req.valid('json');
       return c.json(await GroupService.listGroup({ prisma, operator: c.var.operator, input }));
     });
   })
-  .get('/', zvJson(GroupRouterSchema.getInput), async (c) => {
+  .post('/', zvJson(GroupRouterSchema.getInput), async (c) => {
     return $transaction(c.var.prisma, async (prisma) => {
       const input = c.req.valid('json');
       return c.json(await GroupService.getGroup({ prisma, operator: c.var.operator, input }));

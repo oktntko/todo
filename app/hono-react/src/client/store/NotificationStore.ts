@@ -6,17 +6,17 @@ import { useEffect, useRef } from 'react';
 import { hono } from '~/middleware/hono';
 import { useToast } from '~/plugin/useToast';
 
-const notificationListAtom = atom<InferResponseType<typeof hono.notification.list.$get>>([]);
+const notificationListAtom = atom<InferResponseType<typeof hono.notification.list.$post>>([]);
 
 export function useNotificationStore() {
   const [notificationList, setNotificationList] = useAtom(notificationListAtom);
 
   async function fetchNotification() {
-    setNotificationList(await hono.notification.list.$get().unwrap());
+    setNotificationList(await hono.notification.list.$post().unwrap());
   }
 
   async function readNotification(notification_id: string) {
-    const _ = await hono.notification.read.$post({ json: { notification_id } }).unwrap();
+    await hono.notification.read.$post({ json: { notification_id } });
 
     setNotificationList(notificationList.filter((x) => x.notification_id !== notification_id));
   }
@@ -29,7 +29,7 @@ export function useNotificationStore() {
     sse.current.onmessage = (event) => {
       try {
         const notification = JSON.parse(event.data) as InferResponseType<
-          typeof hono.notification.list.$get
+          typeof hono.notification.list.$post
         >[number];
 
         setNotificationList((currentList) => {

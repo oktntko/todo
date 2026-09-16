@@ -30,7 +30,7 @@ export default function Layout() {
       {/* sidebar */}
       <aside className="flex h-dvh min-h-0 w-56 shrink-0 flex-col overflow-y-auto bg-gray-900 text-gray-50">
         <Link
-          to={{ pathname: '/space' }}
+          to="/space"
           className="flex items-center gap-1 p-4 text-2xl font-semibold transition-colors hover:text-gray-200"
         >
           <span className="icon-[flat-color-icons--todo-list] h-8 w-8 p-2" />
@@ -42,9 +42,7 @@ export default function Layout() {
             <ul className="pr-1 pl-2 font-medium">
               <li key={currentSpace.space_id}>
                 <Link
-                  to={{
-                    pathname: '/space/:space_id',
-                  }}
+                  to="/space/:space_id"
                   params={{ space_id: currentSpace.space_id }}
                   className="flex items-center gap-2 rounded-lg p-2 text-sm transition hover:brightness-75"
                   style={{ color: currentSpace.space_color }}
@@ -74,11 +72,11 @@ export default function Layout() {
                         route: '/space/:space_id/list',
                         icon: 'icon-[vaadin--list-ol]',
                       },
-                      // {
-                      //   name: 'table',
-                      //   route: '//space/[space_id]/table/',
-                      //   icon: 'icon-[fontisto--table-2]',
-                      // },
+                      {
+                        name: 'table',
+                        route: '/space/:space_id/table',
+                        icon: 'icon-[fontisto--table-2]',
+                      },
                       // {
                       //   name: 'board',
                       //   route: '//space/[space_id]/board',
@@ -113,7 +111,7 @@ export default function Layout() {
                   ).map((item) => (
                     <li key={item.route}>
                       <Link
-                        to={{ pathname: item.route }}
+                        to={item.route}
                         params={{ space_id: currentSpace.space_id }}
                         className="group flex w-full items-center gap-2 rounded-e-full p-2 pl-3 text-base text-gray-200 transition hover:bg-gray-800 hover:text-white"
                         // activeClassName="bg-gray-700"
@@ -251,13 +249,13 @@ export default function Layout() {
               }
             ></MyDropdown> */}
 
-            {/* <Link
-              to={{ pathname: '/mypage' }}
+            <Link
+              to="/mypage"
               className="relative flex cursor-pointer items-center justify-center rounded-full p-1.5 transition-colors hover:bg-gray-200"
             >
               <span className="icon-[radix-icons--avatar] h-5 w-5" />
               <span className="sr-only capitalize">mypage</span>
-            </Link> */}
+            </Link>
           </nav>
         </header>
 

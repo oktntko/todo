@@ -19,7 +19,13 @@ export default function Page() {
     getValues,
     trigger,
     formState: { errors },
-  } = useForm({ resolver: zodResolver(AuthRouterSchema.signinInput) });
+  } = useForm({
+    defaultValues: {
+      email: 'example@example.com',
+      password: '',
+    },
+    resolver: zodResolver(AuthRouterSchema.signinInput),
+  });
 
   return (
     <div className="bg-gray-50">
@@ -120,10 +126,7 @@ export default function Page() {
               </Link>
             </div>
             <div className="text-sm font-light text-gray-500">
-              <Link
-                to={{ pathname: '/signup' }}
-                className="font-medium text-blue-600 hover:underline"
-              >
+              <Link to="/signup" className="font-medium text-blue-600 hover:underline">
                 Create an account
               </Link>
             </div>

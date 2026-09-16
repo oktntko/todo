@@ -15,7 +15,7 @@ export default function Page() {
         {spaceList.map((space) => (
           <Link
             key={space.space_id}
-            to={{ pathname: '/space/:space_id' }}
+            to="/space/:space_id"
             params={{ space_id: space.space_id }}
             className={cn(
               'group/item relative flex w-full cursor-pointer items-center justify-start gap-1 rounded-md border-l-[6px] bg-white px-1 py-2 shadow transition hover:bg-gray-200',

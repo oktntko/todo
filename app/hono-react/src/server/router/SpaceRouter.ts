@@ -8,12 +8,12 @@ import { SpaceService } from '@/service/SpaceService';
 
 export const SpaceRouter = new Hono<ProtectedEnv>()
   .use(requireAuth)
-  .get('/list', async (c) => {
+  .post('/list', async (c) => {
     return $transaction(c.var.prisma, async (prisma) => {
       return c.json(await SpaceService.listSpace({ prisma, operator: c.var.operator }));
     });
   })
-  .get('/', zvJson(SpaceRouterSchema.getInput), async (c) => {
+  .post('/', zvJson(SpaceRouterSchema.getInput), async (c) => {
     return $transaction(c.var.prisma, async (prisma) => {
       const input = c.req.valid('json');
       return c.json(await SpaceService.getSpace({ prisma, operator: c.var.operator, input }));

@@ -128,7 +128,7 @@ export default function Page() {
             <div className="text-sm font-light text-gray-500">
               Do you have an account?
               <Link
-                to={{ pathname: '/signin' }}
+                to="/signin"
                 className="text-primary-600 font-medium text-blue-600 hover:underline"
               >
                 Signin

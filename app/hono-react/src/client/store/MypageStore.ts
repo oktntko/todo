@@ -18,5 +18,5 @@ export function useMypageStore() {
     setMypage(await hono.mypage.$get().unwrap());
   }
 
-  return { mypage, fetchMypage };
+  return { mypage, setMypage, fetchMypage };
 }
