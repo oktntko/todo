@@ -35,7 +35,7 @@ function wrap(obj: any) {
 
                 const status = res.status;
                 const error = await res.json();
-                if ('message' in error) {
+                if (hasMessage(error)) {
                   throw new HonoError(error.message, status);
                 } else {
                   throw new HonoError('An internal server error occurred.', status);
@@ -49,6 +49,15 @@ function wrap(obj: any) {
       return typeof val === 'function' && val !== null ? wrap(val) : val;
     },
   });
+}
+
+export function hasMessage(error: unknown): error is { message: string } {
+  return (
+    typeof error === 'object' &&
+    error != null &&
+    'message' in error &&
+    typeof error.message === 'string'
+  );
 }
 
 export class HonoError extends Error {

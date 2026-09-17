@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 
 import { requireAuth, type ProtectedEnv } from '@/middleware/auth';
-import { zvJson } from '@/middleware/hono';
+import { zvJson, zvParam } from '@/middleware/hono';
 import { $transaction } from '@/middleware/prisma';
 import { TodoRouterSchema } from '@/schema';
 import { TodoService } from '@/service/TodoService';
@@ -20,9 +20,9 @@ export const TodoRouter = new Hono<ProtectedEnv>()
       return c.json(await TodoService.searchTodo({ prisma, operator: c.var.operator, input }));
     });
   })
-  .post('/', zvJson(TodoRouterSchema.getInput), async (c) => {
+  .get('/:todo_id', zvParam(TodoRouterSchema.getInput), async (c) => {
     return $transaction(c.var.prisma, async (prisma) => {
-      const input = c.req.valid('json');
+      const input = c.req.valid('param');
       return c.json(await TodoService.getTodo({ prisma, operator: c.var.operator, input }));
     });
   })

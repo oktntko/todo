@@ -7,3 +7,15 @@ export function bytesToBase64(file: File): Promise<string> {
     reader.readAsDataURL(file);
   });
 }
+
+export async function saveAsFile(blob: Blob, contentDisposition: string | null) {
+  const headerFilename = contentDisposition?.split('filename=')[1] ?? 'download';
+  const filename = decodeURIComponent(headerFilename).replace(/\+/g, ' ');
+
+  const href = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = href;
+  link.setAttribute('download', filename);
+  link.click();
+  URL.revokeObjectURL(href);
+}

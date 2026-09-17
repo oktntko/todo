@@ -1,5 +1,4 @@
-import type { z } from '@todo/lib';
-import type { UserSchema } from '@todo/prisma/schema';
+import type { User } from '@todo/prisma/client';
 import type { Context } from 'hono';
 import type { JWTPayload } from 'hono/utils/jwt/types';
 
@@ -29,7 +28,7 @@ export type TwofaSecretPayload = {
   twofa_secret: string;
 } & JWTPayload;
 
-export type Operator = z.infer<typeof UserSchema>;
+export type Operator = User;
 export type OperatorMinimum = Pick<Operator, 'user_id'>;
 
 // ctx
@@ -45,7 +44,10 @@ export const requireAuth = createMiddleware<ProtectedEnv>(async (c, next) => {
     throw new HTTPException(StatusCode.UNAUTHORIZED, { message: message.error.UNAUTHORIZED });
   }
 
-  const payload = await verify(token, env.secret.JWT_SECRET, ALGORITHM_TYPE);
+  const payload = await verify(token, env.secret.JWT_SECRET, ALGORITHM_TYPE).catch((e) => {
+    console.error(e);
+    throw new HTTPException(StatusCode.UNAUTHORIZED, { message: message.error.UNAUTHORIZED });
+  });
   const user_id = payload['user_id'];
 
   if (typeof user_id !== 'string') {
