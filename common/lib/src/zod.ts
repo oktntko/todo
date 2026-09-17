@@ -26,6 +26,11 @@ export const DateTimeSchema = z
   .refine((arg) => dayjs(arg, 'YYYY-MM-DD HH:mm', true).isValid(), 'Invalid datetime format.')
   .pipe(z.custom<`${number}-${number}-${number} ${number}:${number}`>());
 
+export const ISODateSchema = z
+  .union([z.date(), z.string().trim()])
+  .refine((val) => dayjs(val).isValid(), { message: 'Invalid datetime format.' })
+  .transform((val) => dayjs(val).toISOString());
+
 export const ColorSchema = z
   .string()
   .trim()

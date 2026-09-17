@@ -27,7 +27,7 @@ axios.interceptors.response.use(
 
 export async function saveAsFile(response: AxiosResponse) {
   const headerFilename = response.headers['content-disposition'].split('filename=')[1];
-  const filename = decodeURI(headerFilename).replace(/\+/g, ' ');
+  const filename = decodeURIComponent(headerFilename).replace(/\+/g, ' ');
 
   const href = window.URL.createObjectURL(response.data);
   const link = document.createElement('a');
