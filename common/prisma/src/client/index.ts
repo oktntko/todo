@@ -14,9 +14,38 @@ const adapter = new PrismaMariaDb({
   allowPublicKeyRetrieval: true,
 });
 
+const prisma = new PrismaClient({
+  adapter,
+  log: ['warn', 'error', { emit: 'event', level: 'query' }],
+}).$extends({
+  query: {
+    $allModels: {
+      async create({ args, query }) {
+        args.data.created_at = new Date().toISOString();
+        args.data.updated_at = new Date().toISOString();
+        return query(args);
+      },
+      async update({ args, query }) {
+        args.data.updated_at = new Date().toISOString();
+        return query(args);
+      },
+      async updateMany({ args, query }) {
+        args.data.updated_at = new Date().toISOString();
+        return query(args);
+      },
+      async upsert({ args, query }) {
+        args.create.created_at = new Date().toISOString();
+        args.create.updated_at = new Date().toISOString();
+        args.update.updated_at = new Date().toISOString();
+        return query(args);
+      },
+    },
+  },
+});
+
 type TransactionOriginPrismaClient = Omit<PrismaClient, ITXClientDenyList>;
 
 export type OriginPrismaClient = PrismaClient | TransactionOriginPrismaClient;
 
 export * from './generated/client';
-export { adapter, PrismaMariaDb, type ITXClientDenyList };
+export { adapter, prisma, PrismaMariaDb, type ITXClientDenyList };

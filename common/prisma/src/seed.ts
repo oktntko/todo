@@ -1,9 +1,4 @@
-import { adapter, PrismaClient, SpaceUserRole } from './client';
-
-const prisma = new PrismaClient({
-  adapter,
-  log: ['warn', 'error', { emit: 'event', level: 'query' }],
-});
+import { prisma, SpaceUserRole } from './client';
 
 async function main() {
   await prisma.user.deleteMany();
