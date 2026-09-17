@@ -349,7 +349,7 @@ async function updateManyTodo({
       });
     }
 
-    if (current.updated_at.getDate() !== target.updated_at.getDate()) {
+    if (current.updated_at !== target.updated_at) {
       throw new HTTPException(StatusCode.CONFLICT, {
         message: message.error.CONFLICT_CURRENT_UPDATED,
       });
@@ -443,7 +443,7 @@ async function deleteManyTodo({
       });
     }
 
-    if (current.updated_at.getDate() !== target.updated_at.getDate()) {
+    if (current.updated_at !== target.updated_at) {
       throw new HTTPException(StatusCode.CONFLICT, {
         message: message.error.CONFLICT_CURRENT_UPDATED,
       });

@@ -319,7 +319,7 @@ async function deleteManyFile({
       });
     }
 
-    if (current.updated_at.getTime() !== target.updated_at.getTime()) {
+    if (current.updated_at !== target.updated_at) {
       throw new HTTPException(StatusCode.CONFLICT, {
         message: message.error.CONFLICT_CURRENT_UPDATED,
       });

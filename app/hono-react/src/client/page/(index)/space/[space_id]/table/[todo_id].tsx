@@ -1,4 +1,4 @@
-import type { z } from '@todo/lib';
+import type { InferResponseType } from 'hono';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
@@ -15,46 +15,41 @@ import { Link, useNavigate, useParams } from '~/router';
 import { TodoForm } from '../_component/TodoForm';
 import { type TodoFormValue } from '../_component/useTodoForm';
 
+type Todo = InferResponseType<(typeof hono.todo)[':todo_id']['$get']>;
+
 export default function Page() {
+  const $params = useParams('/space/:space_id/table/:todo_id');
+
+  const [todo, setTodo] = useState<Todo>();
+
+  useEffect(() => {
+    async function getTodo() {
+      setTodo(await hono.todo[':todo_id'].$get({ param: { todo_id: $params.todo_id } }).unwrap());
+    }
+
+    void getTodo();
+  }, [$params.todo_id]);
+
+  return todo ? <TodoEditor todo={todo} /> : <MyLoading />;
+}
+
+function TodoEditor({ todo }: { todo: Todo }) {
   const $params = useParams('/space/:space_id/table/:todo_id');
   const $navigate = useNavigate();
   const $toast = useToast();
   const $dialog = useDialog();
 
   const methods = useForm<TodoFormValue>({
-    defaultValues: async () => {
-      const todo = await hono.todo[':todo_id']
-        .$get({ param: { todo_id: $params.todo_id } })
-        .unwrap();
-
-      return todo satisfies z.infer<typeof TodoRouterSchema.createInput>;
-    },
+    defaultValues: todo,
     resolver: zodResolver(TodoRouterSchema.createInput),
   });
-
-  const [updated_at, setUpdatedAt] = useState('');
-
-  useEffect(() => {
-    console.log('effect');
-    async function getTodo() {
-      const todo = await hono.todo[':todo_id']
-        .$get({ param: { todo_id: $params.todo_id } })
-        .unwrap();
-
-      setUpdatedAt(todo.updated_at);
-
-      // methods.reset({ ...todo });
-    }
-
-    void getTodo();
-  }, [$params.todo_id]);
 
   const handleSubmit = methods.handleSubmit(async function (value) {
     const loading = $dialog.loading();
     try {
       await hono.todo.update
         .$post({
-          json: { ...value, todo_id: $params.todo_id, updated_at },
+          json: { ...value, todo_id: $params.todo_id, updated_at: todo.updated_at },
         })
         .unwrap();
 
@@ -87,7 +82,7 @@ export default function Page() {
               params={{ space_id: $params.space_id }}
               className="inline-flex items-center gap-0.5 text-sm font-medium text-gray-900"
             >
-              <span className="capitalize">add todo</span>
+              <span className="capitalize">edit todo</span>
             </Link>
           </MyBreadcrumb>
         </nav>
@@ -95,7 +90,7 @@ export default function Page() {
 
       <div className="h-full">
         <FormProvider {...methods}>
-          {updated_at ? <TodoForm onSubmit={handleSubmit} /> : <MyLoading />}
+          <TodoForm onSubmit={handleSubmit} />
         </FormProvider>
       </div>
     </div>

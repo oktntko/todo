@@ -46,9 +46,9 @@ async function checkDuplicate<T>(params: {
   return data;
 }
 
-async function checkVersion<T extends { updated_at: Date }>(params: {
+async function checkVersion<T extends { updated_at: string }>(params: {
   current: T | null | Promise<T | null>;
-  updated_at: string | Date;
+  updated_at: string;
   dataIsNotExistMessage?: string;
   currentIsUpdatedMessage?: string;
 }) {
@@ -57,10 +57,7 @@ async function checkVersion<T extends { updated_at: Date }>(params: {
     dataIsNotExistMessage: params.dataIsNotExistMessage,
   });
 
-  const date =
-    typeof params.updated_at === 'string' ? new Date(params.updated_at) : params.updated_at;
-
-  if (current.updated_at.getTime() !== date.getTime()) {
+  if (params.updated_at !== current.updated_at) {
     throw new HTTPException(409, {
       message: params.currentIsUpdatedMessage || message.error.CONFLICT_CURRENT_UPDATED,
     });

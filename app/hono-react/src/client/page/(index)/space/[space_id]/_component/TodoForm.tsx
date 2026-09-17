@@ -22,15 +22,10 @@ export function TodoForm({ onSubmit, buttons }: Props) {
   const {
     register,
     formState: { errors, isDirty },
-    watch,
   } = useFormContext<TodoFormValue>();
-
-  const title = watch('title');
-  console.log('todo form', title);
 
   return (
     <form className="flex flex-col gap-6" autoComplete="off" onSubmit={onSubmit}>
-      {String(isDirty)}
       <section className="flex flex-col gap-3">
         <div className="focus-container flex flex-col gap-0.5">
           <div>

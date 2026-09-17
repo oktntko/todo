@@ -62,7 +62,7 @@ async function listNotification({
       ...general.map((x) => ({ type: 'general' as const, ...x })),
       ...todo.map((x) => ({ type: 'todo' as const, ...x })),
     ],
-    [(x) => x.notification_at.getTime(), 'desc'],
+    [(x) => x.notification_at, 'desc'],
   );
 
   return notification_list satisfies z.infer<typeof NotificationRouterSchema.listOutput>;
@@ -142,7 +142,7 @@ async function addNotificationTodo({
         .filter((x) => x)
         .join('\n'),
       notification_status: NotificationStatus.QUEUING,
-      notification_at: new Date(Date.now() + input.delay),
+      notification_at: new Date(Date.now() + input.delay).toISOString(),
       user_id: ctx.operator.user_id,
       todo_id: input.todo_id,
     },
