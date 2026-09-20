@@ -1,13 +1,19 @@
+import React from 'react';
+
 import { cn } from '~/lib/cn';
 
-type MyButtonProps<T extends React.ElementType> = {
+export type WrapperMyButtonProps<T extends React.ElementType> = {
   tag?: T;
   children?: React.ReactNode;
   color?: 'white' | 'gray' | 'green' | 'red' | 'blue' | 'yellow';
   variant?: 'outlined' | 'contained';
-} & Omit<React.ComponentPropsWithoutRef<T>, 'tag' | 'children'>;
+};
+
+type MyButtonProps<T extends React.ElementType> = WrapperMyButtonProps<T> &
+  Omit<React.ComponentProps<T>, keyof WrapperMyButtonProps<T>>;
 
 export function MyButton<T extends React.ElementType>({
+  ref,
   tag,
   className,
   children,
@@ -18,7 +24,7 @@ export function MyButton<T extends React.ElementType>({
 
   return (
     <Tag
-      {...restProps}
+      ref={ref}
       className={cn([
         'inline-flex items-center justify-center gap-0.5 transition',
         'min-w-28 rounded-md border px-4 py-2 text-sm hover:ring-2 focus:ring-2 focus:outline-none',
@@ -49,6 +55,7 @@ export function MyButton<T extends React.ElementType>({
             : 'border-transparent bg-yellow-600 text-white hover:bg-yellow-700 hover:ring-yellow-800 focus:ring-yellow-800'),
         className,
       ])}
+      {...restProps}
     >
       {children}
     </Tag>

@@ -6,7 +6,9 @@ import { useEffect, useRef } from 'react';
 import { hono } from '~/middleware/hono';
 import { useToast } from '~/plugin/useToast';
 
-const notificationListAtom = atom<InferResponseType<typeof hono.notification.list.$post>>([]);
+export const notificationListAtom = atom<InferResponseType<typeof hono.notification.list.$post>>(
+  [],
+);
 
 export function useNotificationStore() {
   const [notificationList, setNotificationList] = useAtom(notificationListAtom);
