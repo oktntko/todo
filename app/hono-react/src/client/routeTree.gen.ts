@@ -24,7 +24,10 @@ import { Route as MainSpaceIndexRouteImport } from './page/_main/space/index'
 import { Route as MainSpaceSpace_idRouteRouteImport } from './page/_main/space/$space_id/route'
 import { Route as MainSpaceSpace_idIndexRouteImport } from './page/_main/space/$space_id/index'
 import { Route as MainSpaceSpace_idListRouteImport } from './page/_main/space/$space_id/list'
+import { Route as MainSpaceSpace_idSettingRouteRouteImport } from './page/_main/space/$space_id/setting/route'
 import { Route as MainSpaceSpace_idTableRouteRouteImport } from './page/_main/space/$space_id/table/route'
+import { Route as MainSpaceSpace_idSettingIndexRouteImport } from './page/_main/space/$space_id/setting/index'
+import { Route as MainSpaceSpace_idSettingChatRouteImport } from './page/_main/space/$space_id/setting/chat'
 import { Route as MainSpaceSpace_idTableIndexRouteImport } from './page/_main/space/$space_id/table/index'
 import { Route as MainSpaceSpace_idTableTodo_idRouteImport } from './page/_main/space/$space_id/table/$todo_id'
 import { Route as MainSpaceSpace_idTableAddRouteImport } from './page/_main/space/$space_id/table/add'
@@ -104,11 +107,29 @@ const MainSpaceSpace_idListRoute = MainSpaceSpace_idListRouteImport.update({
   path: '/list',
   getParentRoute: () => MainSpaceSpace_idRouteRoute,
 } as any)
+const MainSpaceSpace_idSettingRouteRoute =
+  MainSpaceSpace_idSettingRouteRouteImport.update({
+    id: '/setting',
+    path: '/setting',
+    getParentRoute: () => MainSpaceSpace_idRouteRoute,
+  } as any)
 const MainSpaceSpace_idTableRouteRoute =
   MainSpaceSpace_idTableRouteRouteImport.update({
     id: '/table',
     path: '/table',
     getParentRoute: () => MainSpaceSpace_idRouteRoute,
+  } as any)
+const MainSpaceSpace_idSettingIndexRoute =
+  MainSpaceSpace_idSettingIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => MainSpaceSpace_idSettingRouteRoute,
+  } as any)
+const MainSpaceSpace_idSettingChatRoute =
+  MainSpaceSpace_idSettingChatRouteImport.update({
+    id: '/chat',
+    path: '/chat',
+    getParentRoute: () => MainSpaceSpace_idSettingRouteRoute,
   } as any)
 const MainSpaceSpace_idTableIndexRoute =
   MainSpaceSpace_idTableIndexRouteImport.update({
@@ -142,11 +163,14 @@ export interface FileRoutesByFullPath {
   '/mypage/security': typeof MainMypageSecurityRoute
   '/mypage/': typeof MainMypageIndexRoute
   '/space/': typeof MainSpaceIndexRoute
+  '/space/$space_id/setting': typeof MainSpaceSpace_idSettingRouteRouteWithChildren
   '/space/$space_id/table': typeof MainSpaceSpace_idTableRouteRouteWithChildren
   '/space/$space_id/list': typeof MainSpaceSpace_idListRoute
   '/space/$space_id/': typeof MainSpaceSpace_idIndexRoute
+  '/space/$space_id/setting/chat': typeof MainSpaceSpace_idSettingChatRoute
   '/space/$space_id/table/$todo_id': typeof MainSpaceSpace_idTableTodo_idRoute
   '/space/$space_id/table/add': typeof MainSpaceSpace_idTableAddRoute
+  '/space/$space_id/setting/': typeof MainSpaceSpace_idSettingIndexRoute
   '/space/$space_id/table/': typeof MainSpaceSpace_idTableIndexRoute
 }
 export interface FileRoutesByTo {
@@ -161,8 +185,10 @@ export interface FileRoutesByTo {
   '/space': typeof MainSpaceIndexRoute
   '/space/$space_id/list': typeof MainSpaceSpace_idListRoute
   '/space/$space_id': typeof MainSpaceSpace_idIndexRoute
+  '/space/$space_id/setting/chat': typeof MainSpaceSpace_idSettingChatRoute
   '/space/$space_id/table/$todo_id': typeof MainSpaceSpace_idTableTodo_idRoute
   '/space/$space_id/table/add': typeof MainSpaceSpace_idTableAddRoute
+  '/space/$space_id/setting': typeof MainSpaceSpace_idSettingIndexRoute
   '/space/$space_id/table': typeof MainSpaceSpace_idTableIndexRoute
 }
 export interface FileRoutesById {
@@ -180,11 +206,14 @@ export interface FileRoutesById {
   '/_main/mypage/security': typeof MainMypageSecurityRoute
   '/_main/mypage/': typeof MainMypageIndexRoute
   '/_main/space/': typeof MainSpaceIndexRoute
+  '/_main/space/$space_id/setting': typeof MainSpaceSpace_idSettingRouteRouteWithChildren
   '/_main/space/$space_id/table': typeof MainSpaceSpace_idTableRouteRouteWithChildren
   '/_main/space/$space_id/list': typeof MainSpaceSpace_idListRoute
   '/_main/space/$space_id/': typeof MainSpaceSpace_idIndexRoute
+  '/_main/space/$space_id/setting/chat': typeof MainSpaceSpace_idSettingChatRoute
   '/_main/space/$space_id/table/$todo_id': typeof MainSpaceSpace_idTableTodo_idRoute
   '/_main/space/$space_id/table/add': typeof MainSpaceSpace_idTableAddRoute
+  '/_main/space/$space_id/setting/': typeof MainSpaceSpace_idSettingIndexRoute
   '/_main/space/$space_id/table/': typeof MainSpaceSpace_idTableIndexRoute
 }
 export interface FileRouteTypes {
@@ -202,11 +231,14 @@ export interface FileRouteTypes {
     | '/mypage/security'
     | '/mypage/'
     | '/space/'
+    | '/space/$space_id/setting'
     | '/space/$space_id/table'
     | '/space/$space_id/list'
     | '/space/$space_id/'
+    | '/space/$space_id/setting/chat'
     | '/space/$space_id/table/$todo_id'
     | '/space/$space_id/table/add'
+    | '/space/$space_id/setting/'
     | '/space/$space_id/table/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -221,8 +253,10 @@ export interface FileRouteTypes {
     | '/space'
     | '/space/$space_id/list'
     | '/space/$space_id'
+    | '/space/$space_id/setting/chat'
     | '/space/$space_id/table/$todo_id'
     | '/space/$space_id/table/add'
+    | '/space/$space_id/setting'
     | '/space/$space_id/table'
   id:
     | '__root__'
@@ -239,11 +273,14 @@ export interface FileRouteTypes {
     | '/_main/mypage/security'
     | '/_main/mypage/'
     | '/_main/space/'
+    | '/_main/space/$space_id/setting'
     | '/_main/space/$space_id/table'
     | '/_main/space/$space_id/list'
     | '/_main/space/$space_id/'
+    | '/_main/space/$space_id/setting/chat'
     | '/_main/space/$space_id/table/$todo_id'
     | '/_main/space/$space_id/table/add'
+    | '/_main/space/$space_id/setting/'
     | '/_main/space/$space_id/table/'
   fileRoutesById: FileRoutesById
 }
@@ -361,12 +398,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainSpaceSpace_idListRouteImport
       parentRoute: typeof MainSpaceSpace_idRouteRoute
     }
+    '/_main/space/$space_id/setting': {
+      id: '/_main/space/$space_id/setting'
+      path: '/setting'
+      fullPath: '/space/$space_id/setting'
+      preLoaderRoute: typeof MainSpaceSpace_idSettingRouteRouteImport
+      parentRoute: typeof MainSpaceSpace_idRouteRoute
+    }
     '/_main/space/$space_id/table': {
       id: '/_main/space/$space_id/table'
       path: '/table'
       fullPath: '/space/$space_id/table'
       preLoaderRoute: typeof MainSpaceSpace_idTableRouteRouteImport
       parentRoute: typeof MainSpaceSpace_idRouteRoute
+    }
+    '/_main/space/$space_id/setting/': {
+      id: '/_main/space/$space_id/setting/'
+      path: '/'
+      fullPath: '/space/$space_id/setting/'
+      preLoaderRoute: typeof MainSpaceSpace_idSettingIndexRouteImport
+      parentRoute: typeof MainSpaceSpace_idSettingRouteRoute
+    }
+    '/_main/space/$space_id/setting/chat': {
+      id: '/_main/space/$space_id/setting/chat'
+      path: '/chat'
+      fullPath: '/space/$space_id/setting/chat'
+      preLoaderRoute: typeof MainSpaceSpace_idSettingChatRouteImport
+      parentRoute: typeof MainSpaceSpace_idSettingRouteRoute
     }
     '/_main/space/$space_id/table/': {
       id: '/_main/space/$space_id/table/'
@@ -412,6 +470,22 @@ const MainMypageRouteRouteWithChildren = MainMypageRouteRoute._addFileChildren(
   MainMypageRouteRouteChildren,
 )
 
+interface MainSpaceSpace_idSettingRouteRouteChildren {
+  MainSpaceSpace_idSettingChatRoute: typeof MainSpaceSpace_idSettingChatRoute
+  MainSpaceSpace_idSettingIndexRoute: typeof MainSpaceSpace_idSettingIndexRoute
+}
+
+const MainSpaceSpace_idSettingRouteRouteChildren: MainSpaceSpace_idSettingRouteRouteChildren =
+  {
+    MainSpaceSpace_idSettingChatRoute: MainSpaceSpace_idSettingChatRoute,
+    MainSpaceSpace_idSettingIndexRoute: MainSpaceSpace_idSettingIndexRoute,
+  }
+
+const MainSpaceSpace_idSettingRouteRouteWithChildren =
+  MainSpaceSpace_idSettingRouteRoute._addFileChildren(
+    MainSpaceSpace_idSettingRouteRouteChildren,
+  )
+
 interface MainSpaceSpace_idTableRouteRouteChildren {
   MainSpaceSpace_idTableTodo_idRoute: typeof MainSpaceSpace_idTableTodo_idRoute
   MainSpaceSpace_idTableAddRoute: typeof MainSpaceSpace_idTableAddRoute
@@ -431,6 +505,7 @@ const MainSpaceSpace_idTableRouteRouteWithChildren =
   )
 
 interface MainSpaceSpace_idRouteRouteChildren {
+  MainSpaceSpace_idSettingRouteRoute: typeof MainSpaceSpace_idSettingRouteRouteWithChildren
   MainSpaceSpace_idTableRouteRoute: typeof MainSpaceSpace_idTableRouteRouteWithChildren
   MainSpaceSpace_idListRoute: typeof MainSpaceSpace_idListRoute
   MainSpaceSpace_idIndexRoute: typeof MainSpaceSpace_idIndexRoute
@@ -438,6 +513,8 @@ interface MainSpaceSpace_idRouteRouteChildren {
 
 const MainSpaceSpace_idRouteRouteChildren: MainSpaceSpace_idRouteRouteChildren =
   {
+    MainSpaceSpace_idSettingRouteRoute:
+      MainSpaceSpace_idSettingRouteRouteWithChildren,
     MainSpaceSpace_idTableRouteRoute:
       MainSpaceSpace_idTableRouteRouteWithChildren,
     MainSpaceSpace_idListRoute: MainSpaceSpace_idListRoute,

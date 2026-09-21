@@ -41,7 +41,8 @@ export const Route = createFileRoute('/_main/mypage')({
                     <Link
                       to={item.route}
                       className="group flex items-center gap-2 rounded-lg rounded-l-none border-l-4 border-l-transparent p-2 transition-colors hover:bg-gray-100"
-                      // exact-active-className="text-blue-600 border-l-blue-400!"
+                      activeProps={{ className: 'text-blue-600 border-l-blue-400!' }}
+                      activeOptions={{ exact: true }}
                     >
                       <span
                         className={`${item.icon} h-5 w-5 text-gray-500 group-hover:text-gray-900`}

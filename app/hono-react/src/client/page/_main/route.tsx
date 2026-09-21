@@ -105,11 +105,11 @@ export const Route = createFileRoute('/_main')({
                         //   route: '//space/[space_id]/chat',
                         //   icon: 'icon-[vaadin--chat]',
                         // },
-                        // {
-                        //   name: 'setting',
-                        //   route: '//space/[space_id]/setting/',
-                        //   icon: 'icon-[uil--setting]',
-                        // },
+                        {
+                          name: 'setting',
+                          route: '/space/$space_id/setting',
+                          icon: 'icon-[uil--setting]',
+                        },
                       ] as const
                     ).map((item) => (
                       <li key={item.route}>
@@ -117,7 +117,7 @@ export const Route = createFileRoute('/_main')({
                           to={item.route}
                           params={{ space_id: currentSpace.space_id }}
                           className="group flex w-full items-center gap-2 rounded-e-full p-2 pl-3 text-base text-gray-200 transition hover:bg-gray-800 hover:text-white"
-                          // activeClassName="bg-gray-700"
+                          activeProps={{ className: 'bg-gray-700' }}
                         >
                           <span
                             className={`${item.icon} h-5 w-5 text-gray-200 transition group-hover:text-white`}
