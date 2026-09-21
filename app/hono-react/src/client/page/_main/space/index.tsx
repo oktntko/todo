@@ -3,11 +3,14 @@ import { R } from '@todo/lib';
 import { useAtomValue } from 'jotai';
 
 import { cn } from '~/lib/cn';
+import { useDialog } from '~/plugin/useDialog';
 import { spaceListAtom } from '~/store/SpaceStore';
+
+import { ModalAddSpace } from './$space_id/-modal/ModalAddSpace';
 
 export const Route = createFileRoute('/_main/space/')({
   component: function Page() {
-    // const $dialog = useDialog();
+    const $dialog = useDialog();
 
     const spaceList = useAtomValue(spaceListAtom);
 
@@ -82,9 +85,12 @@ export const Route = createFileRoute('/_main/space/')({
             type="button"
             className="group inline-flex items-center gap-1 rounded bg-gray-200/10 p-2 text-blue-600 backdrop-blur transition-[color,text-shadow] hover:text-blue-800 hover:text-shadow-sm"
             onClick={async () => {
-              // await $dialog.showModal(ModalAddSpace, (resolve) => ({
-              //   onDone: resolve,
-              // }));
+              await $dialog.showModal({
+                Component: ModalAddSpace,
+                $props: (resolve) => ({
+                  onDone: resolve,
+                }),
+              });
             }}
           >
             <span className="icon-[icon-park-solid--add-one] h-4 w-4" />

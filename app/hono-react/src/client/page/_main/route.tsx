@@ -20,8 +20,6 @@ export const Route = createFileRoute('/_main')({
 
     const spaceList = await hono.space.list.$post().unwrap();
     Store.set(spaceListAtom, spaceList);
-
-    Store.set(currentSpaceAtom, spaceList[0]);
   },
 
   component: function Layout() {

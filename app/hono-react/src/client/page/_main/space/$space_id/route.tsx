@@ -1,6 +1,5 @@
-import { createFileRoute, Outlet, useParams } from '@tanstack/react-router';
-import { getDefaultStore, useAtomValue, useSetAtom } from 'jotai';
-import { useEffect } from 'react';
+import { createFileRoute, Outlet } from '@tanstack/react-router';
+import { getDefaultStore } from 'jotai';
 
 import { hono } from '~/middleware/hono';
 import { aichatListAtom } from '~/store/AichatStore';
@@ -22,15 +21,19 @@ export const Route = createFileRoute('/_main/space/$space_id')({
     Store.set(aichatListAtom, aichatList);
   },
 
+  onEnter: function ({ params: $params }) {
+    // loader は親コンポーネントの loader の完了を待たずに実行するため、データが取れていないケースがあり空振りする。
+    // component の useEffect 内で値をセットすると、親コンポーネントで変更が検出されず、レンダリングされない。
+    // （原因不明。 Transition が複雑でレンダリングがスキップされた？ useEffect 内で setTimeout するとレンダリングされる）
+    // loader 完了後、レンダリング開始前の onEnter で値をセットしておく。
+    const spaceList = Store.get(spaceListAtom);
+    Store.set(
+      currentSpaceAtom,
+      spaceList.find((x) => x.space_id === $params.space_id),
+    );
+  },
+
   component: function Layout() {
-    const $params = useParams({ from: '/_main/space/$space_id' });
-
-    const spaceList = useAtomValue(spaceListAtom);
-    const setCurrentSpace = useSetAtom(currentSpaceAtom);
-    useEffect(() => {
-      setCurrentSpace(spaceList.find((x) => x.space_id === $params.space_id));
-    }, [$params.space_id, spaceList, setCurrentSpace]);
-
     return (
       <div className="h-full">
         <Outlet />
