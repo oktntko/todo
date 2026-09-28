@@ -2,7 +2,7 @@ import { Link } from '@tanstack/react-router';
 
 import { MyButton } from './button/MyButton';
 
-export function NotFound() {
+export function MyNotFound() {
   return (
     <section className="bg-gray-50">
       <div className="container mx-auto flex min-h-screen items-center px-6 py-12">

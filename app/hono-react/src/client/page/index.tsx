@@ -1,11 +1,9 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/')({
-  component: function Page() {
-    return (
-      <div>
-        <div>index</div>
-      </div>
-    );
+  beforeLoad: function () {
+    throw redirect({
+      to: '/space',
+    });
   },
 });

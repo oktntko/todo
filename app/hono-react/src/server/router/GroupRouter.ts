@@ -38,7 +38,7 @@ export const GroupRouter = new Hono<ProtectedEnv>()
       return c.json(await GroupService.deleteGroup({ prisma, operator: c.var.operator, input }));
     });
   })
-  .get('/reorder', zvJson(GroupRouterSchema.reorderInput), async (c) => {
+  .post('/reorder', zvJson(GroupRouterSchema.reorderInput), async (c) => {
     return $transaction(c.var.prisma, async (prisma) => {
       const input = c.req.valid('json');
       return c.json(await GroupService.reorderGroup({ prisma, operator: c.var.operator, input }));

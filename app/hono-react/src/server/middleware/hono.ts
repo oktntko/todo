@@ -1,7 +1,7 @@
-import type { z } from '@todo/lib';
 import type { StatusCode as StatusCodeType } from 'hono/utils/http-status';
 
 import { zValidator } from '@hono/zod-validator';
+import { z } from '@todo/lib';
 import { Context, Hono } from 'hono';
 import { compress } from 'hono/compress';
 import { cors } from 'hono/cors';
@@ -66,8 +66,10 @@ export const hono = new Hono<PublicEnv>()
     return c.json({ message: errorMessage }, status);
   });
 
-function zValidatorHook(result: { success: boolean }) {
+function zValidatorHook(result: { success: boolean; error?: unknown }) {
   if (!result.success) {
+    console.info(z.prettifyError(result.error as z.ZodError));
+
     throw new HTTPException(StatusCode.BAD_REQUEST, {
       message: message.error.BAD_REQUEST,
     });

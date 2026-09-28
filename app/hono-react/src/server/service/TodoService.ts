@@ -58,7 +58,7 @@ async function listTodo({
       ...hasAccessAuthorityWhere,
       AND,
     },
-    orderBy: { order: 'asc' },
+    orderBy: [{ order: 'asc' }, { updated_at: 'desc' }],
   });
 }
 

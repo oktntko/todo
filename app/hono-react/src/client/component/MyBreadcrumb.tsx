@@ -1,8 +1,8 @@
-import { Children, Fragment, type ReactNode } from 'react';
+import { Children, Fragment } from 'react';
 
 type MyBreadcrumbProps = React.HTMLAttributes<HTMLUListElement> & {
-  children?: ReactNode;
-  separator?: ReactNode;
+  children?: React.ReactNode;
+  separator?: React.ReactNode;
 };
 
 export function MyBreadcrumb({ children, separator, ...props }: MyBreadcrumbProps) {

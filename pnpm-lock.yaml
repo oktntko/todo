@@ -330,6 +330,9 @@ importers:
       react-hook-form:
         specifier: ^7.87.0
         version: 7.87.0(react@19.2.8)
+      sortablejs:
+        specifier: ^1.15.7
+        version: 1.15.7
       speakeasy:
         specifier: ^2.0.0
         version: 2.0.0
@@ -370,6 +373,9 @@ importers:
       '@types/react-dom':
         specifier: ^19.2.4
         version: 19.2.7(@types/react@19.2.18)
+      '@types/sortablejs':
+        specifier: ^1.15.9
+        version: 1.15.9
       '@types/speakeasy':
         specifier: ^2.0.10
         version: 2.0.10

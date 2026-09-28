@@ -22,6 +22,7 @@ const emits = {
   remove: (_: DynamicTodoModel) => true,
 } satisfies EmitsType;
 
+// oxlint-disable-next-line react/only-export-components
 export default defineComponent(
   ($props: Props, { emit: $emit }) => {
     const listInput = ref<z.infer<typeof TodoRouterSchema.listInput>>({
