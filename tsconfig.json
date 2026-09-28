@@ -9,6 +9,7 @@
     { "path": "app/express" },
     { "path": "app/vue" },
     { "path": "app/hono-react" },
+    { "path": "app/hono-next" },
     { "path": "common/lib" },
     { "path": "common/prisma" }
   ]

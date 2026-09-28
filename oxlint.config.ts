@@ -1,7 +1,7 @@
 import { defineConfig } from 'oxlint';
 
 export default defineConfig({
-  plugins: ['eslint', 'typescript', 'unicorn', 'oxc', 'react', 'import', 'vitest', 'vue'],
+  plugins: ['eslint', 'typescript', 'unicorn', 'oxc', 'react', 'import', 'vitest', 'vue', 'nextjs'],
   jsPlugins: ['@cspell/eslint-plugin'],
   categories: {},
   rules: {
