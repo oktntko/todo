@@ -3,8 +3,8 @@ import { Hono } from 'hono';
 import { type ProtectedEnv, requireAuth } from '@/app/api/middleware/auth';
 import { zvForm, zvJson, zvParam, zvQuery } from '@/app/api/middleware/hono';
 import { $transaction } from '@/app/api/middleware/prisma';
-import { FileRouterSchema } from '@/app/api/schema';
 import { FileService } from '@/app/api/service/FileService';
+import { FileRouterSchema } from '@/schema';
 
 export const FileRouter = new Hono<ProtectedEnv>()
   .use(requireAuth)

@@ -3,8 +3,8 @@ import { Hono } from 'hono';
 import { requireAuth, type ProtectedEnv } from '@/app/api/middleware/auth';
 import { zvJson } from '@/app/api/middleware/hono';
 import { $transaction } from '@/app/api/middleware/prisma';
-import { GroupRouterSchema } from '@/app/api/schema';
 import { GroupService } from '@/app/api/service/GroupService';
+import { GroupRouterSchema } from '@/schema';
 
 export const GroupRouter = new Hono<ProtectedEnv>()
   .use(requireAuth)

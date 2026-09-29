@@ -11,7 +11,7 @@ import type { PrismaClient } from '@/app/api/middleware/prisma';
 import { _repository } from '@/app/api/repository/_repository';
 import { FileRepository } from '@/app/api/repository/FileRepository';
 import { TodoRepository } from '@/app/api/repository/TodoRepository';
-import { FileRouterSchema } from '@/app/api/schema/FileRouterSchema';
+import { FileRouterSchema } from '@/schema/FileRouterSchema';
 import { SpaceAuthorization, SpaceService } from '@/app/api/service/SpaceService';
 
 export const FileService = {

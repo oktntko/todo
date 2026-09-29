@@ -11,7 +11,7 @@ import type { PrismaClient } from '@/app/api/middleware/prisma';
 import { _repository } from '@/app/api/repository/_repository';
 import { GroupRepository } from '@/app/api/repository/GroupRepository';
 import { TodoRepository } from '@/app/api/repository/TodoRepository';
-import { TodoRouterSchema } from '@/app/api/schema/TodoRouterSchema';
+import { TodoRouterSchema } from '@/schema/TodoRouterSchema';
 import { GroupService } from '@/app/api/service/GroupService';
 import { SpaceAuthorization, SpaceService } from '@/app/api/service/SpaceService';
 

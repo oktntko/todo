@@ -4,9 +4,9 @@ import { streamSSE } from 'hono/streaming';
 import { requireAuth, type ProtectedEnv } from '@/app/api/middleware/auth';
 import { zvJson } from '@/app/api/middleware/hono';
 import { $transaction } from '@/app/api/middleware/prisma';
-import { NotificationRouterSchema } from '@/app/api/schema';
 import { NotificationService } from '@/app/api/service/NotificationService';
 import { ServerSentEventsManager } from '@/app/api/worker/ServerSentEvents';
+import { NotificationRouterSchema } from '@/schema';
 
 export const NotificationRouter = new Hono<ProtectedEnv>()
   .use(requireAuth)

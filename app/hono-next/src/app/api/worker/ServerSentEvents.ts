@@ -1,6 +1,6 @@
 import { z } from '@todo/lib';
 
-import { NotificationRouterSchema } from '@/app/api/schema/NotificationRouterSchema';
+import { NotificationRouterSchema } from '@/schema/NotificationRouterSchema';
 
 type SSESubscriber = (notification: z.infer<typeof NotificationRouterSchema.getOutput>) => void;
 const subscribers = new Map<string, SSESubscriber>();

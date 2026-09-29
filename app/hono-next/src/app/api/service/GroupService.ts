@@ -10,7 +10,7 @@ import type { PrismaClient } from '@/app/api/middleware/prisma';
 import { _repository } from '@/app/api/repository/_repository';
 import { GroupRepository } from '@/app/api/repository/GroupRepository';
 import { SpaceRepository } from '@/app/api/repository/SpaceRepository';
-import { GroupRouterSchema } from '@/app/api/schema/GroupRouterSchema';
+import { GroupRouterSchema } from '@/schema/GroupRouterSchema';
 import { SpaceAuthorization, SpaceService } from '@/app/api/service/SpaceService';
 
 export const GroupService = {

@@ -3,8 +3,8 @@ import { Hono } from 'hono';
 import { requireAuth, type ProtectedEnv } from '@/app/api/middleware/auth';
 import { zvJson, zvQuery } from '@/app/api/middleware/hono';
 import { $transaction } from '@/app/api/middleware/prisma';
-import { AichatRouterSchema } from '@/app/api/schema';
 import { AichatService } from '@/app/api/service/AichatService';
+import { AichatRouterSchema } from '@/schema';
 
 export const AichatRouter = new Hono<ProtectedEnv>()
   .use(requireAuth)

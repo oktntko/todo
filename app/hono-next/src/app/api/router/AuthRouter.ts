@@ -9,8 +9,8 @@ import { ALGORITHM_TYPE, COOKIE_KEY, type AuthPayload } from '@/app/api/middlewa
 import { StatusCode, zvJson, type PublicEnv } from '@/app/api/middleware/hono';
 import { $transaction } from '@/app/api/middleware/prisma';
 import { UserRepository } from '@/app/api/repository/UserRepository';
-import { AuthRouterSchema } from '@/app/api/schema';
 import { AuthService } from '@/app/api/service/AuthService';
+import { AuthRouterSchema } from '@/schema';
 
 export const AuthRouter = new Hono<PublicEnv>()
   .post('/signup', zvJson(AuthRouterSchema.signupInput), async (c) => {

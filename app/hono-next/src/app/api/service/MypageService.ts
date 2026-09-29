@@ -8,7 +8,7 @@ import { StatusCode } from '@/app/api/middleware/hono';
 import type { PrismaClient } from '@/app/api/middleware/prisma';
 import { _repository } from '@/app/api/repository/_repository';
 import { UserRepository } from '@/app/api/repository/UserRepository';
-import { MypageRouterSchema } from '@/app/api/schema/MypageRouterSchema';
+import { MypageRouterSchema } from '@/schema/MypageRouterSchema';
 
 export const MypageService = {
   deleteMypage,

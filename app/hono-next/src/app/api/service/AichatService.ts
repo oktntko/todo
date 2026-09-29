@@ -12,7 +12,7 @@ import { StatusCode } from '@/app/api/middleware/hono';
 import type { PrismaClient } from '@/app/api/middleware/prisma';
 import { _repository } from '@/app/api/repository/_repository';
 import { AichatRepository } from '@/app/api/repository/AichatRepository';
-import { AichatRouterSchema } from '@/app/api/schema';
+import { AichatRouterSchema } from '@/schema';
 import { SpaceAuthorization, SpaceService } from '@/app/api/service/SpaceService';
 
 export const AichatService = {

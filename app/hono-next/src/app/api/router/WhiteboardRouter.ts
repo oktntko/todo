@@ -3,8 +3,8 @@ import { Hono } from 'hono';
 import { requireAuth, type ProtectedEnv } from '@/app/api/middleware/auth';
 import { zvJson } from '@/app/api/middleware/hono';
 import { $transaction } from '@/app/api/middleware/prisma';
-import { WhiteboardRouterSchema } from '@/app/api/schema';
 import { WhiteboardService } from '@/app/api/service/WhiteboardService';
+import { WhiteboardRouterSchema } from '@/schema';
 
 export const WhiteboardRouter = new Hono<ProtectedEnv>()
   .use(requireAuth)

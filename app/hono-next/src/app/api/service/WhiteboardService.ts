@@ -10,7 +10,7 @@ import type { PrismaClient } from '@/app/api/middleware/prisma';
 import { _repository } from '@/app/api/repository/_repository';
 import { SpaceRepository } from '@/app/api/repository/SpaceRepository';
 import { WhiteboardRepository } from '@/app/api/repository/WhiteboardRepository';
-import { WhiteboardRouterSchema } from '@/app/api/schema/WhiteboardRouterSchema';
+import { WhiteboardRouterSchema } from '@/schema/WhiteboardRouterSchema';
 import { SpaceAuthorization, SpaceService } from '@/app/api/service/SpaceService';
 
 export const WhiteboardService = {

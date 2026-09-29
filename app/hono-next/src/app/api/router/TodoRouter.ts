@@ -3,8 +3,8 @@ import { Hono } from 'hono';
 import { requireAuth, type ProtectedEnv } from '@/app/api/middleware/auth';
 import { zvJson, zvParam } from '@/app/api/middleware/hono';
 import { $transaction } from '@/app/api/middleware/prisma';
-import { TodoRouterSchema } from '@/app/api/schema';
 import { TodoService } from '@/app/api/service/TodoService';
+import { TodoRouterSchema } from '@/schema';
 
 export const TodoRouter = new Hono<ProtectedEnv>()
   .use(requireAuth)

@@ -10,7 +10,7 @@ import type { PrismaClient } from '@/app/api/middleware/prisma';
 import { _repository } from '@/app/api/repository/_repository';
 import { SpaceRepository } from '@/app/api/repository/SpaceRepository';
 import { UserRepository } from '@/app/api/repository/UserRepository';
-import { AuthRouterSchema } from '@/app/api/schema/AuthRouterSchema';
+import { AuthRouterSchema } from '@/schema/AuthRouterSchema';
 
 export const AuthService = {
   signup,

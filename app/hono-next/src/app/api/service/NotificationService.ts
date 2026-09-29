@@ -9,7 +9,7 @@ import type { OperatorMinimum } from '@/app/api/middleware/auth';
 import { ExtendsPrismaClient, type PrismaClient } from '@/app/api/middleware/prisma';
 import { NotificationRepository } from '@/app/api/repository/NotificationRepository';
 import { NotificationTodoRepository } from '@/app/api/repository/NotificationTodoRepository';
-import { NotificationRouterSchema } from '@/app/api/schema/NotificationRouterSchema';
+import { NotificationRouterSchema } from '@/schema/NotificationRouterSchema';
 import { TodoService } from '@/app/api/service/TodoService';
 import { REDIS_CONNECTION, WORKER_CONCURRENCY } from '@/app/api/worker/_worker';
 import { ServerSentEventsManager } from '@/app/api/worker/ServerSentEvents';
