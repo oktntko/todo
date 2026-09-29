@@ -9,18 +9,30 @@
     "format": "oxfmt"
   },
   "dependencies": {
+    "@hono/vercel": "^1.0.0",
+    "@hono/zod-validator": "^0.9.1",
+    "@todo/lib": "workspace:*",
+    "@todo/prisma": "workspace:*",
+    "adm-zip": "^0.6.1",
+    "bcryptjs": "^3.0.3",
+    "bullmq": "^6.3.9",
     "clsx": "^2.1.1",
     "hono": "^4.13.10",
     "next": "^16.3.6",
+    "openai": "^7.23.0",
+    "qrcode": "^1.5.4",
     "react": "19.3.0",
     "react-dom": "19.3.0",
+    "speakeasy": "^2.0.0",
     "tailwind-merge": "^3.7.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^26",
+    "@types/qrcode": "^1.5.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/speakeasy": "^2.0.10",
     "postcss": "^8.5.28",
     "tailwindcss": "^4.3.3"
   }

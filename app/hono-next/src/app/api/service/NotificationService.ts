@@ -1,0 +1,275 @@
+import type { z } from '@todo/lib';
+import { R } from '@todo/lib';
+import { NotificationStatus } from '@todo/prisma/client';
+import type { JobsOptions } from 'bullmq';
+import { Queue, Worker } from 'bullmq';
+
+import { ReqCtx } from '@/app/api/lib/context';
+import type { OperatorMinimum } from '@/app/api/middleware/auth';
+import { ExtendsPrismaClient, type PrismaClient } from '@/app/api/middleware/prisma';
+import { NotificationRepository } from '@/app/api/repository/NotificationRepository';
+import { NotificationTodoRepository } from '@/app/api/repository/NotificationTodoRepository';
+import { NotificationRouterSchema } from '@/app/api/schema/NotificationRouterSchema';
+import { TodoService } from '@/app/api/service/TodoService';
+import { REDIS_CONNECTION, WORKER_CONCURRENCY } from '@/app/api/worker/_worker';
+import { ServerSentEventsManager } from '@/app/api/worker/ServerSentEvents';
+
+export const NotificationService = {
+  listNotification,
+  readNotification,
+  addNotificationTodo,
+  removeNotificationTodo,
+};
+
+async function listNotification({
+  ...ctx
+}: {
+  prisma: PrismaClient;
+  operator: OperatorMinimum;
+  // input: z.infer<typeof GroupRouterSchema.listInput>,
+}) {
+  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'listNotification');
+
+  const [general, todo] = await Promise.all([
+    NotificationRepository.findManyNotification(ctx.prisma, {
+      where: {
+        user_id: ctx.operator.user_id,
+        notification_status: {
+          in: [NotificationStatus.PLANNING, NotificationStatus.QUEUING, NotificationStatus.UNREAD],
+        },
+      },
+      orderBy: {
+        notification_at: 'desc',
+      },
+    }),
+    NotificationTodoRepository.findManyNotificationTodo(ctx.prisma, {
+      where: {
+        user_id: ctx.operator.user_id,
+        notification_status: {
+          in: [NotificationStatus.PLANNING, NotificationStatus.QUEUING, NotificationStatus.UNREAD],
+        },
+      },
+      orderBy: {
+        notification_at: 'desc',
+      },
+    }),
+  ]);
+
+  const notification_list = R.sortBy(
+    [
+      ...general.map((x) => ({ type: 'general' as const, ...x })),
+      ...todo.map((x) => ({ type: 'todo' as const, ...x })),
+    ],
+    [(x) => x.notification_at, 'desc'],
+  );
+
+  return notification_list satisfies z.infer<typeof NotificationRouterSchema.listOutput>;
+}
+
+// notification.read
+async function readNotification({
+  input,
+  ...ctx
+}: {
+  prisma: PrismaClient;
+  operator: OperatorMinimum;
+  input: z.infer<typeof NotificationRouterSchema.getInput>;
+}) {
+  console.trace(
+    { reqid: ReqCtx.reqid, user_id: ctx.operator.user_id },
+    'readNotification %o',
+    input,
+  );
+
+  await Promise.all([
+    NotificationRepository.updateManyNotification(ctx.prisma, {
+      data: {
+        notification_status: NotificationStatus.READ,
+      },
+      where: {
+        notification_id: input.notification_id,
+        user_id: ctx.operator.user_id,
+      },
+    }),
+    NotificationTodoRepository.updateManyNotificationTodo(ctx.prisma, {
+      data: {
+        notification_status: NotificationStatus.READ,
+      },
+      where: {
+        notification_id: input.notification_id,
+        user_id: ctx.operator.user_id,
+      },
+    }),
+  ]);
+
+  return { ok: true } as const;
+}
+
+// notification.addTodo
+async function addNotificationTodo({
+  input,
+  ...ctx
+}: {
+  prisma: PrismaClient;
+  operator: OperatorMinimum;
+  input: z.infer<typeof NotificationRouterSchema.addNotificationTodoInput>;
+}) {
+  console.trace(
+    { reqid: ReqCtx.reqid, user_id: ctx.operator.user_id },
+    'addNotificationTodo %o',
+    input,
+  );
+
+  // 権限チェック
+  const todo = await TodoService.getTodo({ ...ctx, input });
+
+  // ジョブID取得のため、通知を登録する
+  const notification = await NotificationTodoRepository.createNotificationTodo(ctx.prisma, {
+    data: {
+      notification_link: `/space/${todo.group.space_id}/todo/table/${todo.todo_id}`,
+      notification_title: `It's time for "${todo.title}"`,
+      notification_body: [
+        todo.begin_date || todo.begin_time
+          ? 'BEGIN: ' + [todo.begin_date, todo.begin_time].filter((x) => x).join(' ')
+          : '',
+        todo.limit_date || todo.limit_time
+          ? 'LIMIT: ' + [todo.limit_date, todo.limit_time].filter((x) => x).join(' ')
+          : '',
+        todo.description,
+      ]
+        .filter((x) => x)
+        .join('\n'),
+      notification_status: NotificationStatus.QUEUING,
+      notification_at: new Date(Date.now() + input.delay).toISOString(),
+      user_id: ctx.operator.user_id,
+      todo_id: input.todo_id,
+    },
+  });
+
+  // queueにジョブを追加する
+  await NotificationTodoQueue.add({
+    data: {
+      notification_id: notification.notification_id,
+    },
+    opts: {
+      delay: input.delay,
+    },
+  });
+
+  return {
+    type: 'todo' as const,
+    ...notification,
+  } satisfies z.infer<typeof NotificationRouterSchema.getOutput>;
+}
+
+// notification.removeTodo
+async function removeNotificationTodo({
+  input,
+  ...ctx
+}: {
+  prisma: PrismaClient;
+  operator: OperatorMinimum;
+  input: z.infer<typeof NotificationRouterSchema.removeInput>;
+}) {
+  console.trace(
+    { reqid: ReqCtx.reqid, user_id: ctx.operator.user_id },
+    'removeNotificationTodo %o',
+    input,
+  );
+
+  // 権限違いでもエラーにしないがデータは消さないため、 user_id を条件に入れる
+  // 通知がすでに削除されている場合でもエラーにしないため、 deleteMany を使う
+  await NotificationTodoRepository.deleteManyNotificationTodo(ctx.prisma, {
+    where: {
+      user_id: ctx.operator.user_id,
+      notification_id: input.notification_id,
+    },
+  });
+
+  void NotificationTodoQueue.remove(input);
+
+  return { notification_id: input.notification_id };
+}
+
+const NotificationTodoQueue = {
+  async add(params: { data: NotificationTodoData; opts?: JobsOptions }) {
+    return queue.add(WORKER_NAME, params.data, params.opts); // return job
+  },
+  async remove(input: { notification_id: string }) {
+    const job = await queue.getJob(input.notification_id);
+    if (job != null) {
+      await job.remove();
+    }
+  },
+};
+
+export type NotificationTodoData = {
+  notification_id: string;
+};
+
+const WORKER_NAME = 'NotificationTodo';
+
+const queue = new Queue<NotificationTodoData>(WORKER_NAME, { connection: REDIS_CONNECTION });
+
+// ジョブからユーザIDとTODO IDを取得して、SSEで通知する
+const worker = new Worker<NotificationTodoData>(
+  WORKER_NAME,
+  async function (job) {
+    const data = job.data;
+    console.trace(`Processing job ${WORKER_NAME} %o`, data);
+    const prisma = ExtendsPrismaClient;
+
+    const notification = await NotificationTodoRepository.findUniqueNotificationTodo(prisma, {
+      where: { notification_id: data.notification_id },
+    });
+
+    if (notification == null) {
+      return;
+    }
+
+    // 権限チェック
+    const todo = await TodoService.getTodo({
+      prisma,
+      operator: {
+        user_id: notification.user_id,
+      },
+      input: { todo_id: notification.todo_id },
+    }).catch(() => null);
+
+    if (todo == null) {
+      return; // 権限がない、またはTODOが存在しない場合は何もしないで終了
+    }
+
+    // 通知テーブルに書き込み
+    const unreadNotification = await NotificationTodoRepository.updateNotificationTodo(prisma, {
+      data: {
+        notification_status: NotificationStatus.UNREAD,
+      },
+      where: {
+        notification_id: notification.notification_id,
+      },
+    });
+
+    // 即時通知されるように、Server-Sent Eventsでイベントを送る
+    ServerSentEventsManager.send(notification.user_id, {
+      type: 'todo',
+      ...unreadNotification,
+    });
+  },
+  { connection: REDIS_CONNECTION, concurrency: WORKER_CONCURRENCY },
+);
+
+worker.on('completed', (job) => {
+  console.trace(`${WORKER_NAME} %s has completed.`, job.id);
+});
+
+worker.on('failed', (job, err) => {
+  console.error({ err }, `${WORKER_NAME} %s has failed.`, job?.id);
+});
+
+// サーバー終了時の処理
+process.on('SIGTERM', async () => {
+  console.error(`${WORKER_NAME} Closing worker...`);
+  await worker.close(); // 現在実行中のジョブが完了するのを待って安全に停止
+  console.error(`${WORKER_NAME} Worker closed.`);
+});
