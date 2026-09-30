@@ -1,4 +1,13 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "references": [
+    {
+      "path": "../../common/lib/tsconfig.base.json"
+    },
+    {
+      "path": "../../common/prisma/tsconfig.base.json"
+    }
+  ],
   "compilerOptions": {
     "target": "es2022",
     "lib": ["dom", "dom.iterable", "esnext"],

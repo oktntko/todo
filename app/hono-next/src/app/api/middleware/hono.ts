@@ -22,7 +22,7 @@ export type PublicEnv = {
 export type PublicContext = Context<PublicEnv>;
 
 const ALLOWED_ORIGIN =
-  env.NODE_ENV === 'production' ? 'https://oktntko.com' : 'http://localhost:5173';
+  env.NODE_ENV === 'production' ? 'https://oktntko.com' : 'http://localhost:3000';
 
 export const hono = new Hono<PublicEnv>()
   .use('*', logger())

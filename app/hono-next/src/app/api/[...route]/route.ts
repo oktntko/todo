@@ -1,6 +1,6 @@
 import { handle } from '@hono/vercel';
-import { Hono } from 'hono';
 
+import { hono } from '../middleware/hono';
 import { AichatRouter } from '../router/AichatRouter';
 import { AuthRouter } from '../router/AuthRouter';
 import { FileRouter } from '../router/FileRouter';
@@ -11,7 +11,7 @@ import { SpaceRouter } from '../router/SpaceRouter';
 import { TodoRouter } from '../router/TodoRouter';
 import { WhiteboardRouter } from '../router/WhiteboardRouter';
 
-const api = new Hono()
+const api = hono
   .basePath('/api')
   .route('/aichat', AichatRouter)
   .route('/auth', AuthRouter)
