@@ -14,6 +14,8 @@ import { CsrProvider } from '@/plugin/CsrProvider';
 import { useDialog } from '@/plugin/useDialog';
 import { AuthRouterSchema } from '~/schema';
 
+import { ModalSigninTwofa } from './ModalSigninTwofa';
+
 function Contents() {
   const $router = useRouter();
   const $dialog = useDialog();
@@ -62,10 +64,12 @@ function Contents() {
               }
 
               // 二要素認証
-              // TODO
-              // await $dialog.showModal(ModalSigninTwofa, (resolve) => ({
-              //   onSuccess: resolve,
-              // }));
+              await $dialog.showModal({
+                Component: ModalSigninTwofa,
+                $props: (resolve) => ({
+                  onSuccess: resolve,
+                }),
+              });
 
               return $router.push('/' /* /space */);
             }}
