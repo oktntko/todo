@@ -1,0 +1,157 @@
+import fs from 'fs';
+import fsPromises from 'fs/promises';
+import path from 'path';
+import { cwd } from 'process';
+
+import { type Prisma } from '@todo/prisma/client';
+
+import { type PrismaClient } from '~/middleware/prisma';
+
+export const FileRepository = {
+  // database
+  countFile,
+  findManyFile,
+  findUniqueFile,
+  createFile,
+  deleteFile,
+  deleteManyFile,
+  // file system
+  readFile,
+  writeFile,
+  removeFile,
+};
+
+////////////////////////////////////////////////
+// database
+////////////////////////////////////////////////
+async function countFile(
+  prisma: PrismaClient,
+  params: {
+    where: Prisma.FileWhereInput;
+  },
+) {
+  return prisma.file.count({
+    where: params.where,
+  });
+}
+
+async function findManyFile(
+  prisma: PrismaClient,
+  params: {
+    where: Prisma.FileWhereInput;
+    orderBy: Prisma.FileOrderByWithRelationInput | Prisma.FileOrderByWithRelationInput[];
+    take?: number;
+    skip?: number;
+  },
+) {
+  return prisma.file.findMany({
+    include: {
+      todo_list: { orderBy: { created_at: 'asc' } },
+    },
+    where: params.where,
+    orderBy: params.orderBy,
+    take: params.take,
+    skip: params.skip,
+  });
+}
+
+async function findUniqueFile(
+  prisma: PrismaClient,
+  params: {
+    where: Prisma.FileWhereUniqueInput;
+    operator_id: string;
+  },
+) {
+  return prisma.file.findUnique({
+    include: {
+      space: {
+        include: {
+          space_user_list: {
+            where: {
+              user_id: params.operator_id,
+            },
+          },
+        },
+      },
+    },
+    where: params.where,
+  });
+}
+
+async function createFile(
+  prisma: PrismaClient,
+  operator_id: string,
+  params: { data: Omit<Prisma.FileUncheckedCreateInput, CommonColumn> },
+) {
+  return prisma.file.create({
+    data: {
+      space_id: params.data.space_id,
+      filename: params.data.filename,
+      mimetype: params.data.mimetype,
+      filesize: params.data.filesize,
+
+      todo_list: params.data.todo_list,
+
+      created_by: operator_id,
+      updated_by: operator_id,
+    },
+  });
+}
+
+async function deleteFile(
+  prisma: PrismaClient,
+  params: {
+    where: Prisma.FileWhereUniqueInput;
+  },
+) {
+  return prisma.file.delete({
+    where: params.where,
+  });
+}
+
+async function deleteManyFile(
+  prisma: PrismaClient,
+  params: {
+    where: Prisma.FileWhereInput;
+    limit?: number;
+  },
+) {
+  return prisma.file.deleteMany({
+    where: params.where,
+    limit: params.limit,
+  });
+}
+
+////////////////////////////////////////////////
+// file system
+////////////////////////////////////////////////
+const STORAGE = `${cwd()}/.userstorage`;
+
+async function readFile(params: { file_id: string; filename: string }) {
+  console.debug({ params }, 'readFile');
+
+  const filepath = path.resolve(STORAGE, params.file_id, params.filename);
+
+  return fs.existsSync(filepath) ? fsPromises.readFile(filepath) : null;
+}
+
+async function writeFile(params: { file_id: string; filename: string }, buffer: Buffer) {
+  console.debug({ params }, 'writeFile');
+
+  const dirpath = path.resolve(STORAGE, params.file_id);
+  fs.rmSync(dirpath, { recursive: true, force: true });
+  fs.mkdirSync(dirpath, { recursive: true });
+
+  const filepath = path.join(dirpath, params.filename);
+  return fsPromises.writeFile(filepath, buffer);
+}
+
+function removeFile(params: { file_id: string }) {
+  console.debug({ params }, 'removeFile');
+
+  const dirpath = path.resolve(STORAGE, params.file_id);
+
+  if (fs.existsSync(dirpath)) {
+    fs.rmSync(dirpath, { recursive: true, force: true });
+  }
+}

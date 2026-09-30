@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 
-import { cn } from '@/lib/cn';
+import { cn } from '~/lib/cn';
 
 import { colorClass, iconClass, type ColorSet } from './_plugin';
 import { ToastContext, type ToastOptions, type ToastPlugin } from './toastContext';

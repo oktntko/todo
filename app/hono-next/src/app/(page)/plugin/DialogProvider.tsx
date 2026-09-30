@@ -9,8 +9,8 @@ import {
   type ReactNode,
 } from 'react';
 
-import { MyButton } from '@/app/(page)/component/button/MyButton';
-import { cn } from '@/lib/cn';
+import { MyButton } from '@/component/button/MyButton';
+import { cn } from '~/lib/cn';
 
 import { borderColor, iconClass, iconColorClass, type ReactComponent } from './_plugin';
 import {

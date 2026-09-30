@@ -24,7 +24,8 @@
     "jsx": "react-jsx",
     "incremental": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "~/*": ["./src/*"],
+      "@/*": ["./src/app/(page)/*"]
     },
     "plugins": [
       {

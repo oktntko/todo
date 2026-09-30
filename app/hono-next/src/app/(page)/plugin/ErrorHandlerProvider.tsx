@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 
-import { HonoError } from '../middleware/hono';
+import { HonoError } from '@/middleware/hono';
+
 import { useDialog } from './useDialog';
 
 type Props = {

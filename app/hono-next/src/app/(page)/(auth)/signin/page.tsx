@@ -5,14 +5,14 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
-import { MyButton } from '@/app/(page)/component/button/MyButton';
-import { ErrorMessage } from '@/app/(page)/component/ErrorMessage';
-import { MyInput } from '@/app/(page)/component/input/MyInput';
-import { MyInputPassword } from '@/app/(page)/component/input/MyInputPassword';
-import { hono } from '@/app/(page)/middleware/hono';
-import { CsrProvider } from '@/app/(page)/plugin/CsrProvider';
-import { useDialog } from '@/app/(page)/plugin/useDialog';
-import { AuthRouterSchema } from '@/schema';
+import { MyButton } from '@/component/button/MyButton';
+import { ErrorMessage } from '@/component/ErrorMessage';
+import { MyInput } from '@/component/input/MyInput';
+import { MyInputPassword } from '@/component/input/MyInputPassword';
+import { hono } from '@/middleware/hono';
+import { CsrProvider } from '@/plugin/CsrProvider';
+import { useDialog } from '@/plugin/useDialog';
+import { AuthRouterSchema } from '~/schema';
 
 function Contents() {
   const $router = useRouter();

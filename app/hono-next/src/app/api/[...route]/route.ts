@@ -1,15 +1,16 @@
 import { handle } from '@hono/vercel';
 
-import { hono } from '../middleware/hono';
-import { AichatRouter } from '../router/AichatRouter';
-import { AuthRouter } from '../router/AuthRouter';
-import { FileRouter } from '../router/FileRouter';
-import { GroupRouter } from '../router/GroupRouter';
-import { MypageRouter } from '../router/MypageRouter';
-import { NotificationRouter } from '../router/NotificationRouter';
-import { SpaceRouter } from '../router/SpaceRouter';
-import { TodoRouter } from '../router/TodoRouter';
-import { WhiteboardRouter } from '../router/WhiteboardRouter';
+import { hono } from '~/middleware/hono';
+
+import { AichatRouter } from './router/AichatRouter';
+import { AuthRouter } from './router/AuthRouter';
+import { FileRouter } from './router/FileRouter';
+import { GroupRouter } from './router/GroupRouter';
+import { MypageRouter } from './router/MypageRouter';
+import { NotificationRouter } from './router/NotificationRouter';
+import { SpaceRouter } from './router/SpaceRouter';
+import { TodoRouter } from './router/TodoRouter';
+import { WhiteboardRouter } from './router/WhiteboardRouter';
 
 const api = hono
   .basePath('/api')

@@ -1,6 +1,6 @@
 import { hc, type ClientResponse } from 'hono/client';
 
-import type { ApiType } from '@/app/api/[...route]/route';
+import type { ApiType } from '~/app/api/[...route]/route';
 
 type UnwrappedPromise<T> = Promise<ClientResponse<T>> & { unwrap(): Promise<T> };
 

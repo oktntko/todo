@@ -5,15 +5,16 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
-import { MyButton } from '@/app/(page)/component/button/MyButton';
-import { ErrorMessage } from '@/app/(page)/component/ErrorMessage';
-import { MyInput } from '@/app/(page)/component/input/MyInput';
-import { MyInputPassword } from '@/app/(page)/component/input/MyInputPassword';
-import { hono } from '@/app/(page)/middleware/hono';
-import { useDialog } from '@/app/(page)/plugin/useDialog';
-import { AuthRouterSchema } from '@/schema';
+import { MyButton } from '@/component/button/MyButton';
+import { ErrorMessage } from '@/component/ErrorMessage';
+import { MyInput } from '@/component/input/MyInput';
+import { MyInputPassword } from '@/component/input/MyInputPassword';
+import { hono } from '@/middleware/hono';
+import { CsrProvider } from '@/plugin/CsrProvider';
+import { useDialog } from '@/plugin/useDialog';
+import { AuthRouterSchema } from '~/schema';
 
-export default function Page() {
+function Contents() {
   const $router = useRouter();
   const $dialog = useDialog();
 
@@ -131,7 +132,7 @@ export default function Page() {
             <div className="text-sm font-light text-gray-500">
               Do you have an account?
               <Link
-                to="/signin"
+                href="/signin"
                 className="text-primary-600 font-medium text-blue-600 hover:underline"
               >
                 Signin
@@ -141,5 +142,13 @@ export default function Page() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <CsrProvider>
+      <Contents />
+    </CsrProvider>
   );
 }

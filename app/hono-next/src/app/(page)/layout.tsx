@@ -1,5 +1,6 @@
-import '@/main.css';
 import type { Metadata } from 'next';
+
+import '~/main.css';
 
 export const metadata: Metadata = {
   title: 'Hono | nextjs',
