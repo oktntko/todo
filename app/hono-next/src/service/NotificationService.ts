@@ -22,16 +22,17 @@ export const NotificationService = {
 };
 
 async function listNotification({
+  prisma = ExtendsPrismaClient,
   ...ctx
 }: {
-  prisma: PrismaClient;
+  prisma?: PrismaClient;
   operator: OperatorMinimum;
   // input: z.infer<typeof GroupRouterSchema.listInput>,
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'listNotification');
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'listNotification');
 
   const [general, todo] = await Promise.all([
-    NotificationRepository.findManyNotification(ctx.prisma, {
+    NotificationRepository.findManyNotification(prisma, {
       where: {
         user_id: ctx.operator.user_id,
         notification_status: {
@@ -42,7 +43,7 @@ async function listNotification({
         notification_at: 'desc',
       },
     }),
-    NotificationTodoRepository.findManyNotificationTodo(ctx.prisma, {
+    NotificationTodoRepository.findManyNotificationTodo(prisma, {
       where: {
         user_id: ctx.operator.user_id,
         notification_status: {
@@ -75,7 +76,7 @@ async function readNotification({
   operator: OperatorMinimum;
   input: z.infer<typeof NotificationRouterSchema.getInput>;
 }) {
-  console.trace(
+  console.info(
     { reqid: ReqCtx.reqid, user_id: ctx.operator.user_id },
     'readNotification %o',
     input,
@@ -114,7 +115,7 @@ async function addNotificationTodo({
   operator: OperatorMinimum;
   input: z.infer<typeof NotificationRouterSchema.addNotificationTodoInput>;
 }) {
-  console.trace(
+  console.info(
     { reqid: ReqCtx.reqid, user_id: ctx.operator.user_id },
     'addNotificationTodo %o',
     input,
@@ -171,7 +172,7 @@ async function removeNotificationTodo({
   operator: OperatorMinimum;
   input: z.infer<typeof NotificationRouterSchema.removeInput>;
 }) {
-  console.trace(
+  console.info(
     { reqid: ReqCtx.reqid, user_id: ctx.operator.user_id },
     'removeNotificationTodo %o',
     input,
@@ -216,7 +217,7 @@ const worker = new Worker<NotificationTodoData>(
   WORKER_NAME,
   async function (job) {
     const data = job.data;
-    console.trace(`Processing job ${WORKER_NAME} %o`, data);
+    console.info(`Processing job ${WORKER_NAME} %o`, data);
     const prisma = ExtendsPrismaClient;
 
     const notification = await NotificationTodoRepository.findUniqueNotificationTodo(prisma, {
@@ -260,7 +261,7 @@ const worker = new Worker<NotificationTodoData>(
 );
 
 worker.on('completed', (job) => {
-  console.trace(`${WORKER_NAME} %s has completed.`, job.id);
+  console.info(`${WORKER_NAME} %s has completed.`, job.id);
 });
 
 worker.on('failed', (job, err) => {

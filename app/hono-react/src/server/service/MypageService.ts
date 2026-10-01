@@ -23,7 +23,7 @@ export const MypageService = {
 
 // mypage.deleteMypage
 async function deleteMypage({ ...ctx }: { prisma: PrismaClient; operator: OperatorMinimum }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'deleteProfile');
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'deleteProfile');
 
   await UserRepository.deleteUser(ctx.prisma, {
     where: { user_id: ctx.operator.user_id },
@@ -41,7 +41,7 @@ async function patchPassword({
   operator: Operator;
   input: z.infer<typeof MypageRouterSchema.patchPasswordInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'patchPassword');
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'patchPassword');
 
   // 現在のパスワードの確認
   if (!HashPassword.compare(input.current_password, ctx.operator.password)) {
@@ -67,7 +67,7 @@ async function patchProfile({
   operator: OperatorMinimum;
   input: z.infer<typeof MypageRouterSchema.patchProfileInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'patchProfile');
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'patchProfile');
 
   await _repository.checkDuplicate({
     duplicate: UserRepository.findUniqueUser(ctx.prisma, { where: { email: input.email } }),
@@ -82,7 +82,7 @@ async function patchProfile({
 
 // mypage.generateSecret
 async function generateSecret({ ...ctx }: { prisma: PrismaClient; operator: Operator }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'generateSecret');
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'generateSecret');
 
   const secret = OnetimePassword.generateSecret({ name: ctx.operator.email });
 
@@ -107,7 +107,7 @@ async function enableSecret({
     twofa_secret: string;
   };
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'enableSecret');
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'enableSecret');
 
   const verified = OnetimePassword.verifyToken({
     secret: SecretPassword.decrypt(input.twofa_secret),
@@ -128,7 +128,7 @@ async function enableSecret({
 
 // mypage.disableSecret
 async function disableSecret({ ...ctx }: { prisma: PrismaClient; operator: OperatorMinimum }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'disableSecret');
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'disableSecret');
 
   return UserRepository.updateUser(ctx.prisma, {
     data: { twofa_enable: false, twofa_secret: '' },

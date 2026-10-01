@@ -34,7 +34,7 @@ async function listWhiteboard({
   operator: OperatorMinimum;
   input: z.infer<typeof WhiteboardRouterSchema.listInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'listWhiteboard %o', input);
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'listWhiteboard %o', input);
 
   const AND: Prisma.WhiteboardWhereInput[] = [];
   AND.push({ space_id: input.space_id });
@@ -60,7 +60,7 @@ async function getWhiteboard({
   operator: OperatorMinimum;
   input: z.infer<typeof WhiteboardRouterSchema.getInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'getWhiteboard %o', input);
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'getWhiteboard %o', input);
 
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
   return _repository.checkDataExist({
@@ -83,7 +83,7 @@ async function createWhiteboard({
   operator: OperatorMinimum;
   input: z.infer<typeof WhiteboardRouterSchema.createInput>;
 }) {
-  console.trace(
+  console.info(
     { reqid: ReqCtx.reqid, user_id: ctx.operator.user_id },
     'createWhiteboard %o',
     input,
@@ -117,7 +117,7 @@ async function updateWhiteboard({
   operator: OperatorMinimum;
   input: z.infer<typeof WhiteboardRouterSchema.updateInput>;
 }) {
-  console.trace(
+  console.info(
     { reqid: ReqCtx.reqid, user_id: ctx.operator.user_id },
     'updateWhiteboard %o',
     input,
@@ -158,7 +158,7 @@ async function applyChangeWhiteboard({
   operator: OperatorMinimum;
   input: z.infer<typeof WhiteboardRouterSchema.applyChangeInput>;
 }) {
-  console.trace(
+  console.info(
     { reqid: ReqCtx.reqid, user_id: ctx.operator.user_id },
     'applyChangeWhiteboard %o',
     input,
@@ -198,7 +198,7 @@ async function deleteWhiteboard({
   operator: OperatorMinimum;
   input: z.infer<typeof WhiteboardRouterSchema.deleteInput>;
 }) {
-  console.trace(
+  console.info(
     { reqid: ReqCtx.reqid, user_id: ctx.operator.user_id },
     'deleteWhiteboard %o',
     input,
@@ -237,7 +237,7 @@ async function reorderWhiteboard({
   operator: OperatorMinimum;
   input: z.infer<typeof WhiteboardRouterSchema.reorderInput>;
 }) {
-  console.trace(
+  console.info(
     { reqid: ReqCtx.reqid, user_id: ctx.operator.user_id },
     'reorderWhiteboard %o',
     input,

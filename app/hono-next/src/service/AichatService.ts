@@ -35,7 +35,7 @@ async function listAichat({
   operator: OperatorMinimum;
   input: z.infer<typeof AichatRouterSchema.listInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'listAichat %o', input);
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'listAichat %o', input);
 
   const AND: Prisma.AichatWhereInput[] = [];
   AND.push({ space_id: input.space_id });
@@ -61,7 +61,7 @@ async function getAichat({
   operator: OperatorMinimum;
   input: z.infer<typeof AichatRouterSchema.getInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'getAichat %o', input);
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'getAichat %o', input);
 
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
   return _repository.checkDataExist({
@@ -84,7 +84,7 @@ async function createAichat({
   operator: OperatorMinimum;
   input: z.infer<typeof AichatRouterSchema.createInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'createAichat %o', input);
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'createAichat %o', input);
   // 存在チェック & 認可（読み取り権限）の確認
   const space = await SpaceService.getSpace({ ...ctx, input });
 
@@ -109,7 +109,7 @@ async function updateAichat({
   operator: OperatorMinimum;
   input: z.infer<typeof AichatRouterSchema.updateInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'updateAichat %o', input);
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'updateAichat %o', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
@@ -144,7 +144,7 @@ async function deleteAichat({
   operator: OperatorMinimum;
   input: z.infer<typeof AichatRouterSchema.deleteInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'deleteAichat %o', input);
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'deleteAichat %o', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
@@ -178,7 +178,7 @@ async function listAichatMessage({
   operator: OperatorMinimum;
   input: z.infer<typeof AichatRouterSchema.listMessageInput>;
 }) {
-  console.trace(
+  console.info(
     { reqid: ReqCtx.reqid, user_id: ctx.operator.user_id },
     'listAichatMessage %o',
     input,
@@ -211,7 +211,7 @@ async function postAichatMessage({
   operator: Operator;
   input: z.infer<typeof AichatRouterSchema.postMessageInput>;
 }) {
-  console.trace(
+  console.info(
     { reqid: ReqCtx.reqid, user_id: ctx.operator.user_id },
     'postAichatMessage %o',
     input,
@@ -342,7 +342,7 @@ async function postAichatMessage({
     });
   }
 
-  console.trace({ reqid: ReqCtx.reqid }, 'chat %o', response.choices);
+  console.info({ reqid: ReqCtx.reqid }, 'chat %o', response.choices);
   const choice: ChatCompletion.Choice = response.choices[0]!;
 
   let content = '';

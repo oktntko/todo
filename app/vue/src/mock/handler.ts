@@ -117,11 +117,11 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
 
   // aichat
   trpcMsw.aichat.list.query(() => {
-    console.trace('aichat.list');
+    console.info('aichat.list');
     return [];
   }),
   trpcMsw.aichat.listMessage.query(() => {
-    console.trace('aichat.listMessage');
+    console.info('aichat.listMessage');
     return {
       space_id: '',
       aichat_id: 'aichat_id',
@@ -134,7 +134,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
     };
   }),
   trpcMsw.aichat.postMessage.mutation(() => {
-    console.trace('aichat.postMessage');
+    console.info('aichat.postMessage');
     return {
       space_id: '',
       aichat_id: 'aichat_id',
@@ -149,29 +149,29 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
 
   // auth
   trpcMsw.auth.signup.mutation(() => {
-    console.trace('auth.signup');
+    console.info('auth.signup');
     // void
   }),
   trpcMsw.auth.signin.mutation(() => {
-    console.trace('auth.signin');
+    console.info('auth.signin');
     return {
       auth: true,
     };
   }),
   trpcMsw.auth.signinTwofa.mutation(() => {
-    console.trace('auth.signinTwofa');
+    console.info('auth.signinTwofa');
     return {
       auth: true,
     };
   }),
   trpcMsw.auth.get.query(() => {
-    console.trace('auth.get');
+    console.info('auth.get');
     return {
       auth: true,
     };
   }),
   trpcMsw.auth.delete.mutation(() => {
-    console.trace('auth.delete');
+    console.info('auth.delete');
     // void
   }),
 
@@ -179,7 +179,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
   http.get<{ file_id: string }>(
     `${import.meta.env.BASE_URL}api/file/download/single/:file_id`,
     () => {
-      console.trace('api/file/download/single/:file_id');
+      console.info('api/file/download/single/:file_id');
       // @ts-expect-error Buffer<ArrayBuffer>
       return HttpResponse.arrayBuffer(Buffer.from('str', 'utf8'), {
         headers: {
@@ -189,7 +189,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
     },
   ),
   http.get(`${import.meta.env.BASE_URL}api/file/download/many`, () => {
-    console.trace('api/file/download/many');
+    console.info('api/file/download/many');
     // @ts-expect-error Buffer<ArrayBuffer>
     return HttpResponse.arrayBuffer(Buffer.from('str', 'utf8'), {
       headers: {
@@ -198,7 +198,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
     });
   }),
   http.post(`${import.meta.env.BASE_URL}api/file/upload/single`, () => {
-    console.trace('api/file/upload/single');
+    console.info('api/file/upload/single');
     return HttpResponse.json({
       file_id: '',
       filename: '',
@@ -211,15 +211,15 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
     });
   }),
   http.post(`${import.meta.env.BASE_URL}api/file/upload/many`, () => {
-    console.trace('api/file/upload/many');
+    console.info('api/file/upload/many');
     return HttpResponse.json([]);
   }),
   trpcMsw.file.search.query(() => {
-    console.trace('file.search');
+    console.info('file.search');
     return { total: 0, file_list: [] };
   }),
   trpcMsw.file.delete.mutation(() => {
-    console.trace('file.delete');
+    console.info('file.delete');
     return {
       file_id: '',
       filename: '',
@@ -232,54 +232,54 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
     };
   }),
   trpcMsw.file.deleteMany.mutation(() => {
-    console.trace('file.deleteMany');
+    console.info('file.deleteMany');
     return { ok: true } as const;
   }),
 
   // mypage
   trpcMsw.mypage.get.query(() => {
-    console.trace('mypage.get');
+    console.info('mypage.get');
     return ctx.user;
   }),
   trpcMsw.mypage.delete.mutation(() => {
-    console.trace('mypage.delete');
+    console.info('mypage.delete');
     // void
   }),
   trpcMsw.mypage.patchPassword.mutation(() => {
-    console.trace('mypage.patchPassword');
+    console.info('mypage.patchPassword');
     return ctx.user;
   }),
   trpcMsw.mypage.patchProfile.mutation(() => {
-    console.trace('mypage.patchProfile');
+    console.info('mypage.patchProfile');
     return ctx.user;
   }),
   trpcMsw.mypage.generateSecret.mutation(() => {
-    console.trace('mypage.generateSecret');
+    console.info('mypage.generateSecret');
     return {
       dataurl:
         'data:image/png;base64,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',
     };
   }),
   trpcMsw.mypage.enableSecret.mutation(() => {
-    console.trace('mypage.enableSecret');
+    console.info('mypage.enableSecret');
     // void
   }),
   trpcMsw.mypage.disableSecret.mutation(() => {
-    console.trace('mypage.disableSecret');
+    console.info('mypage.disableSecret');
     // void
   }),
 
   // space
   // @ts-expect-error space_color
   trpcMsw.space.list.query(async () => {
-    console.trace('space.list');
+    console.info('space.list');
     // ログインユーザーがアクセス可能なスペースのみ
     return drizzle.select().from(pgSpace).orderBy(asc(pgSpace.created_at));
   }),
 
   // @ts-expect-error space_color
   trpcMsw.space.get.query(async ({ input }) => {
-    console.trace('space.get', input);
+    console.info('space.get', input);
 
     const space = await drizzle.query.pgSpace.findFirst({
       with: {
@@ -300,7 +300,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
 
   // @ts-expect-error space_color
   trpcMsw.space.create.mutation(async ({ input }) => {
-    console.trace('space.create', input);
+    console.info('space.create', input);
 
     const [space] = await drizzle
       .insert(pgSpace)
@@ -336,7 +336,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
 
   // @ts-expect-error space_color
   trpcMsw.space.update.mutation(async ({ input }) => {
-    console.trace('space.update', input);
+    console.info('space.update', input);
 
     const [space] = await drizzle
       .update(pgSpace)
@@ -366,7 +366,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
   }),
 
   trpcMsw.space.delete.mutation(async ({ input }) => {
-    console.trace('space.delete', input);
+    console.info('space.delete', input);
 
     await drizzle.delete(pgSpace).where(eq(pgSpace.space_id, input.space_id));
 
@@ -376,7 +376,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
   // group
   // @ts-expect-error group_color
   trpcMsw.group.list.query(async ({ input }) => {
-    console.trace('group.list', input);
+    console.info('group.list', input);
     return drizzle
       .select()
       .from(pgGroup)
@@ -385,7 +385,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
   }),
   // @ts-expect-error group_color
   trpcMsw.group.get.query(async ({ input }) => {
-    console.trace('group.get', input);
+    console.info('group.get', input);
 
     const group = await drizzle.query.pgGroup.findFirst({
       where: and(eq(pgGroup.group_id, input.group_id)),
@@ -402,7 +402,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
   }),
   // @ts-expect-error group_color
   trpcMsw.group.create.mutation(async ({ input }) => {
-    console.trace('group.create', input);
+    console.info('group.create', input);
     // group_orderは自動採番
     const count = await drizzle
       .select()
@@ -428,7 +428,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
   }),
   // @ts-expect-error group_color
   trpcMsw.group.update.mutation(async ({ input }) => {
-    console.trace('group.update', input);
+    console.info('group.update', input);
     // 楽観ロックやバージョンチェックは省略
     const [group] = await drizzle
       .update(pgGroup)
@@ -450,14 +450,14 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
     return group;
   }),
   trpcMsw.group.delete.mutation(async ({ input }) => {
-    console.trace('group.delete', input);
+    console.info('group.delete', input);
     // 楽観ロックやバージョンチェックは省略
     await drizzle.delete(pgGroup).where(and(eq(pgGroup.group_id, input.group_id)));
 
     return { group_id: input.group_id };
   }),
   trpcMsw.group.reorder.mutation(async ({ input }) => {
-    console.trace('group.reorder', input);
+    console.info('group.reorder', input);
     for (const x of input.order) {
       await drizzle
         .update(pgGroup)
@@ -474,13 +474,13 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
   // todo
   // @ts-expect-error group_color begin_date begin_time limit_date limit_time
   trpcMsw.todo.list.query(async (args) => {
-    console.trace('todo.list', args?.input);
+    console.info('todo.list', args?.input);
     return findManyTodo(args);
   }),
 
   // @ts-expect-error group_color begin_date begin_time limit_date limit_time
   trpcMsw.todo.search.query(async ({ input }) => {
-    console.trace('todo.search', input);
+    console.info('todo.search', input);
     const where = [];
     if (input.where.group_id_list!.length > 0) {
       where.push(or(...input.where.group_id_list!.map((id) => eq(pgTodo.group_id, id))));
@@ -538,13 +538,13 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
 
   // @ts-expect-error group_color begin_date begin_time limit_date limit_time
   trpcMsw.todo.get.query(async (args) => {
-    console.trace('todo.get', args.input);
+    console.info('todo.get', args.input);
     return findUniqueTodo(args);
   }),
 
   // @ts-expect-error group_color begin_date begin_time limit_date limit_time
   trpcMsw.todo.create.mutation(async ({ input }) => {
-    console.trace('todo.create', input);
+    console.info('todo.create', input);
     const [todo] = await drizzle
       .insert(pgTodo)
       .values({
@@ -569,7 +569,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
 
   // @ts-expect-error group_color begin_date begin_time limit_date limit_time
   trpcMsw.todo.update.mutation(async ({ input }) => {
-    console.trace('todo.update', input);
+    console.info('todo.update', input);
     const [todo] = await drizzle
       .update(pgTodo)
       .set({
@@ -597,7 +597,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
 
   // @ts-expect-error group_color begin_date begin_time limit_date limit_time
   trpcMsw.todo.applyChange.mutation(async ({ input }) => {
-    console.trace('todo.applyChange', input);
+    console.info('todo.applyChange', input);
     const [todo] = await drizzle
       .update(pgTodo)
       .set({
@@ -624,7 +624,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
   }),
 
   trpcMsw.todo.updateMany.mutation(async ({ input }) => {
-    console.trace('todo.updateMany', input);
+    console.info('todo.updateMany', input);
     const todo_list: InferSelectModel<typeof pgTodo>[] = [];
     for (const target of input.target_list) {
       const [todo] = await drizzle
@@ -653,14 +653,14 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
   }),
 
   trpcMsw.todo.delete.mutation(async ({ input }) => {
-    console.trace('todo.delete', input);
+    console.info('todo.delete', input);
     await drizzle.delete(pgTodo).where(eq(pgTodo.todo_id, input.todo_id));
 
     return { todo_id: input.todo_id };
   }),
 
   trpcMsw.todo.deleteMany.mutation(async ({ input }) => {
-    console.trace('todo.deleteMany', input);
+    console.info('todo.deleteMany', input);
 
     for (const target of input.target_list) {
       await drizzle.delete(pgTodo).where(eq(pgTodo.todo_id, target.todo_id));
@@ -671,7 +671,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
 
   // notification
   trpcMsw.notification.list.query(async () => {
-    console.trace('notification.list');
+    console.info('notification.list');
     const [general, todo] = await Promise.all([
       drizzle.query.pgNotification.findMany({
         where: and(
@@ -706,7 +706,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
   }),
 
   trpcMsw.notification.addTodo.mutation(async ({ input }) => {
-    console.trace('notification.addTodo', input);
+    console.info('notification.addTodo', input);
 
     const todo = await drizzle.query.pgTodo.findFirst({
       with: { group: true },
@@ -747,7 +747,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
   }),
 
   trpcMsw.notification.read.mutation(async ({ input }) => {
-    console.trace('notification.read', input);
+    console.info('notification.read', input);
 
     await Promise.all([
       drizzle
@@ -774,7 +774,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
   }),
 
   trpcMsw.notification.removeTodo.mutation(async ({ input }) => {
-    console.trace('notification.removeTodo', input);
+    console.info('notification.removeTodo', input);
 
     await drizzle
       .delete(pgNotificationTodo)
@@ -790,12 +790,12 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
 
   // whiteboard
   trpcMsw.whiteboard.list.query(async () => {
-    console.trace('whiteboard.list');
+    console.info('whiteboard.list');
     return drizzle.select().from(pgWhiteboard).orderBy(asc(pgWhiteboard.whiteboard_order));
   }),
 
   trpcMsw.whiteboard.get.query(async ({ input }) => {
-    console.trace('whiteboard.get', input);
+    console.info('whiteboard.get', input);
     const whiteboard = await drizzle.query.pgWhiteboard.findFirst({
       where: eq(pgWhiteboard.whiteboard_id, input.whiteboard_id),
     });
@@ -809,7 +809,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
   }),
 
   trpcMsw.whiteboard.create.mutation(async ({ input }) => {
-    console.trace('whiteboard.create', input);
+    console.info('whiteboard.create', input);
     // whiteboard_orderは自動採番
     const count = await drizzle
       .select()
@@ -834,7 +834,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
   }),
 
   trpcMsw.whiteboard.update.mutation(async ({ input }) => {
-    console.trace('whiteboard.update', input);
+    console.info('whiteboard.update', input);
     // 楽観ロックやバージョンチェックは省略
     const [whiteboard] = await drizzle
       .update(pgWhiteboard)
@@ -855,7 +855,7 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
   }),
 
   trpcMsw.whiteboard.applyChange.mutation(async ({ input }) => {
-    console.trace('whiteboard.applyChange', input);
+    console.info('whiteboard.applyChange', input);
     const [whiteboard] = await drizzle
       .update(pgWhiteboard)
       .set({
@@ -873,14 +873,14 @@ export const handlers: Array<RequestHandler | WebSocketHandler> = [
   }),
 
   trpcMsw.whiteboard.delete.mutation(async ({ input }) => {
-    console.trace('whiteboard.delete', input);
+    console.info('whiteboard.delete', input);
     await drizzle.delete(pgWhiteboard).where(eq(pgWhiteboard.whiteboard_id, input.whiteboard_id));
 
     return { whiteboard_id: input.whiteboard_id };
   }),
 
   trpcMsw.whiteboard.reorder.mutation(async ({ input }) => {
-    console.trace('whiteboard.reorder', input);
+    console.info('whiteboard.reorder', input);
     for (const x of input.order) {
       await drizzle
         .update(pgWhiteboard)

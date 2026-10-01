@@ -28,7 +28,7 @@ export const SpaceService = {
 
 // space.list
 async function listSpace({ ...ctx }: { prisma: PrismaClient; operator: OperatorMinimum }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'listSpace');
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'listSpace');
 
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
   return SpaceRepository.findManySpace(ctx.prisma, {
@@ -49,7 +49,7 @@ async function getSpace({
   operator: OperatorMinimum;
   input: z.infer<typeof SpaceRouterSchema.getInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'getSpace %o', input);
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'getSpace %o', input);
 
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
   return _repository.checkDataExist({
@@ -72,7 +72,7 @@ async function createSpace({
   operator: OperatorMinimum;
   input: z.infer<typeof SpaceRouterSchema.createInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'createSpace %o', input);
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'createSpace %o', input);
 
   return SpaceRepository.createSpace(ctx.prisma, {
     operator_id: ctx.operator.user_id,
@@ -98,7 +98,7 @@ async function updateSpace({
   operator: OperatorMinimum;
   input: z.infer<typeof SpaceRouterSchema.updateInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'updateSpace %o', input);
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'updateSpace %o', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
@@ -133,7 +133,7 @@ async function deleteSpace({
   operator: OperatorMinimum;
   input: z.infer<typeof SpaceRouterSchema.deleteInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'deleteSpace %o', input);
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'deleteSpace %o', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
@@ -168,7 +168,7 @@ async function enableAichat({
   operator: OperatorMinimum;
   input: z.infer<typeof SpaceRouterSchema.enableAichatInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'enableAichat'); // input secret
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'enableAichat'); // input secret
 
   // 存在チェック & 認可（読み取り権限）の確認
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
@@ -224,7 +224,7 @@ async function disableAichat({
   operator: OperatorMinimum;
   input: z.infer<typeof SpaceRouterSchema.deleteInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id, input }, 'disableAichat');
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id, input }, 'disableAichat');
 
   // 存在チェック & 認可（読み取り権限）の確認
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);

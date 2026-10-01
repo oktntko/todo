@@ -38,7 +38,7 @@ async function listTodo({
   operator: OperatorMinimum;
   input: z.infer<typeof TodoRouterSchema.listInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'listTodo %o', input);
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'listTodo %o', input);
 
   const AND: Prisma.TodoWhereInput[] = [];
   AND.push({ group: { space_id: input.space_id } });
@@ -49,7 +49,7 @@ async function listTodo({
 
   AND.push({ done_at: input.todo_status === 'active' ? { equals: null } : { not: null } });
 
-  console.trace({ reqid: ReqCtx.reqid }, 'where %o', { AND });
+  console.info({ reqid: ReqCtx.reqid }, 'where %o', { AND });
 
   // 認可（読み取り権限）の確認
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
@@ -71,7 +71,7 @@ async function searchTodo({
   operator: OperatorMinimum;
   input: z.infer<typeof TodoRouterSchema.searchInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'searchTodo %o', input);
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'searchTodo %o', input);
 
   const AND: Prisma.TodoWhereInput[] = [];
 
@@ -110,7 +110,7 @@ async function searchTodo({
     });
   }
 
-  console.trace({ reqid: ReqCtx.reqid }, 'where %o', { AND });
+  console.info({ reqid: ReqCtx.reqid }, 'where %o', { AND });
 
   const orderBy: Prisma.TodoOrderByWithRelationInput =
     input.sort.field === 'group'
@@ -120,7 +120,7 @@ async function searchTodo({
           },
         }
       : { [input.sort.field]: input.sort.order };
-  console.trace({ reqid: ReqCtx.reqid }, 'orderBy %o', { orderBy });
+  console.info({ reqid: ReqCtx.reqid }, 'orderBy %o', { orderBy });
 
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
   const where: Prisma.TodoWhereInput = {
@@ -153,7 +153,7 @@ async function getTodo({
   operator: OperatorMinimum;
   input: z.infer<typeof TodoRouterSchema.getInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'getTodo %o', input);
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'getTodo %o', input);
 
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
   return _repository.checkDataExist({
@@ -176,7 +176,7 @@ async function createTodo({
   operator: OperatorMinimum;
   input: z.infer<typeof TodoRouterSchema.createInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'createTodo %o', input);
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'createTodo %o', input);
   // 存在チェック & 認可（読み取り権限）の確認
   const { space } = await GroupService.getGroup({ ...ctx, input });
 
@@ -199,7 +199,7 @@ async function updateTodo({
   operator: OperatorMinimum;
   input: z.infer<typeof TodoRouterSchema.updateInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'updateTodo %o', input);
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'updateTodo %o', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
@@ -251,7 +251,7 @@ async function applyChangeTodo({
   operator: OperatorMinimum;
   input: z.infer<typeof TodoRouterSchema.applyChangeInput>;
 }) {
-  console.trace(
+  console.info(
     { reqid: ReqCtx.reqid, user_id: ctx.operator.user_id },
     'applyChangeTodo %o',
     input,
@@ -306,7 +306,7 @@ async function updateManyTodo({
   operator: OperatorMinimum;
   input: z.infer<typeof TodoRouterSchema.updateManyInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'updateManyTodo %o', input);
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'updateManyTodo %o', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
   const space = await SpaceService.getSpace({ ...ctx, input });
@@ -376,7 +376,7 @@ async function deleteTodo({
   operator: OperatorMinimum;
   input: z.infer<typeof TodoRouterSchema.deleteInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'deleteTodo %o', input);
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'deleteTodo %o', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
@@ -413,7 +413,7 @@ async function deleteManyTodo({
   operator: OperatorMinimum;
   input: z.infer<typeof TodoRouterSchema.deleteManyInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'deleteManyTodo %o', input);
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'deleteManyTodo %o', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
   const space = await SpaceService.getSpace({ ...ctx, input });

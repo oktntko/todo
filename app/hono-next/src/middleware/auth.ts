@@ -5,12 +5,14 @@ import { createMiddleware } from 'hono/factory';
 import { HTTPException } from 'hono/http-exception';
 import { verify } from 'hono/jwt';
 import type { JWTPayload } from 'hono/utils/jwt/types';
+import { cookies } from 'next/headers';
 
 import { env } from '~/lib/env';
 import { message } from '~/lib/message';
 import { UserRepository } from '~/repository/UserRepository';
 
 import { PublicEnv, StatusCode } from './hono';
+import { ExtendsPrismaClient, type PrismaClient } from './prisma';
 
 // cookie
 export const COOKIE_KEY = {
@@ -40,25 +42,7 @@ export type ProtectedContext = Context<ProtectedEnv>;
 export const requireAuth = createMiddleware<ProtectedEnv>(async (c, next) => {
   const token = getCookie(c, COOKIE_KEY.AUTH_TOKEN);
 
-  if (!token) {
-    throw new HTTPException(StatusCode.UNAUTHORIZED, { message: message.error.UNAUTHORIZED });
-  }
-
-  const payload = await verify(token, env.secret.JWT_SECRET, ALGORITHM_TYPE).catch((e) => {
-    console.error(e);
-    throw new HTTPException(StatusCode.UNAUTHORIZED, { message: message.error.UNAUTHORIZED });
-  });
-  const user_id = payload['user_id'];
-
-  if (typeof user_id !== 'string') {
-    throw new HTTPException(StatusCode.UNAUTHORIZED, { message: message.error.UNAUTHORIZED });
-  }
-
-  const operator = await UserRepository.findUniqueUser(c.var.prisma, {
-    where: {
-      user_id,
-    },
-  });
+  const operator = await findOperatorFromToken(token, c.var.prisma);
 
   if (operator == null) {
     throw new HTTPException(StatusCode.UNAUTHORIZED, { message: message.error.UNAUTHORIZED });
@@ -67,3 +51,37 @@ export const requireAuth = createMiddleware<ProtectedEnv>(async (c, next) => {
   c.set('operator', operator);
   return next();
 });
+
+export async function findOperatorFromToken(
+  token: string | undefined,
+  prisma: PrismaClient = ExtendsPrismaClient,
+) {
+  if (!token) {
+    return;
+  }
+
+  const payload = await verify(token, env.secret.JWT_SECRET, ALGORITHM_TYPE).catch((e) => {
+    console.error(e);
+    return undefined;
+  });
+  if (payload == null) {
+    return;
+  }
+
+  const user_id = payload['user_id'];
+  if (typeof user_id !== 'string') {
+    return;
+  }
+
+  return UserRepository.findUniqueUser(prisma, {
+    where: {
+      user_id,
+    },
+  });
+}
+
+export async function findOperatorFromTokenSSR() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(COOKIE_KEY.AUTH_TOKEN)?.value;
+  return findOperatorFromToken(token);
+}

@@ -26,7 +26,7 @@ async function signup({
   prisma: PrismaClient;
   input: z.infer<typeof AuthRouterSchema.signupInput>;
 }) {
-  console.debug({ reqid: ReqCtx.reqid }, 'signup'); // input secret
+  console.info({ reqid: ReqCtx.reqid }, 'signup'); // input secret
 
   await _repository.checkDuplicate({
     duplicate: UserRepository.findUniqueUser(ctx.prisma, {
@@ -98,7 +98,7 @@ async function signin({
   prisma: PrismaClient;
   input: z.infer<typeof AuthRouterSchema.signinInput>;
 }) {
-  console.debug({ reqid: ReqCtx.reqid }, 'signin'); // input secret
+  console.info({ reqid: ReqCtx.reqid }, 'signin'); // input secret
 
   const user = await UserRepository.findUniqueUser(ctx.prisma, {
     where: { email: input.email },
@@ -125,7 +125,7 @@ async function signinTwofa({
     exp: number;
   };
 }) {
-  console.debug({ reqid: ReqCtx.reqid }, 'signinTwofa'); // input secret
+  console.info({ reqid: ReqCtx.reqid }, 'signinTwofa'); // input secret
 
   if (!input.exp || dayjs(input.exp).isBefore(dayjs())) {
     throw new HTTPException(StatusCode.BAD_REQUEST, {

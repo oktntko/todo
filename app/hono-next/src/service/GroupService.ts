@@ -31,7 +31,7 @@ async function listGroup({
   operator: OperatorMinimum;
   input: z.infer<typeof GroupRouterSchema.listInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'listGroup %o', input);
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'listGroup %o', input);
 
   const AND: Prisma.GroupWhereInput[] = [];
   AND.push({ space_id: input.space_id });
@@ -57,7 +57,7 @@ async function getGroup({
   operator: OperatorMinimum;
   input: z.infer<typeof GroupRouterSchema.getInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'getGroup %o', input);
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'getGroup %o', input);
 
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
   return _repository.checkDataExist({
@@ -80,7 +80,7 @@ async function createGroup({
   operator: OperatorMinimum;
   input: z.infer<typeof GroupRouterSchema.createInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'createGroup %o', input);
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'createGroup %o', input);
   // 存在チェック & 認可（読み取り権限）の確認
   const space = await SpaceService.getSpace({ input, ...ctx });
 
@@ -110,7 +110,7 @@ async function updateGroup({
   operator: OperatorMinimum;
   input: z.infer<typeof GroupRouterSchema.updateInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'updateGroup %o', input);
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'updateGroup %o', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
@@ -145,7 +145,7 @@ async function deleteGroup({
   operator: OperatorMinimum;
   input: z.infer<typeof GroupRouterSchema.deleteInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'deleteGroup %o', input);
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'deleteGroup %o', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
   const hasAccessAuthorityWhere = generateHasAccessAuthorityWhere(ctx.operator.user_id);
@@ -180,7 +180,7 @@ async function reorderGroup({
   operator: OperatorMinimum;
   input: z.infer<typeof GroupRouterSchema.reorderInput>;
 }) {
-  console.trace({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'reorderGroup %o', input);
+  console.info({ reqid: ReqCtx.reqid, user_id: ctx.operator.user_id }, 'reorderGroup %o', input);
 
   // 存在チェック & 認可（読み取り権限）の確認
   const space = await SpaceService.getSpace({ input, ...ctx });
