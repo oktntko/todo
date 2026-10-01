@@ -3,35 +3,48 @@ import { redirect } from 'next/navigation';
 
 import { cn } from '~/lib/cn';
 import { findOperatorFromTokenSSR } from '~/middleware/auth';
+import { removeSymbol } from '~/middleware/prisma';
 import { NotificationService } from '~/service/NotificationService';
 import { SpaceService } from '~/service/SpaceService';
 
-export default async function Layout({ children }: { children: React.ReactNode }) {
+import { LogoutButton } from './LogoutButton';
+import { MainMenuLink } from './MainMenuLink';
+import { MainStateProvider } from './MainStateProvider';
+
+export async function MainLayout({
+  children,
+  space_id,
+}: {
+  children: React.ReactNode;
+  space_id?: string;
+}) {
   const operator = await findOperatorFromTokenSSR();
   if (operator == null) {
     return redirect('/signin');
   }
 
-  const spaceList = await SpaceService.listSpace({ operator });
-  const notificationList = await NotificationService.listNotification({ operator });
+  const space_list = await SpaceService.listSpace({ operator }).then(removeSymbol);
+  const notification_list = await NotificationService.listNotification({ operator }).then(
+    removeSymbol,
+  );
 
   return (
-    <div className="flex h-dvh">
-      {/* sidebar */}
-      <aside className="flex h-dvh min-h-0 w-56 shrink-0 flex-col overflow-y-auto bg-gray-900 text-gray-50">
-        <Link
-          href="/space"
-          className="flex items-center gap-1 p-4 text-2xl font-semibold transition-colors hover:text-gray-200"
-        >
-          <span className="icon-[flat-color-icons--todo-list] h-8 w-8 p-2" />
-          <span>MyTodo</span>
-        </Link>
+    <MainStateProvider space_list={space_list} notification_list={notification_list}>
+      <div className="flex h-dvh">
+        {/* sidebar */}
+        <aside className="flex h-dvh min-h-0 w-56 shrink-0 flex-col overflow-y-auto bg-gray-900 text-gray-50">
+          <Link
+            href="/space"
+            className="flex items-center gap-1 p-4 text-2xl font-semibold transition-colors hover:text-gray-200"
+          >
+            <span className="icon-[flat-color-icons--todo-list] h-8 w-8 p-2" />
+            <span>MyTodo</span>
+          </Link>
 
-        {spaceList.map((space) => {
-          return (
-            <div key={space.space_id} className="h-full">
-              <ul className="pr-1 pl-2 font-medium">
-                <li>
+          {space_list.map((space) => {
+            return (
+              <details key={space.space_id} name="spaceList" open={space.space_id === space_id}>
+                <summary className="block font-medium">
                   <Link
                     href={`/space/${space.space_id}`}
                     className="flex items-center gap-2 rounded-lg p-2 text-sm transition hover:brightness-75"
@@ -51,7 +64,8 @@ export default async function Layout({ children }: { children: React.ReactNode }
                     )}
                     <span className="truncate capitalize">{space.space_name}</span>
                   </Link>
-
+                </summary>
+                <li>
                   <ul
                     className={cn('ml-3 border-l-2 border-gray-600 transition-discrete')}
                     style={{ borderColor: space.space_color }}
@@ -100,64 +114,39 @@ export default async function Layout({ children }: { children: React.ReactNode }
                         },
                       ] as const
                     ).map((item) => (
-                      <li key={item.route}>
-                        <Link
-                          href={item.route}
-                          className="group flex w-full items-center gap-2 rounded-e-full p-2 pl-3 text-base text-gray-200 transition hover:bg-gray-800 hover:text-white"
-                          // activeProps={{ className: 'bg-gray-700' }}
-                        >
-                          <span
-                            className={`${item.icon} h-5 w-5 text-gray-200 transition group-hover:text-white`}
-                          />
-                          <span className="capitalize">{item.name}</span>
-                        </Link>
-                      </li>
+                      <MainMenuLink key={item.route} {...item} />
                     ))}
                   </ul>
                 </li>
-              </ul>
-            </div>
-          );
-        })}
-      </aside>
+              </details>
+            );
+          })}
+        </aside>
 
-      {/* main */}
-      <div className="flex min-h-0 grow flex-col overflow-y-auto bg-gray-100 text-gray-900">
-        <header className="flex h-16 items-center justify-between p-4">
-          <nav className="flex items-center">
-            <button
-              type="button"
-              className="flex w-48 cursor-pointer items-center gap-2 rounded-lg border border-gray-300 bg-gray-100 px-2 py-1 text-sm text-gray-900 transition-colors hover:border-blue-500 hover:bg-white"
-            >
-              <span className="icon-[bx--search] h-4 w-4" />
-              <span className="text-gray-500 capitalize">search</span>
-            </button>
-          </nav>
+        {/* main */}
+        <div className="flex min-h-0 grow flex-col overflow-y-auto bg-gray-100 text-gray-900">
+          <header className="flex h-16 items-center justify-between p-4">
+            <nav className="flex items-center">
+              <button
+                type="button"
+                className="flex w-48 cursor-pointer items-center gap-2 rounded-lg border border-gray-300 bg-gray-100 px-2 py-1 text-sm text-gray-900 transition-colors hover:border-blue-500 hover:bg-white"
+              >
+                <span className="icon-[bx--search] h-4 w-4" />
+                <span className="text-gray-500 capitalize">search</span>
+              </button>
+            </nav>
 
-          <nav className="flex items-center gap-2">
-            {/* TODO: csr */}
-            {/* <button
-              type="button"
-              className="relative flex cursor-pointer items-center justify-center rounded-full p-1.5 transition-colors hover:bg-gray-200"
-              onClick={async () => {
-                await $dialog.confirm.info('Are you sure you want to sign out?');
-
-                void hono.auth.$delete();
-                return $navigate({ to: '/signin' });
-              }}
-            >
-              <span className="icon-[stash--signout-alt] h-5 w-5" />
-              <span className="sr-only capitalize">signout</span>
-            </button> */}
-            <button
-              type="button"
-              className="relative flex cursor-pointer items-center justify-center rounded-full p-1.5 transition-colors hover:bg-gray-200"
-              title="bookmark"
-            >
-              <span className="icon-[bxs--bookmark] h-5 w-5" />
-              <span className="sr-only capitalize">bookmark</span>
-            </button>
-            {/* <MyDropdown
+            <nav className="flex items-center gap-2">
+              <LogoutButton className="relative flex cursor-pointer items-center justify-center rounded-full p-1.5 transition-colors hover:bg-gray-200" />
+              <button
+                type="button"
+                className="relative flex cursor-pointer items-center justify-center rounded-full p-1.5 transition-colors hover:bg-gray-200"
+                title="bookmark"
+              >
+                <span className="icon-[bxs--bookmark] h-5 w-5" />
+                <span className="sr-only capitalize">bookmark</span>
+              </button>
+              {/* <MyDropdown
               className="z-100"
               v-slots={
                 {
@@ -241,18 +230,19 @@ export default async function Layout({ children }: { children: React.ReactNode }
               }
             ></MyDropdown> */}
 
-            <Link
-              href="/mypage"
-              className="relative flex cursor-pointer items-center justify-center rounded-full p-1.5 transition-colors hover:bg-gray-200"
-            >
-              <span className="icon-[radix-icons--avatar] h-5 w-5" />
-              <span className="sr-only capitalize">mypage</span>
-            </Link>
-          </nav>
-        </header>
+              <Link
+                href="/mypage"
+                className="relative flex cursor-pointer items-center justify-center rounded-full p-1.5 transition-colors hover:bg-gray-200"
+              >
+                <span className="icon-[radix-icons--avatar] h-5 w-5" />
+                <span className="sr-only capitalize">mypage</span>
+              </Link>
+            </nav>
+          </header>
 
-        <div className="grow">{children}</div>
+          <div className="grow">{children}</div>
+        </div>
       </div>
-    </div>
+    </MainStateProvider>
   );
 }

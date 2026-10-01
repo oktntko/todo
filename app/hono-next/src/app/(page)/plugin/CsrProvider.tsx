@@ -8,10 +8,10 @@ type Props = {
 
 export function CsrProvider({ children }: Props) {
   return (
-    <DialogProvider>
-      <ToastProvider>
+    <ToastProvider>
+      <DialogProvider>
         <ErrorHandlerProvider>{children}</ErrorHandlerProvider>
-      </ToastProvider>
-    </DialogProvider>
+      </DialogProvider>
+    </ToastProvider>
   );
 }

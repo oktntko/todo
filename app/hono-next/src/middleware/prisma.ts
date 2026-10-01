@@ -115,3 +115,22 @@ export async function $transaction<R>(
     return fn(prisma);
   }
 }
+
+// Symbol.for('nodejs.util.inspect.custom') をはずす
+export function removeSymbol<T>(obj: T): T {
+  if (obj === null || typeof obj !== 'object') {
+    return obj;
+  }
+
+  if (obj instanceof Date) {
+    return obj as unknown as T;
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map((item) => removeSymbol(item)) as unknown as T;
+  }
+
+  const entries = Object.entries(obj).map(([key, value]) => [key, removeSymbol(value)]);
+
+  return Object.fromEntries(entries) as T;
+}

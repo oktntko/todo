@@ -150,8 +150,9 @@ export const AuthRouter = new Hono<PublicEnv>()
 
     return c.json({ auth: true }, StatusCode.OK);
   })
-  .delete('/', (c) => {
+  .post('/delete', (c) => {
     deleteCookie(c, COOKIE_KEY.AUTH_TOKEN, {
+      httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'Lax',
       path: '/',
