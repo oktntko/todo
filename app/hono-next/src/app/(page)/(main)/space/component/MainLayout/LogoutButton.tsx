@@ -4,21 +4,12 @@ import { useRouter } from 'next/navigation';
 
 import { hono } from '@/middleware/hono';
 import { useDialog } from '@/plugin/useDialog';
-import DialogProvider from '~/app/(page)/plugin/DialogProvider';
 
 type Props = {
   className?: string;
 };
 
 export function LogoutButton({ className }: Props) {
-  return (
-    <DialogProvider>
-      <Contents className={className} />
-    </DialogProvider>
-  );
-}
-
-function Contents({ className }: Props) {
   const $dialog = useDialog();
   const $router = useRouter();
 

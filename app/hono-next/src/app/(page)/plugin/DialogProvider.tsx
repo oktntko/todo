@@ -1,3 +1,5 @@
+'use client';
+
 import {
   useCallback,
   useEffect,
@@ -21,7 +23,7 @@ import {
   type WindowDialogAlertOptions,
   type WindowDialogConfirmOptions,
   type WindowDialogOptions,
-} from './dialogContext';
+} from './DialogContext';
 
 export default function DialogProvider({ children }: { children: ReactNode }) {
   // oxlint-disable-next-line typescript/no-explicit-any

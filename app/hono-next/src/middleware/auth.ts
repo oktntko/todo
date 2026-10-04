@@ -1,3 +1,4 @@
+import { R } from '@todo/lib';
 import type { User } from '@todo/prisma/client';
 import type { Context } from 'hono';
 import { getCookie } from 'hono/cookie';
@@ -6,6 +7,7 @@ import { HTTPException } from 'hono/http-exception';
 import { verify } from 'hono/jwt';
 import type { JWTPayload } from 'hono/utils/jwt/types';
 import { cookies } from 'next/headers';
+import { cache } from 'react';
 
 import { env } from '~/lib/env';
 import { message } from '~/lib/message';
@@ -80,8 +82,23 @@ export async function findOperatorFromToken(
   });
 }
 
-export async function findOperatorFromTokenSSR() {
+export type OperatorSafe = Pick<
+  User,
+  'user_id' | 'email' | 'username' | 'avatar_image' | 'description' | 'twofa_enable'
+>;
+
+export const findOperatorFromTokenSSR = cache(async function (): Promise<OperatorSafe | null> {
   const cookieStore = await cookies();
   const token = cookieStore.get(COOKIE_KEY.AUTH_TOKEN)?.value;
-  return findOperatorFromToken(token);
-}
+  const operator = await findOperatorFromToken(token);
+  return operator == null
+    ? null
+    : R.pick(operator, [
+        'user_id',
+        'email',
+        'username',
+        'avatar_image',
+        'description',
+        'twofa_enable',
+      ]);
+});

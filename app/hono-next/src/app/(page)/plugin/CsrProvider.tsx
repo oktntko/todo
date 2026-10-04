@@ -1,3 +1,5 @@
+'use client';
+
 import DialogProvider from './DialogProvider';
 import { ErrorHandlerProvider } from './ErrorHandlerProvider';
 import ToastProvider from './ToastProvider';
