@@ -1,23 +1,16 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
-import { cn } from '~/lib/cn';
 import { findOperatorFromTokenSSR } from '~/middleware/auth';
 import { removeSymbol } from '~/middleware/prisma';
 import { NotificationService } from '~/service/NotificationService';
 import { SpaceService } from '~/service/SpaceService';
 
 import { MainHeader } from './MainHeader';
-import { MainMenuLink } from './MainMenuLink';
+import { MainMenuSidebar } from './MainMenuLink';
 import { MainStateProvider } from './MainStateProvider';
 
-export async function MainLayout({
-  children,
-  space_id,
-}: {
-  children: React.ReactNode;
-  space_id?: string;
-}) {
+export async function MainLayout({ children }: { children: React.ReactNode }) {
   const operator = await findOperatorFromTokenSSR();
   if (operator == null) {
     return redirect('/signin');
@@ -41,88 +34,7 @@ export async function MainLayout({
             <span>MyTodo</span>
           </Link>
 
-          {space_list.map((space) => {
-            return (
-              <details key={space.space_id} name="spaceList" open={space.space_id === space_id}>
-                <summary className="block font-medium">
-                  <Link
-                    href={`/space/${space.space_id}`}
-                    className="flex items-center gap-2 rounded-lg p-2 text-sm transition hover:brightness-75"
-                    style={{ color: space.space_color }}
-                  >
-                    {space.space_image ? (
-                      // oxlint-disable-next-line next/no-img-element
-                      <img
-                        src={space.space_image}
-                        width="16"
-                        height="16"
-                        decoding="async"
-                        className="h-4 w-4 shrink-0 rounded-full object-cover object-center"
-                      />
-                    ) : (
-                      <span className="icon-[ri--image-circle-fill] h-4 w-4 shrink-0"></span>
-                    )}
-                    <span className="truncate capitalize">{space.space_name}</span>
-                  </Link>
-                </summary>
-                <li>
-                  <ul
-                    className={cn('ml-3 border-l-2 border-gray-600 transition-discrete')}
-                    style={{ borderColor: space.space_color }}
-                  >
-                    {(
-                      [
-                        {
-                          name: 'list',
-                          route: `/space/${space.space_id}/list`,
-                          icon: 'icon-[vaadin--list-ol]',
-                        },
-                        {
-                          name: 'table',
-                          route: `/space/${space.space_id}/table`,
-                          icon: 'icon-[fontisto--table-2]',
-                        },
-                        {
-                          name: 'board',
-                          route: `/space/${space.space_id}/board`,
-                          icon: 'icon-[bi--kanban-fill]',
-                        },
-                        {
-                          name: 'calendar',
-                          route: `/space/${space.space_id}/calendar`,
-                          icon: 'icon-[subway--calendar-2]',
-                        },
-                        {
-                          name: 'whiteboard',
-                          route: `/space/${space.space_id}/whiteboard`,
-                          icon: 'icon-[hugeicons--whiteboard]',
-                        },
-                        {
-                          name: 'drive',
-                          route: `/space/${space.space_id}/drive`,
-                          icon: 'icon-[vaadin--folder-open]',
-                        },
-                        {
-                          name: 'chat',
-                          route: `/space/${space.space_id}/chat`,
-                          icon: 'icon-[vaadin--chat]',
-                        },
-                        {
-                          name: 'setting',
-                          route: `/space/${space.space_id}/setting`,
-                          icon: 'icon-[uil--setting]',
-                        },
-                      ] as const
-                    ).map((item) => (
-                      <li key={item.route}>
-                        <MainMenuLink {...item} />
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-              </details>
-            );
-          })}
+          <MainMenuSidebar />
         </aside>
 
         {/* main */}
