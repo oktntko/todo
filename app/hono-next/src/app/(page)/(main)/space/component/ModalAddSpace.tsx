@@ -2,12 +2,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import type { InferResponseType } from 'hono';
 import { FormProvider, useForm } from 'react-hook-form';
 
+import { useMainState } from '@/(main)/component/MainState/useMainState';
 import { hono } from '@/middleware/hono';
 import { useDialog } from '@/plugin/useDialog';
 import { useToast } from '@/plugin/useToast';
 import { SpaceRouterSchema } from '~/schema';
 
-import { useMainState } from './MainLayout/useMainState';
 import { SpaceForm } from './SpaceForm';
 import type { SpaceFormValue } from './useSpaceForm';
 

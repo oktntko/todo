@@ -3,9 +3,8 @@
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
 
+import { useMainState } from '@/(main)/component/MainState/useMainState';
 import { cn } from '~/lib/cn';
-
-import { useMainState } from './useMainState';
 
 export function MainMenuSidebar() {
   const { space_id } = useParams<{ space_id: string }>();

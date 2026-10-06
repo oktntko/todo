@@ -1,25 +1,12 @@
 'use client';
 
 import { dayjs } from '@todo/lib';
-import { InferResponseType } from 'hono';
-import { useEffect, useState } from 'react';
 
-import { hono } from '@/middleware/hono';
-import { useDialog } from '~/app/(page)/plugin/useDialog';
+import { useMainState } from '@/(main)/component/MainState/useMainState';
 import { cn } from '~/lib/cn';
 
 export default function Page() {
-  const $dialog = useDialog();
-
-  const [notification_list, setNotificationList] = useState<
-    InferResponseType<typeof hono.notification.list.$post>
-  >([]);
-
-  useEffect(() => {
-    const $loading = $dialog.loading();
-    void hono.notification.list.$post().unwrap().then(setNotificationList).finally($loading.close);
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { notification_list, setNotificationList } = useMainState();
 
   return (
     <div className="flex flex-col gap-6">
@@ -33,7 +20,11 @@ export default function Page() {
                   className="flex items-center gap-2 p-2 transition-all hover:bg-gray-200"
                   onClick={() => {
                     setNotificationList((prev) =>
-                      prev.filter((p) => p.notification_id !== x.notification_id),
+                      prev.map((p) =>
+                        p.notification_id !== x.notification_id
+                          ? p
+                          : { ...x, notification_status: 'READ' },
+                      ),
                     );
                   }}
                 >

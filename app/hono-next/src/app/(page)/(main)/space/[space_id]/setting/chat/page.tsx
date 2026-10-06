@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
 
-import { useMainState } from '@/(main)/space/component/MainLayout/useMainState';
+import { useMainState } from '@/(main)/component/MainState/useMainState';
 import { MyButton } from '@/component/button/MyButton';
 import { MyInput } from '@/component/input/MyInput';
 import { MyLoading } from '@/component/MyLoading';

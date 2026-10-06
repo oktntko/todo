@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
 
-import { useMainState } from '@/(main)/space/component/MainLayout/useMainState';
+import { useMainState } from '@/(main)/component/MainState/useMainState';
 import { MyLoading } from '@/component/MyLoading';
 import { cn } from '~/lib/cn';
 

@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useParams } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
 
-import { useMainState } from '@/(main)/space/component/MainLayout/useMainState';
+import { useMainState } from '@/(main)/component/MainState/useMainState';
 import { SpaceForm } from '@/(main)/space/component/SpaceForm';
 import type { SpaceFormValue } from '@/(main)/space/component/useSpaceForm';
 import { MyLoading } from '@/component/MyLoading';

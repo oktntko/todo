@@ -10,9 +10,9 @@ import { MyButton } from '@/component/button/MyButton';
 import { ErrorMessage } from '@/component/ErrorMessage';
 import { MyInput } from '@/component/input/MyInput';
 import { hono } from '@/middleware/hono';
+import { useAuth } from '@/plugin/useAuth';
 import { useDialog } from '@/plugin/useDialog';
 import { useToast } from '@/plugin/useToast';
-import { useAuth } from '~/app/(page)/plugin/useAuth';
 import { cn } from '~/lib/cn';
 import { MypageRouterSchema } from '~/schema';
 
